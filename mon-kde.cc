@@ -359,10 +359,10 @@ void MainWindow::handle_getcs(Msg *_m)
     m_view->update( m_rememberedJobs );
 }
 
-void MainWindow::handle_job_begin(Msg *m)
+void MainWindow::handle_job_begin(Msg *_m)
 {
-    MonJobBeginMsg *msg = dynamic_cast<MonJobBeginMsg*>( m );
-    if ( !msg )
+    MonJobBeginMsg *m = dynamic_cast<MonJobBeginMsg*>( m );
+    if ( !m )
         return;
 }
 
