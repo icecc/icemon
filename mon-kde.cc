@@ -10,6 +10,7 @@
 #include <kmessagebox.h>
 #include <kstdaction.h>
 #include <kdebug.h>
+#include "summaryview.h"
 #include "ganttstatusview.h"
 
 #include <qcanvas.h>
@@ -345,6 +346,11 @@ MainWindow::MainWindow( QWidget *parent, const char *name )
                           actionCollection(), "view_gantt_view" );
     a->setExclusiveGroup( "viewmode" );
 
+    a = new KRadioAction( i18n( "&Summary View" ), 0,
+                          this, SLOT( setupSummaryView() ),
+                          actionCollection(), "view_foo_view" );
+    a->setExclusiveGroup( "viewmode" );
+
     KStdAction::quit( kapp, SLOT( quit() ), actionCollection() );
 
     new KAction( i18n("Stop"), 0, this, SLOT( stopView() ), actionCollection(),
@@ -357,7 +363,7 @@ MainWindow::MainWindow( QWidget *parent, const char *name )
                  actionCollection(), "check_nodes" );
 
     createGUI();
-    setupGanttView();
+    setupSummaryView();
     checkScheduler();
 
     setAutoSaveSettings();
@@ -578,6 +584,11 @@ void MainWindow::setupView( StatusView *view, bool rememberJobs )
 void MainWindow::setupListView()
 {
     setupView( new ListStatusView( this ), true );
+}
+
+void MainWindow::setupSummaryView()
+{
+    setupView( new SummaryView( this ), false );
 }
 
 void MainWindow::setupGanttView()

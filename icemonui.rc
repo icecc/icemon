@@ -5,6 +5,7 @@
         <Menu name="view_mode"><text>&amp;Mode</text>
             <Action name="view_list_view"/>
             <Action name="view_star_view"/>
+            <Action name="view_foo_view"/>
             <Action name="view_gantt_view"/>
         </Menu>
         <Action name="view_start"/>

@@ -178,6 +178,7 @@ class MainWindow : public KMainWindow
   private slots:
     void setupListView();
     void setupStarView();
+    void setupSummaryView();
     void setupGanttView();
 
     void slotCheckScheduler();
