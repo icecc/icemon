@@ -98,19 +98,19 @@ void GanttProgress::update( const Job &job )
 #endif
 
     if ( !m_jobs.isEmpty() && m_jobs.first().first == job ) {
-       kdDebug() << "  Known Job. State: " << job.state() << endl;
+//       kdDebug() << "  Known Job. State: " << job.state() << endl;
         if ( job.state() == Job::Finished || job.state() == Job::Failed ) {
           Job j = IdleJob();
           m_jobs.prepend( qMakePair( j, mClock ) );
           mIsFree = true;
         }
     } else {
-        kdDebug() << " New Job" << endl;
+//        kdDebug() << " New Job" << endl;
         m_jobs.prepend( qMakePair( job, mClock ) );
         mIsFree = false;
     }
 
-    kdDebug() << "num jobs: " << m_jobs.count() << " jobs" << endl;
+//    kdDebug() << "num jobs: " << m_jobs.count() << " jobs" << endl;
 }
 
 void GanttProgress::drawGraph( QPainter &p )
@@ -200,7 +200,7 @@ void GanttProgress::resizeEvent( QResizeEvent * )
 GanttStatusView::GanttStatusView( QWidget *parent, const char *name )
 	: QWidget( parent, name, WRepaintNoErase | WResizeNoErase )
 {
-    m_topLayout = new QGridLayout( this, 2, 2 );
+    m_topLayout = new QGridLayout( this, 2, 2, 0, -1, "topLayout" );
     m_topLayout->setSpacing( 5 );
     m_topLayout->setMargin( 4 );
     m_topLayout->setColStretch( 1, 10 );
@@ -308,7 +308,7 @@ GanttProgress *GanttStatusView::registerNode( const QString &name )
       m_topLayout->addWidget( l, lastRow, 0 );
       l->show();
 
-      nodeLayout = new QVBoxLayout( this );
+      nodeLayout = new QVBoxLayout( 0, ( name + "_layout" ).latin1() );
       m_topLayout->addLayout( nodeLayout, lastRow, 1 );
       mNodeLayouts.insert( name, nodeLayout );
     } else {
