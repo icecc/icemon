@@ -75,9 +75,13 @@ ListStatusView::ListStatusView( QWidget *parent, const char *name )
     m_listView = new KListView( this );
     m_listView->addColumn( i18n( "ID" ) );
     m_listView->addColumn( i18n( "Filename" ) );
-    m_listView->addColumn( i18n( "Client" ) );
-    m_listView->addColumn( i18n( "Server" ) );
+    m_listView->addColumn( i18n( "Client / Server" ) );
     m_listView->addColumn( i18n( "State" ) );
+    m_listView->addColumn( i18n( "Real / User" ) );
+    m_listView->addColumn( i18n( "Faults" ) );
+    m_listView->addColumn( i18n( "Size In" ) );
+    m_listView->addColumn( i18n( "Size Out" ) );
+
     layout->addWidget( m_listView );
 }
 
@@ -87,8 +91,16 @@ void ListStatusView::update( const JobList &jobs )
     m_listView->clear();
     JobList::ConstIterator it = jobs.begin();
     for ( ; it != jobs.end(); ++it )
-        new KListViewItem( m_listView, QString::number( ( *it ).jobId() ),
-                           ( *it ).fileName(), ( *it ).client(), ( *it ).server(), ( *it ).stateAsString() );
+        new KListViewItem( m_listView,
+                           QString::number( ( *it ).jobId() ),
+                           ( *it ).fileName(),
+                           ( *it ).client() + "/" + ( *it ).server(),
+                           ( *it ).stateAsString(),
+                           QString::number( ( *it ).real_msec ) + "/" + QString::number( ( *it ).user_msec ),
+                           QString::number( ( *it ).majflt ),
+                           QString::number( ( *it ).in_uncompressed ),
+                           QString::number( ( *it ).out_uncompressed ) );
+
     m_listView->setUpdatesEnabled( true );
     m_listView->triggerUpdate();
 }
@@ -359,6 +371,7 @@ void MainWindow::handle_job_begin(Msg *_m)
     ( *it ).setServer( m->host.c_str() );
     ( *it ).setStartTime( m->stime );
     ( *it ).setState( Job::Compiling );
+     m_view->update( m_rememberedJobs );
 }
 
 void MainWindow::handle_job_done(Msg *_m)
@@ -370,6 +383,21 @@ void MainWindow::handle_job_done(Msg *_m)
     if ( it == m_rememberedJobs.end() ) // we started in between
         return;
     ( *it ).setState( Job::Finished );
+    ( *it ).exitcode = m->exitcode;
+
+    ( *it ).real_msec = m->real_msec;
+    ( *it ).user_msec = m->user_msec;
+    ( *it ).sys_msec = m->sys_msec;   /* system time used */
+    ( *it ).maxrss = m->maxrss;     /* maximum resident set size (KB) */
+    ( *it ).idrss = m->idrss;      /* integral unshared data size (KB) */
+    ( *it ).majflt = m->majflt;     /* page faults */
+    ( *it ).nswap = m->nswap;      /* swaps */
+
+    ( *it ).in_compressed = m->in_compressed;
+    ( *it ).in_uncompressed = m->in_uncompressed;
+    ( *it ).out_compressed = m->out_compressed;
+    ( *it ).out_uncompressed = m->out_uncompressed;
+     m_view->update( m_rememberedJobs );
 }
 
 void MainWindow::setupView( StatusView *view )

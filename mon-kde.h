@@ -17,17 +17,27 @@ class Job
 {
 public:
     enum State { WaitingForCS, Compiling, Finished };
-    Job(unsigned int id, const QString &client, const QString &filename,
-        const QString &environment, const QString &lang) {
+    Job(unsigned int id = 0,
+        const QString &client = QString::null,
+        const QString &filename = QString::null,
+        const QString &environment = QString::null,
+        const QString &lang = QString::null)
+    {
         m_id = id;
         m_fileName = filename;
         m_env = environment;
         m_lang = lang;
         m_state = WaitingForCS;
         m_client = client;
-    }
-    Job() {
-        m_id = 0;
+        real_msec = 0;
+        user_msec = 0;
+        sys_msec = 0;
+        maxrss = 0;
+        idrss = 0;
+        majflt = 0;
+        nswap = 0;
+        exitcode = 0;
+        in_compressed = in_uncompressed = out_compressed = out_uncompressed = 0;
     }
 
     bool operator==( const Job &rhs ) const { return m_id == rhs.m_id; }
@@ -59,6 +69,22 @@ private:
     QString m_env;
     State m_state;
     time_t m_stime;
+public:
+    unsigned int real_msec;  /* real time it used */
+    unsigned int user_msec;  /* user time used */
+    unsigned int sys_msec;   /* system time used */
+    unsigned int maxrss;     /* maximum resident set size (KB) */
+    unsigned int idrss;      /* integral unshared data size (KB) */
+    unsigned int majflt;     /* page faults */
+    unsigned int nswap;      /* swaps */
+
+    int exitcode;            /* exit code */
+
+    unsigned int in_compressed;
+    unsigned int in_uncompressed;
+    unsigned int out_compressed;
+    unsigned int out_uncompressed;
+
 };
 
 class JobList : public QMap<unsigned int, Job>
