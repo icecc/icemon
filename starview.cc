@@ -45,7 +45,7 @@ class HostItem : public QCanvasText
     enum { RttiHostItem = 1000 };
 
     HostItem( const QString &text, QCanvas *canvas )
-      : QCanvasText( text, canvas ), mHostInfo( 0 ), m_stateItem( 0 )
+      : QCanvasText( text, canvas ), mHostInfo( 0 )
     {
       init();
     }
@@ -76,8 +76,11 @@ class HostItem : public QCanvasText
       else setColor( white );
     }
 
-    void setState( Job::State state ) { m_state = state; }
-    Job::State state() const { return m_state; }
+    void setIsActiveClient( bool active ) { mIsActiveClient = active; }
+    bool isActiveClient() const { return mIsActiveClient; }
+    
+    void setIsCompiling( bool compiling ) { mIsCompiling = compiling; }
+    bool isCompiling() const { return mIsCompiling; }
 
     void setStateItem( QCanvasItem *item ) { m_stateItem = item; }
     QCanvasItem *stateItem() { return m_stateItem; }
@@ -99,7 +102,7 @@ class HostItem : public QCanvasText
 
     void update( const Job &job )
     {
-      setState( job.state() );
+      setIsCompiling( job.state() == Job::Compiling );
       setClient( job.client() );
 
       if ( job.state() == Job::WaitingForCS ) return;
@@ -141,12 +144,15 @@ class HostItem : public QCanvasText
 
       setHostColor( QColor( 200, 200, 200 ) );
 
-      m_state = Job::Idle;
+      mIsActiveClient = false;
+      mIsCompiling = false;
     }
 
     HostInfo *mHostInfo;
 
-    Job::State m_state;
+    bool mIsActiveClient;
+    bool mIsCompiling;
+    
     QCanvasItem *m_stateItem;
     unsigned int m_client;
 
@@ -250,6 +256,9 @@ void StarView::update( const Job &job )
     (*it)->update( job );
     if ( finished ) {
       mJobMap.remove( it );
+      unsigned int clientid = job.client();
+      HostItem *clientItem = findHostItem( clientid );
+      if ( clientItem ) clientItem->setIsActiveClient( false );
     }
     return;
   }
@@ -266,6 +275,12 @@ void StarView::update( const Job &job )
   hostItem->update( job );
 
   if ( !finished ) mJobMap.insert( job.jobId(), hostItem );
+
+  if ( job.state() == Job::Compiling ) {
+    unsigned int clientid = job.client();
+    HostItem *clientItem = findHostItem( clientid );
+    if ( clientItem ) clientItem->setIsActiveClient( true );
+  }
 
   drawNodeStatus();
 }
@@ -364,33 +379,27 @@ void StarView::drawState( HostItem *node )
     const QPoint nodeCenter = node->boundingRect().center();
     const QPoint localCenter = m_localhostItem->boundingRect().center();
 
-    switch ( node->state() ) {
-        case Job::Compiling: {
-            QCanvasLine *line = new QCanvasLine( m_canvas );
-            QColor color;
-            unsigned int client = node->client();
-            if ( !client ) color = Qt::green;
-            else color = hostColor( client );
-            line->setPen( color );
+    QColor color;
+    unsigned int client = node->client();
+    if ( !client ) color = Qt::green;
+    else color = hostColor( client );
 
-            line->setPoints( nodeCenter.x(), nodeCenter.y(),
-                             localCenter.x(), localCenter.y() );
-            line->show();
-            newItem = line;
-            break;
-        }
-        case Job::WaitingForCS: {
-            QCanvasLine *line = new QCanvasLine( m_canvas );
-            line->setPen( QPen( Qt::darkGreen, 0, QPen::DashLine ) );
+    if ( node->isCompiling() ) {
+      QCanvasLine *line = new QCanvasLine( m_canvas );
+      line->setPen( color );
 
-            line->setPoints( nodeCenter.x(), nodeCenter.y(),
-                             localCenter.x(), localCenter.y() );
-            line->show();
-            newItem = line;
-            break;
-        }
-        default:
-            break;
+      line->setPoints( nodeCenter.x(), nodeCenter.y(),
+                       localCenter.x(), localCenter.y() );
+      line->show();
+      newItem = line;
+    } else if ( node->isActiveClient() ) {
+      QCanvasLine *line = new QCanvasLine( m_canvas );
+      line->setPen( QPen( color, 0, QPen::DashLine ) );
+
+      line->setPoints( nodeCenter.x(), nodeCenter.y(),
+                       localCenter.x(), localCenter.y() );
+      line->show();
+      newItem = line;
     }
 
     node->setStateItem( newItem );
