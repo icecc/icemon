@@ -305,7 +305,7 @@ void StarView::update( const Job &job )
   }
 
   HostItem *hostItem = findHostItem( hostid );
-  if ( !hostItem ) hostItem = createHostItem( hostid );
+  if ( !hostItem ) return;
 
   hostItem->update( job );
 
@@ -331,14 +331,22 @@ HostItem *StarView::findHostItem( unsigned int hostid )
 
 void StarView::checkNode( unsigned int hostid )
 {
+//  kdDebug() << "StarView::checkNode() " << hostid << endl;
+
   if ( !hostid ) return;
 
   HostItem *hostItem = findHostItem( hostid );
-  if ( !hostItem ) hostItem = createHostItem( hostid );
+  if ( !hostItem ) {
+    hostItem = createHostItem( hostid );
+    arrangeHostItems();
+    drawNodeStatus();
+  }
 }
 
 void StarView::removeNode( unsigned int hostid )
 {
+//  kdDebug() << "StarView::removeNode() " << hostid << endl;
+
   HostItem *hostItem = findHostItem( hostid );
 
   if ( hostItem && hostItem->hostInfo()->isOffline() ) {
@@ -480,10 +488,13 @@ void StarView::arrangeHostItems()
 
 HostItem *StarView::createHostItem( unsigned int hostid )
 {
-//  kdDebug() << "New node for '" << hostid << "'" << endl;
+  HostInfo *i = hostInfoManager()->find( hostid );
 
-  HostItem *hostItem = new HostItem( hostInfoManager()->find( hostid ),
-                                     m_canvas );
+//  kdDebug() << "New node for " << hostid << " (" << i->name() << ")" << endl;
+
+  assert( !i->name().isEmpty() );
+
+  HostItem *hostItem = new HostItem( i, m_canvas );
   hostItem->setHostColor( hostColor( hostid ) );
   m_hostItems.insert( hostid, hostItem );
   hostItem->show();

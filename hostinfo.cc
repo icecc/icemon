@@ -127,6 +127,7 @@ void HostInfo::updateFromStatsMap( const StatsMap &stats )
 #endif
 
   QString name = stats["Name"];
+
   if ( name != mName ) {
     mName = name;
     mColor = createColor( mName );

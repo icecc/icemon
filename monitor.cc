@@ -197,6 +197,7 @@ void Monitor::handle_stats( Msg *_m )
   }
 
   HostInfo *hostInfo = m_hostInfoManager->checkNode( m->hostid, stats );
+
   if ( hostInfo->isOffline() ) {
     m_view->removeNode( m->hostid );
   } else {
