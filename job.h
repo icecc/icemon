@@ -54,6 +54,7 @@ class Job
 
     bool operator==( const Job &rhs ) const { return m_id == rhs.m_id; }
     bool operator!=( const Job &rhs ) const { return m_id != rhs.m_id; }
+    int operator<( const Job &rhs ) const{ return m_id < rhs.m_id; }
 
     unsigned int jobId() const { return m_id; }
     QString fileName() const { return m_fileName; }

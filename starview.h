@@ -63,8 +63,8 @@ class HostItem : public QCanvasText
   public:
     enum { RttiHostItem = 1000 };
 
-    HostItem( const QString &text, QCanvas *canvas );
-    HostItem( HostInfo *hostInfo, QCanvas *canvas );
+    HostItem( const QString &text, QCanvas *canvas, HostInfoManager * );
+    HostItem( HostInfo *hostInfo, QCanvas *canvas, HostInfoManager * );
     ~HostItem();
 
     void init();
@@ -95,8 +95,14 @@ class HostItem : public QCanvasText
 
     void update( const Job &job );
 
+  protected:
+    void createJobHalo( const Job & );
+    void deleteJobHalo( const Job &job );
+    void updateHalos();
+
   private:
     HostInfo *mHostInfo;
+    HostInfoManager *mHostInfoManager;
 
     bool mIsActiveClient;
     bool mIsCompiling;
@@ -109,7 +115,7 @@ class HostItem : public QCanvasText
 
     QCanvasEllipse *m_boxItem;
 
-    QCanvasEllipse *m_jobHalo;
+    QMap<Job, QCanvasEllipse *> m_jobHalos;
 
     JobList m_jobs;
 };

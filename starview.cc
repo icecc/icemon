@@ -108,15 +108,16 @@ QString StarViewConfigDialog::archFilter()
   return mArchFilterEdit->text();
 }
 
-HostItem::HostItem( const QString &text, QCanvas *canvas )
-  : QCanvasText( text, canvas ), mHostInfo( 0 ), m_stateItem( 0 )
+HostItem::HostItem( const QString &text, QCanvas *canvas, HostInfoManager *m )
+  : QCanvasText( text, canvas ), mHostInfo( 0 ), mHostInfoManager( m ),
+    m_stateItem( 0 )
 {
   init();
 }
 
-HostItem::HostItem( HostInfo *hostInfo, QCanvas *canvas )
+HostItem::HostItem( HostInfo *hostInfo, QCanvas *canvas, HostInfoManager *m )
   : QCanvasText( hostInfo->name(), canvas ), mHostInfo( hostInfo ),
-    m_stateItem( 0 )
+    mHostInfoManager( m ), m_stateItem( 0 )
 {
   init();
 }
@@ -125,17 +126,43 @@ HostItem::~HostItem()
 {
 }
 
+void HostItem::init()
+{
+  setZ( 100 );
+
+  QRect r = boundingRect();
+  mBaseWidth = r.width() + 10;
+  mBaseHeight = r.height() + 10;
+
+  m_boxItem = new QCanvasEllipse( mBaseWidth, mBaseHeight, canvas() );
+  m_boxItem->setZ( 80 );
+  m_boxItem->move( r.width() / 2, r.height() / 2 );
+  m_boxItem->show();
+
+  setHostColor( QColor( 200, 200, 200 ) );
+
+  mIsActiveClient = false;
+  mIsCompiling = false;
+
+  m_client = 0;
+}
+
 void HostItem::deleteSubItems()
 {
   delete m_boxItem;
-  delete m_jobHalo;
+
+  QMap<Job,QCanvasEllipse *>::ConstIterator it;
+  for( it = m_jobHalos.begin(); it != m_jobHalos.end(); ++it ) {
+    delete it.data();
+  }
+  m_jobHalos.clear();
+
   delete m_stateItem;
 }
 
 void HostItem::setHostColor( const QColor &color )
 {
   m_boxItem->setBrush( color );
-  m_jobHalo->setBrush( color.light() );
 
   setColor( StatusView::textColor( color ) );
 }
@@ -152,7 +179,10 @@ void HostItem::moveBy( double dx, double dy )
   QRect r = boundingRect();
 
   m_boxItem->moveBy( dx, dy );
-  m_jobHalo->moveBy( dx, dy );
+  QMap<Job,QCanvasEllipse*>::ConstIterator it;
+  for( it = m_jobHalos.begin(); it != m_jobHalos.end(); ++it ) {
+    it.data()->moveBy( dx, dy );
+  }
 }
 
 void HostItem::update( const Job &job )
@@ -171,37 +201,54 @@ void HostItem::update( const Job &job )
   if ( newJob && finished ) return;
   if ( !newJob && !finished ) return;
 
-  if ( newJob ) m_jobs.insert( job.jobId(), job );
-  else if ( finished ) m_jobs.remove( it );
-
-  m_jobHalo->setSize( mBaseWidth + m_jobs.count() * 4,
-                      mBaseHeight + m_jobs.count() * 4 );
+  if ( newJob ) {
+    m_jobs.insert( job.jobId(), job );
+    createJobHalo( job );
+  } else if ( finished ) {
+    deleteJobHalo( job );
+    m_jobs.remove( it );
+  }
 }
 
-void HostItem::init()
+void HostItem::createJobHalo( const Job &job )
 {
-  setZ( 100 );
-
+  QCanvasEllipse *halo = new QCanvasEllipse( mBaseWidth, mBaseHeight,
+                                             canvas() );
+  halo->setZ( 70 - m_jobHalos.size() );
   QRect r = boundingRect();
-  mBaseWidth = r.width() + 10;
-  mBaseHeight = r.height() + 10;
+  halo->move( x() + r.width() / 2, y() + r.height() / 2 );
+  halo->setSize( mBaseWidth + m_jobs.count() * 5,
+                 mBaseHeight + m_jobs.count() * 5 );
+  halo->show();
 
-  m_boxItem = new QCanvasEllipse( mBaseWidth, mBaseHeight, canvas() );
-  m_boxItem->setZ( 80 );
-  m_boxItem->move( r.width() / 2, r.height() / 2 );
-  m_boxItem->show();
+  m_jobHalos.insert( job, halo );
 
-  m_jobHalo = new QCanvasEllipse( mBaseWidth, mBaseHeight, canvas() );
-  m_jobHalo->setZ( 70 );
-  m_jobHalo->move( r.width() / 2, r.height() / 2 );
-  m_jobHalo->show();
+  updateHalos();
+}
 
-  setHostColor( QColor( 200, 200, 200 ) );
+void HostItem::deleteJobHalo( const Job &job )
+{
+  QMap<Job,QCanvasEllipse*>::Iterator it = m_jobHalos.find( job );
+  if ( it == m_jobHalos.end() ) return;
+  
+  QCanvasEllipse *halo = *it;
+  delete halo;
+  m_jobHalos.remove( it );
 
-  mIsActiveClient = false;
-  mIsCompiling = false;
+  updateHalos();
+}
 
-  m_client = 0;
+void HostItem::updateHalos()
+{
+  int count = 1;
+
+  QMap<Job,QCanvasEllipse*>::Iterator it;
+  for( it = m_jobHalos.begin(); it != m_jobHalos.end(); ++it ) {
+    QCanvasEllipse *halo = it.data();
+    halo->setSize( mBaseWidth + count * 4, mBaseHeight + count * 4 );
+    halo->setBrush( mHostInfoManager->hostColor( it.key().client() ) );
+    ++count;
+  }
 }
 
 
@@ -274,7 +321,7 @@ StarView::StarView( HostInfoManager *m, QWidget *parent, const char *name )
     m_canvasView->setHScrollBarMode( QScrollView::AlwaysOff );
     layout->addWidget( m_canvasView );
 
-    m_schedulerItem = new HostItem( "", m_canvas );
+    m_schedulerItem = new HostItem( "", m_canvas, hostInfoManager() );
     centerSchedulerItem();
     m_schedulerItem->show();
 
@@ -444,7 +491,7 @@ void StarView::updateSchedulerState( bool online )
     mJobMap.clear();
   }
 
-  m_schedulerItem = new HostItem( txt, m_canvas );
+  m_schedulerItem = new HostItem( txt, m_canvas, hostInfoManager() );
   m_schedulerItem->show();
   centerSchedulerItem();
   m_canvas->update();
@@ -538,7 +585,7 @@ HostItem *StarView::createHostItem( unsigned int hostid )
 
   //assert( !i->name().isEmpty() );
 
-  HostItem *hostItem = new HostItem( i, m_canvas );
+  HostItem *hostItem = new HostItem( i, m_canvas, hostInfoManager() );
   hostItem->setHostColor( hostColor( hostid ) );
   m_hostItems.insert( hostid, hostItem );
   hostItem->show();
