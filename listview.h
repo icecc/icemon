@@ -25,10 +25,10 @@
 
 #include <klistview.h>
 
-class ListStatusViewItem : public QListViewItem
+class ListStatusViewItem : public KListViewItem
 {
 public:
-    ListStatusViewItem( QListView *parent, const Job &job );
+    ListStatusViewItem( KListView *parent, const Job &job );
     void updateText( const Job &job);
     int compare( QListViewItem *i, int col, bool ascending ) const;
 private:

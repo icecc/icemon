@@ -27,11 +27,11 @@
 #include <klistview.h>
 
 
-class HostListViewItem : public QListViewItem
+class HostListViewItem : public KListViewItem
 {
 public:
 
-    HostListViewItem( QListView* parent, const HostInfo& info );
+    HostListViewItem( KListView* parent, const HostInfo& info );
 
     const HostInfo& hostInfo() const;
 

@@ -40,8 +40,8 @@ enum Columns
 };
 
 
-HostListViewItem::HostListViewItem( QListView *parent, const HostInfo& info )
-    :  QListViewItem( parent ),
+HostListViewItem::HostListViewItem( KListView* parent, const HostInfo& info )
+    :  KListViewItem( parent ),
        mHostInfo( info ),
        mActive( false )
 {
@@ -125,7 +125,7 @@ void HostListViewItem::paintCell( QPainter* painter,
         painter->setFont( font );
     }
 
-    QListViewItem::paintCell( painter, cg, column, width, align );
+    KListViewItem::paintCell( painter, cg, column, width, align );
 
     painter->setFont( oldFont );
 }
@@ -145,7 +145,7 @@ int HostListViewItem::width( const QFontMetrics& fm,
     }
     else
     {
-        width = QListViewItem::width( fm, lv, column );
+        width = KListViewItem::width( fm, lv, column );
     }
 
     return width;

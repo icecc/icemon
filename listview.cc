@@ -21,8 +21,6 @@
 
 #include "listview.h"
 
-#include <services/logging.h>
-
 #include <klocale.h>
 
 using namespace std;
@@ -67,8 +65,8 @@ enum Columns
     ColumnSizeOut
 };
 
-ListStatusViewItem::ListStatusViewItem( QListView *parent, const Job &_job )
-    :  QListViewItem( parent ), job( _job )
+ListStatusViewItem::ListStatusViewItem( KListView *parent, const Job &_job )
+    :  KListViewItem( parent ), job( _job )
 {
     updateText( job );
 }
@@ -109,7 +107,6 @@ int ListStatusViewItem::compare( QListViewItem *i, int col,
 {
     const ListStatusViewItem *first = this;
     const ListStatusViewItem *other = dynamic_cast<ListStatusViewItem*>( i );
-    assert( other );
 
     switch ( col ) {
     case ColumnID:
