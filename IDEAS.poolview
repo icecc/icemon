@@ -1,0 +1,7 @@
+- Basically like the star view; scheduler appears as an isle in the middle,
+  nodes appear as differently colored luftmatrazen around the scheduler.
+- Nodes slowly drift around the scheduler, in a circle
+- When a node gets a call from the scheduler, that increases it's attraction
+  to the scheduler for a time, away from the scheduler.
+
+- 
