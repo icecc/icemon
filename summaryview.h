@@ -13,7 +13,7 @@
 
 #include "mon-kde.h"
 
-#include <qhbox.h>
+#include <qscrollview.h>
 
 class KSqueezedTextLabel;
 class QLabel;
@@ -24,7 +24,7 @@ class SummaryView;
 class SummaryViewItem
 {
 public:
-    SummaryViewItem(const QString &name, SummaryView *parent, QGridLayout *layout);
+    SummaryViewItem(const QString &name, QWidget *parent, SummaryView *parent, QGridLayout *layout);
     void update(const Job &job);
 
 private:
@@ -39,10 +39,10 @@ private:
     KSqueezedTextLabel *m_sourceLabel;
 
     int m_jobCount;
-    SummaryView *m_parent;
+    SummaryView *m_view;
 };
 
-class SummaryView : public QWidget, public StatusView
+class SummaryView : public QScrollView, public StatusView
 {
     Q_OBJECT
 
@@ -53,12 +53,15 @@ public:
     virtual QWidget *widget();
     virtual void update(const Job &job);
     virtual void checkNode(unsigned int hostid);
+    virtual QString id() const { return "summary"; }
 
-    QString id() const { return "summary"; }
+protected:
+    virtual void viewportResizeEvent(QResizeEvent *e);
 
 private:
     QMap<unsigned int, SummaryViewItem *> m_items;
     QGridLayout *m_layout;
+    QWidget *m_base;
 };
 
 #endif
