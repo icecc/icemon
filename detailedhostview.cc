@@ -24,14 +24,14 @@
 #include "hostlistview.h"
 #include "listview.h"
 
-#include <services/logging.h>
-
 #include <klocale.h>
 #include <kdebug.h>
+#include <kdialog.h>
 
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qsplitter.h>
+#include <qvbox.h>
 
 #include <sys/utsname.h>
 
@@ -57,9 +57,23 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
   QSplitter* viewSplitter = new QSplitter( Qt::Vertical, this );
   topLayout->addWidget( viewSplitter );
 
-  mHostListView = new HostListView( manager, viewSplitter, "HostListView" );
-  mLocalJobsView = new ListStatusView( manager, viewSplitter, "LocalJobs" );
-  mRemoteJobsView = new ListStatusView( manager, viewSplitter, "RemoteJobs" );
+  QVBox* hosts = new QVBox( viewSplitter );
+  hosts->setSpacing( KDialog::spacingHint() );
+
+  new QLabel( i18n( "Hosts" ), hosts );
+  mHostListView = new HostListView( manager, hosts, "HostListView" );
+
+  QVBox* locals = new QVBox( viewSplitter );
+  locals->setSpacing( KDialog::spacingHint() );
+
+  new QLabel( i18n( "Outgoing jobs" ), locals );
+  mLocalJobsView = new ListStatusView( manager, locals, "LocalJobs" );
+
+  QVBox* remotes = new QVBox( viewSplitter );
+  remotes->setSpacing( KDialog::spacingHint() );
+
+  new QLabel( i18n( "Incoming jobs" ), remotes );
+  mRemoteJobsView = new ListStatusView( manager, remotes, "RemoteJobs" );
 
   connect(mHostListView, SIGNAL( nodeActivated( unsigned int ) ),
           this, SLOT( slotNodeActivated() ) );
