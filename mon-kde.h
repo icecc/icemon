@@ -67,6 +67,7 @@ class MainWindow : public KMainWindow
     void handle_local_begin( Msg *m );
     void handle_local_done( Msg *m );
 
+    HostInfoManager *m_hostInfoManager;
     StatusView *m_view;
     JobList m_rememberedJobs;
     MsgChannel *m_scheduler;

@@ -21,11 +21,14 @@
 */
 
 #include "mon-kde.h"
-#include "logging.h"
 #include "summaryview.h"
 #include "ganttstatusview.h"
 #include "listview.h"
 #include "starview.h"
+#include "hostinfo.h"
+
+#include <services/logging.h>
+#include <services/comm.h>
 
 #include <kaboutdata.h>
 #include <kaction.h>
@@ -47,7 +50,6 @@
 
 #include <math.h>
 #include <iostream>
-#include <comm.h>
 #include <cassert>
 
 using namespace std;
@@ -56,6 +58,8 @@ MainWindow::MainWindow( QWidget *parent, const char *name )
 	: KMainWindow( parent, name ), m_view( 0 ), m_scheduler( 0 ),
           m_scheduler_read( 0 )
 {
+    m_hostInfoManager = new HostInfoManager;
+
     KRadioAction *a = new KRadioAction( i18n( "&List View" ), 0,
                                         this, SLOT( setupListView() ),
                                         actionCollection(), "view_list_view" );
@@ -97,6 +101,8 @@ MainWindow::MainWindow( QWidget *parent, const char *name )
 MainWindow::~MainWindow()
 {
   writeSettings();
+
+  delete m_hostInfoManager;
 }
 
 void MainWindow::readSettings()
@@ -248,7 +254,7 @@ void MainWindow::handle_stats( Msg *_m )
         return;
 
     QStringList statmsg = QStringList::split( '\n', m->statmsg.c_str() );
-    StatusView::StatsMap stats;
+    HostInfo::StatsMap stats;
     for ( QStringList::ConstIterator it = statmsg.begin(); it != statmsg.end(); ++it )
     {
         QString key = *it;
@@ -258,7 +264,8 @@ void MainWindow::handle_stats( Msg *_m )
         stats[key] = value;
     }
 
-    m_view->checkNode( m->hostid, stats );
+    m_hostInfoManager->checkNode( m->hostid, stats );
+    m_view->checkNode( m->hostid );
 }
 
 void MainWindow::handle_job_begin(Msg *_m)
@@ -319,8 +326,6 @@ void MainWindow::handle_job_done(Msg *_m)
 
 void MainWindow::setupView( StatusView *view, bool rememberJobs )
 {
-    if ( m_view )
-        view->inherit( m_view );
     delete m_view;
     m_view = view;
     if ( rememberJobs ) {
@@ -334,22 +339,22 @@ void MainWindow::setupView( StatusView *view, bool rememberJobs )
 
 void MainWindow::setupListView()
 {
-    setupView( new ListStatusView( this ), true );
+    setupView( new ListStatusView( m_hostInfoManager, this ), true );
 }
 
 void MainWindow::setupSummaryView()
 {
-    setupView( new SummaryView( this ), false );
+    setupView( new SummaryView( m_hostInfoManager, this ), false );
 }
 
 void MainWindow::setupGanttView()
 {
-    setupView( new GanttStatusView( this ), false );
+    setupView( new GanttStatusView( m_hostInfoManager, this ), false );
 }
 
 void MainWindow::setupStarView()
 {
-    setupView( new StarView( this ), false );
+    setupView( new StarView( m_hostInfoManager, this ), false );
 }
 
 void MainWindow::stopView()

@@ -18,8 +18,12 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
 #include "starview.h"
-#include "logging.h"
+
+#include "hostinfo.h"
+
+#include <services/logging.h>
 
 #include <klocale.h>
 #include <kdebug.h>
@@ -38,6 +42,8 @@ using namespace std;
 class HostItem : public QCanvasText
 {
   public:
+    enum { RttiHostItem = 1000 };
+
     HostItem( const QString &hostName, QCanvas *canvas )
       : QCanvasText( hostName, canvas ), m_hostName( hostName ),
         m_stateItem( 0 )
@@ -65,8 +71,12 @@ class HostItem : public QCanvasText
     {
     }
 
+    int rtti() const { return RttiHostItem; }
+
     void setHostColor( const QColor &color )
     {
+      m_color = color;
+
       m_boxItem->setBrush( color );
       m_jobHalo->setBrush( color.light() );
 
@@ -74,6 +84,10 @@ class HostItem : public QCanvasText
                         ( color.blue() * 0.114 );
       if ( luminance > 140.0 ) setColor( black );
       else setColor( white );
+    }
+    QColor hostColor() const
+    {
+      return m_color;
     }
 
     void setState( Job::State state ) { m_state = state; }
@@ -123,6 +137,7 @@ class HostItem : public QCanvasText
   private:
     Job::State m_state;
     QString m_hostName;
+    QColor m_color;
     QCanvasItem *m_stateItem;
     unsigned int m_client;
 
@@ -136,26 +151,47 @@ class HostItem : public QCanvasText
     JobList m_jobs;
 };
 
-class WhatsStat : public QToolTip {
-public:
-    WhatsStat( QWidget *widget )
-        : QToolTip( widget ) {
+class WhatsStat : public QToolTip
+{
+  public:
+    WhatsStat( QCanvas *canvas, QWidget *widget )
+        : QToolTip( widget ), mCanvas( canvas )
+    {
         QMimeSourceFactory::defaultFactory()->setPixmap( "computer",
                                                          UserIcon("icemonnode") );
     }
-    virtual void maybeTip ( const QPoint &p ) {
-        tip( QRect( p.x() - 20, p.y() - 20, 40, 40 ),
-             "<p><table><tr><td>"
-             "<img source=\"computer\"><br>coolos</td><td>"
-             "<table>"
-             "<tr><td>Jobs:</td><td>7</td></tr>"
-             "<tr><td>File:</td><td>/etc/nowhere</td></tr>"
-             "</table></td></tr></table></p>" );
+
+    virtual void maybeTip ( const QPoint &p )
+    {
+        HostItem *item = 0;        
+        QCanvasItemList items = mCanvas->collisions( p );
+        QCanvasItemList::ConstIterator it;
+        for( it = items.begin(); it != items.end(); ++it ) {
+          if ( (*it)->rtti() == HostItem::RttiHostItem ) {
+            item = static_cast<HostItem *>( *it );
+            break;
+          }
+        }
+        if ( item ) {
+          tip( QRect( p.x() - 20, p.y() - 20, 40, 40 ),
+               "<p><table><tr><td>"
+               "<img source=\"computer\"><br><b>" + item->hostName() +
+               "</b><br>" +
+               i18n("Flavor: %1")
+               .arg( HostInfo::colorName( item->hostColor() ) ) + "</td><td>"
+               "<table>"
+               "<tr><td>Jobs:</td><td>7</td></tr>"
+               "<tr><td>File:</td><td>/etc/nowhere</td></tr>"
+               "</table></td></tr></table></p>" );
+        }
     }
+  
+  private:
+    QCanvas *mCanvas;
 };
 
-StarView::StarView( QWidget *parent, const char *name )
-  : QWidget( parent, name, WRepaintNoErase | WResizeNoErase )
+StarView::StarView( HostInfoManager *m, QWidget *parent, const char *name )
+  : QWidget( parent, name, WRepaintNoErase | WResizeNoErase ), StatusView( m )
 {
     m_canvas = new QCanvas( this );
     m_canvas->resize( width(), height() );
@@ -174,8 +210,9 @@ StarView::StarView( QWidget *parent, const char *name )
 
     m_canvas->update();
 
-    new WhatsStat( this );
-
+#if 1
+    new WhatsStat( m_canvas, this );
+#endif
 }
 
 void StarView::update( const Job &job )
@@ -227,12 +264,10 @@ HostItem *StarView::findHostItem( unsigned int hostid )
   return hostItem;
 }
 
-void StarView::checkNode( unsigned int hostid, const StatsMap &stats )
+void StarView::checkNode( unsigned int hostid )
 {
   if ( !hostid ) return;
 
-  StatusView::checkNode( hostid, stats );
-  
   HostItem *hostItem = findHostItem( hostid );
   if ( !hostItem ) hostItem = createHostItem( hostid );
 }
@@ -284,7 +319,7 @@ unsigned int StarView::processor( const Job &job )
 
 HostItem *StarView::createHostItem( unsigned int hostid )
 {
-  kdDebug() << "New node for '" << hostid << "'" << endl;
+//  kdDebug() << "New node for '" << hostid << "'" << endl;
 
   HostItem *hostItem = new HostItem( nameForHost( hostid ), m_canvas );
   hostItem->setHostColor( hostColor( hostid ) );

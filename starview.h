@@ -35,7 +35,7 @@ class StarView : public QWidget, public StatusView
 {
     Q_OBJECT
   public:
-    StarView( QWidget *parent, const char *name = 0 );
+    StarView( HostInfoManager *, QWidget *parent, const char *name = 0 );
 
     void update( const Job &job );
     QWidget *widget();
@@ -46,7 +46,7 @@ class StarView : public QWidget, public StatusView
 
     HostItem *StarView::findHostItem( unsigned int hostid );
 
-    void checkNode( unsigned int hostid, const StatsMap & );
+    void checkNode( unsigned int hostid );
 
   protected:
     virtual void resizeEvent( QResizeEvent *e );

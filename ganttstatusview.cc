@@ -18,8 +18,10 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
 #include "ganttstatusview.h"
 #include "job.h"
+#include "hostinfo.h"
 
 #include <qlabel.h>
 #include <qlayout.h>
@@ -236,8 +238,10 @@ void GanttProgress::resizeEvent( QResizeEvent * )
     adjustGraph();
 }
 
-GanttStatusView::GanttStatusView( QWidget *parent, const char *name )
-	: QWidget( parent, name, WRepaintNoErase | WResizeNoErase )
+GanttStatusView::GanttStatusView( HostInfoManager *m, QWidget *parent,
+                                  const char *name )
+  : QWidget( parent, name, WRepaintNoErase | WResizeNoErase ),
+    StatusView( m )
 {
     m_topLayout = new QGridLayout( this, 2, 2, 0, -1, "topLayout" );
     m_topLayout->setSpacing( 5 );
@@ -330,15 +334,13 @@ QWidget * GanttStatusView::widget()
     return this;
 }
 
-void GanttStatusView::checkNode( unsigned int hostid, const StatsMap &statmsg )
+void GanttStatusView::checkNode( unsigned int hostid )
 {
-    StatusView::checkNode( hostid, statmsg );
-
     if ( !mRunning ) return;
 
     if ( mNodeMap.find( hostid ) == mNodeMap.end())
         registerNode( hostid )->update( IdleJob());
-    unsigned int max_kids = statmsg["MaxJobs"].toUInt();
+    unsigned int max_kids = hostInfoManager()->maxJobs( hostid );
     for( unsigned int i = mNodeMap[ hostid ].count();
          i < max_kids;
          ++i )

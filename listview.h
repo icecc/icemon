@@ -39,7 +39,7 @@ class ListStatusView :public KListView, public StatusView
 {
     Q_OBJECT
 public:
-    ListStatusView( QWidget *parent, const char *name = 0 );
+    ListStatusView( HostInfoManager *, QWidget *parent, const char *name = 0 );
     virtual ~ListStatusView() {}
     virtual QWidget *widget() { return this; }
     virtual void update( const Job &job );

@@ -121,7 +121,8 @@ void SummaryViewItem::update(const Job &job)
 // SummaryView implementation
 ////////////////////////////////////////////////////////////////////////////////
 
-SummaryView::SummaryView(QWidget *parent, const char *name) : QWidget(parent, name)
+SummaryView::SummaryView(HostInfoManager *m, QWidget *parent, const char *name)
+  : QWidget(parent, name), StatusView(m)
 {
     QVBoxLayout *l = new QVBoxLayout(this);
     l->setAutoAdd(true);
@@ -153,10 +154,8 @@ void SummaryView::update(const Job &job)
     i->update(job);
 }
 
-void SummaryView::checkNode(unsigned int hostid, const StatsMap &statmsg )
+void SummaryView::checkNode(unsigned int hostid)
 {
-    StatusView::checkNode( hostid, statmsg );
-
     if(!m_items[hostid]) {
         SummaryViewItem *i = new SummaryViewItem( nameForHost( hostid ), this);
         i->show();

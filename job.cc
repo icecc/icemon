@@ -20,32 +20,32 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "statusview.h"
-
-#include "hostinfo.h"
+#include "job.h"
 
 #include <klocale.h>
 #include <kdebug.h>
 
-StatusView::StatusView( HostInfoManager *m )
-  : mHostInfoManager( m )
+QString Job::stateAsString() const
 {
-}
-
-StatusView::~StatusView()
-{
-}
-
-void StatusView::checkNode( unsigned int )
-{
-}
-
-QString StatusView::nameForHost( unsigned int id )
-{
-  return mHostInfoManager->nameForHost( id );
-}
-
-QColor StatusView::hostColor( unsigned int id )
-{
-  return mHostInfoManager->hostColor( id );
+    switch ( m_state ) {
+    case WaitingForCS:
+        return i18n( "Waiting" );
+        break;
+    case Compiling:
+        return i18n( "Compiling" );
+        break;
+    case Finished:
+        return i18n( "Finished" );
+        break;
+    case Failed:
+        return i18n( "Failed" );
+        break;
+    case Idle:
+        return i18n( "Idle" );
+        break;
+    case LocalOnly:
+        return i18n( "LocalOnly" );
+        break;
+    }
+    return QString::null;
 }

@@ -22,108 +22,26 @@
 #ifndef ICEMON_STATUSVIEW_H
 #define ICEMON_STATUSVIEW_H
 
+#include "job.h"
+
 #include <qstring.h>
 #include <qwidget.h>
 #include <qmap.h>
 #include <time.h>
 
-class Job
-{
-  public:
-    enum State { WaitingForCS, LocalOnly, Compiling, Finished, Failed, Idle };
-    Job(unsigned int id = 0,
-        unsigned int client = 0,
-        const QString &filename = QString::null,
-        const QString &environment = QString::null,
-        const QString &lang = QString::null)
-    {
-        m_id = id;
-        m_fileName = filename;
-        m_env = environment;
-        m_lang = lang;
-        m_state = WaitingForCS;
-        m_client = client;
-        real_msec = 0;
-        user_msec = 0;
-        sys_msec = 0;
-        maxrss = 0;
-        idrss = 0;
-        majflt = 0;
-        nswap = 0;
-        exitcode = 0;
-        m_server = 0;
-        in_compressed = in_uncompressed = out_compressed = out_uncompressed = 0;
-    }
-
-    bool operator==( const Job &rhs ) const { return m_id == rhs.m_id; }
-    bool operator!=( const Job &rhs ) const { return m_id != rhs.m_id; }
-
-    unsigned int jobId() const { return m_id; }
-    QString fileName() const { return m_fileName; }
-    int client() const { return m_client; }
-    int server() const { return m_server; }
-    State state() const { return m_state; }
-    QString stateAsString() const;
-    time_t stime() const { return m_stime; }
-
-    void setServer( unsigned int hostid ) {
-        m_server = hostid;
-    }
-    void setStartTime( time_t t ) {
-        m_stime = t;
-    }
-    void setState( State s ) {
-        m_state = s;
-    }
-
-  private:
-    unsigned int m_id;
-    QString m_fileName;
-    unsigned int m_server;
-    unsigned int m_client;
-    QString m_lang;
-    QString m_env;
-    State m_state;
-    time_t m_stime;
-
-  public:
-    unsigned int real_msec;  /* real time it used */
-    unsigned int user_msec;  /* user time used */
-    unsigned int sys_msec;   /* system time used */
-    unsigned int maxrss;     /* maximum resident set size (KB) */
-    unsigned int idrss;      /* integral unshared data size (KB) */
-    unsigned int majflt;     /* page faults */
-    unsigned int nswap;      /* swaps */
-
-    int exitcode;            /* exit code */
-
-    unsigned int in_compressed;
-    unsigned int in_uncompressed;
-    unsigned int out_compressed;
-    unsigned int out_uncompressed;
-};
-
-class IdleJob : public Job
-{
-  public:
-    IdleJob() : Job() { setState( Job::Idle ); }
-};
-
-class JobList : public QMap<unsigned int, Job>
-{
-  public:
-    JobList() { }
-};
-
+class HostInfoManager;
 
 class StatusView
 {
   public:
-    virtual ~StatusView() {}
+    StatusView( HostInfoManager * );
+    virtual ~StatusView();
+
+    HostInfoManager *hostInfoManager() const { return mHostInfoManager; }
+
     virtual void update( const Job &job ) = 0;
     virtual QWidget *widget() = 0;
-    typedef QMap<QString,QString> StatsMap;
-    virtual void checkNode( unsigned int hostid, const StatsMap &statmsg );
+    virtual void checkNode( unsigned int hostid );
     virtual void stop() {}
     virtual void start() {}
     virtual void checkNodes() {}
@@ -131,14 +49,10 @@ class StatusView
     virtual QString id() const = 0;
 
     QString nameForHost( unsigned int hostid );
-
     QColor hostColor( unsigned int hostid );
 
-    void inherit( StatusView *old );
-
   private:
-    QMap<unsigned int,QString> mHostNameMap;
-    QMap<unsigned int,QColor> mHostColorMap;
+    HostInfoManager *mHostInfoManager;
 };
 
 #endif

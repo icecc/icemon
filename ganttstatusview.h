@@ -100,12 +100,12 @@ class GanttStatusView : public QWidget, public StatusView
 {
     Q_OBJECT
   public:
-    GanttStatusView( QWidget *parent, const char *name = 0 );
+    GanttStatusView( HostInfoManager *, QWidget *parent, const char *name = 0 );
     virtual ~GanttStatusView() {}
 
     QString id() const { return "gantt"; }
 
-    virtual void checkNode( unsigned int hostid, const StatsMap &statmsg );
+    virtual void checkNode( unsigned int hostid );
 
     void start();
     void stop();

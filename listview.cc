@@ -20,7 +20,8 @@
 */
 
 #include "listview.h"
-#include "logging.h"
+
+#include <services/logging.h>
 
 #include <klocale.h>
 
@@ -88,8 +89,9 @@ int ListStatusViewItem::compare( QListViewItem *i, int col,
     }
 }
 
-ListStatusView::ListStatusView( QWidget *parent, const char *name )
-	: KListView( parent, name )
+ListStatusView::ListStatusView( HostInfoManager *m, QWidget *parent,
+                                const char *name )
+	: KListView( parent, name ), StatusView( m )
 {
     addColumn( i18n( "ID" ) );
     addColumn( i18n( "Filename" ) );

@@ -41,12 +41,12 @@ class SummaryView : public QWidget, public StatusView
     Q_OBJECT
 
 public:
-    SummaryView(QWidget *parent, const char *name = 0);
+    SummaryView(HostInfoManager *, QWidget *parent, const char *name = 0);
     ~SummaryView();
 
     virtual QWidget *widget();
     virtual void update(const Job &job);
-    virtual void checkNode(unsigned int hostid, const StatsMap &statmsg );
+    virtual void checkNode(unsigned int hostid);
 
     QString id() const { return "summary"; }
 
