@@ -406,8 +406,15 @@ void StarView::arrangeHostItems()
     int xr = int( xRadius * factor );
     int yr = int( yRadius * factor );
 
-    it.data()->move( m_localhostItem->x() + ( cos( angle ) * xr ),
-                     m_localhostItem->y() + ( sin( angle ) * yr ) );
+    HostItem *item = it.data();
+
+    QRect rect = item->boundingRect();
+    int xOffset = rect.width() / 2;
+    int yOffset = rect.height() / 2;    
+
+    item->move( width() / 2 + ( cos( angle ) * xr ) - xOffset,
+                height() / 2 + ( sin( angle ) * yr ) - yOffset );
+
     angle += step;
     ++i;
   }
