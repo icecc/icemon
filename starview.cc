@@ -280,8 +280,6 @@ StarView::StarView( HostInfoManager *m, QWidget *parent, const char *name )
 
     createKnownHosts();
 
-    m_canvas->update();
-
     new WhatsStat( m_canvas, this );
 }
 
@@ -547,8 +545,6 @@ HostItem *StarView::createHostItem( unsigned int hostid )
 
   arrangeHostItems();
 
-  m_canvas->update();
-
   if ( m_hostItems.count() > 25 ) {
     mConfigDialog->setMaxNodes( m_hostItems.count() );
   }
@@ -607,6 +603,8 @@ void StarView::createKnownHosts()
     unsigned int id = (*it)->id();
     if ( !findHostItem( id ) ) createHostItem( id );
   }
+
+  m_canvas->update();
 }
 
 void StarView::configureView()
