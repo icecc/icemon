@@ -209,12 +209,7 @@ void StarView::update( const Job &job )
     return;
   }
 
-  HostItem *hostItem = 0;
-  QMapIterator<unsigned int, HostItem*> it2 = m_hostItems.find( hostid );
-
-  if ( it2 != m_hostItems.end() )
-      hostItem = it2.data();
-
+  HostItem *hostItem = findHostItem( hostid );
   if ( !hostItem ) hostItem = createHostItem( hostid );
 
   hostItem->update( job );
@@ -222,6 +217,24 @@ void StarView::update( const Job &job )
   if ( !finished ) mJobMap.insert( job.jobId(), hostItem );
 
   drawNodeStatus();
+}
+
+HostItem *StarView::findHostItem( unsigned int hostid )
+{
+  HostItem *hostItem = 0;
+  QMapIterator<unsigned int, HostItem*> it = m_hostItems.find( hostid );
+  if ( it != m_hostItems.end() ) hostItem = it.data();
+  return hostItem;
+}
+
+void StarView::checkNode( unsigned int hostid, const StatsMap &stats )
+{
+  if ( !hostid ) return;
+
+  StatusView::checkNode( hostid, stats );
+  
+  HostItem *hostItem = findHostItem( hostid );
+  if ( !hostItem ) hostItem = createHostItem( hostid );
 }
 
 QWidget *StarView::widget()

@@ -44,6 +44,10 @@ class StarView : public QWidget, public StatusView
 
     unsigned int processor( const Job & );
 
+    HostItem *StarView::findHostItem( unsigned int hostid );
+
+    void checkNode( unsigned int hostid, const StatsMap & );
+
   protected:
     virtual void resizeEvent( QResizeEvent *e );
 
