@@ -331,7 +331,7 @@ void MainWindow::setupSummaryView()
 
 void MainWindow::setupGanttView()
 {
-//    setupView( new GanttStatusView( this ), false );
+    setupView( new GanttStatusView( this ), false );
 }
 
 void MainWindow::setupStarView()

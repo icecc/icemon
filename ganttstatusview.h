@@ -120,23 +120,23 @@ class GanttStatusView : public QWidget, public StatusView
     void checkAge();
 
   private:
-    GanttProgress *registerNode( const QString &name );
-    void removeSlot( const QString& name, GanttProgress* slot );
-    void unregisterNode( const QString &name );
+    GanttProgress *registerNode( unsigned int hostid );
+    void removeSlot( unsigned int hostid, GanttProgress* slot );
+    void unregisterNode( unsigned int hostid );
 
     QGridLayout *m_topLayout;
     typedef QValueList<GanttProgress *> SlotList;
-    typedef QMap<QString,SlotList> NodeMap;
+    typedef QMap<unsigned int,SlotList> NodeMap;
     NodeMap mNodeMap;
-    typedef QMap<QString,int> AgeMap;
+    typedef QMap<unsigned int,int> AgeMap;
     AgeMap mAgeMap;
     typedef QMap<unsigned int, GanttProgress *> JobMap;
     JobMap mJobMap;
-    typedef QMap<QString,QVBoxLayout *> NodeLayoutMap;
+    typedef QMap<unsigned int,QVBoxLayout *> NodeLayoutMap;
     NodeLayoutMap mNodeLayouts;
-    typedef QMap<QString,int> NodeRowMap;
+    typedef QMap<unsigned int,int> NodeRowMap;
     NodeRowMap mNodeRows;
-    typedef QMap<QString,QWidget *> NodeLabelMap;
+    typedef QMap<unsigned int,QWidget *> NodeLabelMap;
     NodeLabelMap mNodeLabels;
     QTimer *m_progressTimer;
     QTimer *m_ageTimer;

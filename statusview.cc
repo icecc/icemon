@@ -88,7 +88,7 @@ QColor StatusView::hostColor( unsigned int id )
 {
   QMap<unsigned int,QColor>::ConstIterator it;
   it = mHostColorMap.find( id );
-  if ( it != mHostColorMap.end() ) {
+  if ( it != mHostColorMap.end() && ( *it ).isValid() ) {
     return *it;
   }
 
