@@ -98,6 +98,11 @@ class HostItem : public QCanvasText
 
     void moveBy( double dx, double dy );
 
+    double centerPosX() const { return m_boxItem->x(); }
+    double centerPosY() const { return m_boxItem->y(); }
+
+    void setCenterPos( double x, double y );
+
     void update( const Job &job );
 
   protected:

@@ -123,10 +123,12 @@ HostItem::HostItem( const QString &text, QCanvas *canvas, HostInfoManager *m )
     m_stateItem( 0 )
 {
   init();
+
+  updateName();
 }
 
 HostItem::HostItem( HostInfo *hostInfo, QCanvas *canvas, HostInfoManager *m )
-  : QCanvasText( hostInfo->name(), canvas ), mHostInfo( hostInfo ),
+  : QCanvasText( canvas ), mHostInfo( hostInfo ),
     mHostInfoManager( m ), m_stateItem( 0 )
 {
   init();
@@ -140,13 +142,11 @@ void HostItem::init()
 {
   setZ( 100 );
 
-  QRect r = boundingRect();
-  mBaseWidth = r.width() + 10;
-  mBaseHeight = r.height() + 10;
+  mBaseWidth = 0;
+  mBaseHeight = 0;
 
-  m_boxItem = new QCanvasEllipse( mBaseWidth, mBaseHeight, canvas() );
+  m_boxItem = new QCanvasEllipse( canvas() );
   m_boxItem->setZ( 80 );
-  m_boxItem->move( r.width() / 2, r.height() / 2 );
   m_boxItem->show();
 
   setHostColor( QColor( 200, 200, 200 ) );
@@ -193,11 +193,17 @@ void HostItem::updateName()
       }
       setText(s);
   }
+
   QRect r = boundingRect();
   mBaseWidth = r.width() + 10 ;
   mBaseHeight = r.height() + 10 ;
+
+  // don't move the sub items
+  QCanvasText::moveBy( centerPosX() - x() - r.width() / 2,
+                       centerPosY() - y() - r.height() / 2 );
+
   m_boxItem->setSize( mBaseWidth, mBaseHeight );
-  m_boxItem->move( r.x() + r.width() / 2, r.y() + r.height() / 2 );
+
   updateHalos();
 }
 
@@ -205,14 +211,18 @@ void HostItem::moveBy( double dx, double dy )
 {
   QCanvasText::moveBy( dx, dy );
 
-  QRect r = boundingRect();
-
-
   m_boxItem->moveBy( dx, dy );
+
   QMap<Job,QCanvasEllipse*>::ConstIterator it;
   for( it = m_jobHalos.begin(); it != m_jobHalos.end(); ++it ) {
     it.data()->moveBy( dx, dy );
   }
+}
+
+void HostItem::setCenterPos( double x, double y )
+{
+    // move all items (also the sub items)
+    moveBy( x - centerPosX(), y - centerPosY() );
 }
 
 void HostItem::update( const Job &job )
@@ -245,8 +255,7 @@ void HostItem::createJobHalo( const Job &job )
   QCanvasEllipse *halo = new QCanvasEllipse( mBaseWidth, mBaseHeight,
                                              canvas() );
   halo->setZ( 70 - m_jobHalos.size() );
-  QRect r = boundingRect();
-  halo->move( x() + r.width() / 2, y() + r.height() / 2 );
+  halo->move( centerPosX(), centerPosY() );
   halo->show();
 
   m_jobHalos.insert( job, halo );
@@ -541,10 +550,7 @@ void StarView::resizeEvent( QResizeEvent * )
 
 void StarView::centerSchedulerItem()
 {
-    const QRect br = m_schedulerItem->boundingRect();
-    const int newX = ( width() - br.width() ) / 2;
-    const int newY = ( height() - br.height() ) / 2;
-    m_schedulerItem->move( newX, newY );
+    m_schedulerItem->setCenterPos( width() / 2, height() / 2 );
 }
 
 void StarView::slotConfigChanged()
@@ -578,8 +584,8 @@ void StarView::arrangeHostItems()
 //  kdDebug() << "  Rings: " << ringCount << endl;
   double radiusFactor = 2.5;
   if (suppressDomain) radiusFactor = 4;
-  const int xRadius = int( m_canvas->width() / radiusFactor );
-  const int yRadius = int( m_canvas->height() / radiusFactor );
+  const int xRadius = qRound( m_canvas->width() / radiusFactor );
+  const int yRadius = qRound( m_canvas->height() / radiusFactor );
 
   const double step = 2 * M_PI / count;
 
@@ -587,21 +593,17 @@ void StarView::arrangeHostItems()
   int i = 0;
   QMap<unsigned int, HostItem*>::ConstIterator it;
   for ( it = m_hostItems.begin(); it != m_hostItems.end(); ++it ) {
-    float factor = 1 - ( 1.0 / ( ringCount + 1 ) ) * ( i % ringCount );
+    double factor = 1 - ( 1.0 / ( ringCount + 1 ) ) * ( i % ringCount );
 
-    int xr = int( xRadius * factor );
-    int yr = int( yRadius * factor );
+    double xr = xRadius * factor;
+    double yr = yRadius * factor;
 
     HostItem *item = it.data();
 
     item->updateName();
 
-    QRect rect = item->boundingRect();
-    int xOffset = rect.width() / 2;
-    int yOffset = rect.height() / 2;
-
-    item->move( width() / 2 + ( cos( angle ) * xr ) - xOffset,
-                height() / 2 + ( sin( angle ) * yr ) - yOffset );
+    item->setCenterPos( width() / 2 + cos( angle ) * xr,
+                        height() / 2 + sin( angle ) * yr );
 
     angle += step;
     ++i;
@@ -646,10 +648,7 @@ void StarView::drawNodeStatus()
 void StarView::drawState( HostItem *node )
 {
     delete node->stateItem();
-    QCanvasItem *newItem = 0;
-
-    const QPoint nodeCenter = node->boundingRect().center();
-    const QPoint localCenter = m_schedulerItem->boundingRect().center();
+    QCanvasLine *newItem = 0;
 
     QColor color;
     unsigned int client = node->client();
@@ -657,21 +656,19 @@ void StarView::drawState( HostItem *node )
     else color = hostColor( client );
 
     if ( node->isCompiling() ) {
-      QCanvasLine *line = new QCanvasLine( m_canvas );
-      line->setPen( color );
-
-      line->setPoints( nodeCenter.x(), nodeCenter.y(),
-                       localCenter.x(), localCenter.y() );
-      line->show();
-      newItem = line;
+      newItem = new QCanvasLine( m_canvas );
+      newItem->setPen( color );
     } else if ( node->isActiveClient() ) {
-      QCanvasLine *line = new QCanvasLine( m_canvas );
-      line->setPen( QPen( color, 0, QPen::DashLine ) );
+      newItem = new QCanvasLine( m_canvas );
+      newItem->setPen( QPen( color, 0, QPen::DashLine ) );
+    }
 
-      line->setPoints( nodeCenter.x(), nodeCenter.y(),
-                       localCenter.x(), localCenter.y() );
-      line->show();
-      newItem = line;
+    if ( newItem ) {
+      newItem->setPoints( qRound( node->centerPosX() ),
+                          qRound( node->centerPosY() ),
+                          qRound( m_schedulerItem->centerPosX() ),
+                          qRound( m_schedulerItem->centerPosY() ) );
+      newItem->show();
     }
 
     node->setStateItem( newItem );
