@@ -42,14 +42,15 @@ class StarView : public QWidget, public StatusView
 
     QString id() const { return "star"; }
 
+    QString processor( const Job & );
+
   protected:
     virtual void resizeEvent( QResizeEvent *e );
 
   private:
     void centerLocalhostItem();
     void arrangeHostItems();
-    void checkForNewNode( const Job &job );
-    void updateNodeStatus( const Job &job );
+    HostItem *createHostItem( const QString &host );
     void drawNodeStatus();
     void drawState( HostItem *node );
 
@@ -57,6 +58,8 @@ class StarView : public QWidget, public StatusView
     QCanvasView *m_canvasView;
     QCanvasText *m_localhostItem;
     QDict<HostItem> m_hostItems;
+
+    QMap<unsigned int,HostItem *> mJobMap;
 };
 
 #endif

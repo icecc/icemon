@@ -89,6 +89,10 @@ class HostItem : public QCanvasText
 
     void update( const Job &job )
     {
+      setState( job.state() );
+
+      if ( job.state() == Job::WaitingForCS ) return;
+    
       bool finished = job.state() == Job::Finished ||
                       job.state() == Job::Failed;
 
@@ -134,7 +138,7 @@ StarView::StarView( QWidget *parent, const char *name )
     m_canvasView->setHScrollBarMode( QScrollView::AlwaysOff );
     layout->addWidget( m_canvasView );
 
-    m_localhostItem = new HostItem( i18n( "localhost" ), m_canvas );
+    m_localhostItem = new HostItem( i18n( "Scheduler" ), m_canvas );
     centerLocalhostItem();
     m_localhostItem->show();
 
@@ -143,12 +147,39 @@ StarView::StarView( QWidget *parent, const char *name )
 
 void StarView::update( const Job &job )
 {
-  kdDebug() << "StarView::checkForNewNode() " << job.jobId()
+  kdDebug() << "StarView::update() " << job.jobId()
             << " server: " << job.server() << " client: " << job.client()
             << " state: " << job.stateAsString() << endl;
 
-  checkForNewNode( job );
-  updateNodeStatus( job );
+  if ( job.state() == Job::WaitingForCS ) {
+    drawNodeStatus();
+    return;
+  }
+
+  bool finished = job.state() == Job::Finished || job.state() == Job::Failed;
+
+  QMap<unsigned int,HostItem *>::Iterator it;
+  it = mJobMap.find( job.jobId() );
+  if ( it != mJobMap.end() ) {
+    (*it)->update( job );
+    if ( finished ) {
+      mJobMap.remove( it );
+    }
+    return;
+  }
+
+  QString host = processor( job );
+  if ( host.isEmpty() ) {
+    kdDebug() << "Empty host" << endl;
+    return;
+  }
+  HostItem *hostItem = m_hostItems.find( host );
+  if ( !hostItem ) hostItem = createHostItem( host );
+
+  hostItem->update( job );
+
+  if ( !finished ) mJobMap.insert( job.jobId(), hostItem );
+
   drawNodeStatus();
 }
 
@@ -189,45 +220,29 @@ void StarView::arrangeHostItems()
     }
 }
 
-void StarView::checkForNewNode( const Job &job )
+QString StarView::processor( const Job &job )
 {
-    kdDebug() << "StarView::checkForNewNode() " << job.jobId() << endl;
-
-    QString server = job.server();
-    if ( server.isEmpty() ) {
-      kdDebug() << "Empty server" << endl;
-      return;
-    }
-    HostItem *hostItem = m_hostItems.find( server );
-    if ( !hostItem ) {
-      kdDebug() << "New node for '" << server << "'" << endl;
-      hostItem = new HostItem( nameForIp( server ), m_canvas );
-      hostItem->setColor( hostColor( server ) );
-      m_hostItems.insert( server, hostItem );
-      hostItem->show();
-
-      arrangeHostItems();
-
-      m_canvas->update();
-    }
+  if ( job.state() == Job::LocalOnly || job.state() == Job::WaitingForCS ) {
+    return job.client();
+  } else {
+    return job.server();
+  }
 }
 
-void StarView::updateNodeStatus( const Job &job )
+HostItem *StarView::createHostItem( const QString &host )
 {
-    kdDebug() << "StarView::updateNodeStatus() " << job.jobId() << endl;
+  kdDebug() << "New node for '" << host << "'" << endl;
 
-    QString server = job.server();
-    if ( server.isEmpty() ) {
-      kdDebug() << "Empty server" << endl;
-      return;
-    }
-    HostItem *hostItem = m_hostItems.find( server );
-    if ( !hostItem ) {
-      kdError() << "HostItem for '" << server << "' is missing." << endl;
-    } else {
-      hostItem->setState( job.state() );
-      hostItem->update( job );
-    }
+  HostItem *hostItem = new HostItem( nameForIp( host ), m_canvas );
+  hostItem->setColor( hostColor( host ) );
+  m_hostItems.insert( host, hostItem );
+  hostItem->show();
+
+  arrangeHostItems();
+
+  m_canvas->update();
+
+  return hostItem;
 }
 
 void StarView::drawNodeStatus()
@@ -267,36 +282,8 @@ void StarView::drawState( HostItem *node )
             newItem = line;
             break;
         }
-#if 0
-        case Job::Send: {
-            QPointArray points( 3 );
-            points.setPoint( 0, localCenter.x() - 5, localCenter.y() );
-            points.setPoint( 1, nodeCenter );
-            points.setPoint( 2, localCenter.x() + 5, localCenter.y() );
-
-            QCanvasPolygon *poly = new QCanvasPolygon( m_canvas );
-            poly->setBrush( Qt::blue );
-            poly->setPoints( points );
-            poly->show();
-
-            newItem = poly;
+        default:
             break;
-        }
-        case Job::Receive: {
-            QPointArray points( 3 );
-            points.setPoint( 0, nodeCenter.x() - 5, nodeCenter.y() );
-            points.setPoint( 1, localCenter );
-            points.setPoint( 2, nodeCenter.x() + 5, nodeCenter.y() );
-
-            QCanvasPolygon *poly = new QCanvasPolygon( m_canvas );
-            poly->setBrush( Qt::blue );
-            poly->setPoints( points );
-            poly->show();
-
-            newItem = poly;
-            break;
-        }
-#endif
     }
 
     node->setStateItem( newItem );
