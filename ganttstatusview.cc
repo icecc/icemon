@@ -36,6 +36,7 @@ GanttTimeScaleWidget::GanttTimeScaleWidget( QWidget *parent, const char *name )
 	: QWidget( parent, name, WResizeNoErase | WRepaintNoErase ),
           mPixelsPerSecond( 40 )
 {
+  setPaletteBackgroundColor( Qt::white );
 }
 
 void GanttTimeScaleWidget::setPixelsPerSecond( int v )
@@ -89,6 +90,7 @@ GanttProgress::GanttProgress( StatusView *statusView, QWidget *parent,
 	: QWidget( parent, name, WResizeNoErase | WRepaintNoErase ),
           mStatusView( statusView ), mClock( 0 ), mIsFree( true )
 {
+  setPaletteBackgroundColor( Qt::white );
 }
 
 void GanttProgress::progress()
@@ -249,6 +251,8 @@ GanttStatusView::GanttStatusView( HostInfoManager *m, QWidget *parent,
     mTopWidget = new QWidget( viewport() );
     addChild( mTopWidget );
 
+    mTopWidget->setPaletteBackgroundColor( Qt::white );
+
     m_topLayout = new QGridLayout( mTopWidget, 2, 2, 0, -1, "topLayout" );
     m_topLayout->setSpacing( 5 );
     m_topLayout->setMargin( 4 );
@@ -403,6 +407,7 @@ GanttProgress *GanttStatusView::registerNode( unsigned int hostid )
         QString name = nameForHost( hostid );
         QLabel *l = new QLabel( name, mTopWidget );
         l->setPaletteForegroundColor( color );
+        l->setPaletteBackgroundColor( Qt::white );
         m_topLayout->addWidget( l, row, 0 );
         l->show();
         mNodeLabels.insert( hostid, l );
