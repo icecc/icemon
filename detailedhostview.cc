@@ -97,11 +97,12 @@ void DetailedHostView::update( const Job &job )
     if ( !hostid )
         return;
 
-    if ( job.client() != hostid && job.server() != hostid ) return;
+    if ( job.client() != hostid && job.server() != hostid )
+        return;
 
     if ( job.client() == hostid )
         mLocalJobsView->update( job );
-    else
+    if ( job.server() == hostid )
         mRemoteJobsView->update( job );
 }
 
@@ -128,7 +129,7 @@ void DetailedHostView::checkNode( unsigned int hostid )
 
 void DetailedHostView::removeNode( unsigned int hostid )
 {
-    kdDebug() << "DetailedHostView::removeNode(): " << hostid << endl;
+//   kdDebug() << "DetailedHostView::removeNode(): " << hostid << endl;
 
     mHostListView->removeNode( hostid );
 }
