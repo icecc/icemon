@@ -247,7 +247,7 @@ void MainWindow::handle_stats( Msg *_m )
     if ( !m )
         return;
 
-    m_view->checkNode( m->hostid, m->statmsg );
+    m_view->checkNode( m->hostid, m->statmsg.c_str() );
 }
 
 void MainWindow::handle_job_begin(Msg *_m)
