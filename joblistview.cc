@@ -98,7 +98,7 @@ void JobListViewItem::updateText( const Job& job)
     setText( JobColumnState, job.stateAsString() );
     setText( JobColumnReal, QString::number( job.real_msec ) );
     setText( JobColumnUser, QString::number( job.user_msec ) );
-    setText( JobColumnFaults, QString::number( job.majflt ) );
+    setText( JobColumnFaults, QString::number( job.pfaults ) );
     setText( JobColumnSizeIn, convertSize( job.in_uncompressed ) );
     setText( JobColumnSizeOut, convertSize( job.out_uncompressed ) );
 
@@ -167,7 +167,7 @@ int JobListViewItem::compare( QListViewItem* item,
     case JobColumnUser:
         return ::compare( first->mJob.user_msec, other->mJob.user_msec );
     case JobColumnFaults:
-        return ::compare( first->mJob.majflt, other->mJob.majflt );
+        return ::compare( first->mJob.pfaults, other->mJob.pfaults );
     case JobColumnSizeIn:
         return ::compare( first->mJob.in_uncompressed, other->mJob.in_uncompressed );
     case JobColumnSizeOut:

@@ -43,10 +43,7 @@ class Job
         real_msec = 0;
         user_msec = 0;
         sys_msec = 0;
-        maxrss = 0;
-        idrss = 0;
-        majflt = 0;
-        nswap = 0;
+        pfaults = 0;
         exitcode = 0;
         m_server = 0;
         in_compressed = in_uncompressed = out_compressed = out_uncompressed = 0;
@@ -87,10 +84,7 @@ class Job
     unsigned int real_msec;  /* real time it used */
     unsigned int user_msec;  /* user time used */
     unsigned int sys_msec;   /* system time used */
-    unsigned int maxrss;     /* maximum resident set size (KB) */
-    unsigned int idrss;      /* integral unshared data size (KB) */
-    unsigned int majflt;     /* page faults */
-    unsigned int nswap;      /* swaps */
+    unsigned int pfaults;    /* page faults */
 
     int exitcode;            /* exit code */
 

@@ -256,10 +256,7 @@ void Monitor::handle_job_done( Msg *_m )
     ( *it ).real_msec = m->real_msec;
     ( *it ).user_msec = m->user_msec;
     ( *it ).sys_msec = m->sys_msec;   /* system time used */
-    ( *it ).maxrss = m->maxrss;     /* maximum resident set size (KB) */
-    ( *it ).idrss = m->idrss;      /* integral unshared data size (KB) */
-    ( *it ).majflt = m->majflt;     /* page faults */
-    ( *it ).nswap = m->nswap;      /* swaps */
+    ( *it ).pfaults = m->pfaults;     /* page faults */
 
     ( *it ).in_compressed = m->in_compressed;
     ( *it ).in_uncompressed = m->in_uncompressed;
