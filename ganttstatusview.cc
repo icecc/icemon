@@ -448,6 +448,11 @@ GanttProgress *GanttStatusView::registerNode( unsigned int hostid )
         l->setPaletteForegroundColor( color );
         l->setPaletteBackgroundColor( Qt::white );
         m_topLayout->addWidget( l, row, 0 );
+
+        QFont f = l->font();
+        f.setBold( true );
+        l->setFont( f );
+
         l->show();
         mNodeLabels.insert( hostid, l );
       }
