@@ -424,15 +424,6 @@ void StarView::arrangeHostItems()
   }
 }
 
-unsigned int StarView::processor( const Job &job )
-{
-  if ( job.state() == Job::LocalOnly || job.state() == Job::WaitingForCS ) {
-    return job.client();
-  } else {
-    return job.server();
-  }
-}
-
 HostItem *StarView::createHostItem( unsigned int hostid )
 {
 //  kdDebug() << "New node for '" << hostid << "'" << endl;

@@ -65,3 +65,12 @@ QColor StatusView::textColor( const QColor &color )
 
   return textColor;
 }
+
+unsigned int StatusView::processor( const Job &job )
+{
+  if ( job.state() == Job::LocalOnly || job.state() == Job::WaitingForCS ) {
+    return job.client();
+  } else {
+    return job.server();
+  }
+}

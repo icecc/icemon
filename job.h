@@ -57,8 +57,8 @@ class Job
 
     unsigned int jobId() const { return m_id; }
     QString fileName() const { return m_fileName; }
-    int client() const { return m_client; }
-    int server() const { return m_server; }
+    unsigned int client() const { return m_client; }
+    unsigned int server() const { return m_server; }
     State state() const { return m_state; }
     QString stateAsString() const;
     time_t stime() const { return m_stime; }

@@ -25,12 +25,8 @@
 #include "statusview.h"
 
 #include <kmainwindow.h>
-#include <time.h>
-#include <qdict.h>
 
-class MsgChannel;
-class QSocketNotifier;
-class Msg;
+class Monitor;
 
 class MainWindow : public KMainWindow
 {
@@ -46,9 +42,7 @@ class MainWindow : public KMainWindow
     void setupStarView();
     void setupSummaryView();
     void setupGanttView();
-
-    void slotCheckScheduler();
-    void msgReceived();
+    void setupHostView();
 
     void stopView();
     void startView();
@@ -60,20 +54,10 @@ class MainWindow : public KMainWindow
     void writeSettings();
   
     void setupView( StatusView *view, bool rememberJobs );
-    void checkScheduler(bool deleteit = false);
-    void handle_getcs( Msg *m );
-    void handle_job_begin( Msg *m );
-    void handle_job_done( Msg *m );
-    void handle_stats( Msg *m );
-    void handle_local_begin( Msg *m );
-    void handle_local_done( Msg *m );
 
     HostInfoManager *m_hostInfoManager;
+    Monitor *m_monitor;
     StatusView *m_view;
-    JobList m_rememberedJobs;
-    MsgChannel *m_scheduler;
-    QSocketNotifier *m_scheduler_read;
-    QString m_current_netname;
 };
 
 #endif // MON_KDE_H

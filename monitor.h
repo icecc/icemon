@@ -19,47 +19,50 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-#ifndef ICEMON_STATUSVIEW_H
-#define ICEMON_STATUSVIEW_H
+#ifndef ICEMON_MONITOR_H
+#define ICEMON_MONITOR_H
 
-#include "job.h"
+#include "statusview.h"
 
-#include <qstring.h>
-#include <qwidget.h>
-#include <qmap.h>
+#include <kmainwindow.h>
 #include <time.h>
+#include <qdict.h>
 
+class MsgChannel;
+class QSocketNotifier;
+class Msg;
 class HostInfoManager;
 
-class StatusView
+class Monitor : public QObject
 {
+    Q_OBJECT
   public:
-    StatusView( HostInfoManager * );
-    virtual ~StatusView();
+    Monitor( HostInfoManager *, QObject *parent, const char *name = 0 );
+    ~Monitor();
 
-    HostInfoManager *hostInfoManager() const { return mHostInfoManager; }
+    void setCurrentNet( const QString & );
+    void setCurrentView( StatusView *, bool rememberJobs );
 
-    virtual void update( const Job &job ) = 0;
-    virtual QWidget *widget() = 0;
-    virtual void checkNode( unsigned int hostid );
-    virtual void removeNode( unsigned int hostid );
-    virtual void stop() {}
-    virtual void start() {}
-    virtual void checkNodes() {}
-    virtual void configureView() {}
-
-    virtual QString id() const = 0;
-
-    unsigned int processor( const Job & );
-
-    QString nameForHost( unsigned int hostid );
-    QColor hostColor( unsigned int hostid );
-
-    static QColor textColor( const QColor &backGroundColor );
+  private slots:
+    void slotCheckScheduler();
+    void msgReceived();
 
   private:
-    HostInfoManager *mHostInfoManager;
+    void checkScheduler(bool deleteit = false);
+    void handle_getcs( Msg *m );
+    void handle_job_begin( Msg *m );
+    void handle_job_done( Msg *m );
+    void handle_stats( Msg *m );
+    void handle_local_begin( Msg *m );
+    void handle_local_done( Msg *m );
+
+    HostInfoManager *m_hostInfoManager;
+    StatusView *m_view;
+    JobList m_rememberedJobs;
+    MsgChannel *m_scheduler;
+    QSocketNotifier *m_scheduler_read;
+    QString m_current_netname;
 };
 
-#endif
+#endif // MON_KDE_H
 // vim:ts=4:sw=4:noet

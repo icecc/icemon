@@ -122,8 +122,6 @@ class StarView : public QWidget, public StatusView
 
     QString id() const { return "star"; }
 
-    unsigned int processor( const Job & );
-
     HostItem *StarView::findHostItem( unsigned int hostid );
 
     void checkNode( unsigned int hostid );

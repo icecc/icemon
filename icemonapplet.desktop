@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Icecream monitor
+Comment=Icecram monitor applet
+X-KDE-Library=icemon_panelapplet
+X-KDE-UniqueApplet=false
