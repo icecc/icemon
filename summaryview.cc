@@ -19,6 +19,37 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qvbox.h>
+#include <qpainter.h>
+
+class NodeInfoFrame : public QFrame
+{
+public:
+    NodeInfoFrame(QWidget *parent, const QColor &frameColor) :
+        QFrame(parent), m_frameColor(frameColor) {}
+protected:
+    virtual void drawFrame(QPainter *p)
+    {
+        static const int border = 2;
+
+        QPen oldPen = p->pen();
+        QPen newPen = oldPen;
+
+        newPen.setWidth(5);
+
+        p->setPen(newPen);
+        p->drawRect(border, border, width() - border * 2, height() - border * 2);
+
+        newPen.setWidth(1);
+        newPen.setColor(m_frameColor);
+
+        p->setPen(newPen);
+        p->drawRect(border, border, width() - border * 2, height() - border * 2);
+
+        p->setPen(oldPen);       
+    }
+private:
+    QColor m_frameColor;
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // SummaryViewItem implementation
@@ -28,16 +59,19 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
     m_jobCount(0),
     m_view(view)
 {
-    int row = layout->numRows();
+    const int row = layout->numRows();
+    const QColor nodeColor = view->hostInfoManager()->hostColor(hostid);
 
-    QVBox *labelBox = new QVBox(parent);
-    labelBox->setFrameStyle(QFrame::Box | QFrame::Plain);
-    labelBox->setLineWidth(3);
+    NodeInfoFrame *labelBox = new NodeInfoFrame(parent, nodeColor);
     labelBox->setMargin(5);
-    labelBox->layout()->setSpacing(3);
     layout->addWidget(labelBox, row, 0);
     labelBox->show();
     labelBox->setMinimumWidth(75);
+
+    QVBoxLayout *labelLayout = new QVBoxLayout(labelBox);
+    labelLayout->setAutoAdd(true);
+    labelLayout->setMargin(10);
+    labelLayout->setSpacing(5);
 
     QLabel *l;
 
@@ -63,9 +97,7 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
         m_jobHandlers[i].stateWidget->show();
     }
 
-    QFrame *detailsBox = new QFrame(parent);
-    detailsBox->setFrameStyle(QFrame::Box | QFrame::Plain);
-    detailsBox->setLineWidth(3);
+    NodeInfoFrame *detailsBox = new NodeInfoFrame(parent, nodeColor);
     detailsBox->setMargin(5);
     layout->addWidget(detailsBox, row, 1);
     detailsBox->show();
@@ -104,7 +136,8 @@ void SummaryViewItem::update(const Job &job)
             ++it;
 
         if(it != m_jobHandlers.end()) {
-            (*it).stateWidget->setPaletteBackgroundColor(QColor("green"));
+            const QColor nodeColor = m_view->hostInfoManager()->hostColor(job.client());
+            (*it).stateWidget->setPaletteBackgroundColor(nodeColor);
             const QString fileName = job.fileName().section('/', -1);
             const QString hostName = m_view->nameForHost(job.client());
             (*it).sourceLabel->setText(QString("%1 (%2)").arg(fileName).arg(hostName));
