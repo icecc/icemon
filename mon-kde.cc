@@ -61,48 +61,52 @@ QString Job::stateAsString() const
     return QString::null;
 }
 
-StatusView::StatusView( QWidget *parent, const char *name, WFlags f )
-	: QWidget( parent, name, f )
+ListStatusViewItem::ListStatusViewItem( QListView *parent, const Job &_job )
+    :  QListViewItem( parent ), job( _job )
 {
+    updateText( job );
+}
+
+void ListStatusViewItem::updateText( const Job &job)
+{
+    this->job = job;
+    setText( 0, QString::number( job.jobId() ) );
+    setText( 1, job.fileName() );
+    setText( 2, job.client() + "/" + job.server() );
+    setText( 3, job.stateAsString() );
+    setText( 4, QString::number( job.real_msec ) + "/" + QString::number( job.user_msec ) );
+    setText( 5, QString::number( job.majflt ) );
+    setText( 6, QString::number( job.in_uncompressed ) );
+    setText( 7, QString::number( job.out_uncompressed ) );
 }
 
 ListStatusView::ListStatusView( QWidget *parent, const char *name )
-	: StatusView( parent, name, WRepaintNoErase | WResizeNoErase )
+	: KListView( parent, name )
 {
-    QHBoxLayout *layout = new QHBoxLayout( this );
-    layout->setMargin( 0 );
-
-    m_listView = new KListView( this );
-    m_listView->addColumn( i18n( "ID" ) );
-    m_listView->addColumn( i18n( "Filename" ) );
-    m_listView->addColumn( i18n( "Client / Server" ) );
-    m_listView->addColumn( i18n( "State" ) );
-    m_listView->addColumn( i18n( "Real / User" ) );
-    m_listView->addColumn( i18n( "Faults" ) );
-    m_listView->addColumn( i18n( "Size In" ) );
-    m_listView->addColumn( i18n( "Size Out" ) );
-
-    layout->addWidget( m_listView );
+    addColumn( i18n( "ID" ) );
+    addColumn( i18n( "Filename" ) );
+    addColumn( i18n( "Client / Server" ) );
+    addColumn( i18n( "State" ) );
+    addColumn( i18n( "Real / User" ) );
+    addColumn( i18n( "Faults" ) );
+    addColumn( i18n( "Size In" ) );
+    addColumn( i18n( "Size Out" ) );
 }
 
-void ListStatusView::update( const JobList &jobs )
+void ListStatusView::update( const Job &job )
 {
-    m_listView->setUpdatesEnabled( false );
-    m_listView->clear();
-    JobList::ConstIterator it = jobs.begin();
-    for ( ; it != jobs.end(); ++it )
-        new KListViewItem( m_listView,
-                           QString::number( ( *it ).jobId() ),
-                           ( *it ).fileName(),
-                           ( *it ).client() + "/" + ( *it ).server(),
-                           ( *it ).stateAsString(),
-                           QString::number( ( *it ).real_msec ) + "/" + QString::number( ( *it ).user_msec ),
-                           QString::number( ( *it ).majflt ),
-                           QString::number( ( *it ).in_uncompressed ),
-                           QString::number( ( *it ).out_uncompressed ) );
+    ItemMap::iterator it = items.find( job.jobId() );
+    if ( it == items.end() )
+    {
+        items[job.jobId()] = new ListStatusViewItem( this, job );
 
-    m_listView->setUpdatesEnabled( true );
-    m_listView->triggerUpdate();
+    } else
+    {
+        ( *it )->updateText( job );
+    }
+
+    setUpdatesEnabled( true );
+    triggerUpdate();
 }
 
 #if 0
@@ -357,7 +361,7 @@ void MainWindow::handle_getcs(Msg *_m)
                                        m->filename.c_str(),
                                        m->version.c_str(),
                                        m->lang == CompileJob::Lang_C ? "C" : "C++" );
-    m_view->update( m_rememberedJobs );
+    m_view->update( m_rememberedJobs[m->job_id] );
 }
 
 void MainWindow::handle_job_begin(Msg *_m)
@@ -371,7 +375,7 @@ void MainWindow::handle_job_begin(Msg *_m)
     ( *it ).setServer( m->host.c_str() );
     ( *it ).setStartTime( m->stime );
     ( *it ).setState( Job::Compiling );
-     m_view->update( m_rememberedJobs );
+    m_view->update( *it );
 }
 
 void MainWindow::handle_job_done(Msg *_m)
@@ -397,16 +401,18 @@ void MainWindow::handle_job_done(Msg *_m)
     ( *it ).in_uncompressed = m->in_uncompressed;
     ( *it ).out_compressed = m->out_compressed;
     ( *it ).out_uncompressed = m->out_uncompressed;
-     m_view->update( m_rememberedJobs );
+     m_view->update( *it );
 }
 
 void MainWindow::setupView( StatusView *view )
 {
     delete m_view;
     m_view = view;
-    m_view->update( m_rememberedJobs );
-    setCentralWidget( m_view );
-    m_view->show();
+    JobList::ConstIterator it = m_rememberedJobs.begin();
+    for ( ; it != m_rememberedJobs.end(); ++it )
+        m_view->update( *it );
+    setCentralWidget( m_view->widget() );
+    m_view->widget()->show();
 }
 
 void MainWindow::setupListView()

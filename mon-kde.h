@@ -4,8 +4,8 @@
 #include <kmainwindow.h>
 #include <time.h>
 #include <qdict.h>
+#include <klistview.h>
 
-class KListView;
 template <class T> class QValueList;
 
 class QCanvas;
@@ -93,28 +93,35 @@ public:
     JobList() { }
 };
 
-class StatusView : public QWidget
+class StatusView
 {
-	Q_OBJECT
-	public:
-		StatusView( QWidget *parent, const char *name = 0, WFlags f = 0 );
-
-	public slots:
-		virtual void update( const JobList &jobs ) = 0;
+public:
+    virtual void update( const Job &job ) = 0;
+    virtual QWidget *widget() = 0;
 };
 
-class ListStatusView : public StatusView
+class ListStatusViewItem : public QListViewItem
 {
-	Q_OBJECT
-	public:
-		ListStatusView( QWidget *parent, const char *name = 0 );
-
-	public slots:
-		virtual void update( const JobList &jobs );
-
-	private:
-		KListView *m_listView;
+public:
+    ListStatusViewItem( QListView *parent, const Job &job );
+    void updateText( const Job &job);
+private:
+    Job job;
 };
+
+class ListStatusView :public KListView, public StatusView
+{
+    Q_OBJECT
+public:
+    ListStatusView( QWidget *parent, const char *name = 0 );
+    virtual QWidget *widget() { return this; }
+    virtual void update( const Job &job );
+
+    typedef QMap<unsigned int, ListStatusViewItem*> ItemMap;
+private:
+    ItemMap items;
+};
+
 /*
 class StarStatusView : public StatusView
 {
