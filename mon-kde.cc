@@ -88,7 +88,7 @@ MainWindow::MainWindow( QWidget *parent, const char *name )
                           actionCollection(), "view_host_view" );
     a->setExclusiveGroup( "viewmode" );
 
-    KStdAction::quit( kapp, SLOT( quit() ), actionCollection() );
+    KStdAction::quit( this, SLOT( close() ), actionCollection() );
 
     new KAction( i18n("Stop"), 0, this, SLOT( stopView() ), actionCollection(),
                  "view_stop" );
@@ -152,21 +152,33 @@ void MainWindow::setupListView()
 void MainWindow::setupSummaryView()
 {
     setupView( new SummaryView( m_hostInfoManager, this ), false );
+    KAction* radioAction = actionCollection()->action( "view_foo_view" );
+    if ( radioAction )
+        dynamic_cast<KRadioAction*>( radioAction )->setChecked( true );
 }
 
 void MainWindow::setupGanttView()
 {
     setupView( new GanttStatusView( m_hostInfoManager, this ), false );
+    KAction* radioAction = actionCollection()->action( "view_gantt_view" );
+    if ( radioAction )
+        dynamic_cast<KRadioAction*>( radioAction )->setChecked( true );
 }
 
 void MainWindow::setupStarView()
 {
     setupView( new StarView( m_hostInfoManager, this ), false );
+    KAction* radioAction = actionCollection()->action( "view_star_view" );
+    if ( radioAction )
+        dynamic_cast<KRadioAction*>( radioAction )->setChecked( true );
 }
 
 void MainWindow::setupHostView()
 {
     setupView( new HostView( true, m_hostInfoManager, this ), false );
+    KAction* radioAction = actionCollection()->action( "view_host_view" );
+    if ( radioAction )
+        dynamic_cast<KRadioAction*>( radioAction )->setChecked( true );
 }
 
 void MainWindow::stopView()
