@@ -11,13 +11,12 @@
 #ifndef SUMMARYVIEW_H
 #define SUMMARYVIEW_H
 
-#include "mon-kde.h"
+#include "statusview.h"
 
 #include <qscrollview.h>
 #include <qvaluevector.h>
 
 class KSqueezedTextLabel;
-class QLabel;
 class QGridLayout;
 
 class SummaryView;

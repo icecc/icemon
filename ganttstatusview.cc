@@ -20,6 +20,7 @@
 */
 
 #include "ganttstatusview.h"
+
 #include "job.h"
 #include "hostinfo.h"
 

@@ -21,18 +21,19 @@
 #ifndef GANTTSTATUSVIEW_H
 #define GANTTSTATUSVIEW_H
 
-#include "mon-kde.h"
+#include "job.h"
+#include "statusview.h"
 
-#include <qmap.h>
-#include <qvaluelist.h>
-#include <qscrollview.h>
 #include <qdialog.h>
+#include <qmap.h>
+#include <qpixmap.h>
+#include <qscrollview.h>
+#include <qvaluelist.h>
 
-class Job;
-class JobList;
+class QCheckBox;
 class QGridLayout;
 class QTimer;
-class QCheckBox;
+class QVBoxLayout;
 
 class GanttConfigDialog : public QDialog
 {

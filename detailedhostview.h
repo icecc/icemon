@@ -21,7 +21,9 @@
 #define ICEMON_DETAILEDHOSTVIEW_H
 
 
-#include "mon-kde.h"
+#include "statusview.h"
+
+#include <qwidget.h>
 
 
 class HostListView;

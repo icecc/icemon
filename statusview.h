@@ -22,14 +22,12 @@
 #ifndef ICEMON_STATUSVIEW_H
 #define ICEMON_STATUSVIEW_H
 
-#include "job.h"
-
-#include <qstring.h>
-#include <qwidget.h>
-#include <qmap.h>
-#include <time.h>
-
 class HostInfoManager;
+class Job;
+
+class QColor;
+class QString;
+class QWidget;
 
 class StatusView
 {

@@ -23,15 +23,12 @@
 
 #include "hostinfo.h"
 
-#include <services/logging.h>
-
 #include <klocale.h>
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <kdialog.h>
 
 #include <qlayout.h>
-#include <qtimer.h>
 #include <qvaluelist.h>
 #include <qtooltip.h>
 #include <qslider.h>
@@ -39,10 +36,6 @@
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include <qregexp.h>
-
-#include <math.h>
-
-using namespace std;
 
 StarViewConfigDialog::StarViewConfigDialog( QWidget *parent )
   : QDialog( parent )

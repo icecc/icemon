@@ -21,9 +21,9 @@
 #ifndef ICEMON_STARVIEW_H
 #define ICEMON_STARVIEW_H
 
-#include "mon-kde.h"
+#include "job.h"
+#include "statusview.h"
 
-#include <qdict.h>
 #include <qcanvas.h>
 #include <qdialog.h>
 

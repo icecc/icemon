@@ -21,8 +21,7 @@
 #include "hostview.h"
 
 #include "hostinfo.h"
-
-#include <services/logging.h>
+#include "job.h"
 
 #include <klocale.h>
 #include <kdebug.h>

@@ -22,11 +22,11 @@
 #ifndef MON_KDE_H
 #define MON_KDE_H
 
-#include "statusview.h"
-
 #include <kmainwindow.h>
 
+class HostInfoManager;
 class Monitor;
+class StatusView;
 
 class MainWindow : public KMainWindow
 {

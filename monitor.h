@@ -22,16 +22,16 @@
 #ifndef ICEMON_MONITOR_H
 #define ICEMON_MONITOR_H
 
-#include "statusview.h"
+#include "job.h"
 
-#include <kmainwindow.h>
-#include <time.h>
-#include <qdict.h>
+#include <qobject.h>
 
-class MsgChannel;
-class QSocketNotifier;
-class Msg;
 class HostInfoManager;
+class Msg;
+class MsgChannel;
+class StatusView;
+
+class QSocketNotifier;
 
 class Monitor : public QObject
 {

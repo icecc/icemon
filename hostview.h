@@ -20,18 +20,15 @@
 #ifndef ICEMON_HOSTVIEW_H
 #define ICEMON_HOSTVIEW_H
 
-#include "mon-kde.h"
+#include "statusview.h"
 
-#include <qdict.h>
-#include <qcanvas.h>
 #include <qdialog.h>
-
-class HostInfo;
 
 class KLed;
 
-class QSlider;
 class QLabel;
+class QLineEdit;
+class QSlider;
 
 class HostViewConfigDialog : public QDialog
 {

@@ -23,6 +23,7 @@
 #include "monitor.h"
 
 #include "hostinfo.h"
+#include "statusview.h"
 
 #include <services/logging.h>
 #include <services/comm.h>
@@ -32,11 +33,8 @@
 
 #include <qsocketnotifier.h>
 #include <qtimer.h>
-#include <qvaluelist.h>
 
-#include <math.h>
-#include <iostream>
-#include <cassert>
+#include <list>
 
 using namespace std;
 

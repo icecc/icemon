@@ -9,7 +9,9 @@
  */
 
 #include "summaryview.h"
+
 #include "hostinfo.h"
+#include "job.h"
 
 #include <kiconloader.h>
 #include <ksqueezedtextlabel.h>

@@ -23,6 +23,7 @@
 #include "statusview.h"
 
 #include "hostinfo.h"
+#include "job.h"
 
 #include <klocale.h>
 #include <kdebug.h>

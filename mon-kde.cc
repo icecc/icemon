@@ -21,41 +21,27 @@
 */
 
 #include "mon-kde.h"
-#include "summaryview.h"
-#include "ganttstatusview.h"
-#include "listview.h"
-#include "starview.h"
+
 #include "detailedhostview.h"
+#include "ganttstatusview.h"
 #include "hostinfo.h"
 #include "hostview.h"
+#include "listview.h"
 #include "monitor.h"
+#include "starview.h"
+#include "summaryview.h"
 
 #include <services/logging.h>
-#include <services/comm.h>
 
 #include <kaboutdata.h>
 #include <kaction.h>
 #include <kapplication.h>
 #include <kcmdlineargs.h>
-#include <klistview.h>
+#include <kconfig.h>
+#include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kstdaction.h>
-#include <klocale.h>
-#include <kdebug.h>
-#include <kconfig.h>
-
-#include <qsocketnotifier.h>
-#include <qcanvas.h>
-#include <qlayout.h>
-#include <qtimer.h>
-#include <qvaluelist.h>
-
-#include <math.h>
-#include <iostream>
-#include <cassert>
-
-using namespace std;
 
 MainWindow::MainWindow( QWidget *parent, const char *name )
   : KMainWindow( parent, name ), m_view( 0 )
