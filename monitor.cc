@@ -72,11 +72,15 @@ void Monitor::slotCheckScheduler()
     names.push_front( m_current_netname.latin1() );
   } else {
     names = get_netnames( 60 );
-    if ( names.empty() ) {
-      checkScheduler( true );
-      setSchedulerState( false );
-      return;
-    }
+  }
+
+  if (getenv("USE_SCHEDULER"))
+     names.push_front(""); // try $USE_SCHEDULER
+
+  if ( names.empty() ) {
+    checkScheduler( true );
+    setSchedulerState( false );
+    return;
   }
 
   for ( list<string>::const_iterator it = names.begin(); it != names.end();
