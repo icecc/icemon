@@ -35,7 +35,6 @@ enum Columns
     ColumnIP,
     ColumnPlatform,
     ColumnMaxJobs,
-    ColumnState, // on-/offline
     ColumnSpeed
 };
 
@@ -72,7 +71,6 @@ void HostListViewItem::updateText( const HostInfo& info )
     setText( ColumnIP, info.ip() );
     setText( ColumnPlatform, info.platform() );
     setText( ColumnMaxJobs, QString::number( info.maxJobs() ) );
-    setText( ColumnState, info.isOffline() ? i18n( "offline" ) : i18n( "online" ) );
     setText( ColumnSpeed, KGlobal::locale()->formatNumber( info.serverSpeed(), 1 ) );
 }
 
@@ -165,7 +163,6 @@ HostListView::HostListView( HostInfoManager* manager,
     addColumn( i18n( "IP" ) );
     addColumn( i18n( "Platform" ) );
     addColumn( i18n( "Max Jobs" ) );
-    addColumn( i18n( "State" ) );
     addColumn( i18n( "Speed" ) );
 
     setColumnAlignment( ColumnID, Qt::AlignRight );
@@ -209,14 +206,9 @@ void HostListView::checkNode( unsigned int hostid )
 
     ItemMap::iterator it = mItems.find( hostid );
     if ( it == mItems.end() )
-    {
         mItems[hostid] = new HostListViewItem( this, *info );
-
-    }
     else
-    {
         ( *it )->updateText( *info );
-    }
 }
 
 
