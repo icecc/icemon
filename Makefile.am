@@ -1,6 +1,5 @@
 SUBDIRS = doc
 
-
 INCLUDES = -I$(srcdir)/.. $(all_includes)
 
 bin_PROGRAMS = icemon
@@ -32,5 +31,6 @@ icemon_panelapplet_la_SOURCES = icemonapplet.cpp
 lnkdir = $(kde_datadir)/kicker/applets
 lnk_DATA = icemonapplet.desktop
 
-xdg_apps_data = icemon.desktop
+xdg_apps_DATA = icemon.desktop
 
+EXTRA_DIST = $(xdg_apps_DATA)
