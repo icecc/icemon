@@ -1,6 +1,21 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Icecream monitor
-Comment=Icecram monitor applet
+Name[da]=Icecream overvåger
+Name[et]=Icecreami monitor
+Name[pt]=Monitor de Icecream
+Name[pt_BR]=Monitor de Icecream
+Name[sv]=Icecream-övervakare
+Name[ta]=முறைமையின் திறை
+Name[xx]=xxIcecream monitorxx
+Comment=Icecream-monitor applet
+Comment[cy]=Rhaglennig monitr Icecram
+Comment[da]=Icecram overvågnings-applet
+Comment[et]=Icecreami monitori aplett
+Comment[pt]='Applet' de monitorização do Icecream
+Comment[pt_BR]='Applet' de monitorização do Icecream
+Comment[sv]=Miniprogram för övervakning av Icecream
+Comment[ta]=செயலிக் கண்காணிச் செருகல்.
+Comment[xx]=xxIcecram monitor appletxx
 X-KDE-Library=icemon_panelapplet
 X-KDE-UniqueApplet=false
