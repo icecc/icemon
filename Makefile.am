@@ -1,3 +1,5 @@
+SUBDIRS = doc
+
 
 INCLUDES = -I$(srcdir)/.. $(all_includes)
 
