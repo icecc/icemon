@@ -139,7 +139,7 @@ void MainWindow::slotCheckScheduler()
     }
 
     if ( !m_current_netname.isEmpty() )
-        names.push_front( m_current_netname );
+        names.push_front( m_current_netname.latin1() );
 
     for ( list<string>::const_iterator it = names.begin(); it != names.end(); ++it )
     {
