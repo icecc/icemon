@@ -74,6 +74,7 @@ void Monitor::slotCheckScheduler()
     names = get_netnames( 60 );
     if ( names.empty() ) {
       checkScheduler( true );
+      m_view->updateSchedulerState( false );
       return;
     }
   }
@@ -97,6 +98,7 @@ void Monitor::slotCheckScheduler()
     }
   }
   checkScheduler( true );
+  m_view->updateSchedulerState( false );
 }
 
 void Monitor::msgReceived()
