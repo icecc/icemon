@@ -27,8 +27,10 @@ class GanttProgress : public QWidget
 {
 	Q_OBJECT
 	public:
-		GanttProgress( QWidget *parent, const char *name = 0 );
+		GanttProgress( QMap<QString,QColor> &hostColors,
+                               QWidget *parent, const char *name = 0 );
 
+                void setHostColors( QMap<QString,QColor> & );
 	public slots:
 		void progress();
 		void update( const Job &job );
@@ -44,6 +46,8 @@ class GanttProgress : public QWidget
 
 		QValueList< QPair<Job, int> > m_jobs;
 		int m_totalWidth;
+                
+                QMap<QString,QColor> &mHostColors;
 };
 
 class GanttStatusView : public QWidget, public StatusView
@@ -65,10 +69,13 @@ private:
     void checkForNewNodes( const Job &job );
     void updateNodes( const Job &job );
     void registerNode( const QString &name );
+    void createHostColor( const QString &host );
 
     QGridLayout *m_topLayout;
     QMap<QString, GanttProgress *> m_nodeMap;
     QTimer *m_progressTimer;
+
+    QMap<QString,QColor> mHostColors;
 };
 
 #endif // GANTTSTATUSVIEW_H

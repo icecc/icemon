@@ -63,6 +63,9 @@ QString Job::stateAsString() const
     case Failed:
         return "Failed";
         break;
+    case Idle:
+        return "Idle";
+        break;
     }
     return QString::null;
 }

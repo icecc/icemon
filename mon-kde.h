@@ -16,7 +16,7 @@ class NodeItem;
 class Job
 {
 public:
-    enum State { WaitingForCS, Compiling, Finished, Failed };
+    enum State { WaitingForCS, Compiling, Finished, Failed, Idle };
     Job(unsigned int id = 0,
         const QString &client = QString::null,
         const QString &filename = QString::null,
@@ -85,6 +85,12 @@ public:
     unsigned int out_compressed;
     unsigned int out_uncompressed;
 
+};
+
+class IdleJob : public Job
+{
+  public:
+    IdleJob() : Job() { setState( Job::Idle ); }
 };
 
 class JobList : public QMap<unsigned int, Job>

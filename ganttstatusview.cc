@@ -50,10 +50,16 @@ void GanttTimeScaleWidget::paintEvent( QPaintEvent *pe )
 	bitBlt( this, r.topLeft(), &buffer );
 }
 
-GanttProgress::GanttProgress( QWidget *parent, const char *name )
-	: QWidget( parent, name, WResizeNoErase | WRepaintNoErase )
+GanttProgress::GanttProgress( QMap<QString,QColor> &hostColors, QWidget *parent, const char *name )
+	: QWidget( parent, name, WResizeNoErase | WRepaintNoErase ),
+          mHostColors( hostColors )
 {
     m_totalWidth = 0;
+}
+
+void GanttProgress::setHostColors( QMap<QString,QColor> &v )
+{
+    mHostColors = v;
 }
 
 void GanttProgress::progress()
@@ -82,7 +88,12 @@ void GanttProgress::update( const Job &job )
 {
     // If it's the same job as before, just increase the time it occupied.
     if ( m_jobs.last().first == job )
-        ++m_jobs.last().second;
+        if ( job.state() == Job::Finished || job.state() == Job::Failed ) {
+          Job j = IdleJob();
+          m_jobs += qMakePair( j, 1 );
+        } else {
+          ++m_jobs.last().second;
+        }
     else
         m_jobs += qMakePair( job, 1 );
 }
@@ -125,7 +136,13 @@ void GanttProgress::drawGraph( QPainter &p )
 
 QColor GanttProgress::colorForStatus( const Job &job ) const
 {
-    return Qt::green; // job.state() == Job::Compile ? Qt::green : Qt::blue;
+    if ( job.state() == Job::Idle ) {
+        return Qt::gray;
+    } else {
+        QMap<QString,QColor>::ConstIterator it = mHostColors.find( job.client() );
+        if ( it != mHostColors.end() ) return it.data();
+        else return Qt::blue;
+    }
 }
 
 void GanttProgress::paintEvent( QPaintEvent * )
@@ -174,10 +191,13 @@ QWidget * GanttStatusView::widget()
 
 void GanttStatusView::checkForNewNodes( const Job &job )
 {
+    if ( job.server().isEmpty() ) return;
+
     kdDebug() << "checkForNewNodes " << job.server() << endl;
     if ( !m_nodeMap.contains( job.server() ) ) {
         registerNode( job.server() );
     }
+    createHostColor( job.client() );
 }
 
 void GanttStatusView::updateNodes( const Job &job )
@@ -189,16 +209,37 @@ void GanttStatusView::updateNodes( const Job &job )
 
 void GanttStatusView::registerNode( const QString &name )
 {
+    kdDebug() << "GanttStatusView::registerNode(): " << name << endl;
+
+    createHostColor( name );
+    QColor color = mHostColors[ name ];
+
     const int lastRow = m_nodeMap.count() + 1;
 
     QLabel *l = new QLabel( name, this );
+    l->setPaletteForegroundColor( color );
     m_topLayout->addWidget( l, lastRow, 0 );
+    l->show();
 
-    GanttProgress *w = new GanttProgress( this );
+    GanttProgress *w = new GanttProgress( mHostColors, this );
     m_topLayout->addWidget( w, lastRow, 1 );
     w->show();
 
     m_nodeMap[ name ] = w;
+}
+
+void GanttStatusView::createHostColor( const QString &host )
+{
+  if ( mHostColors.find( host ) != mHostColors.end() ) return;
+
+  static int num = 0;
+
+  QColor color( num, 255 - num, ( num * 3 ) % 255 );
+
+  mHostColors.insert( host, color );
+
+  num += 48;
+  num %= 255;
 }
 
 void GanttStatusView::updateGraphs()
