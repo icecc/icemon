@@ -15,65 +15,33 @@ class NodeItem;
 
 class Job
 {
-	public:
-		enum State {
-			Compile, Connect, Send, Receive, Blocked, Startup,
-			CPP, Unknown
-		};
+public:
+    enum State { WaitingForCS, Compiling, Finished };
+    Job() { }
 
-		static QString stateAsString( State state );
-		static State stringAsState( const QString &s );
+    bool operator==( const Job &rhs ) const { return m_id == rhs.m_id; }
+    bool operator!=( const Job &rhs ) const { return m_id != rhs.m_id; }
 
-		Job() { }
-//		explicit Job( const struct dcc_mon_list * const job );
+    unsigned int jobId() const { return m_id; }
+    QString fileName() const { return m_fileName; }
+    QString host() const { return m_host; }
+    State state() const { return m_state; }
 
-		bool operator==( const Job &rhs ) const;
-		bool operator!=( const Job &rhs ) const { return !operator==( rhs ); }
-
-		unsigned int pid() const { return m_pid; }
-		QString fileName() const { return m_fileName; }
-		QString host() const { return m_host; }
-		State state() const { return m_state; }
-
-	private:
-		unsigned int m_pid;
-		QString m_fileName;
-		QString m_host;
-		State m_state;
+private:
+    unsigned int m_id;
+    QString m_fileName;
+    QString m_host;
+    State m_state;
 };
 
 class JobList : public QValueList<Job>
 {
-	public:
-		JobList() { }
-//		JobList( const struct dcc_mon_list * const list );
+public:
+    JobList() { }
 
-		// Tests for equivalence, not equality!
-		bool operator==( const JobList &rhs ) const;
-		bool operator!=( const JobList &rhs ) const { return !operator==( rhs ); }
-};
-
-class StatusObserver : public QObject
-{
-	Q_OBJECT
-	public:
-		StatusObserver( QObject *parent, const char *name = 0 );
-
-		void start();
-		void stop();
-
-	signals:
-		void statusChanged( const JobList &jobs );
-
-	private slots:
-		void pollTimeout();
-
-	private:
-		void setupErrorMessages();
-
-		QTimer *m_timer;
-		QValueList<Job> m_prevJobs;
-		QMap<int, QString> m_errorMessages;
+    // Tests for equivalence, not equality!
+    bool operator==( const JobList &rhs ) const;
+    bool operator!=( const JobList &rhs ) const { return !operator==( rhs ); }
 };
 
 class StatusView : public QWidget
@@ -98,7 +66,7 @@ class ListStatusView : public StatusView
 	private:
 		KListView *m_listView;
 };
-
+/*
 class StarStatusView : public StatusView
 {
 	Q_OBJECT
@@ -124,9 +92,11 @@ class StarStatusView : public StatusView
 		QCanvasText *m_localhostItem;
 		QDict<NodeItem> m_nodeItems;
 };
+*/
 
 class MsgChannel;
 class QSocketNotifier;
+class Msg;
 
 class MainWindow : public KMainWindow
 {
@@ -144,8 +114,10 @@ private slots:
 private:
     void setupView( StatusView *view );
     void checkScheduler(bool deleteit = false);
+    void handle_getcs( Msg *m );
+    void handle_job_begin( Msg *m );
+    void handle_job_end( Msg *m );
 
-    StatusObserver *m_observer;
     StatusView *m_view;
     JobList m_rememberedJobs;
     MsgChannel *scheduler;
