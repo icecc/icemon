@@ -29,7 +29,7 @@ public:
 
 private:
     KSqueezedTextLabel *addLine(const QString &caption, QWidget *parent, QGridLayout *grid,
-                                int flags = Qt::AlignBottom,
+                                int flags = Qt::AlignTop,
                                 const QString &status = QString::null);
 
     QFrame *m_stateWidget;

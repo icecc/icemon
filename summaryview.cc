@@ -35,7 +35,6 @@ SummaryViewItem::SummaryViewItem(const QString &name, QWidget *parent, SummaryVi
     labelBox->setMargin(5);
     layout->addWidget(labelBox, row, 0);
     labelBox->show();
-    // view->addChild(labelBox);
 
     QLabel *l;
 
@@ -60,7 +59,6 @@ SummaryViewItem::SummaryViewItem(const QString &name, QWidget *parent, SummaryVi
     detailsBox->setMargin(5);
     layout->addWidget(detailsBox, row, 1);
     detailsBox->show();
-    // view->addChild(detailsBox);
 
     QGridLayout *grid = new QGridLayout(detailsBox);
     grid->setMargin(10);
@@ -73,7 +71,7 @@ SummaryViewItem::SummaryViewItem(const QString &name, QWidget *parent, SummaryVi
 
     grid->setColStretch(grid->numCols() - 1, 1);
     grid->setRowStretch(0, 1);
-    grid->setRowStretch(grid->numRows() - 1, 1);
+    grid->setRowStretch(grid->numRows(), 1);
 }
 
 void SummaryViewItem::update(const Job &job)
