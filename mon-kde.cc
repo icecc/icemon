@@ -264,8 +264,12 @@ void MainWindow::handle_stats( Msg *_m )
         stats[key] = value;
     }
 
-    m_hostInfoManager->checkNode( m->hostid, stats );
-    m_view->checkNode( m->hostid );
+    HostInfo *hostInfo = m_hostInfoManager->checkNode( m->hostid, stats );
+    if ( hostInfo->isOffline() ) {
+      m_view->removeNode( m->hostid );
+    } else {
+      m_view->checkNode( m->hostid );
+    }
 }
 
 void MainWindow::handle_job_begin(Msg *_m)

@@ -42,6 +42,7 @@ class StatusView
     virtual void update( const Job &job ) = 0;
     virtual QWidget *widget() = 0;
     virtual void checkNode( unsigned int hostid );
+    virtual void removeNode( unsigned int hostid ) {}
     virtual void stop() {}
     virtual void start() {}
     virtual void checkNodes() {}

@@ -78,7 +78,8 @@ class HostInfoManager
 
     HostMap hostMap() const;
 
-    void checkNode( unsigned int hostid, const HostInfo::StatsMap &statmsg );
+    HostInfo *checkNode( unsigned int hostid,
+                         const HostInfo::StatsMap &statmsg );
 
     QString nameForHost( unsigned int id ) const;
     QColor hostColor( unsigned int id ) const;

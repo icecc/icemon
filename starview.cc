@@ -29,7 +29,6 @@
 #include <kdebug.h>
 #include <kiconloader.h>
 
-#include <qcanvas.h>
 #include <qlayout.h>
 #include <qtimer.h>
 #include <qvaluelist.h>
@@ -39,132 +38,103 @@
 
 using namespace std;
 
-class HostItem : public QCanvasText
+HostItem::HostItem( const QString &text, QCanvas *canvas )
+  : QCanvasText( text, canvas ), mHostInfo( 0 ), m_stateItem( 0 )
 {
-  public:
-    enum { RttiHostItem = 1000 };
+  init();
+}
 
-    HostItem( const QString &text, QCanvas *canvas )
-      : QCanvasText( text, canvas ), mHostInfo( 0 )
-    {
-      init();
-    }
+HostItem::HostItem( HostInfo *hostInfo, QCanvas *canvas )
+  : QCanvasText( hostInfo->name(), canvas ), mHostInfo( hostInfo ),
+    m_stateItem( 0 )
+{
+  init();
+}
 
-    HostItem( HostInfo *hostInfo, QCanvas *canvas )
-      : QCanvasText( hostInfo->name(), canvas ), mHostInfo( hostInfo ),
-        m_stateItem( 0 )
-    {
-      init();
-    }
+HostItem::~HostItem()
+{
+}
 
-    ~HostItem()
-    {
-    }
+void HostItem::deleteSubItems()
+{
+  delete m_boxItem;
+  delete m_jobHalo;
+  delete m_stateItem;
+}
 
-    int rtti() const { return RttiHostItem; }
+void HostItem::setHostColor( const QColor &color )
+{
+  m_boxItem->setBrush( color );
+  m_jobHalo->setBrush( color.light() );
 
-    HostInfo *hostInfo() const { return mHostInfo; }
+  float luminance = ( color.red() * 0.299 ) + ( color.green() * 0.587 ) +
+                    ( color.blue() * 0.114 );
+  if ( luminance > 140.0 ) setColor( black );
+  else setColor( white );
+}
 
-    void setHostColor( const QColor &color )
-    {
-      m_boxItem->setBrush( color );
-      m_jobHalo->setBrush( color.light() );
+QString HostItem::hostName() const
+{
+  return mHostInfo->name();
+}
 
-      float luminance = ( color.red() * 0.299 ) + ( color.green() * 0.587 ) +
-                        ( color.blue() * 0.114 );
-      if ( luminance > 140.0 ) setColor( black );
-      else setColor( white );
-    }
+void HostItem::moveBy( double dx, double dy )
+{
+  QCanvasText::moveBy( dx, dy );
 
-    void setIsActiveClient( bool active ) { mIsActiveClient = active; }
-    bool isActiveClient() const { return mIsActiveClient; }
-    
-    void setIsCompiling( bool compiling ) { mIsCompiling = compiling; }
-    bool isCompiling() const { return mIsCompiling; }
+  QRect r = boundingRect();
 
-    void setStateItem( QCanvasItem *item ) { m_stateItem = item; }
-    QCanvasItem *stateItem() { return m_stateItem; }
+  m_boxItem->moveBy( dx, dy );
+  m_jobHalo->moveBy( dx, dy );
+}
 
-    void setClient( unsigned int client ) { m_client = client; }
-    unsigned int client() const { return m_client; }
+void HostItem::update( const Job &job )
+{
+  setIsCompiling( job.state() == Job::Compiling );
+  setClient( job.client() );
 
-    QString hostName() const { return mHostInfo->name(); }
+  if ( job.state() == Job::WaitingForCS ) return;
 
-    void moveBy( double dx, double dy )
-    {
-      QCanvasText::moveBy( dx, dy );
+  bool finished = job.state() == Job::Finished ||
+                  job.state() == Job::Failed;
 
-      QRect r = boundingRect();
+  JobList::Iterator it = m_jobs.find( job.jobId() );
+  bool newJob = ( it == m_jobs.end() );
 
-      m_boxItem->moveBy( dx, dy );
-      m_jobHalo->moveBy( dx, dy );
-    }
+  if ( newJob && finished ) return;
+  if ( !newJob && !finished ) return;
 
-    void update( const Job &job )
-    {
-      setIsCompiling( job.state() == Job::Compiling );
-      setClient( job.client() );
+  if ( newJob ) m_jobs.insert( job.jobId(), job );
+  else if ( finished ) m_jobs.remove( it );
 
-      if ( job.state() == Job::WaitingForCS ) return;
+  m_jobHalo->setSize( mBaseWidth + m_jobs.count() * 4,
+                      mBaseHeight + m_jobs.count() * 4 );
+}
 
-      bool finished = job.state() == Job::Finished ||
-                      job.state() == Job::Failed;
+void HostItem::init()
+{
+  setZ( 100 );
 
-      JobList::Iterator it = m_jobs.find( job.jobId() );
-      bool newJob = ( it == m_jobs.end() );
+  QRect r = boundingRect();
+  mBaseWidth = r.width() + 10;
+  mBaseHeight = r.height() + 10;
 
-      if ( newJob && finished ) return;
-      if ( !newJob && !finished ) return;
+  m_boxItem = new QCanvasEllipse( mBaseWidth, mBaseHeight, canvas() );
+  m_boxItem->setZ( 80 );
+  m_boxItem->move( r.width() / 2, r.height() / 2 );
+  m_boxItem->show();
 
-      if ( newJob ) m_jobs.insert( job.jobId(), job );
-      else if ( finished ) m_jobs.remove( it );
+  m_jobHalo = new QCanvasEllipse( mBaseWidth, mBaseHeight, canvas() );
+  m_jobHalo->setZ( 70 );
+  m_jobHalo->move( r.width() / 2, r.height() / 2 );
+  m_jobHalo->show();
 
-      m_jobHalo->setSize( mBaseWidth + m_jobs.count() * 4,
-                          mBaseHeight + m_jobs.count() * 4 );
-    }
+  setHostColor( QColor( 200, 200, 200 ) );
 
-  private:
-    void init()
-    {
-      setZ( 100 );
+  mIsActiveClient = false;
+  mIsCompiling = false;
+}
 
-      QRect r = boundingRect();
-      mBaseWidth = r.width() + 10;
-      mBaseHeight = r.height() + 10;
-
-      m_boxItem = new QCanvasEllipse( mBaseWidth, mBaseHeight, canvas() );
-      m_boxItem->setZ( 80 );
-      m_boxItem->move( r.width() / 2, r.height() / 2 );
-      m_boxItem->show();
-
-      m_jobHalo = new QCanvasEllipse( mBaseWidth, mBaseHeight, canvas() );
-      m_jobHalo->setZ( 70 );
-      m_jobHalo->move( r.width() / 2, r.height() / 2 );
-      m_jobHalo->show();
-
-      setHostColor( QColor( 200, 200, 200 ) );
-
-      mIsActiveClient = false;
-      mIsCompiling = false;
-    }
-
-    HostInfo *mHostInfo;
-
-    bool mIsActiveClient;
-    bool mIsCompiling;
-    
-    QCanvasItem *m_stateItem;
-    unsigned int m_client;
-
-    int mBaseWidth;
-    int mBaseHeight;
-
-    QCanvasEllipse *m_boxItem;
-
-    QCanvasEllipse *m_jobHalo;
-
-    JobList m_jobs;
-};
 
 class WhatsStat : public QToolTip
 {
@@ -301,6 +271,22 @@ void StarView::checkNode( unsigned int hostid )
   if ( !hostItem ) hostItem = createHostItem( hostid );
 }
 
+void StarView::removeNode( unsigned int hostid )
+{
+  HostItem *hostItem = findHostItem( hostid );
+  if ( hostItem && hostItem->hostInfo()->isOffline() ) {
+    m_hostItems.remove( hostid );
+
+    hostItem->deleteSubItems();  
+    delete hostItem;
+  
+    arrangeHostItems();
+    drawNodeStatus();
+  
+    m_canvas->update();
+  }
+}
+
 QWidget *StarView::widget()
 {
   return this;
@@ -311,6 +297,7 @@ void StarView::resizeEvent( QResizeEvent * )
     m_canvas->resize( width(), height() );
     centerLocalhostItem();
     arrangeHostItems();
+    drawNodeStatus();
     m_canvas->update();
 }
 

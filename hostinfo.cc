@@ -106,6 +106,11 @@ unsigned int HostInfo::maxJobs() const
   return mMaxJobs;
 }
 
+bool HostInfo::isOffline() const
+{
+  return mOffline;
+}
+
 void HostInfo::updateFromStatsMap( const StatsMap &stats )
 {
 #if 0
@@ -175,8 +180,8 @@ HostInfo *HostInfoManager::find( unsigned int hostid ) const
   else return *it;
 }
 
-void HostInfoManager::checkNode( unsigned int hostid,
-                                 const HostInfo::StatsMap &stats )
+HostInfo *HostInfoManager::checkNode( unsigned int hostid,
+                                      const HostInfo::StatsMap &stats )
 {
   HostMap::ConstIterator it = mHostMap.find( hostid );
   HostInfo *hostInfo;
@@ -188,6 +193,8 @@ void HostInfoManager::checkNode( unsigned int hostid,
   }
 
   hostInfo->updateFromStatsMap( stats );
+
+  return hostInfo;
 }
 
 QString HostInfoManager::nameForHost( unsigned int id ) const

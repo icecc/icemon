@@ -23,13 +23,67 @@
 
 #include "mon-kde.h"
 
-#include <time.h>
 #include <qdict.h>
+#include <qcanvas.h>
 
-class QCanvas;
-class QCanvasText;
-class QCanvasView;
-class HostItem;
+class HostInfo;
+
+class HostItem : public QCanvasText
+{
+  public:
+    enum { RttiHostItem = 1000 };
+
+    HostItem( const QString &text, QCanvas *canvas );
+    HostItem( HostInfo *hostInfo, QCanvas *canvas );
+    ~HostItem();
+
+    void deleteSubItems();
+
+    int rtti() const { return RttiHostItem; }
+
+    HostInfo *hostInfo() const { return mHostInfo; }
+
+    void setHostColor( const QColor &color );
+
+    void setIsActiveClient( bool active ) { mIsActiveClient = active; }
+    bool isActiveClient() const { return mIsActiveClient; }
+    
+    void setIsCompiling( bool compiling ) { mIsCompiling = compiling; }
+    bool isCompiling() const { return mIsCompiling; }
+
+    void setStateItem( QCanvasItem *item ) { m_stateItem = item; }
+    QCanvasItem *stateItem() { return m_stateItem; }
+
+    void setClient( unsigned int client ) { m_client = client; }
+    unsigned int client() const { return m_client; }
+
+    QString hostName() const;
+
+    void moveBy( double dx, double dy );
+
+    void update( const Job &job );
+
+  private:
+    void init();
+
+    HostInfo *mHostInfo;
+
+    bool mIsActiveClient;
+    bool mIsCompiling;
+    
+    QCanvasItem *m_stateItem;
+    unsigned int m_client;
+
+    int mBaseWidth;
+    int mBaseHeight;
+
+    QCanvasEllipse *m_boxItem;
+
+    QCanvasEllipse *m_jobHalo;
+
+    JobList m_jobs;
+};
+
 
 class StarView : public QWidget, public StatusView
 {
@@ -47,6 +101,8 @@ class StarView : public QWidget, public StatusView
     HostItem *StarView::findHostItem( unsigned int hostid );
 
     void checkNode( unsigned int hostid );
+
+    void removeNode( unsigned int hostid );
 
   protected:
     virtual void resizeEvent( QResizeEvent *e );
