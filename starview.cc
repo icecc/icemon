@@ -390,6 +390,17 @@ void StarView::updateSchedulerState( bool online )
   }
   m_schedulerItem->deleteSubItems();
   delete m_schedulerItem;
+
+  if ( !online ) {
+    QMap<unsigned int,HostItem *>::ConstIterator it;
+    for( it = m_hostItems.begin(); it != m_hostItems.end(); ++it ) {
+      (*it)->deleteSubItems();
+      delete *it;
+    }
+    m_hostItems.clear();
+    mJobMap.clear();
+  }
+
   m_schedulerItem = new HostItem( txt, m_canvas );
   m_schedulerItem->show();
   centerSchedulerItem();
