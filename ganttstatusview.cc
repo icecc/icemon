@@ -82,7 +82,7 @@ void GanttProgress::adjustGraph()
 {
   // Remove non-visible jobs
   if ( m_jobs.count() >= 2 &&
-       mClock - m_jobs[ m_jobs.count() - 2 ].second > width() ) {
+       mClock - m_jobs[ m_jobs.count() - 2 ].clock > width() ) {
     m_jobs.remove( m_jobs.last() );
   }
 }
@@ -93,20 +93,20 @@ void GanttProgress::update( const Job &job )
     kdDebug() << "GanttProgress::update( job ): " << job.fileName() << endl;
 
     kdDebug() << "  num jobs: " << m_jobs.count() << endl;
-    kdDebug() << "  first id: " << m_jobs.first().first.jobId() << endl;
+    kdDebug() << "  first id: " << m_jobs.first().job.jobId() << endl;
     kdDebug() << "  this id: " << job.jobId() << endl;
 #endif
 
-    if ( !m_jobs.isEmpty() && m_jobs.first().first == job ) {
+    if ( !m_jobs.isEmpty() && m_jobs.first().job == job ) {
 //       kdDebug() << "  Known Job. State: " << job.state() << endl;
         if ( job.state() == Job::Finished || job.state() == Job::Failed ) {
           Job j = IdleJob();
-          m_jobs.prepend( qMakePair( j, mClock ) );
+          m_jobs.prepend( JobData( j, mClock ) );
           mIsFree = true;
         }
     } else {
 //        kdDebug() << " New Job" << endl;
-        m_jobs.prepend( qMakePair( job, mClock ) );
+        m_jobs.prepend( JobData( job, mClock ) );
         mIsFree = ( job.state() == Job::Idle );
     }
 
@@ -119,9 +119,9 @@ void GanttProgress::drawGraph( QPainter &p )
 
     bool lastBox = false;
     int xStart = 0;
-    QValueList< QPair<Job, int > >::ConstIterator it = m_jobs.begin();
+    QValueList< JobData >::ConstIterator it = m_jobs.begin();
     for ( ; ( it != m_jobs.end() ) && !lastBox; ++it ) {
-        int xEnd = mClock - (*it).second;
+        int xEnd = mClock - (*it).clock;
 
         if ( xEnd > width() ) {
           xEnd = width();
@@ -133,12 +133,12 @@ void GanttProgress::drawGraph( QPainter &p )
 //        kdDebug() << "XStart: " << xStart << "  xWidth: " << xWidth << endl;
 
         // Draw the rectangle for the current job
-        QColor color = colorForStatus( ( *it ).first );
+        QColor color = colorForStatus( ( *it ).job );
         p.fillRect( xStart, 0, xWidth, height(), color );
         p.setPen( color.dark() );
         p.drawRect( xStart, 0, xWidth, height() );
 
-        QString s = ( *it ).first.fileName();
+        QString s = ( *it ).job.fileName();
         if ( !s.isEmpty() ) {
           s = s.mid( s.findRev( '/' ) + 1, s.length() );
 //          s = s.left( s.findRev( '.' ) );

@@ -4,7 +4,6 @@
 #include "mon-kde.h"
 
 #include <qmap.h>
-#include <qpair.h>
 #include <qvaluelist.h>
 #include <qwidget.h>
 
@@ -53,7 +52,17 @@ class GanttProgress : public QWidget
 		void drawGraph( QPainter &p );
 		QColor colorForStatus( const Job &job ) const;
 
-		QValueList< QPair<Job, int> > m_jobs;
+                struct JobData
+                {
+                    JobData( const Job& j, int c )
+                        : job( j ), clock( c ) {}
+                    Job job;
+                    int clock;
+                    JobData() {}; // stupid QValueList
+                    bool operator==( const JobData& d )
+                        { return job == d.job && clock == d.clock; }
+                };
+		QValueList< JobData > m_jobs;
                 
                 QMap<QString,QColor> &mHostColors;
 
