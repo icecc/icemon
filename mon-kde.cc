@@ -556,35 +556,32 @@ void MainWindow::handle_job_done(Msg *_m)
     m_view->update( *it );
 }
 
-void MainWindow::setupView( StatusView *view )
+void MainWindow::setupView( StatusView *view, bool rememberJobs )
 {
     delete m_view;
     m_view = view;
-    JobList::ConstIterator it = m_rememberedJobs.begin();
-    for ( ; it != m_rememberedJobs.end(); ++it )
-        m_view->update( *it );
+    if ( rememberJobs ) {
+      JobList::ConstIterator it = m_rememberedJobs.begin();
+      for ( ; it != m_rememberedJobs.end(); ++it )
+          m_view->update( *it );
+    }
     setCentralWidget( m_view->widget() );
     m_view->widget()->show();
 }
 
 void MainWindow::setupListView()
 {
-    setupView( new ListStatusView( this ) );
+    setupView( new ListStatusView( this ), true );
 }
 
 void MainWindow::setupGanttView()
 {
-    setupView( new GanttStatusView( this ) );
+    setupView( new GanttStatusView( this ), false );
 }
 
 void MainWindow::setupStarView()
 {
-//	setupView( new StarStatusView( this ) );
-}
-
-void MainWindow::rememberJobs( const JobList &jobs )
-{
-    m_rememberedJobs = jobs;
+//	setupView( new StarStatusView( this ), false );
 }
 
 void MainWindow::stopView()

@@ -177,7 +177,6 @@ private slots:
     void setupStarView();
     void setupGanttView();
 
-    void rememberJobs( const JobList &jobs );
     void slotCheckScheduler();
     void msgReceived();
 
@@ -185,7 +184,7 @@ private slots:
     void startView();
 
 private:
-    void setupView( StatusView *view );
+    void setupView( StatusView *view, bool rememberJobs );
     void checkScheduler(bool deleteit = false);
     void handle_getcs( Msg *m );
     void handle_job_begin( Msg *m );
