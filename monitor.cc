@@ -66,14 +66,17 @@ void Monitor::checkScheduler(bool deleteit)
 
 void Monitor::slotCheckScheduler()
 {
-  list<string> names = get_netnames( 60 );
-  if ( names.empty() ) {
-    checkScheduler( true );
-    return;
-  }
+  list<string> names;
 
-  if ( !m_current_netname.isEmpty() )
+  if ( !m_current_netname.isEmpty() ) {
     names.push_front( m_current_netname.latin1() );
+  } else {
+    names = get_netnames( 60 );
+    if ( names.empty() ) {
+      checkScheduler( true );
+      return;
+    }
+  }
 
   for ( list<string>::const_iterator it = names.begin(); it != names.end();
         ++it ) {
@@ -88,6 +91,7 @@ void Monitor::slotCheckScheduler()
                                                 this );
         QObject::connect( m_scheduler_read, SIGNAL( activated( int ) ),
                           SLOT( msgReceived() ) );
+        m_view->updateSchedulerState( true );
         return;
       }
     }
@@ -101,6 +105,7 @@ void Monitor::msgReceived()
   if ( !m ) {
     kdDebug() << "lost connection to scheduler\n";
     checkScheduler( true );
+    m_view->updateSchedulerState( false );
     return;
   }
 

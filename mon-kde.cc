@@ -209,29 +209,29 @@ static const KCmdLineOptions options[] =
 
 int main( int argc, char **argv )
 {
- 	setup_debug(Debug|Info|Warning|Error,"");
-	KAboutData aboutData( rs_program_name, appName, version, description,
-	                      KAboutData::License_BSD, copyright );
-        aboutData.addAuthor( "Frerich Raabe", 0, "raabe@kde.org" );
-        aboutData.addAuthor( "Stephan Kulow", 0, "coolo@kde.org" );
-        aboutData.addAuthor( "Cornelius Schumacher", 0, "schumacher@kde.org" );
-        
-	KCmdLineArgs::init( argc, argv, &aboutData );
-        KCmdLineArgs::addCmdLineOptions( options );
+  setup_debug(Debug|Info|Warning|Error,"");
+  KAboutData aboutData( rs_program_name, appName, version, description,
+	                KAboutData::License_BSD, copyright );
+  aboutData.addAuthor( "Frerich Raabe", 0, "raabe@kde.org" );
+  aboutData.addAuthor( "Stephan Kulow", 0, "coolo@kde.org" );
+  aboutData.addAuthor( "Cornelius Schumacher", 0, "schumacher@kde.org" );
 
-	KApplication app;
-	MainWindow *mainWidget = new MainWindow( 0 );
+  KCmdLineArgs::init( argc, argv, &aboutData );
+  KCmdLineArgs::addCmdLineOptions( options );
 
-        KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-        QString netName = QString::fromLocal8Bit( args->getOption( "netname" ) );
-        if ( !netName.isEmpty() ) {
-          mainWidget->setCurrentNet( netName );
-        }
+  KApplication app;
+  MainWindow *mainWidget = new MainWindow( 0 );
 
-	app.setMainWidget( mainWidget );
-	mainWidget->show();
+  KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+  QString netName = QString::fromLocal8Bit( args->getOption( "netname" ) );
+  if ( !netName.isEmpty() ) {
+    mainWidget->setCurrentNet( netName );
+  }
 
-    	return app.exec();
+  app.setMainWidget( mainWidget );
+  mainWidget->show();
+
+  return app.exec();
 }
 
 #include "mon-kde.moc"

@@ -43,6 +43,8 @@ class StatusView
     virtual QWidget *widget() = 0;
     virtual void checkNode( unsigned int hostid );
     virtual void removeNode( unsigned int hostid );
+    virtual void updateSchedulerState( bool online );
+
     virtual void stop() {}
     virtual void start() {}
     virtual void checkNodes() {}

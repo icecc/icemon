@@ -256,9 +256,9 @@ StarView::StarView( HostInfoManager *m, QWidget *parent, const char *name )
     m_canvasView->setHScrollBarMode( QScrollView::AlwaysOff );
     layout->addWidget( m_canvasView );
 
-    m_localhostItem = new HostItem( i18n( "Scheduler" ), m_canvas );
-    centerLocalhostItem();
-    m_localhostItem->show();
+    m_schedulerItem = new HostItem( "", m_canvas );
+    centerSchedulerItem();
+    m_schedulerItem->show();
 
     createKnownHosts();
 
@@ -353,6 +353,22 @@ void StarView::removeNode( unsigned int hostid )
   }
 }
 
+void StarView::updateSchedulerState( bool online )
+{
+  QString txt;
+  if ( online ) {
+    txt = i18n("Scheduler");
+  } else {
+    txt = "";
+  }
+  m_schedulerItem->deleteSubItems();
+  delete m_schedulerItem;
+  m_schedulerItem = new HostItem( txt, m_canvas );
+  m_schedulerItem->show();
+  centerSchedulerItem();
+  m_canvas->update();
+}
+
 QWidget *StarView::widget()
 {
   return this;
@@ -361,18 +377,18 @@ QWidget *StarView::widget()
 void StarView::resizeEvent( QResizeEvent * )
 {
     m_canvas->resize( width(), height() );
-    centerLocalhostItem();
+    centerSchedulerItem();
     arrangeHostItems();
     drawNodeStatus();
     m_canvas->update();
 }
 
-void StarView::centerLocalhostItem()
+void StarView::centerSchedulerItem()
 {
-    const QRect br = m_localhostItem->boundingRect();
+    const QRect br = m_schedulerItem->boundingRect();
     const int newX = ( width() - br.width() ) / 2;
     const int newY = ( height() - br.height() ) / 2;
-    m_localhostItem->move( newX, newY );
+    m_schedulerItem->move( newX, newY );
 }
 
 void StarView::slotConfigChanged()
@@ -459,7 +475,7 @@ void StarView::drawState( HostItem *node )
     QCanvasItem *newItem = 0;
 
     const QPoint nodeCenter = node->boundingRect().center();
-    const QPoint localCenter = m_localhostItem->boundingRect().center();
+    const QPoint localCenter = m_schedulerItem->boundingRect().center();
 
     QColor color;
     unsigned int client = node->client();

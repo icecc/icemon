@@ -63,6 +63,8 @@ class HostItem : public QCanvasText
     HostItem( HostInfo *hostInfo, QCanvas *canvas );
     ~HostItem();
 
+    void init();
+
     void deleteSubItems();
 
     int rtti() const { return RttiHostItem; }
@@ -90,8 +92,6 @@ class HostItem : public QCanvasText
     void update( const Job &job );
 
   private:
-    void init();
-
     HostInfo *mHostInfo;
 
     bool mIsActiveClient;
@@ -128,6 +128,8 @@ class StarView : public QWidget, public StatusView
 
     void removeNode( unsigned int hostid );
 
+    void updateSchedulerState( bool online );
+
     void configureView();
 
   protected:
@@ -138,7 +140,7 @@ class StarView : public QWidget, public StatusView
 
   private:
     void createKnownHosts();
-    void centerLocalhostItem();
+    void centerSchedulerItem();
     HostItem *createHostItem( unsigned int hostid );
     void arrangeHostItems();
     void drawNodeStatus();
@@ -148,7 +150,7 @@ class StarView : public QWidget, public StatusView
 
     QCanvas *m_canvas;
     QCanvasView *m_canvasView;
-    QCanvasText *m_localhostItem;
+    HostItem *m_schedulerItem;
     QMap<unsigned int,HostItem*> m_hostItems;
     QMap<unsigned int,HostItem *> mJobMap;
 };
