@@ -2,7 +2,7 @@
 #define MON_KDE_H
 
 #include <kmainwindow.h>
-
+#include <time.h>
 #include <qdict.h>
 
 class KListView;
@@ -37,7 +37,17 @@ public:
     QString host() const { return m_host; }
     State state() const { return m_state; }
     QString stateAsString() const;
+    time_t stime() const { return m_stime; }
 
+    void setHost( const QString & host ) {
+        m_host = host;
+    }
+    void setStartTime( time_t t ) {
+        m_stime = t;
+    }
+    void setState( State s ) {
+        m_state = s;
+    }
 private:
     unsigned int m_id;
     QString m_fileName;
@@ -45,16 +55,13 @@ private:
     QString m_lang;
     QString m_env;
     State m_state;
+    time_t m_stime;
 };
 
-class JobList : public QValueList<Job>
+class JobList : public QMap<unsigned int, Job>
 {
 public:
     JobList() { }
-
-    // Tests for equivalence, not equality!
-    bool operator==( const JobList &rhs ) const;
-    bool operator!=( const JobList &rhs ) const { return !operator==( rhs ); }
 };
 
 class StatusView : public QWidget

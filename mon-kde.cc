@@ -45,19 +45,6 @@ private:
     QCanvasItem *m_stateItem;
 };
 
-bool JobList::operator==( const JobList &rhs ) const
-{
-    if ( count() != rhs.count() )
-        return false;
-
-    JobList::ConstIterator it = begin();
-    for ( ; it != end(); ++it )
-        if ( rhs.find( rhs.begin(), *it ) == rhs.end() )
-            return false;
-
-    return true;
-}
-
 QString Job::stateAsString() const
 {
     switch ( m_state ) {
@@ -353,23 +340,29 @@ void MainWindow::handle_getcs(Msg *_m)
     MonGetCSMsg *m = dynamic_cast<MonGetCSMsg*>( _m );
     if ( !m )
         return;
-    m_rememberedJobs.append( Job( m->job_id, m->filename.c_str(),
-                                  m->version.c_str(),
-                                  m->lang == CompileJob::Lang_C ? "C" : "C++" ) );
+    m_rememberedJobs[m->job_id] = Job( m->job_id, m->filename.c_str(),
+                                       m->version.c_str(),
+                                       m->lang == CompileJob::Lang_C ? "C" : "C++" );
     m_view->update( m_rememberedJobs );
 }
 
 void MainWindow::handle_job_begin(Msg *_m)
 {
-    MonJobBeginMsg *m = dynamic_cast<MonJobBeginMsg*>( m );
+    MonJobBeginMsg *m = dynamic_cast<MonJobBeginMsg*>( _m );
     if ( !m )
         return;
+    JobList::iterator it = m_rememberedJobs.find( m->job_id );
+    if ( it == m_rememberedJobs.end() ) // we started in between
+        return;
+    ( *it ).setHost( m->host.c_str() );
+    ( *it ).setStartTime( m->stime );
+    ( *it ).setState( Job::Compiling );
 }
 
-void MainWindow::handle_job_end(Msg *m)
+void MainWindow::handle_job_end(Msg *_m)
 {
-    MonJobEndMsg *msg = dynamic_cast<MonJobEndMsg*>( m );
-    if ( !msg )
+    MonJobEndMsg *m = dynamic_cast<MonJobEndMsg*>( _m );
+    if ( !m )
         return;
 }
 
