@@ -70,6 +70,8 @@ class HostView : public QWidget, public StatusView
 
     void removeNode( unsigned int hostid );
 
+    void updateSchedulerState( bool online );
+
     void configureView();
 
   protected:

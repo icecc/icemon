@@ -247,6 +247,17 @@ void HostView::removeNode( unsigned int hostid )
   if ( hostid != mHostId ) return;
 }
 
+void HostView::updateSchedulerState( bool online )
+{
+  if ( online ) {
+    mOwnLed->show();
+    mOthersLed->show();
+  } else {
+    mOwnLed->hide();
+    mOthersLed->hide();
+  }
+}
+
 QWidget *HostView::widget()
 {
   return this;
