@@ -315,15 +315,19 @@ GanttProgress *GanttStatusView::registerNode( const QString &name )
       nodeLayout = new QVBoxLayout( 0, ( name + "_layout" ).latin1() );
       m_topLayout->addLayout( nodeLayout, lastRow, 1 );
       mNodeLayouts.insert( name, nodeLayout );
+      mNodeRows.insert( name, lastRow );
     } else {
       nodeLayout = it.data();
     }
 
     GanttProgress *w = new GanttProgress( mHostColors, this );
     nodeLayout->addWidget( w );
-    w->show();
 
     mNodeMap[ name ].append( w );
+
+    m_topLayout->setRowStretch( mNodeRows[ name ], mNodeMap[ name ].size() );
+
+    w->show();
 
     return w;
 }

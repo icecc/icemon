@@ -90,8 +90,10 @@ private:
     typedef QMap<QString,SlotList> NodeMap;
     NodeMap mNodeMap;
     QMap<unsigned int, GanttProgress *> mJobMap;
-    typedef QMap<QString,QVBoxLayout *>  NodeLayoutMap;
+    typedef QMap<QString,QVBoxLayout *> NodeLayoutMap;
     NodeLayoutMap mNodeLayouts;
+    typedef QMap<QString,int> NodeRowMap;
+    NodeRowMap mNodeRows;
     QTimer *m_progressTimer;
 
     QMap<QString,QColor> mHostColors;
