@@ -79,7 +79,7 @@ MainWindow::MainWindow( QWidget *parent, const char *name )
                           actionCollection(), "view_gantt_view" );
     a->setExclusiveGroup( "viewmode" );
 
-    a = new KRadioAction( i18n( "&Summary View" ), 0,
+    a = new KRadioAction( i18n( "Summary &View" ), 0,
                           this, SLOT( setupSummaryView() ),
                           actionCollection(), "view_foo_view" );
     a->setExclusiveGroup( "viewmode" );
