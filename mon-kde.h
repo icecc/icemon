@@ -105,7 +105,7 @@ public:
     virtual ~StatusView() {}
     virtual void update( const Job &job ) = 0;
     virtual QWidget *widget() = 0;
-    virtual void checkForNewNode( const QString &host );
+    virtual void checkNode( const QString &host, unsigned int max_kids );
     virtual void stop() {}
     virtual void start() {}
 };

@@ -73,7 +73,7 @@ QString Job::stateAsString() const
     return QString::null;
 }
 
-void StatusView::checkForNewNode( const QString & )
+void StatusView::checkNode( const QString &, unsigned int )
 {
 }
 
@@ -498,7 +498,7 @@ void MainWindow::handle_stats( Msg *_m )
          << endl;
 #endif
 
-  m_view->checkForNewNode( m->host.c_str() );
+  m_view->checkNode( m->host.c_str(), m->max_kids );
 }
 
 void MainWindow::handle_job_begin(Msg *_m)

@@ -107,7 +107,7 @@ void GanttProgress::update( const Job &job )
     } else {
 //        kdDebug() << " New Job" << endl;
         m_jobs.prepend( qMakePair( job, mClock ) );
-        mIsFree = false;
+        mIsFree = ( job.state() == Job::Idle );
     }
 
 //    kdDebug() << "num jobs: " << m_jobs.count() << " jobs" << endl;
@@ -283,13 +283,30 @@ QWidget * GanttStatusView::widget()
     return this;
 }
 
-void GanttStatusView::checkForNewNode( const QString &host )
+void GanttStatusView::checkNode( const QString &host, unsigned int max_kids )
 {
     if ( !mRunning ) return;
 
-    if ( mNodeMap.find( host ) != mNodeMap.end() ) return;
+    if ( mNodeMap.find( host ) == mNodeMap.end())
+        registerNode( host )->update( IdleJob());
+    for( unsigned int i = mNodeMap[ host ].count();
+         i < max_kids;
+         ++i )
+        registerNode( host )->update( IdleJob());
 
-    registerNode( host );
+    SlotList slotList = mNodeMap[ host ]; // make a copy
+    int to_remove = slotList.count() - max_kids;
+    if( to_remove <= 0 )
+        return;
+    for( SlotList::Iterator it2 = slotList.fromLast();
+         it2 != slotList.end();
+         --it2 ) {
+        if( (*it2)->isFree() && (*it2)->fullyIdle()) {
+            removeSlot( host, *it2 );
+            if( --to_remove == 0 )
+                return;
+        }
+    }
 }
 
 GanttProgress *GanttStatusView::registerNode( const QString &name )
@@ -330,6 +347,18 @@ GanttProgress *GanttStatusView::registerNode( const QString &name )
     w->show();
 
     return w;
+}
+
+void GanttStatusView::removeSlot( const QString& name, GanttProgress* slot )
+{
+    kdDebug() << "GanttStatusView::removeSlot(): " << name << endl;
+    NodeLayoutMap::ConstIterator it = mNodeLayouts.find( name );
+    if ( it == mNodeLayouts.end() )
+        return;
+
+    mNodeMap[ name ].remove( slot );
+    m_topLayout->setRowStretch( mNodeRows[ name ], mNodeMap[ name ].size() );
+    delete slot;
 }
 
 void GanttStatusView::createHostColor( const QString &host )

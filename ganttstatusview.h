@@ -37,7 +37,8 @@ class GanttProgress : public QWidget
 
                 void setHostColors( QMap<QString,QColor> & );
 
-                bool isFree() { return mIsFree; }
+                bool isFree() const { return mIsFree; }
+                bool fullyIdle() const { return m_jobs.count() == 1 && isFree(); }
 
 	public slots:
 		void progress();
@@ -69,7 +70,7 @@ public:
     GanttStatusView( QWidget *parent, const char *name = 0 );
     virtual ~GanttStatusView() {}
 
-    void checkForNewNode( const QString &host );
+    void checkNode( const QString &host, unsigned int max_kids );
 
     void start();
     void stop();
@@ -83,6 +84,7 @@ private slots:
 
 private:
     GanttProgress *registerNode( const QString &name );
+    void removeSlot( const QString& name, GanttProgress* slot );
     void createHostColor( const QString &host );
 
     QGridLayout *m_topLayout;
