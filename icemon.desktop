@@ -1,7 +1,14 @@
 [Desktop Entry]
 Encoding=UTF-8
 GenericName=Icecream monitor
+GenericName[da]=Icecream overvåger
+GenericName[fr]=Surveillance d'Icecream
+GenericName[pt]=Monitor de Icecream
+GenericName[pt_BR]=Monitor de Icecream
+GenericName[sv]=Icecream-övervakare
+GenericName[xx]=xxIcecream monitorxx
 Name=Icemon
+Name[xx]=xxIcemonxx
 Comment=Icecream-monitor applet
 Comment[bg]=Аплет за монитор на Icecream
 Comment[da]=Icecream overvågnings-applet
@@ -12,8 +19,10 @@ Comment[nl]=Icecream-monitor-applet
 Comment[pt]='Applet' de monitorização do Icecream
 Comment[pt_BR]=Um mini-aplicativo de painel para o icecream
 Comment[sr]=Аплет Icecream монитора
+Comment[sr@Latn]=Aplet Icecream monitora
 Comment[sv]=Miniprogram för övervakning av Icecream
 Comment[ta]=செயலிக் கண்காணிச் செருகல்.
+Comment[tr]=ISDN-izleyici programcığı
 Comment[xx]=xxIcecream-monitor appletxx
 Exec=icemon
 DocPath=icemon/index.html
