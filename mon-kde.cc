@@ -321,8 +321,8 @@ void MainWindow::msgReceived()
     case M_MON_JOB_BEGIN:
         handle_job_begin( m );
         break;
-    case M_MON_JOB_END:
-        handle_job_end( m );
+    case M_MON_JOB_DONE:
+        handle_job_done( m );
         break;
     case M_END:
         cout << "END" << endl;
@@ -359,11 +359,15 @@ void MainWindow::handle_job_begin(Msg *_m)
     ( *it ).setState( Job::Compiling );
 }
 
-void MainWindow::handle_job_end(Msg *_m)
+void MainWindow::handle_job_done(Msg *_m)
 {
-    MonJobEndMsg *m = dynamic_cast<MonJobEndMsg*>( _m );
+    MonJobDoneMsg *m = dynamic_cast<MonJobDoneMsg*>( _m );
     if ( !m )
         return;
+    JobList::iterator it = m_rememberedJobs.find( m->job_id );
+    if ( it == m_rememberedJobs.end() ) // we started in between
+        return;
+    ( *it ).setState( Job::Finished );
 }
 
 void MainWindow::setupView( StatusView *view )

@@ -136,7 +136,7 @@ private:
     void checkScheduler(bool deleteit = false);
     void handle_getcs( Msg *m );
     void handle_job_begin( Msg *m );
-    void handle_job_end( Msg *m );
+    void handle_job_done( Msg *m );
 
     StatusView *m_view;
     JobList m_rememberedJobs;
