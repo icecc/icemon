@@ -9,6 +9,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kstdaction.h>
+#include <klocale.h>
 #include <kdebug.h>
 #include "summaryview.h"
 #include "ganttstatusview.h"
@@ -53,22 +54,22 @@ QString Job::stateAsString() const
 {
     switch ( m_state ) {
     case WaitingForCS:
-        return "Waiting";
+        return i18n( "Waiting" );
         break;
     case Compiling:
-        return "Compiling";
+        return i18n( "Compiling" );
         break;
     case Finished:
-        return "Finished";
+        return i18n( "Finished" );
         break;
     case Failed:
-        return "Failed";
+        return i18n( "Failed" );
         break;
     case Idle:
-        return "Idle";
+        return i18n( "Idle" );
         break;
     case LocalOnly:
-        return "LocalOnly";
+        return i18n( "LocalOnly" );
         break;
     }
     return QString::null;
