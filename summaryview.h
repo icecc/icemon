@@ -25,7 +25,7 @@ class SummaryView;
 class SummaryViewItem
 {
 public:
-    SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryView *parent, QGridLayout *layout);
+    SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryView *view, QGridLayout *layout);
     ~SummaryViewItem();
     void update(const Job &job);
 
