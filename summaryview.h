@@ -17,23 +17,29 @@
 
 class KSqueezedTextLabel;
 class QLabel;
+class QGridLayout;
 
-class SummaryViewItem : public QHBox
+class SummaryView;
+
+class SummaryViewItem
 {
-    Q_OBJECT
-
 public:
-    SummaryViewItem(const QString &name, QWidget *parent);
+    SummaryViewItem(const QString &name, SummaryView *parent, QGridLayout *layout);
     void update(const Job &job);
 
 private:
+    KSqueezedTextLabel *addLine(const QString &caption, QWidget *parent, QGridLayout *grid,
+                                int flags = Qt::AlignBottom,
+                                const QString &status = QString::null);
+
     QFrame *m_stateWidget;
-    QLabel *m_stateLabel;
-    QLabel *m_jobsLabel;
+    KSqueezedTextLabel *m_stateLabel;
+    KSqueezedTextLabel *m_jobsLabel;
     KSqueezedTextLabel *m_fileLabel;
-    QLabel *m_sourceLabel;
+    KSqueezedTextLabel *m_sourceLabel;
 
     int m_jobCount;
+    SummaryView *m_parent;
 };
 
 class SummaryView : public QWidget, public StatusView
@@ -52,6 +58,7 @@ public:
 
 private:
     QMap<unsigned int, SummaryViewItem *> m_items;
+    QGridLayout *m_layout;
 };
 
 #endif

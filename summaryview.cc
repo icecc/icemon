@@ -23,69 +23,51 @@
 // SummaryViewItem implementation
 ////////////////////////////////////////////////////////////////////////////////
 
-SummaryViewItem::SummaryViewItem(const QString &name, QWidget *parent) :
-    QHBox(parent, name.latin1()),
-    m_jobCount(0)
+SummaryViewItem::SummaryViewItem(const QString &name, SummaryView *parent, QGridLayout *layout) :
+    m_jobCount(0),
+    m_parent(parent)
 {
-    setSpacing(10);
+    int row = layout->numRows();
 
-    QVBox *labelBox = new QVBox(this);
-    labelBox->setFrameStyle(Box | Plain);
+    QVBox *labelBox = new QVBox(parent);
+    labelBox->setFrameStyle(QFrame::Box | QFrame::Plain);
     labelBox->setLineWidth(3);
     labelBox->setMargin(5);
+    layout->addWidget(labelBox, row, 0);
+    labelBox->show();
 
     QLabel *l;
 
     l = new QLabel(labelBox);
     l->setPixmap(UserIcon("icemonnode"));
+    l->show();
 
     l = new QLabel(name, labelBox);
-    l->setAlignment(AlignCenter);
+    l->setAlignment(Qt::AlignCenter);
+    l->show();
 
     m_stateWidget = new QFrame(labelBox);
-    m_stateWidget->setFrameStyle(Box | Plain);
+    m_stateWidget->setFrameStyle(QFrame::Box | QFrame::Plain);
     m_stateWidget->setLineWidth(2);
     m_stateWidget->setFixedHeight(20);
     m_stateWidget->setPaletteBackgroundColor(QColor("black"));
+    m_stateWidget->show();
 
-    QFrame *detailsBox = new QFrame(this);
-    detailsBox->setFrameStyle(Box | Plain);
+    QFrame *detailsBox = new QFrame(parent);
+    detailsBox->setFrameStyle(QFrame::Box | QFrame::Plain);
     detailsBox->setLineWidth(3);
     detailsBox->setMargin(5);
-
-    setStretchFactor(detailsBox, 1);
+    layout->addWidget(detailsBox, row, 1);
+    detailsBox->show();
 
     QGridLayout *grid = new QGridLayout(detailsBox);
     grid->setMargin(10);
     grid->setSpacing(5);
 
-    l = new QLabel(i18n("Jobs:"), detailsBox);
-    l->setAlignment(AlignRight | AlignBottom);
-    grid->addWidget(l, 0, 0);
-    m_jobsLabel = new QLabel("0", detailsBox);
-    m_jobsLabel->setAlignment(AlignAuto | AlignBottom);
-    grid->addWidget(m_jobsLabel, 0, 1);
-
-    l = new QLabel(i18n("State:"), detailsBox);
-    l->setAlignment(AlignRight | AlignTop);
-    grid->addWidget(l, 1, 0);
-    m_stateLabel = new QLabel(detailsBox);
-    m_stateLabel->setAlignment(AlignAuto | AlignTop);
-    grid->addWidget(m_stateLabel, 1, 1);
-
-    l = new QLabel(i18n("File:"), detailsBox);
-    l->setAlignment(AlignRight | AlignTop);
-    grid->addWidget(l, 2, 0);
-    m_fileLabel = new KSqueezedTextLabel(detailsBox);
-    m_fileLabel->setAlignment(AlignAuto | AlignTop);
-    grid->addWidget(m_fileLabel, 2, 1);
-
-    l = new QLabel(i18n("Source:"), detailsBox);
-    l->setAlignment(AlignRight | AlignTop);
-    grid->addWidget(l, 3, 0);
-    m_sourceLabel = new QLabel(detailsBox);
-    m_sourceLabel->setAlignment(AlignAuto | AlignTop);
-    grid->addWidget(m_sourceLabel, 3, 1);
+    m_jobsLabel   = addLine(i18n("Jobs:"), detailsBox, grid, Qt::AlignBottom, "0");
+    m_stateLabel  = addLine(i18n("State:"), detailsBox, grid);
+    m_fileLabel   = addLine(i18n("File:"), detailsBox, grid);
+    m_sourceLabel = addLine(i18n("Source:"), detailsBox, grid);
 
     grid->setColStretch(grid->numCols() - 1, 1);
     grid->setRowStretch(0, 1);
@@ -100,7 +82,7 @@ void SummaryViewItem::update(const Job &job)
         m_stateWidget->setPaletteBackgroundColor(QColor("green"));
         m_jobsLabel->setText(QString::number(m_jobCount));
         m_fileLabel->setText(job.fileName());
-        m_sourceLabel->setText( static_cast<SummaryView*>( parent() )->nameForHost( job.client() ));
+        m_sourceLabel->setText(m_parent->nameForHost(job.client()));
         break;
     case Job::Failed:
         m_stateWidget->setPaletteBackgroundColor(QColor("red"));
@@ -117,6 +99,23 @@ void SummaryViewItem::update(const Job &job)
     m_stateLabel->setText(job.stateAsString());
 }
 
+KSqueezedTextLabel *SummaryViewItem::addLine(const QString &caption, QWidget *parent,
+                                             QGridLayout *grid, int flags,
+                                             const QString &status)
+{
+    QLabel *label = new QLabel(caption, parent);
+    label->setAlignment(Qt::AlignRight | flags);
+    const int row = grid->numRows();
+    grid->addWidget(label, row, 0);
+    KSqueezedTextLabel *statusLabel = new KSqueezedTextLabel(status, parent);
+    statusLabel->setAlignment(Qt::AlignAuto | flags);
+    grid->addWidget(statusLabel, row, 1);
+    label->show();
+    statusLabel->show();
+
+    return statusLabel;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // SummaryView implementation
 ////////////////////////////////////////////////////////////////////////////////
@@ -124,10 +123,10 @@ void SummaryViewItem::update(const Job &job)
 SummaryView::SummaryView(HostInfoManager *m, QWidget *parent, const char *name)
   : QWidget(parent, name), StatusView(m)
 {
-    QVBoxLayout *l = new QVBoxLayout(this);
-    l->setAutoAdd(true);
-    l->setMargin(10);
-    l->setSpacing(10);
+    m_layout = new QGridLayout(this);
+    m_layout->setColStretch(1, 1);
+    m_layout->setSpacing(5);
+    m_layout->setMargin(5);
 }
 
 SummaryView::~SummaryView()
@@ -147,8 +146,7 @@ void SummaryView::update(const Job &job)
 
     SummaryViewItem *i = m_items[job.server()];
     if(!i) {
-        i = new SummaryViewItem(nameForHost( job.server() ), this);
-        i->show();
+        i = new SummaryViewItem(nameForHost(job.server()), this, m_layout);
         m_items.insert(job.server(), i);
     }
     i->update(job);
@@ -157,8 +155,7 @@ void SummaryView::update(const Job &job)
 void SummaryView::checkNode(unsigned int hostid)
 {
     if(!m_items[hostid]) {
-        SummaryViewItem *i = new SummaryViewItem( nameForHost( hostid ), this);
-        i->show();
+        SummaryViewItem *i = new SummaryViewItem(nameForHost(hostid), this, m_layout);
         m_items.insert(hostid, i);
     }
 }
