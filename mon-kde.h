@@ -16,7 +16,7 @@ class NodeItem;
 class Job
 {
 public:
-    enum State { WaitingForCS, Compiling, Finished };
+    enum State { WaitingForCS, Compiling, Finished, Failed };
     Job(unsigned int id = 0,
         const QString &client = QString::null,
         const QString &filename = QString::null,

@@ -9,6 +9,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kstdaction.h>
+#include <kdebug.h>
 
 #include <qcanvas.h>
 #include <qlayout.h>
@@ -57,6 +58,9 @@ QString Job::stateAsString() const
         break;
     case Finished:
         return "Finished";
+        break;
+    case Failed:
+        return "Failed";
         break;
     }
     return QString::null;
@@ -408,6 +412,7 @@ void MainWindow::handle_job_begin(Msg *_m)
     MonJobBeginMsg *m = dynamic_cast<MonJobBeginMsg*>( _m );
     if ( !m )
         return;
+    kdDebug() << "handle JobDone " << m->job_id << endl;
     JobList::iterator it = m_rememberedJobs.find( m->job_id );
     if ( it == m_rememberedJobs.end() ) // we started in between
         return;
@@ -422,25 +427,30 @@ void MainWindow::handle_job_done(Msg *_m)
     MonJobDoneMsg *m = dynamic_cast<MonJobDoneMsg*>( _m );
     if ( !m )
         return;
+    kdDebug() << "handle JobDone " << m->job_id << endl;
     JobList::iterator it = m_rememberedJobs.find( m->job_id );
     if ( it == m_rememberedJobs.end() ) // we started in between
         return;
-    ( *it ).setState( Job::Finished );
+
     ( *it ).exitcode = m->exitcode;
+    if ( m->exitcode )
+        ( *it ).setState( Job::Failed );
+    else {
+        ( *it ).setState( Job::Finished );
+        ( *it ).real_msec = m->real_msec;
+        ( *it ).user_msec = m->user_msec;
+        ( *it ).sys_msec = m->sys_msec;   /* system time used */
+        ( *it ).maxrss = m->maxrss;     /* maximum resident set size (KB) */
+        ( *it ).idrss = m->idrss;      /* integral unshared data size (KB) */
+        ( *it ).majflt = m->majflt;     /* page faults */
+        ( *it ).nswap = m->nswap;      /* swaps */
 
-    ( *it ).real_msec = m->real_msec;
-    ( *it ).user_msec = m->user_msec;
-    ( *it ).sys_msec = m->sys_msec;   /* system time used */
-    ( *it ).maxrss = m->maxrss;     /* maximum resident set size (KB) */
-    ( *it ).idrss = m->idrss;      /* integral unshared data size (KB) */
-    ( *it ).majflt = m->majflt;     /* page faults */
-    ( *it ).nswap = m->nswap;      /* swaps */
-
-    ( *it ).in_compressed = m->in_compressed;
-    ( *it ).in_uncompressed = m->in_uncompressed;
-    ( *it ).out_compressed = m->out_compressed;
-    ( *it ).out_uncompressed = m->out_uncompressed;
-     m_view->update( *it );
+        ( *it ).in_compressed = m->in_compressed;
+        ( *it ).in_uncompressed = m->in_uncompressed;
+        ( *it ).out_compressed = m->out_compressed;
+        ( *it ).out_uncompressed = m->out_uncompressed;
+    }
+    m_view->update( *it );
 }
 
 void MainWindow::setupView( StatusView *view )
