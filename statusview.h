@@ -25,6 +25,7 @@
 #include <qstring.h>
 #include <qwidget.h>
 #include <qmap.h>
+#include <time.h>
 
 class Job
 {
