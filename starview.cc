@@ -75,6 +75,9 @@ class HostItem : public QCanvasText
     void setStateItem( QCanvasItem *item ) { m_stateItem = item; }
     QCanvasItem *stateItem() { return m_stateItem; }
 
+    void setClient( const QString &client ) { m_client = client; }
+    QString client() const { return m_client; }
+
     QString hostName() const { return m_hostName; }
 
     void moveBy( double dx, double dy )
@@ -90,6 +93,7 @@ class HostItem : public QCanvasText
     void update( const Job &job )
     {
       setState( job.state() );
+      setClient( job.client() );
 
       if ( job.state() == Job::WaitingForCS ) return;
     
@@ -113,6 +117,7 @@ class HostItem : public QCanvasText
     Job::State m_state;
     QString m_hostName;
     QCanvasItem *m_stateItem;
+    QString m_client;
 
     int mBaseWidth;
     int mBaseHeight;
@@ -264,7 +269,11 @@ void StarView::drawState( HostItem *node )
     switch ( node->state() ) {
         case Job::Compiling: {
             QCanvasLine *line = new QCanvasLine( m_canvas );
-            line->setPen( Qt::green );
+            QColor color;
+            QString client = node->client();
+            if ( client.isEmpty() ) color = Qt::green;
+            else color = hostColor( client );
+            line->setPen( color );
 
             line->setPoints( nodeCenter.x(), nodeCenter.y(),
                              localCenter.x(), localCenter.y() );
