@@ -579,6 +579,9 @@ HostItem *StarView::createHostItem( unsigned int hostid )
 {
   HostInfo *i = hostInfoManager()->find( hostid );
 
+  if ( !i || i->isOffline() || i->name().isEmpty() )
+    return 0;
+
 //  kdDebug() << "New node for " << hostid << " (" << i->name() << ")" << endl;
 
   //assert( !i->name().isEmpty() );
