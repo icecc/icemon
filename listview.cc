@@ -308,7 +308,8 @@ void ListStatusView::expireItem( ListStatusViewItem* item )
     {
         mFinishedJobs.push_back( FinishedJob( QTime::currentTime(), item ) );
 
-        mExpireTimer->start( 1000 );
+        if ( !mExpireTimer->isActive() )
+            mExpireTimer->start( 1000 );
     }
 }
 
