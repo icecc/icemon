@@ -1,4 +1,5 @@
 #include "mon-kde.h"
+#include "logging.h"
 
 #include <qsocketnotifier.h>
 #include <kaboutdata.h>
@@ -638,6 +639,7 @@ static const KCmdLineOptions options[] =
 
 int main( int argc, char **argv )
 {
+ 	setup_debug(Warning|Error,"");
 	KAboutData aboutData( rs_program_name, appName, version, description,
 	                      KAboutData::License_BSD, copyright, bugsEmail );
 	KCmdLineArgs::init( argc, argv, &aboutData );
