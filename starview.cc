@@ -533,7 +533,7 @@ HostItem *StarView::createHostItem( unsigned int hostid )
 
 //  kdDebug() << "New node for " << hostid << " (" << i->name() << ")" << endl;
 
-  assert( !i->name().isEmpty() );
+  //assert( !i->name().isEmpty() );
 
   HostItem *hostItem = new HostItem( i, m_canvas );
   hostItem->setHostColor( hostColor( hostid ) );
