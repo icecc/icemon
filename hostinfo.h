@@ -72,13 +72,13 @@ class HostInfoManager
     HostInfoManager();
     ~HostInfoManager();
 
-    HostInfo *find( unsigned int hostid );
+    HostInfo *find( unsigned int hostid ) const;
 
     void checkNode( unsigned int hostid, const HostInfo::StatsMap &statmsg );
 
-    QString nameForHost( unsigned int id );
-    QColor hostColor( unsigned int id );
-    unsigned int maxJobs( unsigned int id );
+    QString nameForHost( unsigned int id ) const;
+    QColor hostColor( unsigned int id ) const;
+    unsigned int maxJobs( unsigned int id ) const;
 
   private:
     typedef QMap<unsigned int,HostInfo *> HostMap;

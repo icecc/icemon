@@ -168,7 +168,7 @@ HostInfoManager::~HostInfoManager()
   }
 }
 
-HostInfo *HostInfoManager::find( unsigned int hostid )
+HostInfo *HostInfoManager::find( unsigned int hostid ) const
 {
   HostMap::ConstIterator it = mHostMap.find( hostid );
   if ( it == mHostMap.end() ) return 0;
@@ -190,7 +190,7 @@ void HostInfoManager::checkNode( unsigned int hostid,
   hostInfo->updateFromStatsMap( stats );
 }
 
-QString HostInfoManager::nameForHost( unsigned int id )
+QString HostInfoManager::nameForHost( unsigned int id ) const
 {
   if ( !id ) {
     kdError() << "Unknown host" << endl;
@@ -202,7 +202,7 @@ QString HostInfoManager::nameForHost( unsigned int id )
   return i18n("<unknown>");
 }
 
-QColor HostInfoManager::hostColor( unsigned int id )
+QColor HostInfoManager::hostColor( unsigned int id ) const
 {
   if ( id ) {
     HostInfo *hostInfo = find( id );
@@ -212,7 +212,7 @@ QColor HostInfoManager::hostColor( unsigned int id )
   return QColor( 0, 0, 0 );
 }
 
-unsigned int HostInfoManager::maxJobs( unsigned int id )
+unsigned int HostInfoManager::maxJobs( unsigned int id ) const
 {
   if ( id ) {
     HostInfo *hostInfo = find( id );
