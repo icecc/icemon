@@ -56,17 +56,22 @@ class HostItem : public QCanvasText
       m_jobHalo->move( r.width() / 2, r.height() / 2 );
       m_jobHalo->show();
     
-      setColor( QColor( 200, 200, 200 ) );
+      setHostColor( QColor( 200, 200, 200 ) );
     }
 
     ~HostItem()
     {
     }
 
-    void setColor( const QColor &color )
+    void setHostColor( const QColor &color )
     {
       m_boxItem->setBrush( color );
       m_jobHalo->setBrush( color.light() );
+    
+      float luminance = ( color.red() * 0.299 ) + ( color.green() * 0.587 ) +
+                        ( color.blue() * 0.114 );
+      if ( luminance > 140.0 ) setColor( black );
+      else setColor( white );
     }
 
     void setState( Job::State state ) { m_state = state; }
@@ -152,9 +157,11 @@ StarView::StarView( QWidget *parent, const char *name )
 
 void StarView::update( const Job &job )
 {
+#if 0
   kdDebug() << "StarView::update() " << job.jobId()
             << " server: " << job.server() << " client: " << job.client()
             << " state: " << job.stateAsString() << endl;
+#endif
 
   if ( job.state() == Job::WaitingForCS ) {
     drawNodeStatus();
@@ -239,7 +246,7 @@ HostItem *StarView::createHostItem( const QString &host )
   kdDebug() << "New node for '" << host << "'" << endl;
 
   HostItem *hostItem = new HostItem( nameForIp( host ), m_canvas );
-  hostItem->setColor( hostColor( host ) );
+  hostItem->setHostColor( hostColor( host ) );
   m_hostItems.insert( host, hostItem );
   hostItem->show();
 
