@@ -1,6 +1,7 @@
 <?xml version="1.0" ?>
 <!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
  "dtd/kdex.dtd" [
+  <!ENTITY icecream "Icecream">
   <!ENTITY icemon "Icemon">
   <!ENTITY kappname "&icemon;">
   <!ENTITY package "icecream">
@@ -33,12 +34,12 @@
 <date>2004-08-25</date>
 <releaseinfo>0.1</releaseinfo>
 
-<abstract><para>&icemon; is the monitor for Icecream, which is a distributed
-compile system. Icemon visualizes the distributed compile jobs and shows
+<abstract><para>&icemon; is the monitor for &icecream;, which is a distributed
+compile system. &icemon; visualizes the distributed compile jobs and shows
 statistics and overview information.</para></abstract>
 
 <keywordset>
-<keyword>Icecream</keyword>
+<keyword>&icecream;</keyword>
 </keywordset>
 
 </bookinfo>
@@ -47,7 +48,7 @@ statistics and overview information.</para></abstract>
 <chapter id="introduction">
 <title>Introduction</title>
 
-<para>Icecream is a distributed compile system. It allows parallel compiling by
+<para>&icecream; is a distributed compile system. It allows parallel compiling by
 distributing the compile jobs to several nodes of a compile net running the
 icecream daemon. The icecream scheduler routes the jobs and provides status and
 statistics information to the icemon monitor.</para>
@@ -57,7 +58,7 @@ number of processeors and the settings of the daemon. Link jobs and other jobs
 which cannot be distributed are executed locally on the node where the
 compilation is started.</para>
 
-<para>Icemon provides a view on the compile net, which jobs run where and
+<para>&icemon; provides a view on the compile net, which jobs run where and
 details about jobs and nodes.</para>
 
 </chapter>
@@ -65,7 +66,7 @@ details about jobs and nodes.</para>
 <chapter id="views">
 <title>Views</title>
 
-<para>Icemon provides a variety of views on the icecream net. Which view is
+<para>&icemon; provides a variety of views on the icecream net. Which view is
 shown can be selected in the "View" menu. If the view can be configured a
 configuration dialog can be opened by chosing the "Configure" item from the
 "Settings" menu.</para>
@@ -178,9 +179,9 @@ and some statistics about the job.</para>
 </chapter>
 
 <chapter id="kickerapplet">
-<title>Icemon Kicker Applet</title>
+<title>&icemon; Kicker Applet</title>
 
-<para>Icemon also provides a Kicker applet which shows the state of the node the
+<para>&icemon; also provides a Kicker applet which shows the state of the node the
 applet runs on. It shows the color and name of the node and two LEDs indicating
 the status of the jobs running on the node. The left LED is dark when the node
 hasn't any job, orange when it is running a local job and red if it is running
@@ -195,9 +196,9 @@ is one or more job running on this node.</para>
 
 <para>&icemon;</para>
 
-<para>Program copyright 2004, The Icecream Developers</para>
+<para>Program copyright 2004, The &icecream; Developers</para>
 
-<para>Icecream Authors:</para>
+<para>&icecream; Authors:</para>
 
 <itemizedlist>
 <listitem><para>Michael Matz <email>matz@suse.de</email></para>
@@ -213,7 +214,7 @@ is one or more job running on this node.</para>
 <itemizedlist>
 <listitem><para>The distcc developers</para>
 </listitem>
-<listitem><para>Frerich Raabe <email>raabe@suse.de</email></para>
+<listitem><para>Frerich Raabe <email>raabe@kde.org</email></para>
 </listitem>
 </itemizedlist>
 
@@ -230,7 +231,7 @@ is one or more job running on this node.</para>
 <!-- TRANS:CREDIT_FOR_TRANSLATORS -->
 
 <para>See the <ulink
-url="http://wiki.kde.org/tiki-index.php?page=icecream">Icecream
+url="http://wiki.kde.org/tiki-index.php?page=icecream">&icecream;
 homepage</ulink> for more details.</para>
 
 
