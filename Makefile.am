@@ -3,7 +3,7 @@ INCLUDES = -I$(KDEDIR)/include -I$(QTDIR)/include -I$(srcdir)/../services
 
 bin_PROGRAMS = icemon
 icemon_SOURCES = mon-kde.cc ganttstatusview.cc summaryview.cc listview.cc \
-                 statusview.cc
+                 statusview.cc starview.cc
 icemon_LDADD = ../services/libcommon.la -lkdeui
 icemon_LDFLAGS = -L$(KDEDIR)/lib -L$(QTDIR)/lib
 
@@ -11,6 +11,7 @@ mon-kde.o: mon-kde.moc
 summaryview.o: summaryview.moc
 ganttstatusview.o: ganttstatusview.moc
 listview.o: listview.moc
+starview.o: starview.moc
 
 mon-kde.moc: $(srcdir)/mon-kde.h
 	$(QTDIR)/bin/moc -o mon-kde.moc $<
@@ -20,6 +21,9 @@ summaryview.moc: $(srcdir)/summaryview.h
 
 listview.moc: $(srcdir)/listview.h
 	$(QTDIR)/bin/moc -o listview.moc $<
+
+starview.moc: $(srcdir)/starview.h
+	$(QTDIR)/bin/moc -o starview.moc $<
 
 ganttstatusview.moc: $(srcdir)/ganttstatusview.h
 	$(QTDIR)/bin/moc -o ganttstatusview.moc $<

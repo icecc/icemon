@@ -20,12 +20,14 @@
 #include "starview.h"
 #include "logging.h"
 
+#include <klocale.h>
+
 #include <qcanvas.h>
 #include <qlayout.h>
 #include <qtimer.h>
 #include <qvaluelist.h>
-#include <math.h>
 
+#include <math.h>
 #include <iostream>
 #include <comm.h>
 #include <cassert>
@@ -57,7 +59,7 @@ private:
 };
 
 StarView::StarView( QWidget *parent, const char *name )
-  : StatusView( parent, name, WRepaintNoErase | WResizeNoErase )
+  : QWidget( parent, name, WRepaintNoErase | WResizeNoErase )
 {
     m_canvas = new QCanvas( this );
     m_canvas->resize( width(), height() );
@@ -75,6 +77,18 @@ StarView::StarView( QWidget *parent, const char *name )
     m_localhostItem->show();
 
     m_canvas->update();
+}
+
+void StarView::update( const Job &job )
+{
+  JobList jobs;
+  jobs.insert( job.jobId(), job );
+  update( jobs );
+}
+
+QWidget *StarView::widget()
+{
+  return this;
 }
 
 void StarView::update( const JobList &jobs )
@@ -121,9 +135,10 @@ void StarView::checkForNewNodes( const JobList &jobs )
 
     JobList::ConstIterator it = jobs.begin();
     for ( ; it != jobs.end(); ++it ) {
-        if ( m_nodeItems.find( ( *it ).host() ) == 0 ) {
-            NodeItem *nodeItem = new NodeItem( ( *it ).host(), m_canvas );
-            m_nodeItems.insert( ( *it ).host(), nodeItem );
+        QString server = (*it).server();
+        if ( m_nodeItems.find( server ) == 0 ) {
+            NodeItem *nodeItem = new NodeItem( server, m_canvas );
+            m_nodeItems.insert( server, nodeItem );
             nodeItem->show();
             newNode = true;
         }
@@ -140,9 +155,9 @@ void StarView::updateNodeStatus( const JobList &jobs )
     QDictIterator<NodeItem> it( m_nodeItems );
     while ( it.current() != 0 ) {
         JobList::ConstIterator jobIt = jobs.begin();
-        it.current()->setState( Job::Unknown );
+        it.current()->setState( Job::Idle );
         for ( ; jobIt != jobs.end(); ++jobIt ) {
-            if ( it.current()->hostName() == ( *jobIt ).host() )
+            if ( it.current()->hostName() == ( *jobIt ).server() )
                 it.current()->setState( ( *jobIt ).state() );
         }
         ++it;
@@ -166,7 +181,7 @@ void StarView::drawState( NodeItem *node )
     const QPoint localCenter = m_localhostItem->boundingRect().center();
 
     switch ( node->state() ) {
-        case Job::Compile: {
+        case Job::Compiling: {
             QCanvasLine *line = new QCanvasLine( m_canvas );
             line->setPen( Qt::green );
 
@@ -176,7 +191,7 @@ void StarView::drawState( NodeItem *node )
             newItem = line;
             break;
         }
-        case Job::CPP: {
+        case Job::WaitingForCS: {
             QCanvasLine *line = new QCanvasLine( m_canvas );
             line->setPen( QPen( Qt::darkGreen, 0, QPen::DashLine ) );
 
@@ -186,6 +201,7 @@ void StarView::drawState( NodeItem *node )
             newItem = line;
             break;
         }
+#if 0
         case Job::Send: {
             QPointArray points( 3 );
             points.setPoint( 0, localCenter.x() - 5, localCenter.y() );
@@ -214,6 +230,7 @@ void StarView::drawState( NodeItem *node )
             newItem = poly;
             break;
         }
+#endif
     }
 
     node->setStateItem( newItem );

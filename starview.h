@@ -28,12 +28,16 @@
 class QCanvas;
 class QCanvasText;
 class QCanvasView;
+class NodeItem;
 
-class StarStatusView : public StatusView
+class StarView : public QWidget, public StatusView
 {
     Q_OBJECT
   public:
-    StarStatusView( QWidget *parent, const char *name = 0 );
+    StarView( QWidget *parent, const char *name = 0 );
+
+    void update( const Job &job );
+    QWidget *widget();
 
     QString id() const { return "star"; }
 

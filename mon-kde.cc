@@ -25,6 +25,7 @@
 #include "summaryview.h"
 #include "ganttstatusview.h"
 #include "listview.h"
+#include "starview.h"
 
 #include <kaboutdata.h>
 #include <kaction.h>
@@ -105,6 +106,7 @@ void MainWindow::readSettings()
   QString viewId = cfg->readEntry( "CurrentView" );
   if ( viewId == "gantt" ) setupGanttView();
   else if ( viewId == "list" ) setupListView();
+  else if ( viewId == "star" ) setupStarView();
   else setupSummaryView();
 }
 
@@ -344,7 +346,7 @@ void MainWindow::setupGanttView()
 
 void MainWindow::setupStarView()
 {
-//	setupView( new StarStatusView( this ), false );
+    setupView( new StarView( this ), false );
 }
 
 void MainWindow::stopView()

@@ -369,7 +369,7 @@ void GanttStatusView::checkNode( const QString &host, unsigned int max_kids )
 
 GanttProgress *GanttStatusView::registerNode( const QString &ip )
 {
-    kdDebug() << "GanttStatusView::registerNode(): " << ip << endl;
+//    kdDebug() << "GanttStatusView::registerNode(): " << ip << endl;
 
     static int lastRow = 0;
 
