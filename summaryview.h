@@ -14,6 +14,7 @@
 #include "mon-kde.h"
 
 #include <qscrollview.h>
+#include <qvaluevector.h>
 
 class KSqueezedTextLabel;
 class QLabel;
@@ -24,7 +25,7 @@ class SummaryView;
 class SummaryViewItem
 {
 public:
-    SummaryViewItem(const QString &name, QWidget *parent, SummaryView *parent, QGridLayout *layout);
+    SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryView *parent, QGridLayout *layout);
     void update(const Job &job);
 
 private:
@@ -32,14 +33,24 @@ private:
                                 int flags = Qt::AlignTop,
                                 const QString &status = QString::null);
 
+    struct JobHandler
+    {
+        JobHandler() : stateWidget(0), sourceLabel(0), stateLabel(0) {}
+
+        QFrame *stateWidget;
+        KSqueezedTextLabel *sourceLabel;
+        KSqueezedTextLabel *stateLabel;
+        QString currentFile;
+    };
+
     QFrame *m_stateWidget;
-    KSqueezedTextLabel *m_stateLabel;
     KSqueezedTextLabel *m_jobsLabel;
-    KSqueezedTextLabel *m_fileLabel;
     KSqueezedTextLabel *m_sourceLabel;
 
     int m_jobCount;
     SummaryView *m_view;
+
+    QValueVector<JobHandler> m_jobHandlers;
 };
 
 class SummaryView : public QScrollView, public StatusView
@@ -47,7 +58,7 @@ class SummaryView : public QScrollView, public StatusView
     Q_OBJECT
 
 public:
-    SummaryView(HostInfoManager *, QWidget *parent, const char *name = 0);
+    SummaryView(HostInfoManager *h, QWidget *parent, const char *name = 0);
     ~SummaryView();
 
     virtual QWidget *widget();

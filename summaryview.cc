@@ -9,6 +9,7 @@
  */
 
 #include "summaryview.h"
+#include "hostinfo.h"
 
 #include <kiconloader.h>
 #include <ksqueezedtextlabel.h>
@@ -23,7 +24,7 @@
 // SummaryViewItem implementation
 ////////////////////////////////////////////////////////////////////////////////
 
-SummaryViewItem::SummaryViewItem(const QString &name, QWidget *parent, SummaryView *view, QGridLayout *layout) :
+SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryView *view, QGridLayout *layout) :
     m_jobCount(0),
     m_view(view)
 {
@@ -33,25 +34,34 @@ SummaryViewItem::SummaryViewItem(const QString &name, QWidget *parent, SummaryVi
     labelBox->setFrameStyle(QFrame::Box | QFrame::Plain);
     labelBox->setLineWidth(3);
     labelBox->setMargin(5);
+    labelBox->layout()->setSpacing(3);
     layout->addWidget(labelBox, row, 0);
     labelBox->show();
+    labelBox->setMinimumWidth(75);
 
     QLabel *l;
 
     l = new QLabel(labelBox);
     l->setPixmap(UserIcon("icemonnode"));
-    l->show();
-
-    l = new QLabel(name, labelBox);
     l->setAlignment(Qt::AlignCenter);
     l->show();
 
-    m_stateWidget = new QFrame(labelBox);
-    m_stateWidget->setFrameStyle(QFrame::Box | QFrame::Plain);
-    m_stateWidget->setLineWidth(2);
-    m_stateWidget->setFixedHeight(20);
-    m_stateWidget->setPaletteBackgroundColor(QColor("black"));
-    m_stateWidget->show();
+    l = new QLabel(view->nameForHost(hostid), labelBox);
+    l->setAlignment(Qt::AlignCenter);
+    l->show();
+
+    const int maxJobs = view->hostInfoManager()->maxJobs(hostid);
+
+    m_jobHandlers.resize(maxJobs);
+
+    for(int i = 0; i < maxJobs; i++) {
+        m_jobHandlers[i].stateWidget = new QFrame(labelBox);
+        m_jobHandlers[i].stateWidget->setFrameStyle(QFrame::Box | QFrame::Plain);
+        m_jobHandlers[i].stateWidget->setLineWidth(2);
+        m_jobHandlers[i].stateWidget->setFixedHeight(15);
+        m_jobHandlers[i].stateWidget->setPaletteBackgroundColor(QColor("black"));
+        m_jobHandlers[i].stateWidget->show();
+    }
 
     QFrame *detailsBox = new QFrame(parent);
     detailsBox->setFrameStyle(QFrame::Box | QFrame::Plain);
@@ -65,9 +75,11 @@ SummaryViewItem::SummaryViewItem(const QString &name, QWidget *parent, SummaryVi
     grid->setSpacing(5);
 
     m_jobsLabel   = addLine(i18n("Jobs:"), detailsBox, grid, Qt::AlignBottom, "0");
-    m_stateLabel  = addLine(i18n("State:"), detailsBox, grid);
-    m_fileLabel   = addLine(i18n("File:"), detailsBox, grid);
-    m_sourceLabel = addLine(i18n("Source:"), detailsBox, grid);
+
+    for(int i = 0; i < maxJobs; i++) {
+        m_jobHandlers[i].sourceLabel = addLine(i18n("Source:"), detailsBox, grid);
+        m_jobHandlers[i].stateLabel = addLine(i18n("State:"), detailsBox, grid);
+    }
 
     grid->setColStretch(grid->numCols() - 1, 1);
     grid->setRowStretch(0, 1);
@@ -78,25 +90,41 @@ void SummaryViewItem::update(const Job &job)
 {
     switch(job.state()) {
     case Job::Compiling:
+    {
         m_jobCount++;
-        m_stateWidget->setPaletteBackgroundColor(QColor("green"));
         m_jobsLabel->setText(QString::number(m_jobCount));
-        m_fileLabel->setText(job.fileName().section('/', -1));
-        m_sourceLabel->setText(m_view->nameForHost(job.client()));
-        break;
-    case Job::Failed:
-        m_stateWidget->setPaletteBackgroundColor(QColor("red"));
-        m_fileLabel->clear();
-        m_sourceLabel->clear();
-	break;
-    default:
-        m_stateWidget->setPaletteBackgroundColor(QColor("black"));
-        m_fileLabel->clear();
-        m_sourceLabel->clear();
+
+        QValueVector<JobHandler>::Iterator it = m_jobHandlers.begin();
+        while(it != m_jobHandlers.end() && !(*it).currentFile.isNull())
+            ++it;
+
+        if(it != m_jobHandlers.end()) {
+            (*it).stateWidget->setPaletteBackgroundColor(QColor("green"));
+            const QString fileName = job.fileName().section('/', -1);
+            const QString hostName = m_view->nameForHost(job.client());
+            (*it).sourceLabel->setText(QString("%1 (%2)").arg(fileName).arg(hostName));
+            (*it).stateLabel->setText(job.stateAsString());
+            (*it).currentFile = job.fileName();
+        }
         break;
     }
+    case Job::Finished:
+    {
+        QValueVector<JobHandler>::Iterator it = m_jobHandlers.begin();
+        while(it != m_jobHandlers.end() && (*it).currentFile != job.fileName())
+            ++it;
 
-    m_stateLabel->setText(job.stateAsString());
+        if(it != m_jobHandlers.end()) {
+            (*it).stateWidget->setPaletteBackgroundColor(QColor("black"));
+            (*it).sourceLabel->clear();
+            (*it).stateLabel->setText(job.stateAsString());
+            (*it).currentFile = QString::null;
+        }
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 KSqueezedTextLabel *SummaryViewItem::addLine(const QString &caption, QWidget *parent,
@@ -120,8 +148,8 @@ KSqueezedTextLabel *SummaryViewItem::addLine(const QString &caption, QWidget *pa
 // SummaryView implementation
 ////////////////////////////////////////////////////////////////////////////////
 
-SummaryView::SummaryView(HostInfoManager *m, QWidget *parent, const char *name)
-  : QScrollView(parent, name), StatusView(m)
+SummaryView::SummaryView(HostInfoManager *h, QWidget *parent, const char *name) :
+    QScrollView(parent, name), StatusView(h)
 {
     enableClipper(true);
     m_base = new QWidget(viewport());
@@ -153,7 +181,7 @@ void SummaryView::update(const Job &job)
 
     SummaryViewItem *i = m_items[job.server()];
     if(!i) {
-        i = new SummaryViewItem(nameForHost(job.server()), m_base, this, m_layout);
+        i = new SummaryViewItem(job.server(), m_base, this, m_layout);
         m_items.insert(job.server(), i);
     }
     i->update(job);
@@ -162,7 +190,7 @@ void SummaryView::update(const Job &job)
 void SummaryView::checkNode(unsigned int hostid)
 {
     if(!m_items[hostid]) {
-        SummaryViewItem *i = new SummaryViewItem(nameForHost(hostid), m_base, this, m_layout);
+        SummaryViewItem *i = new SummaryViewItem(hostid, m_base, this, m_layout);
         m_items.insert(hostid, i);
     }
 }
