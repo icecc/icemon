@@ -55,9 +55,11 @@ class GanttProgress : public QWidget
                 struct JobData
                 {
                     JobData( const Job& j, int c )
-                        : job( j ), clock( c ) {}
+                        : job( j ), clock( c ), next_text_width( 0 ) {}
                     Job job;
                     int clock;
+                    mutable int next_text_width;
+                    mutable QPixmap text_cache;
                     JobData() {}; // stupid QValueList
                     bool operator==( const JobData& d )
                         { return job == d.job && clock == d.clock; }

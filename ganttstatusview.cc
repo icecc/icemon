@@ -116,6 +116,8 @@ void GanttProgress::update( const Job &job )
 void GanttProgress::drawGraph( QPainter &p )
 {
 //    kdDebug() << "drawGraph() " << m_jobs.count() << " jobs" << endl;
+    if( height() == 0 )
+        return;
 
     bool lastBox = false;
     int xStart = 0;
@@ -129,6 +131,8 @@ void GanttProgress::drawGraph( QPainter &p )
         }
 
         int xWidth = xEnd - xStart;
+        if( xWidth == 0 )
+            continue;
 
 //        kdDebug() << "XStart: " << xStart << "  xWidth: " << xWidth << endl;
 
@@ -138,28 +142,50 @@ void GanttProgress::drawGraph( QPainter &p )
         p.setPen( color.dark() );
         p.drawRect( xStart, 0, xWidth, height() );
 
-        QString s = ( *it ).job.fileName();
-        if ( !s.isEmpty() ) {
-          s = s.mid( s.findRev( '/' ) + 1, s.length() );
-//          s = s.left( s.findRev( '.' ) );
-//          s[0] = s[0].upper();
+        if( xWidth > 4 && height() > 4 ) {
+            int width = xWidth - 4;
+            QString s = ( *it ).job.fileName();
+            if ( !s.isEmpty() ) {
+                s = s.mid( s.findRev( '/' ) + 1, s.length() );
+//              s = s.left( s.findRev( '.' ) );
+//              s[0] = s[0].upper();
+        // Optimization - cache the drawn text in a pixmap, and update the cache
+        // only if the pixmap height doesn't match, if the pixmap width is too large,
+        // or if the shortened text with another character added (next_text_width) would fit
+                if( width >= (*it).next_text_width || width < (*it).text_cache.width()
+                    || height() - 4 != (*it).text_cache.height()) {
+                    // If we print the filename, check whether we need to truncate it and
+                    // append "..." at the end.
+                    int text_width = p.fontMetrics().width( s );
+                    if( text_width > width ) {
+                        int threeDotsWidth = p.fontMetrics().width( "..." );
+                        int next_width = 0;
+                        int newLength = 0;
+                        for(;
+                             next_width <= width;
+                             ++newLength ) {
+                            text_width = next_width;
+                            next_width = p.fontMetrics().width( s.left( newLength ) ) +
+                                threeDotsWidth;
+                        }
+                        (*it).next_text_width = next_width;
+                        s  = s.left( newLength > 2 ? newLength - 2 : 0 ) + "...";
+                    } else {
+                        (*it).next_text_width = 1000000; // large number (no next width)
+                    }
+                    // Finally draw the text.
+                    if( text_width > 0 ) {
+                        (*it).text_cache.resize( text_width, height() - 4 );
+                        (*it).text_cache.fill( color );
+                        QPainter painter( &(*it).text_cache );
+                        painter.drawText( 0, 0, text_width, height() - 4,
+                                    Qt::AlignTop | Qt::AlignLeft, s );
+                    }
+                }
+                if( !(*it).text_cache.isNull())
+                    p.drawPixmap( xStart + 2, 2, (*it).text_cache );
+            }
         }
-
-        // If we print the filename, check whether we need to truncate it and
-        // append "..." at the end.
-        if ( p.fontMetrics().width( s ) >= xWidth - 3 ) {
-            int newLength = 0;
-            int threeDotsWidth = p.fontMetrics().width( "..." );
-            while ( p.fontMetrics().width( s.left( newLength ) ) +
-                    threeDotsWidth < xWidth - 3 )
-                ++newLength;
-            s  = s.left( newLength - 1 ) + "...";
-        }
-
-        // Finally draw the text.
-        p.drawText( xStart + 3, 3, xWidth - 3, height() - 3,
-                    Qt::AlignTop | Qt::AlignLeft, s );
-
         xStart = xEnd;
     }
 }
