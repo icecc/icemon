@@ -64,7 +64,7 @@ HostViewConfigDialog::HostViewConfigDialog( QWidget *parent )
   connect( button, SIGNAL( clicked() ), SLOT( slotOk() ) );
 }
 
-QString HostViewConfigDialog::myHostName()
+QString HostViewConfigDialog::myHostName() const
 {
   struct utsname uname_buf;
   if ( uname( &uname_buf ) == 0 ) {
@@ -80,7 +80,7 @@ void HostViewConfigDialog::slotOk()
   emit configChanged();
 }
 
-QString HostViewConfigDialog::hostName()
+QString HostViewConfigDialog::hostName() const
 {
   return mHostNameEdit->text();
 }

@@ -39,12 +39,12 @@ class HostViewConfigDialog : public QDialog
   public:
     HostViewConfigDialog( QWidget *parent );
 
-    QString hostName();
+    QString hostName() const;
 
   protected slots:
     void slotOk();
   
-    QString myHostName();
+    QString myHostName() const;
   
   signals:
     void configChanged();
