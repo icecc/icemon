@@ -207,7 +207,7 @@ void MainWindow::setCurrentNet( const QString &netName )
 }
 
 const char * rs_program_name = "icemon";
-const char * const appName = I18N_NOOP( "icemon" );
+const char * const appName = I18N_NOOP( "Icecream Monitor" );
 const char * const version = "0.1";
 const char * const description = I18N_NOOP( "Icecream monitor for KDE" );
 const char * const copyright = I18N_NOOP( "(c) 2003,2004, The icecream developers" );
