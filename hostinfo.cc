@@ -30,17 +30,16 @@ void HostInfo::initColorTable()
 {
     // Sorry, the names are in german as my knowledge of the english language
     // doesn't seem to be good enough to translate icecream flavors.
-    initColor( "#d21564", i18n("kirsche") );
+    initColor( "#A5080B", i18n("kirsche") );
     initColor( "#76d26f", i18n("pistazie"));
     initColor( "#664a08", i18n("schokolade"));
-    initColor( "#fff8a7", i18n("vanille"));
     initColor( "#4c9dff", i18n("schlumpf-eis"));
     initColor( "#6c2ca8", i18n("blaubeere"));
     initColor( "#fa8344", i18n("orange"));
-    initColor( "#b5ffe0", i18n("minze"));
+    initColor( "#55CFBD", i18n("minze"));
     initColor( "#db1230", i18n("erdbeer"));
     initColor( "#a6ea5e", i18n("apfel"));
-    initColor( "#f5baf7", i18n("kaugummi"));
+    initColor( "#D6A3D8", i18n("kaugummi"));
     initColor( "#f2aa4d", i18n("pfirsich"));
     initColor( "#aa1387", i18n("pflaume"));
     initColor( "#26c3f7", i18n("eismeer"));
@@ -49,7 +48,7 @@ void HostInfo::initColorTable()
     initColor( "#24b063", i18n("waldmeister"));
     initColor( "#ffff0f", i18n("banane"));
     initColor( "#1e1407", i18n("mocca"));
-    initColor( "#3cb749", i18n("kiwi"));
+    initColor( "#29B450", i18n("kiwi"));
     initColor( "#f7d36f", i18n("maracuja"));
     initColor( "#f8ffc8", i18n("zitrone"));
     initColor( "#fa7e91", i18n("himbeere"));
