@@ -52,9 +52,8 @@ void GanttTimeScaleWidget::paintEvent( QPaintEvent *pe )
 
 GanttProgress::GanttProgress( QMap<QString,QColor> &hostColors, QWidget *parent, const char *name )
 	: QWidget( parent, name, WResizeNoErase | WRepaintNoErase ),
-          mHostColors( hostColors )
+          mHostColors( hostColors ), mClock( 0 )
 {
-    m_totalWidth = 0;
 }
 
 void GanttProgress::setHostColors( QMap<QString,QColor> &v )
@@ -64,55 +63,67 @@ void GanttProgress::setHostColors( QMap<QString,QColor> &v )
 
 void GanttProgress::progress()
 {
-    ++m_jobs.last().second;
-    ++m_totalWidth;
+    mClock += 1;
     adjustGraph();
     QWidget::update();
 }
 
 void GanttProgress::adjustGraph()
 {
-    if ( m_totalWidth < width() )
-        return;
-
-    int delta = m_totalWidth - width();
-    while ( delta >= m_jobs.first().second ) {
-        delta -= m_jobs.first().second;
-        m_jobs.remove( m_jobs.first() );
-    }
-    m_jobs.first().second -= delta;
-    m_totalWidth = width();
+  // Remove non-visible jobs
+  if ( m_jobs.count() >= 2 &&
+       mClock - m_jobs[ m_jobs.count() - 2 ].second > width() ) {
+    m_jobs.remove( m_jobs.last() );
+  }
 }
 
 void GanttProgress::update( const Job &job )
 {
-    // If it's the same job as before, just increase the time it occupied.
-    if ( m_jobs.last().first == job )
+//    kdDebug() << "GanttProgress::update( job )" << endl;
+
+    if ( !m_jobs.isEmpty() && m_jobs.last().first == job ) {
+//        kdDebug() << " Known Job" << endl;
         if ( job.state() == Job::Finished || job.state() == Job::Failed ) {
           Job j = IdleJob();
-          m_jobs += qMakePair( j, 1 );
-        } else {
-          ++m_jobs.last().second;
+          m_jobs.prepend( qMakePair( j, mClock ) );
         }
-    else
-        m_jobs += qMakePair( job, 1 );
+    } else {
+//        kdDebug() << " New Job" << endl;
+        m_jobs.prepend( qMakePair( job, mClock ) );
+    }
+
+//    kdDebug() << "num jobs: " << m_jobs.count() << " jobs" << endl;
 }
 
 void GanttProgress::drawGraph( QPainter &p )
 {
-    int xPos = 0;
+//    kdDebug() << "drawGraph() " << m_jobs.count() << " jobs" << endl;
+
+    bool lastBox = false;
+    int xStart = 0;
     QValueList< QPair<Job, int > >::ConstIterator it = m_jobs.begin();
-    for ( ; it != m_jobs.end(); ++it ) {
+    for ( ; ( it != m_jobs.end() ) && !lastBox; ++it ) {
+        int xEnd = mClock - (*it).second;
+
+        if ( xEnd > width() ) {
+          xEnd = width();
+          lastBox = true;
+        }
+
+        int xWidth = xEnd - xStart;
+
+//        kdDebug() << "XStart: " << xStart << "  xWidth: " << xWidth << endl;
+
         // Draw the rectangle for the current job
         QColor color = colorForStatus( ( *it ).first );
-        p.fillRect( xPos, 0, ( *it ).second, height(), color );
+        p.fillRect( xStart, 0, xWidth, height(), color );
         p.setPen( color.dark() );
-        p.drawRect( xPos, 0, ( *it ).second, height() );
+        p.drawRect( xStart, 0, xWidth, height() );
 
         // If the rectangle is too small, we just print "..." instead of the
         // filename
         QString s;
-        if ( p.fontMetrics().width( "..." ) >= ( *it ).second - 3 )
+        if ( p.fontMetrics().width( "..." ) >= xWidth - 3 )
             s = "...";
         else
             s = ( *it ).first.fileName();
@@ -120,17 +131,20 @@ void GanttProgress::drawGraph( QPainter &p )
         // If we print the filename, check whether we need to truncate it and
         // append "..." at the end.
         if ( s == ( *it ).first.fileName() &&
-             p.fontMetrics().width( s ) >= ( *it ).second - 3 ) {
+             p.fontMetrics().width( s ) >= xWidth - 3 ) {
             int newLength = 0;
             int threeDotsWidth = p.fontMetrics().width( "..." );
-            while ( p.fontMetrics().width( s.left( newLength ) ) + threeDotsWidth < ( *it ).second - 3 )
+            while ( p.fontMetrics().width( s.left( newLength ) ) +
+                    threeDotsWidth < xWidth - 3 )
                 ++newLength;
             s  = s.left( newLength - 1 ) + "...";
         }
 
         // Finally draw the text.
-        p.drawText( xPos + 3, 3, ( *it ).second - 3, height() - 3, Qt::AlignTop | Qt::AlignLeft, s );
-        xPos += ( *it ).second;
+        p.drawText( xStart + 3, 3, xWidth - 3, height() - 3,
+                    Qt::AlignTop | Qt::AlignLeft, s );
+
+        xStart = xEnd;
     }
 }
 
@@ -148,7 +162,7 @@ QColor GanttProgress::colorForStatus( const Job &job ) const
 void GanttProgress::paintEvent( QPaintEvent * )
 {
     QPixmap buffer( width(), height() );
-    buffer.fill( paletteBackgroundColor() );
+    buffer.fill( Qt::yellow );
 
     QPainter p( &buffer );
     drawGraph( p );
@@ -166,7 +180,7 @@ GanttStatusView::GanttStatusView( QWidget *parent, const char *name )
 {
     m_topLayout = new QGridLayout( this, 2, 2 );
     m_topLayout->setSpacing( 5 );
-    m_topLayout->setMargin( 0 );
+    m_topLayout->setMargin( 4 );
     m_topLayout->setColStretch( 1, 10 );
 
     GanttTimeScaleWidget *timeScale = new GanttTimeScaleWidget( this );
@@ -175,7 +189,7 @@ GanttStatusView::GanttStatusView( QWidget *parent, const char *name )
 
     m_progressTimer = new QTimer( this );
     connect( m_progressTimer, SIGNAL( timeout() ), SLOT( updateGraphs() ) );
-    m_progressTimer->start( 50 );
+    m_progressTimer->start( 25 );
 }
 
 void GanttStatusView::update( const Job &job )
@@ -187,6 +201,13 @@ void GanttStatusView::update( const Job &job )
 QWidget * GanttStatusView::widget()
 {
     return this;
+}
+
+void GanttStatusView::checkForNewNode( const QString &host )
+{
+    if ( m_nodeMap.find( host ) != m_nodeMap.end() ) return;
+    
+    registerNode( host );
 }
 
 void GanttStatusView::checkForNewNodes( const Job &job )

@@ -105,6 +105,7 @@ public:
     virtual ~StatusView() {}
     virtual void update( const Job &job ) = 0;
     virtual QWidget *widget() = 0;
+    virtual void checkForNewNode( const QString &host );
 };
 
 class ListStatusViewItem : public QListViewItem

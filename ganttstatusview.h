@@ -45,9 +45,10 @@ class GanttProgress : public QWidget
 		QColor colorForStatus( const Job &job ) const;
 
 		QValueList< QPair<Job, int> > m_jobs;
-		int m_totalWidth;
                 
                 QMap<QString,QColor> &mHostColors;
+
+                int mClock;
 };
 
 class GanttStatusView : public QWidget, public StatusView
@@ -57,6 +58,8 @@ class GanttStatusView : public QWidget, public StatusView
 public:
     GanttStatusView( QWidget *parent, const char *name = 0 );
     virtual ~GanttStatusView() {}
+
+    void checkForNewNode( const QString &host );
 
 public slots:
     virtual void update( const Job &job );

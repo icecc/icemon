@@ -70,6 +70,10 @@ QString Job::stateAsString() const
     return QString::null;
 }
 
+void StatusView::checkForNewNode( const QString & )
+{
+}
+
 ListStatusViewItem::ListStatusViewItem( QListView *parent, const Job &_job )
     :  QListViewItem( parent ), job( _job )
 {
@@ -445,6 +449,8 @@ void MainWindow::handle_stats( Msg *_m )
          << ", " << m->loadAvg5 << ", " << m->loadAvg10 << ")"
          << " freemem=" << m->freeMem
          << endl;
+
+  m_view->checkForNewNode( m->host.c_str() );
 }
 
 void MainWindow::handle_job_begin(Msg *_m)
