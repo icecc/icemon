@@ -26,6 +26,7 @@ class SummaryViewItem
 {
 public:
     SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryView *parent, QGridLayout *layout);
+    ~SummaryViewItem();
     void update(const Job &job);
 
 private:
@@ -51,6 +52,7 @@ private:
     SummaryView *m_view;
 
     QValueVector<JobHandler> m_jobHandlers;
+    QValueList<QWidget *> m_widgets;
 };
 
 class SummaryView : public QScrollView, public StatusView

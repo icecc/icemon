@@ -67,6 +67,7 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
     layout->addWidget(labelBox, row, 0);
     labelBox->show();
     labelBox->setMinimumWidth(75);
+    m_widgets.append(labelBox);
 
     QVBoxLayout *labelLayout = new QVBoxLayout(labelBox);
     labelLayout->setAutoAdd(true);
@@ -101,6 +102,7 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
     detailsBox->setMargin(5);
     layout->addWidget(detailsBox, row, 1);
     detailsBox->show();
+    m_widgets.append(detailsBox);
 
     QGridLayout *grid = new QGridLayout(detailsBox);
     grid->setMargin(10);
@@ -121,6 +123,16 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
     grid->setColStretch(grid->numCols() - 1, 1);
     grid->setRowStretch(0, 1);
     grid->setRowStretch(grid->numRows(), 1);
+}
+
+SummaryViewItem::~SummaryViewItem()
+{
+    for(QValueList<QWidget *>::ConstIterator it = m_widgets.begin();
+        it != m_widgets.end();
+        ++it)
+    {
+        delete *it;
+    }
 }
 
 void SummaryViewItem::update(const Job &job)
@@ -228,7 +240,13 @@ void SummaryView::update(const Job &job)
 
 void SummaryView::checkNode(unsigned int hostid)
 {
-    if(!m_items[hostid]) {
+    HostInfo *hostInfo = hostInfoManager()->find(hostid);
+
+    if(hostInfo && nameForHost(hostid).isNull()) {
+        delete m_items[hostid];
+        m_items.remove(hostid);
+    }
+    else if(!m_items[hostid]) {
         SummaryViewItem *i = new SummaryViewItem(hostid, m_base, this, m_layout);
         m_items.insert(hostid, i);
     }
