@@ -32,6 +32,7 @@ class HostInfo;
 class QSlider;
 class QLabel;
 class QLineEdit;
+class QCheckBox;
 
 class StarViewConfigDialog : public QDialog
 {
@@ -40,6 +41,7 @@ class StarViewConfigDialog : public QDialog
     StarViewConfigDialog( QWidget *parent );
 
     int nodesPerRing();
+    bool suppressDomainName() const;
 
     void setMaxNodes( int );
 
@@ -47,7 +49,8 @@ class StarViewConfigDialog : public QDialog
 
   protected slots:
     void slotNodesPerRingChanged( int nodes );
-  
+    void slotSuppressDomainName( bool );
+
   signals:
     void configChanged();
 
@@ -55,6 +58,7 @@ class StarViewConfigDialog : public QDialog
     QSlider *mNodesPerRingSlider;
     QLabel *mNodesPerRingLabel;
     QLineEdit *mArchFilterEdit;
+    QCheckBox *mSuppressDomainName;
 };
 
 
@@ -79,7 +83,7 @@ class HostItem : public QCanvasText
 
     void setIsActiveClient( bool active ) { mIsActiveClient = active; }
     bool isActiveClient() const { return mIsActiveClient; }
-    
+
     void setIsCompiling( bool compiling ) { mIsCompiling = compiling; }
     bool isCompiling() const { return mIsCompiling; }
 
@@ -90,6 +94,7 @@ class HostItem : public QCanvasText
     unsigned int client() const { return m_client; }
 
     QString hostName() const;
+    void updateName();
 
     void moveBy( double dx, double dy );
 
@@ -106,7 +111,7 @@ class HostItem : public QCanvasText
 
     bool mIsActiveClient;
     bool mIsCompiling;
-    
+
     QCanvasItem *m_stateItem;
     unsigned int m_client;
 

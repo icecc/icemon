@@ -36,8 +36,11 @@
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include <qregexp.h>
+#include <qcheckbox.h>
 
 #include <math.h>
+
+static bool suppressDomain = false;
 
 StarViewConfigDialog::StarViewConfigDialog( QWidget *parent )
   : QDialog( parent )
@@ -69,6 +72,11 @@ StarViewConfigDialog::StarViewConfigDialog( QWidget *parent )
   topLayout->addWidget( mArchFilterEdit );
   connect( mArchFilterEdit, SIGNAL( textChanged( const QString & ) ),
            SIGNAL( configChanged() ) );
+
+  mSuppressDomainName = new QCheckBox( i18n("Suppress domain name"), this);
+  topLayout->addWidget( mSuppressDomainName );
+  connect( mSuppressDomainName, SIGNAL( toggled ( bool ) ),
+           SLOT( slotSuppressDomainName ( bool ) ) );
 
   QFrame *hline = new QFrame( this );
   hline->setFrameShape( QFrame::HLine );
@@ -102,6 +110,13 @@ QString StarViewConfigDialog::archFilter()
 {
   return mArchFilterEdit->text();
 }
+
+void StarViewConfigDialog::slotSuppressDomainName( bool b )
+{
+  suppressDomain = b;
+  configChanged();
+}
+
 
 HostItem::HostItem( const QString &text, QCanvas *canvas, HostInfoManager *m )
   : QCanvasText( text, canvas ), mHostInfo( 0 ), mHostInfoManager( m ),
@@ -167,11 +182,31 @@ QString HostItem::hostName() const
   return mHostInfo->name();
 }
 
+void HostItem::updateName()
+{
+  if (mHostInfo) {
+      QString s = mHostInfo->name();
+      if (suppressDomain) {
+          int l = s.find('.');
+          if (l>0)
+              s.truncate(l);
+      }
+      setText(s);
+  }
+  QRect r = boundingRect();
+  mBaseWidth = r.width() + 10 ;
+  mBaseHeight = r.height() + 10 ;
+  m_boxItem->setSize( mBaseWidth, mBaseHeight );
+  m_boxItem->move( r.x() + r.width() / 2, r.y() + r.height() / 2 );
+  updateHalos();
+}
+
 void HostItem::moveBy( double dx, double dy )
 {
   QCanvasText::moveBy( dx, dy );
 
   QRect r = boundingRect();
+
 
   m_boxItem->moveBy( dx, dy );
   QMap<Job,QCanvasEllipse*>::ConstIterator it;
@@ -541,9 +576,10 @@ void StarView::arrangeHostItems()
   int ringCount = int( count / nodesPerRing ) + 1;
 
 //  kdDebug() << "  Rings: " << ringCount << endl;
-
-  const int xRadius = int( m_canvas->width() / 2.5 );
-  const int yRadius = int( m_canvas->height() / 2.5 );
+  double radiusFactor = 2.5;
+  if (suppressDomain) radiusFactor = 4;
+  const int xRadius = int( m_canvas->width() / radiusFactor );
+  const int yRadius = int( m_canvas->height() / radiusFactor );
 
   const double step = 2 * M_PI / count;
 
@@ -557,6 +593,8 @@ void StarView::arrangeHostItems()
     int yr = int( yRadius * factor );
 
     HostItem *item = it.data();
+
+    item->updateName();
 
     QRect rect = item->boundingRect();
     int xOffset = rect.width() / 2;
