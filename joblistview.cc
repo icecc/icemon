@@ -216,17 +216,13 @@ void JobListView::update( const Job& job )
 {
     ItemMap::iterator it = mItems.find( job.jobId() );
     if ( it == mItems.end() )
-    {
-        mItems.insert( job.jobId(), new JobListViewItem( this, job ) );
-    }
+        it = mItems.insert( job.jobId(), new JobListViewItem( this, job ) );
     else
-    {
         ( *it )->updateText( job );
 
-        const bool finished = ( job.state() == Job::Finished ) || ( job.state() == Job::Failed );
-        if ( finished )
-            expireItem( *it );
-    }
+    const bool finished = ( job.state() == Job::Finished ) || ( job.state() == Job::Failed );
+    if ( finished )
+        expireItem( *it );
 }
 
 
