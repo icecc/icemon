@@ -23,11 +23,13 @@
 
 #include <klocale.h>
 #include <kdebug.h>
+#include <kiconloader.h>
 
 #include <qcanvas.h>
 #include <qlayout.h>
 #include <qtimer.h>
 #include <qvaluelist.h>
+#include <qtooltip.h>
 
 #include <math.h>
 
@@ -45,7 +47,7 @@ class HostItem : public QCanvasText
       QRect r = boundingRect();
       mBaseWidth = r.width() + 10;
       mBaseHeight = r.height() + 10;
-    
+
       m_boxItem = new QCanvasEllipse( mBaseWidth, mBaseHeight, canvas );
       m_boxItem->setZ( 80 );
       m_boxItem->move( r.width() / 2, r.height() / 2 );
@@ -55,7 +57,7 @@ class HostItem : public QCanvasText
       m_jobHalo->setZ( 70 );
       m_jobHalo->move( r.width() / 2, r.height() / 2 );
       m_jobHalo->show();
-    
+
       setHostColor( QColor( 200, 200, 200 ) );
     }
 
@@ -67,7 +69,7 @@ class HostItem : public QCanvasText
     {
       m_boxItem->setBrush( color );
       m_jobHalo->setBrush( color.light() );
-    
+
       float luminance = ( color.red() * 0.299 ) + ( color.green() * 0.587 ) +
                         ( color.blue() * 0.114 );
       if ( luminance > 140.0 ) setColor( black );
@@ -88,9 +90,9 @@ class HostItem : public QCanvasText
     void moveBy( double dx, double dy )
     {
       QCanvasText::moveBy( dx, dy );
-      
+
       QRect r = boundingRect();
-      
+
       m_boxItem->moveBy( dx, dy );
       m_jobHalo->moveBy( dx, dy );
     }
@@ -101,7 +103,7 @@ class HostItem : public QCanvasText
       setClient( job.client() );
 
       if ( job.state() == Job::WaitingForCS ) return;
-    
+
       bool finished = job.state() == Job::Finished ||
                       job.state() == Job::Failed;
 
@@ -113,7 +115,7 @@ class HostItem : public QCanvasText
 
       if ( newJob ) m_jobs.insert( job.jobId(), job );
       else if ( finished ) m_jobs.remove( it );
-      
+
       m_jobHalo->setSize( mBaseWidth + m_jobs.count() * 4,
                           mBaseHeight + m_jobs.count() * 4 );
     }
@@ -132,6 +134,24 @@ class HostItem : public QCanvasText
     QCanvasEllipse *m_jobHalo;
 
     JobList m_jobs;
+};
+
+class WhatsStat : public QToolTip {
+public:
+    WhatsStat( QWidget *widget )
+        : QToolTip( widget ) {
+        QMimeSourceFactory::defaultFactory()->setPixmap( "computer",
+                                                         UserIcon("icemonnode") );
+    }
+    virtual void maybeTip ( const QPoint &p ) {
+        tip( QRect( p.x() - 20, p.y() - 20, 40, 40 ),
+             "<p><table><tr><td>"
+             "<img source=\"computer\"><br>coolos</td><td>"
+             "<table>"
+             "<tr><td>Jobs:</td><td>7</td></tr>"
+             "<tr><td>File:</td><td>/etc/nowhere</td></tr>"
+             "</table></td></tr></table></p>" );
+    }
 };
 
 StarView::StarView( QWidget *parent, const char *name )
@@ -153,6 +173,9 @@ StarView::StarView( QWidget *parent, const char *name )
     m_localhostItem->show();
 
     m_canvas->update();
+
+    new WhatsStat( this );
+
 }
 
 void StarView::update( const Job &job )
