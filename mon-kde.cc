@@ -74,13 +74,13 @@ void ListStatusViewItem::updateText( const Job &job)
     setText( 0, QString::number( job.jobId() ) );
     setText( 1, job.fileName() );
     setText( 2, job.client() );
-    setText( 4, job.server() );
-    setText( 5, job.stateAsString() );
-    setText( 6, QString::number( job.real_msec ) );
-    setText( 7, QString::number( job.user_msec ) );
-    setText( 8, QString::number( job.majflt ) );
-    setText( 9, QString::number( job.in_uncompressed ) );
-    setText( 10, QString::number( job.out_uncompressed ) );
+    setText( 3, job.server() );
+    setText( 4, job.stateAsString() );
+    setText( 5, QString::number( job.real_msec ) );
+    setText( 6, QString::number( job.user_msec ) );
+    setText( 7, QString::number( job.majflt ) );
+    setText( 8, QString::number( job.in_uncompressed ) );
+    setText( 9, QString::number( job.out_uncompressed ) );
 }
 
 inline int compare( unsigned int i1, unsigned int i2 )
@@ -105,15 +105,15 @@ int ListStatusViewItem::compare( QListViewItem *i, int col,
     switch ( col ) {
     case 0:
         return ::compare( first->job.jobId(), other->job.jobId() );
-    case 6:
+    case 5:
         return ::compare( first->job.real_msec, other->job.real_msec );
-    case 7:
+    case 6:
         return ::compare( first->job.user_msec, other->job.user_msec );
-    case 8:
+    case 7:
         return ::compare( first->job.majflt, other->job.majflt );
-    case 9:
+    case 8:
         return ::compare( first->job.in_uncompressed, other->job.in_uncompressed );
-    case 10:
+    case 9:
         return ::compare( first->job.out_uncompressed, other->job.out_uncompressed );
     default:
         return first->text(col).compare( other->text( col ) );
