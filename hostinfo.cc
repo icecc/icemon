@@ -28,8 +28,6 @@ QMap<int,QString> HostInfo::mColorNameMap;
 
 void HostInfo::initColorTable()
 {
-    // Sorry, the names are in german as my knowledge of the english language
-    // doesn't seem to be good enough to translate icecream flavors.
     initColor( "#A5080B", i18n("cherry") );
     initColor( "#76d26f", i18n("pistachio"));
     initColor( "#664a08", i18n("chocolate"));
@@ -49,14 +47,15 @@ void HostInfo::initColorTable()
     initColor( "#ffff0f", i18n("banana"));
     initColor( "#1e1407", i18n("mocha"));
     initColor( "#29B450", i18n("kiwi"));
-    initColor( "#f7d36f", i18n("passionfruit"));
     initColor( "#F8DD31", i18n("lemon"));
     initColor( "#fa7e91", i18n("raspberry"));
     initColor( "#c5a243", i18n("caramel"));
     initColor( "#b8bcff", i18n("blueberry"));
-    initColor( "#ffb8c0", i18n("blackcurrant"));
-    initColor( "#d51013", i18n("pomegranate"));
-    initColor( "#b77a2a", i18n("cinnamon"));
+    // try to make the count a prime number (reminder: 19, 23, 29, 31)
+    // initColor( "#ffb8c0", i18n("blackcurrant"));
+    // initColor( "#f7d36f", i18n("passionfruit"));
+    // initColor( "#d51013", i18n("pomegranate"));
+    // initColor( "#C2C032", i18n("pumpkin" ) );
 }
 
 void HostInfo::initColor( const QString &value , const QString &name )
@@ -141,14 +140,23 @@ void HostInfo::updateFromStatsMap( const StatsMap &stats )
 
 QColor HostInfo::createColor( const QString &name )
 {
-  int n = 0;
-  for( uint i = 0; i < name.length(); ++i ) {
-    n += name[ i ].unicode();
-  }
+    unsigned long h = 0;
+    unsigned long g;
+    int ch;
 
-//  kdDebug() << "HostInfo::createColor: " << name << ": " << n << endl;
+    for( uint i = 0; i < name.length(); ++i ) {
+        ch = name[i].unicode();
+        h = (h << 4) + ch;
+        if ((g = (h & 0xf0000000)) != 0)
+        {
+            h ^= g >> 24;
+            h ^= g;
+        }
+    }
 
-  return mColorTable[ n % mColorTable.count() ];
+    // kdDebug() << "HostInfo::createColor: " << h % mColorTable.count() << ": " << name << endl;
+
+    return mColorTable[ h % mColorTable.count() ];
 }
 
 QColor HostInfo::createColor()
