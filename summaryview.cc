@@ -147,6 +147,7 @@ void SummaryViewItem::update(const Job &job)
         break;
     }
     case Job::Finished:
+    case Job::Failed:
     {
         QValueVector<JobHandler>::Iterator it = m_jobHandlers.begin();
         while(it != m_jobHandlers.end() && (*it).currentFile != job.fileName())
