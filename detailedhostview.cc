@@ -137,11 +137,11 @@ void DetailedHostView::removeNode( unsigned int hostid )
 
 void DetailedHostView::updateSchedulerState( bool online )
 {
-    if ( online )
+    if ( !online )
     {
-    }
-    else
-    {
+        mHostListView->clear();
+        mLocalJobsView->clear();
+        mRemoteJobsView->clear();
     }
 }
 
