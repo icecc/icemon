@@ -33,12 +33,10 @@ class Job
     Job(unsigned int id = 0,
         unsigned int client = 0,
         const QString &filename = QString::null,
-        const QString &environment = QString::null,
         const QString &lang = QString::null)
     {
         m_id = id;
         m_fileName = filename;
-        m_env = environment;
         m_lang = lang;
         m_state = WaitingForCS;
         m_client = client;
@@ -81,7 +79,6 @@ class Job
     unsigned int m_server;
     unsigned int m_client;
     QString m_lang;
-    QString m_env;
     State m_state;
     time_t m_stime;
 

@@ -214,7 +214,6 @@ void MainWindow::handle_getcs(Msg *_m)
         return;
     m_rememberedJobs[m->job_id] = Job( m->job_id, m->clientid,
                                        m->filename.c_str(),
-                                       m->version.c_str(),
                                        m->lang == CompileJob::Lang_C ? "C" : "C++" );
     m_view->update( m_rememberedJobs[m->job_id] );
 }
@@ -227,7 +226,6 @@ void MainWindow::handle_local_begin( Msg *_m )
 
     m_rememberedJobs[m->job_id] = Job( m->job_id, m->hostid,
                                        m->file,
-                                       QString::null,
                                        "C++" );
     m_rememberedJobs[m->job_id].setState( Job::LocalOnly );
     m_view->update( m_rememberedJobs[m->job_id] );
