@@ -125,23 +125,31 @@ class StarStatusView : public StatusView
 		QDict<NodeItem> m_nodeItems;
 };
 
+class MsgChannel;
+class QSocketNotifier;
+
 class MainWindow : public KMainWindow
 {
-	Q_OBJECT
-	public:
-		MainWindow( QWidget *parent, const char *name = 0 );
+    Q_OBJECT
+public:
+    MainWindow( QWidget *parent, const char *name = 0 );
 
-	private slots:
-		void setupListView();
-		void setupStarView();
-		void rememberJobs( const JobList &jobs );
+private slots:
+    void setupListView();
+    void setupStarView();
+    void rememberJobs( const JobList &jobs );
+    void slotCheckScheduler();
+    void msgReceived();
 
-	private:
-		void setupView( StatusView *view );
+private:
+    void setupView( StatusView *view );
+    void checkScheduler(bool deleteit = false);
 
-		StatusObserver *m_observer;
-		StatusView *m_view;
-		JobList m_rememberedJobs;
+    StatusObserver *m_observer;
+    StatusView *m_view;
+    JobList m_rememberedJobs;
+    MsgChannel *scheduler;
+    QSocketNotifier *scheduler_read;
 };
 
 #endif // MON_KDE_H

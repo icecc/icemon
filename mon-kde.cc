@@ -1,5 +1,6 @@
 #include "mon-kde.h"
 
+#include <qsocketnotifier.h>
 #include <kaboutdata.h>
 #include <kaction.h>
 #include <kapplication.h>
@@ -388,7 +389,7 @@ void StarStatusView::drawState( NodeItem *node )
 }
 
 MainWindow::MainWindow( QWidget *parent, const char *name )
-	: KMainWindow( parent, name ), m_view( 0 )
+	: KMainWindow( parent, name ), m_view( 0 ),  scheduler( 0 ), scheduler_read( 0 )
 {
 	KRadioAction *a = new KRadioAction( i18n( "&List View" ), 0,
 	                                    this, SLOT( setupListView() ),
@@ -411,6 +412,65 @@ MainWindow::MainWindow( QWidget *parent, const char *name )
 	setupListView();
 
 	m_observer->start();
+        checkScheduler();
+}
+
+void MainWindow::checkScheduler(bool deleteit)
+{
+    if ( deleteit ) {
+        delete scheduler;
+        scheduler = 0;
+        delete scheduler_read;
+        scheduler_read = 0;
+    } else if ( scheduler )
+        return;
+    QTimer::singleShot( 1000, this, SLOT( slotCheckScheduler() ) );
+}
+
+void MainWindow::slotCheckScheduler()
+{
+    scheduler = connect_scheduler ();
+    if ( scheduler ) {
+        if ( !scheduler->send_msg (MonLoginMsg()) )
+        {
+            checkScheduler( true );
+            return;
+        }
+        scheduler_read = new QSocketNotifier( scheduler->fd,
+                                              QSocketNotifier::Read,
+                                              this );
+        QObject::connect( scheduler_read, SIGNAL(activated(int)),
+                          SLOT( msgReceived()) );
+    }
+}
+
+void MainWindow::msgReceived()
+{
+    Msg *m = scheduler->get_msg ();
+    if ( !m ) {
+        checkScheduler(true);
+        return;
+    }
+
+    switch (m->type) {
+    case M_MON_GET_CS:
+        cout << "GET_CS" << endl;
+        break;
+    case M_MON_JOB_BEGIN:
+        cout << "JOB_BEGIN" << endl;
+        break;
+    case M_MON_JOB_END:
+        cout << "JOB_END" << endl;
+        break;
+    case M_END:
+        cout << "END" << endl;
+        checkScheduler( true );
+        break;
+    default:
+        cout << "UNKNOWN" << endl;
+        break;
+    }
+    delete m;
 }
 
 void MainWindow::setupView( StatusView *view )
@@ -457,25 +517,7 @@ int main( int argc, char **argv )
 	app.setMainWidget( mainWidget );
 	mainWidget->show();
 
-	MsgChannel *scheduler = connect_scheduler ();
-	if (scheduler
-	    && scheduler->send_msg (MonLoginMsg()))
-	  while (Msg *m = scheduler->get_msg ())
-	    {
-	      switch (m->type)
-	        {
-		case M_MON_GET_CS: cout << "GET_CS" << endl; break;
-		case M_MON_JOB_BEGIN: cout << "JOB_BEGIN" << endl; break;
-		case M_MON_JOB_END: cout << "JOB_END" << endl; break;
-		case M_END: cout << "END" << endl; m = 0; break;
-		default: cout << "UNKNOWN" << endl; break;
-		}
-	      if (!m)
-	        break;
-	    }
-	delete scheduler;
-
-	return app.exec();
+    	return app.exec();
 }
 
 #include "mon-kde.moc"
