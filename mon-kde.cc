@@ -120,6 +120,7 @@ void MainWindow::writeSettings()
 void MainWindow::checkScheduler(bool deleteit)
 {
     if ( deleteit ) {
+        m_rememberedJobs.clear();
         delete m_scheduler;
         m_scheduler = 0;
         delete m_scheduler_read;
