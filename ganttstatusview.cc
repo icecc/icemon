@@ -215,10 +215,6 @@ GanttStatusView::GanttStatusView( QWidget *parent, const char *name )
     mUpdateInterval = 25;
     timeScale->setPixelsPerSecond( 1000 / mUpdateInterval );
 
-    QTimer* timer = new QTimer(this);
-    timer->changeInterval(60); // check every minute
-    connect(timer, SIGNAL(timeout()), SLOT(removeStaleHosts()));
-
     start();
 }
 
@@ -330,18 +326,6 @@ GanttProgress *GanttStatusView::registerNode( const QString &name )
     mNodeMap[ name ].append( w );
 
     return w;
-}
-
-void GanttStatusView::updateStats( const QString &host )
-{
-  checkForNewNode (host);
-  // implement me
-//  mNodeMap[host]
-}
-
-void GanttStatusView::removeStaleNodes()
-{
-  // implement me
 }
 
 void GanttStatusView::createHostColor( const QString &host )
