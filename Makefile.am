@@ -16,5 +16,5 @@ ganttstatusview.moc: $(srcdir)/ganttstatusview.h
 	$(QTDIR)/bin/moc -o ganttstatusview.moc $<
 
 install-data-local:
-	$(mkinstalldirs) ${KDEDIR}/share/apps/icemon
-	$(INSTALL_DATA) $(srcdir)/icemonui.rc ${KDEDIR}/share/apps/icemon
+	$(mkinstalldirs) $(DESTDIR)${KDEDIR}/share/apps/icemon
+	$(INSTALL_DATA) $(srcdir)/icemonui.rc $(DESTDIR)${KDEDIR}/share/apps/icemon
