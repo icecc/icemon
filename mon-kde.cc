@@ -226,7 +226,7 @@ void MainWindow::handle_local_begin( Msg *_m )
         return;
 
     m_rememberedJobs[m->job_id] = Job( m->job_id, m->hostid,
-                                       QString::null,
+                                       m->file,
                                        QString::null,
                                        "C++" );
     m_rememberedJobs[m->job_id].setState( Job::LocalOnly );
