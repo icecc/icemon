@@ -340,8 +340,35 @@ void StarView::checkNode( unsigned int hostid )
 void StarView::removeNode( unsigned int hostid )
 {
   HostItem *hostItem = findHostItem( hostid );
+
   if ( hostItem && hostItem->hostInfo()->isOffline() ) {
+#if 0
+    kdDebug() << "StarView::removeNode() " << hostid << " ("
+              << int( hostItem ) << ")" << endl;
+#endif
+
     m_hostItems.remove( hostid );
+
+    QValueList<unsigned int> obsoleteJobs;
+
+    QMap<unsigned int,HostItem *>::Iterator it;
+    for( it = mJobMap.begin(); it != mJobMap.end(); ++it ) {
+#if 0
+      kdDebug() << " JOB: " << it.key() << " (" << int( it.data() )
+                << ")" << endl;
+#endif
+      if ( it.data() == hostItem ) {
+#if 0
+        kdDebug() << " Delete Job " << it.key() << endl;
+#endif
+        obsoleteJobs.append( it.key() );
+      }
+    }
+
+    QValueList<unsigned int>::ConstIterator it2;
+    for( it2 = obsoleteJobs.begin(); it2 != obsoleteJobs.end(); ++it2 ) {
+      mJobMap.remove( *it2 );
+    }
 
     hostItem->deleteSubItems();
     delete hostItem;
