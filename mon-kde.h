@@ -17,7 +17,17 @@ class Job
 {
 public:
     enum State { WaitingForCS, Compiling, Finished };
-    Job() { }
+    Job(unsigned int id, const QString &filename,
+        const QString &environment, const QString &lang) {
+        m_id = id;
+        m_fileName = filename;
+        m_env = environment;
+        m_lang = lang;
+        m_state = WaitingForCS;
+    }
+    Job() {
+        m_id = 0;
+    }
 
     bool operator==( const Job &rhs ) const { return m_id == rhs.m_id; }
     bool operator!=( const Job &rhs ) const { return m_id != rhs.m_id; }
@@ -26,11 +36,14 @@ public:
     QString fileName() const { return m_fileName; }
     QString host() const { return m_host; }
     State state() const { return m_state; }
+    QString stateAsString() const;
 
 private:
     unsigned int m_id;
     QString m_fileName;
     QString m_host;
+    QString m_lang;
+    QString m_env;
     State m_state;
 };
 

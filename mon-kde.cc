@@ -58,6 +58,22 @@ bool JobList::operator==( const JobList &rhs ) const
     return true;
 }
 
+QString Job::stateAsString() const
+{
+    switch ( m_state ) {
+    case WaitingForCS:
+        return "Waiting";
+        break;
+    case Compiling:
+        return "Compiling";
+        break;
+    case Finished:
+        return "Finished";
+        break;
+    }
+    return QString::null;
+}
+
 StatusView::StatusView( QWidget *parent, const char *name, WFlags f )
 	: QWidget( parent, name, f )
 {
@@ -84,7 +100,7 @@ void ListStatusView::update( const JobList &jobs )
     JobList::ConstIterator it = jobs.begin();
     for ( ; it != jobs.end(); ++it )
         new KListViewItem( m_listView, QString::number( ( *it ).jobId() ),
-                           ( *it ).fileName(), ( *it ).host() );
+                           ( *it ).fileName(), ( *it ).host(), ( *it ).stateAsString() );
     m_listView->setUpdatesEnabled( true );
     m_listView->triggerUpdate();
 }
@@ -136,17 +152,17 @@ void StarStatusView::centerLocalhostItem()
 
 void StarStatusView::arrangeNodeItems()
 {
-	const int radius = kMin( m_canvas->width() / 2, m_canvas->height() / 2 );
-	const double step = 2 * M_PI / m_nodeItems.count();
+    const int radius = kMin( m_canvas->width() / 2, m_canvas->height() / 2 );
+    const double step = 2 * M_PI / m_nodeItems.count();
 
-	double angle = 0.0;
-	QDictIterator<NodeItem> it( m_nodeItems );
-	while ( it.current() != 0 ) {
-		it.current()->move( m_localhostItem->x() + ( cos( angle ) * radius ),
-		                    m_localhostItem->y() + ( sin( angle ) * radius ) );
-		angle += step;
-		++it;
-	}
+    double angle = 0.0;
+    QDictIterator<NodeItem> it( m_nodeItems );
+    while ( it.current() != 0 ) {
+        it.current()->move( m_localhostItem->x() + ( cos( angle ) * radius ),
+                            m_localhostItem->y() + ( sin( angle ) * radius ) );
+        angle += step;
+        ++it;
+    }
 }
 
 void StarStatusView::checkForNewNodes( const JobList &jobs )
@@ -332,11 +348,15 @@ void MainWindow::msgReceived()
     delete m;
 }
 
-void MainWindow::handle_getcs(Msg *m)
+void MainWindow::handle_getcs(Msg *_m)
 {
-    MonGetCSMsg *msg = dynamic_cast<MonGetCSMsg*>( m );
-    if ( !msg )
+    MonGetCSMsg *m = dynamic_cast<MonGetCSMsg*>( _m );
+    if ( !m )
         return;
+    m_rememberedJobs.append( Job( m->job_id, m->filename.c_str(),
+                                  m->version.c_str(),
+                                  m->lang == CompileJob::Lang_C ? "C" : "C++" ) );
+    m_view->update( m_rememberedJobs );
 }
 
 void MainWindow::handle_job_begin(Msg *m)
