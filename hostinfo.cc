@@ -22,6 +22,7 @@
 
 #include <kdebug.h>
 #include <klocale.h>
+#include <assert.h>
 
 QValueVector<QColor> HostInfo::mColorTable;
 QMap<int,QString> HostInfo::mColorNameMap;
@@ -238,8 +239,15 @@ QColor HostInfoManager::hostColor( unsigned int id ) const
 {
   if ( id ) {
     HostInfo *hostInfo = find( id );
-    if ( hostInfo ) return hostInfo->color();
+    if ( hostInfo ) {
+        QColor tmp = hostInfo->color();
+        assert( tmp.isValid() && ( tmp.red() + tmp.green() + tmp.blue() ));
+        return tmp;
+    }
   }
+
+  kdDebug() << "id " << id << " got no color\n";
+  assert( false );
 
   return QColor( 0, 0, 0 );
 }

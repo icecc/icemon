@@ -200,6 +200,8 @@ void HostItem::init()
 
   mIsActiveClient = false;
   mIsCompiling = false;
+
+  m_client = 0;
 }
 
 
@@ -611,13 +613,13 @@ void StarView::configureView()
 }
 
 bool StarView::filterArch( unsigned int hostid )
-{  
+{
   HostInfo *i = hostInfoManager()->find( hostid );
   if ( !i ) {
     kdError() << "No HostInfo for id " << hostid << endl;
     return false;
   }
-  
+
   return filterArch( i );
 }
 
