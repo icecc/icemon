@@ -21,6 +21,7 @@
 #include "logging.h"
 
 #include <klocale.h>
+#include <kdebug.h>
 
 #include <qcanvas.h>
 #include <qlayout.h>
@@ -28,9 +29,6 @@
 #include <qvaluelist.h>
 
 #include <math.h>
-#include <iostream>
-#include <comm.h>
-#include <cassert>
 
 using namespace std;
 
@@ -81,21 +79,18 @@ StarView::StarView( QWidget *parent, const char *name )
 
 void StarView::update( const Job &job )
 {
-  JobList jobs;
-  jobs.insert( job.jobId(), job );
-  update( jobs );
+  kdDebug() << "StarView::checkForNewNode() " << job.jobId()
+            << " server: " << job.server() << " client: " << job.client()
+            << " state: " << job.stateAsString() << endl;
+
+  checkForNewNode( job );
+  updateNodeStatus( job );
+  drawNodeStatus();
 }
 
 QWidget *StarView::widget()
 {
   return this;
-}
-
-void StarView::update( const JobList &jobs )
-{
-    checkForNewNodes( jobs );
-    updateNodeStatus( jobs );
-    drawNodeStatus();
 }
 
 void StarView::resizeEvent( QResizeEvent * )
@@ -129,38 +124,42 @@ void StarView::arrangeNodeItems()
     }
 }
 
-void StarView::checkForNewNodes( const JobList &jobs )
+void StarView::checkForNewNode( const Job &job )
 {
-    bool newNode = false;
+    kdDebug() << "StarView::checkForNewNode() " << job.jobId() << endl;
 
-    JobList::ConstIterator it = jobs.begin();
-    for ( ; it != jobs.end(); ++it ) {
-        QString server = (*it).server();
-        if ( m_nodeItems.find( server ) == 0 ) {
-            NodeItem *nodeItem = new NodeItem( server, m_canvas );
-            m_nodeItems.insert( server, nodeItem );
-            nodeItem->show();
-            newNode = true;
-        }
+    QString server = job.server();
+    if ( server.isEmpty() ) {
+      kdDebug() << "Empty server" << endl;
+      return;
     }
+    NodeItem *nodeItem = m_nodeItems.find( server );
+    if ( !nodeItem ) {
+      kdDebug() << "New node for '" << server << "'" << endl;
+      nodeItem = new NodeItem( server, m_canvas );
+      m_nodeItems.insert( server, nodeItem );
+      nodeItem->show();
 
-    if ( newNode ) {
-        arrangeNodeItems();
-        m_canvas->update();
+      arrangeNodeItems();
+
+      m_canvas->update();
     }
 }
 
-void StarView::updateNodeStatus( const JobList &jobs )
+void StarView::updateNodeStatus( const Job &job )
 {
-    QDictIterator<NodeItem> it( m_nodeItems );
-    while ( it.current() != 0 ) {
-        JobList::ConstIterator jobIt = jobs.begin();
-        it.current()->setState( Job::Idle );
-        for ( ; jobIt != jobs.end(); ++jobIt ) {
-            if ( it.current()->hostName() == ( *jobIt ).server() )
-                it.current()->setState( ( *jobIt ).state() );
-        }
-        ++it;
+    kdDebug() << "StarView::updateNodeStatus() " << job.jobId() << endl;
+
+    QString server = job.server();
+    if ( server.isEmpty() ) {
+      kdDebug() << "Empty server" << endl;
+      return;
+    }
+    NodeItem *nodeItem = m_nodeItems.find( server );
+    if ( !nodeItem ) {
+      kdError() << "NodeItem for '" << server << "' is missing." << endl;
+    } else {
+      nodeItem->setState( job.state() );
     }
 }
 

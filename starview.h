@@ -41,17 +41,14 @@ class StarView : public QWidget, public StatusView
 
     QString id() const { return "star"; }
 
-  public slots:
-    virtual void update( const JobList &jobs );
-
   protected:
     virtual void resizeEvent( QResizeEvent *e );
 
   private:
     void centerLocalhostItem();
     void arrangeNodeItems();
-    void checkForNewNodes( const JobList &jobs );
-    void updateNodeStatus( const JobList &jobs );
+    void checkForNewNode( const Job &job );
+    void updateNodeStatus( const Job &job );
     void drawNodeStatus();
     void drawState( NodeItem *node );
 
