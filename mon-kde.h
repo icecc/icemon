@@ -96,6 +96,7 @@ public:
 class StatusView
 {
 public:
+    virtual ~StatusView() {}
     virtual void update( const Job &job ) = 0;
     virtual QWidget *widget() = 0;
 };
@@ -115,6 +116,7 @@ class ListStatusView :public KListView, public StatusView
     Q_OBJECT
 public:
     ListStatusView( QWidget *parent, const char *name = 0 );
+    virtual ~ListStatusView() {}
     virtual QWidget *widget() { return this; }
     virtual void update( const Job &job );
 
@@ -164,6 +166,8 @@ public:
 private slots:
     void setupListView();
     void setupStarView();
+    void setupGanttView();
+
     void rememberJobs( const JobList &jobs );
     void slotCheckScheduler();
     void msgReceived();

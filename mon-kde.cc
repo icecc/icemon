@@ -10,6 +10,7 @@
 #include <kmessagebox.h>
 #include <kstdaction.h>
 #include <kdebug.h>
+#include "ganttstatusview.h"
 
 #include <qcanvas.h>
 #include <qlayout.h>
@@ -328,10 +329,15 @@ MainWindow::MainWindow( QWidget *parent, const char *name )
                           actionCollection(), "view_star_view" );
     a->setExclusiveGroup( "viewmode" );
 
+    a = new KRadioAction( i18n( "&Gantt View" ), 0,
+                          this, SLOT( setupGanttView() ),
+                          actionCollection(), "view_gantt_view" );
+    a->setExclusiveGroup( "viewmode" );
+
     KStdAction::quit( kapp, SLOT( quit() ), actionCollection() );
 
     createGUI();
-    setupListView();
+    setupGanttView();
     checkScheduler();
 }
 
@@ -498,6 +504,11 @@ void MainWindow::setupListView()
     setupView( new ListStatusView( this ) );
 }
 
+void MainWindow::setupGanttView()
+{
+    setupView( new GanttStatusView( this ) );
+}
+
 void MainWindow::setupStarView()
 {
 //	setupView( new StarStatusView( this ) );
@@ -508,8 +519,8 @@ void MainWindow::rememberJobs( const JobList &jobs )
     m_rememberedJobs = jobs;
 }
 
-const char * rs_program_name = "distccmon-kde";
-const char * const appName = I18N_NOOP( "distccmon-kde" );
+const char * rs_program_name = "icemon";
+const char * const appName = I18N_NOOP( "icemon" );
 const char * const version = "0.1";
 const char * const description = I18N_NOOP( "distcc monitor for KDE" );
 const char * const copyright = I18N_NOOP( "(c) 2003, Frerich Raabe <raabe@kde.org>" );
