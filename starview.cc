@@ -140,10 +140,12 @@ class HostItem : public QCanvasText
       m_jobHalo->show();
 
       setHostColor( QColor( 200, 200, 200 ) );
+
+      m_state = Job::Idle;
     }
 
     HostInfo *mHostInfo;
-  
+
     Job::State m_state;
     QCanvasItem *m_stateItem;
     unsigned int m_client;
@@ -170,7 +172,7 @@ class WhatsStat : public QToolTip
 
     virtual void maybeTip ( const QPoint &p )
     {
-        HostItem *item = 0;        
+        HostItem *item = 0;
         QCanvasItemList items = mCanvas->collisions( p );
         QCanvasItemList::ConstIterator it;
         for( it = items.begin(); it != items.end(); ++it ) {
