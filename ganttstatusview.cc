@@ -240,15 +240,20 @@ void GanttProgress::resizeEvent( QResizeEvent * )
 
 GanttStatusView::GanttStatusView( HostInfoManager *m, QWidget *parent,
                                   const char *name )
-  : QWidget( parent, name, WRepaintNoErase | WResizeNoErase ),
+  : QScrollView( parent, name, WRepaintNoErase | WResizeNoErase ),
     StatusView( m )
 {
-    m_topLayout = new QGridLayout( this, 2, 2, 0, -1, "topLayout" );
+    enableClipper( true );
+    setHScrollBarMode( AlwaysOff );
+    mTopWidget = new QWidget( viewport() );
+    addChild( mTopWidget );
+
+    m_topLayout = new QGridLayout( mTopWidget, 2, 2, 0, -1, "topLayout" );
     m_topLayout->setSpacing( 5 );
     m_topLayout->setMargin( 4 );
     m_topLayout->setColStretch( 1, 10 );
 
-    GanttTimeScaleWidget *timeScale = new GanttTimeScaleWidget( this );
+    GanttTimeScaleWidget *timeScale = new GanttTimeScaleWidget( mTopWidget );
     timeScale->setFixedHeight( 50 );
     m_topLayout->addWidget( timeScale, 0, 1 );
 
@@ -259,6 +264,8 @@ GanttStatusView::GanttStatusView( HostInfoManager *m, QWidget *parent,
 
     mUpdateInterval = 25;
     timeScale->setPixelsPerSecond( 1000 / mUpdateInterval );
+
+    mMinimumProgressHeight = QFontMetrics( font() ).height() + 6;
 
     start();
 }
@@ -393,7 +400,7 @@ GanttProgress *GanttStatusView::registerNode( unsigned int hostid )
       NodeLabelMap::ConstIterator labelIt = mNodeLabels.find( hostid );
       if ( labelIt == mNodeLabels.end() ) {
         QString name = nameForHost( hostid );
-        QLabel *l = new QLabel( name, this );
+        QLabel *l = new QLabel( name, mTopWidget );
         l->setPaletteForegroundColor( color );
         m_topLayout->addWidget( l, row, 0 );
         l->show();
@@ -401,7 +408,8 @@ GanttProgress *GanttStatusView::registerNode( unsigned int hostid )
       }
     }
 
-    GanttProgress *w = new GanttProgress( this, this );
+    GanttProgress *w = new GanttProgress( this, mTopWidget );
+    w->setMinimumHeight( mMinimumProgressHeight );
     nodeLayout->addWidget( w );
 
     mNodeMap[ hostid ].append( w );
@@ -498,6 +506,23 @@ void GanttStatusView::checkAge()
          it != to_unregister.end();
          ++it )
         unregisterNode( *it );
+}
+
+void GanttStatusView::viewportResizeEvent( QResizeEvent *e )
+{
+  QSize s = e->size();
+
+  setMinimumWidth( mTopWidget->sizeHint().width() +
+                   verticalScrollBar()->width() );
+  mTopWidget->setMinimumWidth( s.width() );
+
+  if ( mTopWidget->height() <= s.height() ) {
+    mTopWidget->setMinimumHeight( s.height() );
+  } else {
+    mTopWidget->setMinimumHeight( mTopWidget->sizeHint().height() );
+  }
+
+  QScrollView::viewportResizeEvent( e );
 }
 
 #include "ganttstatusview.moc"

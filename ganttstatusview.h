@@ -25,7 +25,7 @@
 
 #include <qmap.h>
 #include <qvaluelist.h>
-#include <qwidget.h>
+#include <qscrollview.h>
 
 class Job;
 class JobList;
@@ -96,7 +96,7 @@ class GanttProgress : public QWidget
     bool mIsFree;
 };
 
-class GanttStatusView : public QWidget, public StatusView
+class GanttStatusView : public QScrollView, public StatusView
 {
     Q_OBJECT
   public:
@@ -115,6 +115,9 @@ class GanttStatusView : public QWidget, public StatusView
     virtual void update( const Job &job );
     virtual QWidget *widget();
 
+  protected:
+    void viewportResizeEvent( QResizeEvent *e );
+
   private slots:
     void updateGraphs();
     void checkAge();
@@ -124,7 +127,9 @@ class GanttStatusView : public QWidget, public StatusView
     void removeSlot( unsigned int hostid, GanttProgress* slot );
     void unregisterNode( unsigned int hostid );
 
+    QWidget *mTopWidget;
     QGridLayout *m_topLayout;
+
     typedef QValueList<GanttProgress *> SlotList;
     typedef QMap<unsigned int,SlotList> NodeMap;
     NodeMap mNodeMap;
@@ -144,6 +149,8 @@ class GanttStatusView : public QWidget, public StatusView
     bool mRunning;
 
     int mUpdateInterval;
+
+    int mMinimumProgressHeight;
 };
 
 #endif

@@ -40,6 +40,10 @@ void StatusView::checkNode( unsigned int )
 {
 }
 
+void StatusView::removeNode( unsigned int )
+{
+}
+
 QString StatusView::nameForHost( unsigned int id )
 {
   return mHostInfoManager->nameForHost( id );
