@@ -16,7 +16,7 @@ class NodeItem;
 class Job
 {
 public:
-    enum State { WaitingForCS, Compiling, Finished, Failed, Idle };
+    enum State { WaitingForCS, LocalOnly, Compiling, Finished, Failed, Idle };
     Job(unsigned int id = 0,
         const QString &client = QString::null,
         const QString &filename = QString::null,
@@ -191,6 +191,8 @@ private:
     void handle_job_begin( Msg *m );
     void handle_job_done( Msg *m );
     void handle_stats( Msg *m );
+    void handle_local_begin( Msg *m );
+    void handle_local_done( Msg *m );
 
     StatusView *m_view;
     JobList m_rememberedJobs;

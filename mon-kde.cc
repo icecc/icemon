@@ -66,6 +66,9 @@ QString Job::stateAsString() const
     case Idle:
         return "Idle";
         break;
+    case LocalOnly:
+        return "LocalOnly";
+        break;
     }
     return QString::null;
 }
@@ -197,10 +200,10 @@ void StarStatusView::resizeEvent( QResizeEvent * )
 
 void StarStatusView::centerLocalhostItem()
 {
-	const QRect br = m_localhostItem->boundingRect();
-	const int newX = ( width() - br.width() ) / 2;
-	const int newY = ( height() - br.height() ) / 2;
-	m_localhostItem->move( newX, newY );
+    const QRect br = m_localhostItem->boundingRect();
+    const int newX = ( width() - br.width() ) / 2;
+    const int newY = ( height() - br.height() ) / 2;
+    m_localhostItem->move( newX, newY );
 }
 
 void StarStatusView::arrangeNodeItems()
@@ -220,22 +223,22 @@ void StarStatusView::arrangeNodeItems()
 
 void StarStatusView::checkForNewNodes( const JobList &jobs )
 {
-	bool newNode = false;
+    bool newNode = false;
 
-	JobList::ConstIterator it = jobs.begin();
-	for ( ; it != jobs.end(); ++it ) {
-		if ( m_nodeItems.find( ( *it ).host() ) == 0 ) {
-			NodeItem *nodeItem = new NodeItem( ( *it ).host(), m_canvas );
-			m_nodeItems.insert( ( *it ).host(), nodeItem );
-			nodeItem->show();
-			newNode = true;
-		}
-	}
+    JobList::ConstIterator it = jobs.begin();
+    for ( ; it != jobs.end(); ++it ) {
+        if ( m_nodeItems.find( ( *it ).host() ) == 0 ) {
+            NodeItem *nodeItem = new NodeItem( ( *it ).host(), m_canvas );
+            m_nodeItems.insert( ( *it ).host(), nodeItem );
+            nodeItem->show();
+            newNode = true;
+        }
+    }
 
-	if ( newNode ) {
-		arrangeNodeItems();
-		m_canvas->update();
-	}
+    if ( newNode ) {
+        arrangeNodeItems();
+        m_canvas->update();
+    }
 }
 
 void StarStatusView::updateNodeStatus( const JobList &jobs )
@@ -254,10 +257,10 @@ void StarStatusView::updateNodeStatus( const JobList &jobs )
 
 void StarStatusView::drawNodeStatus()
 {
-	QDictIterator<NodeItem> it( m_nodeItems );
-	for ( ; it.current() != 0; ++it )
-		drawState( it.current() );
-	m_canvas->update();
+    QDictIterator<NodeItem> it( m_nodeItems );
+    for ( ; it.current() != 0; ++it )
+        drawState( it.current() );
+    m_canvas->update();
 }
 
 void StarStatusView::drawState( NodeItem *node )
@@ -422,6 +425,12 @@ void MainWindow::msgReceived()
     case M_MON_STATS:
         handle_stats( m );
         break;
+    case M_MON_LOCAL_JOB_BEGIN:
+        handle_local_begin( m );
+        break;
+    case M_MON_LOCAL_JOB_DONE:
+        handle_local_done( m );
+        break;
     default:
         cout << "UNKNOWN" << endl;
         break;
@@ -439,6 +448,34 @@ void MainWindow::handle_getcs(Msg *_m)
                                        m->version.c_str(),
                                        m->lang == CompileJob::Lang_C ? "C" : "C++" );
     m_view->update( m_rememberedJobs[m->job_id] );
+}
+
+void MainWindow::handle_local_begin( Msg *_m )
+{
+    MonLocalJobBeginMsg *m = dynamic_cast<MonLocalJobBeginMsg*>( _m );
+    if ( !m )
+        return;
+
+    m_rememberedJobs[m->job_id] = Job( m->job_id, m->host.c_str(),
+                                       QString::null,
+                                       QString::null,
+                                       "C++" );
+    m_rememberedJobs[m->job_id].setState( Job::LocalOnly );
+    m_view->update( m_rememberedJobs[m->job_id] );
+}
+
+void MainWindow::handle_local_done( Msg *_m )
+{
+    MonLocalJobDoneMsg *m = dynamic_cast<MonLocalJobDoneMsg*>( _m );
+    if ( !m )
+        return;
+    JobList::iterator it = m_rememberedJobs.find( m->job_id );
+    if ( it == m_rememberedJobs.end() ) // we started in between
+        return;
+
+    ( *it ).exitcode = m->exitcode;
+    ( *it ).setState( Job::Finished );
+    m_view->update( *it );
 }
 
 void MainWindow::handle_stats( Msg *_m )
@@ -476,7 +513,7 @@ void MainWindow::handle_job_begin(Msg *_m)
     ( *it ).setState( Job::Compiling );
 
 #if 0
-    kdDebug() << "BEGIN: " << (*it).fileName() << " (" << (*it).jobId() 
+    kdDebug() << "BEGIN: " << (*it).fileName() << " (" << (*it).jobId()
               << ")" << endl;
 #endif
 
@@ -512,7 +549,7 @@ void MainWindow::handle_job_done(Msg *_m)
     }
 
 #if 0
-    kdDebug() << "DONE: " << (*it).fileName() << " (" << (*it).jobId() 
+    kdDebug() << "DONE: " << (*it).fileName() << " (" << (*it).jobId()
               << ")" << endl;
 #endif
 

@@ -98,19 +98,19 @@ void GanttProgress::update( const Job &job )
 #endif
 
     if ( !m_jobs.isEmpty() && m_jobs.first().first == job ) {
-//        kdDebug() << "  Known Job. State: " << job.state() << endl;
+       kdDebug() << "  Known Job. State: " << job.state() << endl;
         if ( job.state() == Job::Finished || job.state() == Job::Failed ) {
           Job j = IdleJob();
           m_jobs.prepend( qMakePair( j, mClock ) );
           mIsFree = true;
         }
     } else {
-//        kdDebug() << " New Job" << endl;
+        kdDebug() << " New Job" << endl;
         m_jobs.prepend( qMakePair( job, mClock ) );
         mIsFree = false;
     }
 
-//    kdDebug() << "num jobs: " << m_jobs.count() << " jobs" << endl;
+    kdDebug() << "num jobs: " << m_jobs.count() << " jobs" << endl;
 }
 
 void GanttProgress::drawGraph( QPainter &p )
@@ -170,7 +170,12 @@ QColor GanttProgress::colorForStatus( const Job &job ) const
         return Qt::gray;
     } else {
         QMap<QString,QColor>::ConstIterator it = mHostColors.find( job.client() );
-        if ( it != mHostColors.end() ) return it.data();
+        if ( it != mHostColors.end() ) {
+            QColor c = it.data();
+            if ( job.state() == Job::LocalOnly )
+                return c.light();
+            return c;
+        }
         else return Qt::blue;
     }
 }
@@ -208,7 +213,7 @@ GanttStatusView::GanttStatusView( QWidget *parent, const char *name )
     connect( m_progressTimer, SIGNAL( timeout() ), SLOT( updateGraphs() ) );
 
     mUpdateInterval = 25;
-    timeScale->setPixelsPerSecond( 1000 / mUpdateInterval );    
+    timeScale->setPixelsPerSecond( 1000 / mUpdateInterval );
 
     start();
 }
@@ -252,7 +257,7 @@ void GanttStatusView::update( const Job &job )
 //                kdDebug() << "  Found free slot" << endl;
                 slot = *it3;
                 break;
-            }        
+            }
         }
         if ( it3 == slotList.end() ) {
 //            kdDebug() << "  Create new slot" << endl;
@@ -261,7 +266,7 @@ void GanttStatusView::update( const Job &job )
     }
 
     if ( !slot ) {
-      kdError() << "GanttStatusView::update(): Unable to find slot" << endl; 
+      kdError() << "GanttStatusView::update(): Unable to find slot" << endl;
     } else {
       mJobMap.insert( job.jobId(), slot );
       createHostColor( job.client() );
