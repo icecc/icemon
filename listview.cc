@@ -23,7 +23,7 @@
 
 #include <klocale.h>
 
-using namespace std;
+#include <qdir.h>
 
 QString convertSize( unsigned int size )
 {
@@ -66,16 +66,18 @@ enum Columns
 };
 
 ListStatusViewItem::ListStatusViewItem( KListView *parent, const Job &_job )
-    :  KListViewItem( parent ), job( _job )
+    :  KListViewItem( parent )
 {
-    updateText( job );
+    updateText( _job );
 }
 
 void ListStatusViewItem::updateText( const Job &job)
 {
+    const bool fileNameChanged( this->job.fileName() != job.fileName() );
+
     this->job = job;
+
     setText( ColumnID, QString::number( job.jobId() ) );
-    setText( ColumnFilename, job.fileName() );
     ListStatusView *p = dynamic_cast<ListStatusView*>( listView() );
     if ( p ) {
         setText( ColumnClient, p->nameForHost( job.client() ) );
@@ -90,6 +92,41 @@ void ListStatusViewItem::updateText( const Job &job)
     setText( ColumnFaults, QString::number( job.majflt ) );
     setText( ColumnSizeIn, convertSize( job.in_uncompressed ) );
     setText( ColumnSizeOut, convertSize( job.out_uncompressed ) );
+
+    if ( fileNameChanged )
+        updateFileName();
+}
+
+void ListStatusViewItem::updateFileName()
+{
+    ListStatusView* view = dynamic_cast<ListStatusView*>( listView() );
+    if ( !view )
+        return;
+
+    const char separator = QDir::separator();
+
+    QString fileName = job.fileName();
+
+    const int numberOfFilePathParts = view->numberOfFilePathParts();
+    if ( numberOfFilePathParts > 0 )
+    {
+        int counter = numberOfFilePathParts;
+        int index = 0;
+        do
+        {
+            index = fileName.findRev( separator, index - 1);
+        }
+        while ( counter-- && ( index > 0 ) );
+
+        if ( index > 0 )
+            fileName = QString::fromLatin1( "..." ) + fileName.mid( index );
+    }
+    else if ( numberOfFilePathParts == 0)
+    {
+        fileName = fileName.mid( fileName.findRev( separator ) + 1);
+    }
+
+    setText( ColumnFilename, fileName );
 }
 
 inline int compare( unsigned int i1, unsigned int i2 )
@@ -128,7 +165,9 @@ int ListStatusViewItem::compare( QListViewItem *i, int col,
 
 ListStatusView::ListStatusView( HostInfoManager *m, QWidget *parent,
                                 const char *name )
-	: KListView( parent, name ), StatusView( m )
+    : KListView( parent, name ),
+      StatusView( m ),
+      mNumberOfFilePathParts( 2 )
 {
     addColumn( i18n( "ID" ) );
     addColumn( i18n( "Filename" ) );
@@ -172,6 +211,17 @@ void ListStatusView::removeJob( const Job& job )
         delete *it;
         items.erase( it );
     }
+}
+
+int ListStatusView::numberOfFilePathParts() const
+{
+    return mNumberOfFilePathParts;
+}
+
+void ListStatusView::setNumberOfFilePathParts( int number )
+{
+    if ( number == mNumberOfFilePathParts )
+        return;
 }
 
 

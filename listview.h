@@ -29,8 +29,12 @@ class ListStatusViewItem : public KListViewItem
 {
 public:
     ListStatusViewItem( KListView *parent, const Job &job );
+
     void updateText( const Job &job);
-    int compare( QListViewItem *i, int col, bool ascending ) const;
+
+    void updateFileName();
+
+    virtual int compare( QListViewItem *i, int col, bool ascending ) const;
 private:
     Job job;
 };
@@ -48,9 +52,22 @@ public:
 
     void removeJob( const Job& job );
 
+    int numberOfFilePathParts() const;
+    void setNumberOfFilePathParts( int number );
+
 private:
     typedef QMap<unsigned int, ListStatusViewItem*> ItemMap;
     ItemMap items;
+
+    /**
+     * Number of parts (directories) of the file path which should be displayed.
+     * -   < 0 for complete file path
+     * -  == 0 for the pure file name without path
+     * -   > 0 for only parts of the file path. If there are not enough parts
+     *    the complete file path is displayed else .../partN/.../part1/fileName.
+     * Default is 2.
+     */
+    int mNumberOfFilePathParts;
 };
 
 #endif
