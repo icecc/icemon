@@ -169,10 +169,12 @@ class Msg;
 class MainWindow : public KMainWindow
 {
     Q_OBJECT
-public:
+  public:
     MainWindow( QWidget *parent, const char *name = 0 );
 
-private slots:
+    void setCurrentNet( const QString & );
+
+  private slots:
     void setupListView();
     void setupStarView();
     void setupGanttView();
@@ -183,7 +185,7 @@ private slots:
     void stopView();
     void startView();
 
-private:
+  private:
     void setupView( StatusView *view, bool rememberJobs );
     void checkScheduler(bool deleteit = false);
     void handle_getcs( Msg *m );
@@ -195,9 +197,9 @@ private:
 
     StatusView *m_view;
     JobList m_rememberedJobs;
-    MsgChannel *scheduler;
-    QSocketNotifier *scheduler_read;
-    QString current_netname;
+    MsgChannel *m_scheduler;
+    QSocketNotifier *m_scheduler_read;
+    QString m_current_netname;
 };
 
 #endif // MON_KDE_H

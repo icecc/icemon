@@ -327,7 +327,8 @@ void StarStatusView::drawState( NodeItem *node )
 #endif
 
 MainWindow::MainWindow( QWidget *parent, const char *name )
-	: KMainWindow( parent, name ), m_view( 0 ),  scheduler( 0 ), scheduler_read( 0 )
+	: KMainWindow( parent, name ), m_view( 0 ), m_scheduler( 0 ),
+          m_scheduler_read( 0 )
 {
     KRadioAction *a = new KRadioAction( i18n( "&List View" ), 0,
                                         this, SLOT( setupListView() ),
@@ -362,11 +363,11 @@ MainWindow::MainWindow( QWidget *parent, const char *name )
 void MainWindow::checkScheduler(bool deleteit)
 {
     if ( deleteit ) {
-        delete scheduler;
-        scheduler = 0;
-        delete scheduler_read;
-        scheduler_read = 0;
-    } else if ( scheduler )
+        delete m_scheduler;
+        m_scheduler = 0;
+        delete m_scheduler_read;
+        m_scheduler_read = 0;
+    } else if ( m_scheduler )
         return;
     QTimer::singleShot( 1000, this, SLOT( slotCheckScheduler() ) );
 }
@@ -374,34 +375,34 @@ void MainWindow::checkScheduler(bool deleteit)
 void MainWindow::slotCheckScheduler()
 {
     std::list<std::string> names = get_netnames (60);
-    if ( !names.empty() && current_netname.isEmpty() )
+    if ( !names.empty() && m_current_netname.isEmpty() )
     {
-        current_netname = names.front().c_str();
+        m_current_netname = names.front().c_str();
     }
 
-    if ( current_netname.isEmpty() ) {
+    if ( m_current_netname.isEmpty() ) {
         checkScheduler( true );
         return;
     }
 
-    scheduler = connect_scheduler ( current_netname.latin1() );
-    if ( scheduler ) {
-        if ( !scheduler->send_msg (MonLoginMsg()) )
+    m_scheduler = connect_scheduler ( m_current_netname.latin1() );
+    if ( m_scheduler ) {
+        if ( !m_scheduler->send_msg (MonLoginMsg()) )
         {
             checkScheduler( true );
             return;
         }
-        scheduler_read = new QSocketNotifier( scheduler->fd,
-                                              QSocketNotifier::Read,
-                                              this );
-        QObject::connect( scheduler_read, SIGNAL(activated(int)),
+        m_scheduler_read = new QSocketNotifier( m_scheduler->fd,
+                                                QSocketNotifier::Read,
+                                                this );
+        QObject::connect( m_scheduler_read, SIGNAL(activated(int)),
                           SLOT( msgReceived()) );
     }
 }
 
 void MainWindow::msgReceived()
 {
-    Msg *m = scheduler->get_msg ();
+    Msg *m = m_scheduler->get_msg ();
     if ( !m ) {
         kdDebug() << "lost connection to scheduler\n";
         checkScheduler(true);
@@ -594,6 +595,11 @@ void MainWindow::startView()
   m_view->start();
 }
 
+void MainWindow::setCurrentNet( const QString &netName )
+{
+  m_current_netname = netName;
+}
+
 const char * rs_program_name = "icemon";
 const char * const appName = I18N_NOOP( "icemon" );
 const char * const version = "0.1";
@@ -601,14 +607,29 @@ const char * const description = I18N_NOOP( "distcc monitor for KDE" );
 const char * const copyright = I18N_NOOP( "(c) 2003, Frerich Raabe <raabe@kde.org>" );
 const char * const bugsEmail = "raabe@kde.org";
 
+static const KCmdLineOptions options[] =
+{
+  { "n", 0, 0 },
+  { "netname <name>", "Icecream network name", 0 },
+  KCmdLineLastOption
+};
+
 int main( int argc, char **argv )
 {
 	KAboutData aboutData( rs_program_name, appName, version, description,
 	                      KAboutData::License_BSD, copyright, bugsEmail );
 	KCmdLineArgs::init( argc, argv, &aboutData );
+        KCmdLineArgs::addCmdLineOptions( options );
 
 	KApplication app;
 	MainWindow *mainWidget = new MainWindow( 0 );
+
+        KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+        QString netName = QString::fromLocal8Bit( args->getOption( "netname" ) );
+        if ( !netName.isEmpty() ) {
+          mainWidget->setCurrentNet( netName );
+        }
+
 	app.setMainWidget( mainWidget );
 	mainWidget->show();
 
