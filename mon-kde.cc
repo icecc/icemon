@@ -75,7 +75,8 @@ ListStatusView::ListStatusView( QWidget *parent, const char *name )
     m_listView = new KListView( this );
     m_listView->addColumn( i18n( "ID" ) );
     m_listView->addColumn( i18n( "Filename" ) );
-    m_listView->addColumn( i18n( "Host" ) );
+    m_listView->addColumn( i18n( "Client" ) );
+    m_listView->addColumn( i18n( "Server" ) );
     m_listView->addColumn( i18n( "State" ) );
     layout->addWidget( m_listView );
 }
@@ -87,7 +88,7 @@ void ListStatusView::update( const JobList &jobs )
     JobList::ConstIterator it = jobs.begin();
     for ( ; it != jobs.end(); ++it )
         new KListViewItem( m_listView, QString::number( ( *it ).jobId() ),
-                           ( *it ).fileName(), ( *it ).host(), ( *it ).stateAsString() );
+                           ( *it ).fileName(), ( *it ).client(), ( *it ).server(), ( *it ).stateAsString() );
     m_listView->setUpdatesEnabled( true );
     m_listView->triggerUpdate();
 }
@@ -340,7 +341,8 @@ void MainWindow::handle_getcs(Msg *_m)
     MonGetCSMsg *m = dynamic_cast<MonGetCSMsg*>( _m );
     if ( !m )
         return;
-    m_rememberedJobs[m->job_id] = Job( m->job_id, m->filename.c_str(),
+    m_rememberedJobs[m->job_id] = Job( m->job_id, m->client.c_str(),
+                                       m->filename.c_str(),
                                        m->version.c_str(),
                                        m->lang == CompileJob::Lang_C ? "C" : "C++" );
     m_view->update( m_rememberedJobs );
@@ -354,7 +356,7 @@ void MainWindow::handle_job_begin(Msg *_m)
     JobList::iterator it = m_rememberedJobs.find( m->job_id );
     if ( it == m_rememberedJobs.end() ) // we started in between
         return;
-    ( *it ).setHost( m->host.c_str() );
+    ( *it ).setServer( m->host.c_str() );
     ( *it ).setStartTime( m->stime );
     ( *it ).setState( Job::Compiling );
 }

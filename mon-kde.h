@@ -17,13 +17,14 @@ class Job
 {
 public:
     enum State { WaitingForCS, Compiling, Finished };
-    Job(unsigned int id, const QString &filename,
+    Job(unsigned int id, const QString &client, const QString &filename,
         const QString &environment, const QString &lang) {
         m_id = id;
         m_fileName = filename;
         m_env = environment;
         m_lang = lang;
         m_state = WaitingForCS;
+        m_client = client;
     }
     Job() {
         m_id = 0;
@@ -34,13 +35,14 @@ public:
 
     unsigned int jobId() const { return m_id; }
     QString fileName() const { return m_fileName; }
-    QString host() const { return m_host; }
+    QString client() const { return m_client; }
+    QString server() const { return m_server; }
     State state() const { return m_state; }
     QString stateAsString() const;
     time_t stime() const { return m_stime; }
 
-    void setHost( const QString & host ) {
-        m_host = host;
+    void setServer( const QString & host ) {
+        m_server = host;
     }
     void setStartTime( time_t t ) {
         m_stime = t;
@@ -51,7 +53,8 @@ public:
 private:
     unsigned int m_id;
     QString m_fileName;
-    QString m_host;
+    QString m_server;
+    QString m_client;
     QString m_lang;
     QString m_env;
     State m_state;
