@@ -7,6 +7,8 @@
             <Action name="view_star_view"/>
             <Action name="view_gantt_view"/>
         </Menu>
+        <Action name="view_start"/>
+        <Action name="view_stop"/>
     </Menu>
 </MenuBar>
 </kpartgui>

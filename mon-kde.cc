@@ -343,9 +343,17 @@ MainWindow::MainWindow( QWidget *parent, const char *name )
 
     KStdAction::quit( kapp, SLOT( quit() ), actionCollection() );
 
+    new KAction( i18n("Stop"), 0, this, SLOT( stopView() ), actionCollection(),
+                 "view_stop" );
+
+    new KAction( i18n("Start"), 0, this, SLOT( startView() ),
+                 actionCollection(), "view_start" );
+
     createGUI();
     setupGanttView();
     checkScheduler();
+
+    setAutoSaveSettings();
 }
 
 void MainWindow::checkScheduler(bool deleteit)
@@ -438,6 +446,7 @@ void MainWindow::handle_stats( Msg *_m )
     MonStatsMsg *m = dynamic_cast<MonStatsMsg*>( _m );
     if ( !m )
         return;
+#if 0
     cout << "load"
          << " host=" << m->host
          << " iceload=" << m->load
@@ -449,6 +458,7 @@ void MainWindow::handle_stats( Msg *_m )
          << ", " << m->loadAvg5 << ", " << m->loadAvg10 << ")"
          << " freemem=" << m->freeMem
          << endl;
+#endif
 
   m_view->checkForNewNode( m->host.c_str() );
 }
@@ -464,6 +474,12 @@ void MainWindow::handle_job_begin(Msg *_m)
     ( *it ).setServer( m->host.c_str() );
     ( *it ).setStartTime( m->stime );
     ( *it ).setState( Job::Compiling );
+
+#if 0
+    kdDebug() << "BEGIN: " << (*it).fileName() << " (" << (*it).jobId() 
+              << ")" << endl;
+#endif
+
     m_view->update( *it );
 }
 
@@ -494,6 +510,12 @@ void MainWindow::handle_job_done(Msg *_m)
         ( *it ).out_compressed = m->out_compressed;
         ( *it ).out_uncompressed = m->out_uncompressed;
     }
+
+#if 0
+    kdDebug() << "DONE: " << (*it).fileName() << " (" << (*it).jobId() 
+              << ")" << endl;
+#endif
+
     m_view->update( *it );
 }
 
@@ -526,6 +548,16 @@ void MainWindow::setupStarView()
 void MainWindow::rememberJobs( const JobList &jobs )
 {
     m_rememberedJobs = jobs;
+}
+
+void MainWindow::stopView()
+{
+  m_view->stop();
+}
+
+void MainWindow::startView()
+{
+  m_view->start();
 }
 
 const char * rs_program_name = "icemon";

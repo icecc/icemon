@@ -9,8 +9,14 @@
 #include <kdebug.h>
 
 GanttTimeScaleWidget::GanttTimeScaleWidget( QWidget *parent, const char *name )
-	: QWidget( parent, name, WResizeNoErase | WRepaintNoErase )
+	: QWidget( parent, name, WResizeNoErase | WRepaintNoErase ),
+          mPixelsPerSecond( 40 )
 {
+}
+
+void GanttTimeScaleWidget::setPixelsPerSecond( int v )
+{
+  mPixelsPerSecond = v;
 }
 
 void GanttTimeScaleWidget::paintEvent( QPaintEvent *pe )
@@ -36,13 +42,17 @@ void GanttTimeScaleWidget::paintEvent( QPaintEvent *pe )
 	// Now draw all the bars and numbers, very straightforward.
 	for ( int x = 0; x < r.width(); ++x ) {
 		const int absX = x + r.x();
-		if ( absX % 200 == 0 ) {
+		if ( absX % ( mPixelsPerSecond * 10 ) == 0 ) {
 			p.drawLine( x, -r.y(), x, height() / 2 - r.y() );
-			p.drawText( x + 2, fm.ascent() - r.y(), QString::number( absX / 100 * 5 ) );
-		} else if ( absX % 100 == 0 ) {
+			p.drawText( x + 2, fm.ascent() - r.y(),
+                                    QString::number( absX /
+                                                     mPixelsPerSecond ) );
+		} else if ( absX % ( mPixelsPerSecond * 5 ) == 0 ) {
 			p.drawLine( x, -r.y(), x, height() / 4 - r.y() );
-			p.drawText( x + 2, fm.ascent() - r.y(), QString::number( absX / 100 * 5 ) );
-		} else if ( absX % 20 == 0 ) {
+			p.drawText( x + 2, fm.ascent() - r.y(),
+                                    QString::number( absX /
+                                                     mPixelsPerSecond ) );
+		} else if ( absX % ( mPixelsPerSecond ) == 0 ) {
 			p.drawLine( x, -r.y(), x, height() / 8 - r.y() );
 		}
 	}
@@ -52,7 +62,7 @@ void GanttTimeScaleWidget::paintEvent( QPaintEvent *pe )
 
 GanttProgress::GanttProgress( QMap<QString,QColor> &hostColors, QWidget *parent, const char *name )
 	: QWidget( parent, name, WResizeNoErase | WRepaintNoErase ),
-          mHostColors( hostColors ), mClock( 0 )
+          mHostColors( hostColors ), mClock( 0 ), mIsFree( true )
 {
 }
 
@@ -79,17 +89,25 @@ void GanttProgress::adjustGraph()
 
 void GanttProgress::update( const Job &job )
 {
-//    kdDebug() << "GanttProgress::update( job )" << endl;
+#if 0
+    kdDebug() << "GanttProgress::update( job ): " << job.fileName() << endl;
 
-    if ( !m_jobs.isEmpty() && m_jobs.last().first == job ) {
-//        kdDebug() << " Known Job" << endl;
+    kdDebug() << "  num jobs: " << m_jobs.count() << endl;
+    kdDebug() << "  first id: " << m_jobs.first().first.jobId() << endl;
+    kdDebug() << "  this id: " << job.jobId() << endl;
+#endif
+
+    if ( !m_jobs.isEmpty() && m_jobs.first().first == job ) {
+//        kdDebug() << "  Known Job. State: " << job.state() << endl;
         if ( job.state() == Job::Finished || job.state() == Job::Failed ) {
           Job j = IdleJob();
           m_jobs.prepend( qMakePair( j, mClock ) );
+          mIsFree = true;
         }
     } else {
 //        kdDebug() << " New Job" << endl;
         m_jobs.prepend( qMakePair( job, mClock ) );
+        mIsFree = false;
     }
 
 //    kdDebug() << "num jobs: " << m_jobs.count() << " jobs" << endl;
@@ -121,9 +139,11 @@ void GanttProgress::drawGraph( QPainter &p )
         p.drawRect( xStart, 0, xWidth, height() );
 
         QString s = ( *it ).first.fileName();
-        s = s.mid( s.findRev( '/' ) + 1, s.length() );
-        s = s.left( s.findRev( '.' ) );
-        s[0] = s[0].upper();
+        if ( !s.isEmpty() ) {
+          s = s.mid( s.findRev( '/' ) + 1, s.length() );
+//          s = s.left( s.findRev( '.' ) );
+//          s[0] = s[0].upper();
+        }
 
         // If we print the filename, check whether we need to truncate it and
         // append "..." at the end.
@@ -158,7 +178,8 @@ QColor GanttProgress::colorForStatus( const Job &job ) const
 void GanttProgress::paintEvent( QPaintEvent * )
 {
     QPixmap buffer( width(), height() );
-    buffer.fill( Qt::yellow );
+//    buffer.fill( Qt::yellow );
+    buffer.fill( paletteBackgroundColor() );
 
     QPainter p( &buffer );
     drawGraph( p );
@@ -185,13 +206,67 @@ GanttStatusView::GanttStatusView( QWidget *parent, const char *name )
 
     m_progressTimer = new QTimer( this );
     connect( m_progressTimer, SIGNAL( timeout() ), SLOT( updateGraphs() ) );
-    m_progressTimer->start( 25 );
+
+    mUpdateInterval = 25;
+    timeScale->setPixelsPerSecond( 1000 / mUpdateInterval );    
+
+    start();
 }
 
 void GanttStatusView::update( const Job &job )
 {
-    checkForNewNodes( job );
-    updateNodes( job );
+    if ( !mRunning ) return;
+
+    if ( job.state() == Job::WaitingForCS ) return;
+
+#if 0
+    kdDebug() << "GanttStatusView::update(): ID: " << job.jobId() << "  "
+              << job.fileName() << "  Status:" << int( job.state() )
+              << "  Server: " << job.server() << endl;
+#endif
+
+    QMap<unsigned int, GanttProgress *>::Iterator it;
+
+    it = mJobMap.find( job.jobId() );
+
+    if ( it != mJobMap.end() ) {
+//        kdDebug() << "  Job found" << endl;
+        it.data()->update( job );
+        if ( job.state() == Job::Finished || job.state() == Job::Failed ) {
+            mJobMap.remove( it );
+        }
+        return;
+    }
+
+    GanttProgress *slot = 0;
+
+    NodeMap::ConstIterator it2 = mNodeMap.find( job.server() );
+    if ( it2 == mNodeMap.end() ) {
+//        kdDebug() << "  Server not known" << endl;
+        slot = registerNode( job.server() );
+    } else {
+        SlotList slotList = it2.data();
+        SlotList::ConstIterator it3;
+        for( it3 = slotList.begin(); it3 != slotList.end(); ++it3 ) {
+            if ( (*it3)->isFree() ) {
+//                kdDebug() << "  Found free slot" << endl;
+                slot = *it3;
+                break;
+            }        
+        }
+        if ( it3 == slotList.end() ) {
+//            kdDebug() << "  Create new slot" << endl;
+            slot = registerNode( job.server() );
+        }
+    }
+
+    if ( !slot ) {
+      kdError() << "GanttStatusView::update(): Unable to find slot" << endl; 
+    } else {
+      mJobMap.insert( job.jobId(), slot );
+      createHostColor( job.client() );
+      slot->update( job );
+    }
 }
 
 QWidget * GanttStatusView::widget()
@@ -201,48 +276,47 @@ QWidget * GanttStatusView::widget()
 
 void GanttStatusView::checkForNewNode( const QString &host )
 {
-    if ( m_nodeMap.find( host ) != m_nodeMap.end() ) return;
+    if ( !mRunning ) return;
+
+    if ( mNodeMap.find( host ) != mNodeMap.end() ) return;
 
     registerNode( host );
 }
 
-void GanttStatusView::checkForNewNodes( const Job &job )
-{
-    if ( job.server().isEmpty() ) return;
-
-    kdDebug() << "checkForNewNodes " << job.server() << endl;
-    if ( !m_nodeMap.contains( job.server() ) ) {
-        registerNode( job.server() );
-    }
-    createHostColor( job.client() );
-}
-
-void GanttStatusView::updateNodes( const Job &job )
-{
-    if ( m_nodeMap.contains( job.server() ) ) {
-        m_nodeMap[ job.server() ]->update( job );
-    }
-}
-
-void GanttStatusView::registerNode( const QString &name )
+GanttProgress *GanttStatusView::registerNode( const QString &name )
 {
     kdDebug() << "GanttStatusView::registerNode(): " << name << endl;
+
+    static int lastRow = 0;
 
     createHostColor( name );
     QColor color = mHostColors[ name ];
 
-    const int lastRow = m_nodeMap.count() + 1;
+    QVBoxLayout *nodeLayout;
 
-    QLabel *l = new QLabel( name, this );
-    l->setPaletteForegroundColor( color );
-    m_topLayout->addWidget( l, lastRow, 0 );
-    l->show();
+    NodeLayoutMap::ConstIterator it = mNodeLayouts.find( name );
+    if ( it == mNodeLayouts.end() ) {
+      ++lastRow;
+
+      QLabel *l = new QLabel( name, this );
+      l->setPaletteForegroundColor( color );
+      m_topLayout->addWidget( l, lastRow, 0 );
+      l->show();
+
+      nodeLayout = new QVBoxLayout( this );
+      m_topLayout->addLayout( nodeLayout, lastRow, 1 );
+      mNodeLayouts.insert( name, nodeLayout );
+    } else {
+      nodeLayout = it.data();
+    }
 
     GanttProgress *w = new GanttProgress( mHostColors, this );
-    m_topLayout->addWidget( w, lastRow, 1 );
+    nodeLayout->addWidget( w );
     w->show();
 
-    m_nodeMap[ name ] = w;
+    mNodeMap[ name ].append( w );
+
+    return w;
 }
 
 void GanttStatusView::createHostColor( const QString &host )
@@ -261,9 +335,25 @@ void GanttStatusView::createHostColor( const QString &host )
 
 void GanttStatusView::updateGraphs()
 {
-    QMap<QString, GanttProgress *>::Iterator it = m_nodeMap.begin();
-    for ( ; it != m_nodeMap.end(); ++it )
-        it.data()->progress();
+    NodeMap::ConstIterator it;
+    for ( it = mNodeMap.begin(); it != mNodeMap.end(); ++it ) {
+        SlotList::ConstIterator it2;
+        for( it2 = (*it).begin(); it2 != (*it).end(); ++it2 ) {
+            (*it2)->progress();
+        }
+    }
+}
+
+void GanttStatusView::stop()
+{
+  mRunning = false;
+  m_progressTimer->stop();
+}
+
+void GanttStatusView::start()
+{
+  mRunning = true;
+  m_progressTimer->start( mUpdateInterval );
 }
 
 #include "ganttstatusview.moc"

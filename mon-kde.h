@@ -106,6 +106,8 @@ public:
     virtual void update( const Job &job ) = 0;
     virtual QWidget *widget() = 0;
     virtual void checkForNewNode( const QString &host );
+    virtual void stop() {}
+    virtual void start() {}
 };
 
 class ListStatusViewItem : public QListViewItem
@@ -178,6 +180,9 @@ private slots:
     void rememberJobs( const JobList &jobs );
     void slotCheckScheduler();
     void msgReceived();
+
+    void stopView();
+    void startView();
 
 private:
     void setupView( StatusView *view );
