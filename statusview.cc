@@ -55,16 +55,12 @@ QString Job::stateAsString() const
     return QString::null;
 }
 
-void StatusView::checkNode( unsigned int hostid, const QString &statmsg )
+void StatusView::checkNode( unsigned int hostid, const StatsMap &statmsg )
 {
-    QString first = statmsg.left( statmsg.find( '\n' ) );
-    if ( first.startsWith( "Name:" ) ) {
-        first = first.mid( 5 ).stripWhiteSpace();
-        kdDebug() << "host " << hostid << " " << first << endl;
-        if ( mHostNameMap[hostid] != first ) {
-            mHostColorMap[hostid] = QColor();
-            mHostNameMap[hostid] = first;
-        }
+    QString name = statmsg["Name"];
+    if ( mHostNameMap[hostid] != name ) {
+        mHostColorMap[hostid] = QColor();
+        mHostNameMap[hostid] = name;
     }
 }
 

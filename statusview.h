@@ -122,7 +122,8 @@ class StatusView
     virtual ~StatusView() {}
     virtual void update( const Job &job ) = 0;
     virtual QWidget *widget() = 0;
-    virtual void checkNode( unsigned int hostid, const QString &statmsg );
+    typedef QMap<QString,QString> StatsMap;
+    virtual void checkNode( unsigned int hostid, const StatsMap &statmsg );
     virtual void stop() {}
     virtual void start() {}
     virtual void checkNodes() {}

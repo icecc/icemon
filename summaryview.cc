@@ -153,7 +153,7 @@ void SummaryView::update(const Job &job)
     i->update(job);
 }
 
-void SummaryView::checkNode(unsigned int hostid, const QString &statmsg )
+void SummaryView::checkNode(unsigned int hostid, const StatsMap &statmsg )
 {
     StatusView::checkNode( hostid, statmsg );
 

@@ -46,7 +46,7 @@ public:
 
     virtual QWidget *widget();
     virtual void update(const Job &job);
-    virtual void checkNode(unsigned int hostid, const QString &statmsg );
+    virtual void checkNode(unsigned int hostid, const StatsMap &statmsg );
 
     QString id() const { return "summary"; }
 

@@ -330,7 +330,7 @@ QWidget * GanttStatusView::widget()
     return this;
 }
 
-void GanttStatusView::checkNode( unsigned int hostid, const QString &statmsg )
+void GanttStatusView::checkNode( unsigned int hostid, const StatsMap &statmsg )
 {
     StatusView::checkNode( hostid, statmsg );
 
@@ -338,8 +338,7 @@ void GanttStatusView::checkNode( unsigned int hostid, const QString &statmsg )
 
     if ( mNodeMap.find( hostid ) == mNodeMap.end())
         registerNode( hostid )->update( IdleJob());
-#warning TODO split statmsg somewhere global
-    unsigned int max_kids = 1;
+    unsigned int max_kids = statmsg["MaxJobs"].toUInt();
     for( unsigned int i = mNodeMap[ hostid ].count();
          i < max_kids;
          ++i )

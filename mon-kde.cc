@@ -247,7 +247,18 @@ void MainWindow::handle_stats( Msg *_m )
     if ( !m )
         return;
 
-    m_view->checkNode( m->hostid, m->statmsg.c_str() );
+    QStringList statmsg = QStringList::split( '\n', m->statmsg.c_str() );
+    StatusView::StatsMap stats;
+    for ( QStringList::ConstIterator it = statmsg.begin(); it != statmsg.end(); ++it )
+    {
+        QString key = *it;
+        key = key.left( key.find( ':' ) );
+        QString value = *it;
+        value = value.mid( value.find( ':' ) + 1 );
+        stats[key] = value;
+    }
+
+    m_view->checkNode( m->hostid, stats );
 }
 
 void MainWindow::handle_job_begin(Msg *_m)
