@@ -30,33 +30,33 @@ void HostInfo::initColorTable()
 {
     // Sorry, the names are in german as my knowledge of the english language
     // doesn't seem to be good enough to translate icecream flavors.
-    initColor( "#A5080B", i18n("kirsche") );
-    initColor( "#76d26f", i18n("pistazie"));
-    initColor( "#664a08", i18n("schokolade"));
-    initColor( "#4c9dff", i18n("schlumpf-eis"));
-    initColor( "#6c2ca8", i18n("blaubeere"));
+    initColor( "#A5080B", i18n("cherry") );
+    initColor( "#76d26f", i18n("pistachio"));
+    initColor( "#664a08", i18n("chocolate"));
+    initColor( "#4c9dff", i18n("smurf"));
+    initColor( "#6c2ca8", i18n("blueberry"));
     initColor( "#fa8344", i18n("orange"));
-    initColor( "#55CFBD", i18n("minze"));
-    initColor( "#db1230", i18n("erdbeer"));
-    initColor( "#a6ea5e", i18n("apfel"));
-    initColor( "#D6A3D8", i18n("kaugummi"));
-    initColor( "#f2aa4d", i18n("pfirsich"));
-    initColor( "#aa1387", i18n("pflaume"));
-    initColor( "#26c3f7", i18n("eismeer"));
-    initColor( "#b8850e", i18n("nuss"));
-    initColor( "#6a188d", i18n("brombeere"));
-    initColor( "#24b063", i18n("waldmeister"));
-    initColor( "#ffff0f", i18n("banane"));
-    initColor( "#1e1407", i18n("mocca"));
+    initColor( "#55CFBD", i18n("mint"));
+    initColor( "#db1230", i18n("strawberry"));
+    initColor( "#a6ea5e", i18n("apple"));
+    initColor( "#D6A3D8", i18n("bubblegum"));
+    initColor( "#f2aa4d", i18n("peach"));
+    initColor( "#aa1387", i18n("plum"));
+    initColor( "#26c3f7", i18n("polar sea"));
+    initColor( "#b8850e", i18n("nut"));
+    initColor( "#6a188d", i18n("blackberry"));
+    initColor( "#24b063", i18n("woodruff"));
+    initColor( "#ffff0f", i18n("banana"));
+    initColor( "#1e1407", i18n("mocha"));
     initColor( "#29B450", i18n("kiwi"));
-    initColor( "#f7d36f", i18n("maracuja"));
-    initColor( "#F8DD31", i18n("zitrone"));
-    initColor( "#fa7e91", i18n("himbeere"));
-    initColor( "#c5a243", i18n("karamel"));
-    initColor( "#b8bcff", i18n("heidelbeere"));
-    initColor( "#ffb8c0", i18n("johannisbeere"));
-    initColor( "#d51013", i18n("granatapfel"));
-    initColor( "#b77a2a", i18n("zimt"));
+    initColor( "#f7d36f", i18n("passionfruit"));
+    initColor( "#F8DD31", i18n("lemon"));
+    initColor( "#fa7e91", i18n("raspberry"));
+    initColor( "#c5a243", i18n("caramel"));
+    initColor( "#b8bcff", i18n("blueberry"));
+    initColor( "#ffb8c0", i18n("blackcurrant"));
+    initColor( "#d51013", i18n("pomegranate"));
+    initColor( "#b77a2a", i18n("cinnamon"));
 }
 
 void HostInfo::initColor( const QString &value , const QString &name )
