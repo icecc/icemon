@@ -211,6 +211,8 @@ GanttStatusView::GanttStatusView( QWidget *parent, const char *name )
 
     m_progressTimer = new QTimer( this );
     connect( m_progressTimer, SIGNAL( timeout() ), SLOT( updateGraphs() ) );
+    m_ageTimer = new QTimer( this );
+    connect( m_ageTimer, SIGNAL( timeout() ), SLOT( checkAge() ) );
 
     mUpdateInterval = 25;
     timeScale->setPixelsPerSecond( 1000 / mUpdateInterval );
@@ -275,6 +277,7 @@ void GanttStatusView::update( const Job &job )
       mJobMap.insert( job.jobId(), slot );
       createHostColor( job.client() );
       slot->update( job );
+      mAgeMap[ processor ] = 0;
     }
 }
 
@@ -293,6 +296,8 @@ void GanttStatusView::checkNode( const QString &host, unsigned int max_kids )
          i < max_kids;
          ++i )
         registerNode( host )->update( IdleJob());
+
+    mAgeMap[ host ] = 0;
 
     SlotList slotList = mNodeMap[ host ]; // make a copy
     int to_remove = slotList.count() - max_kids;
@@ -341,6 +346,7 @@ GanttProgress *GanttStatusView::registerNode( const QString &name )
     nodeLayout->addWidget( w );
 
     mNodeMap[ name ].append( w );
+    mAgeMap[ name ] = 0;
 
     m_topLayout->setRowStretch( mNodeRows[ name ], mNodeMap[ name ].size() );
 
@@ -359,6 +365,18 @@ void GanttStatusView::removeSlot( const QString& name, GanttProgress* slot )
     mNodeMap[ name ].remove( slot );
     m_topLayout->setRowStretch( mNodeRows[ name ], mNodeMap[ name ].size() );
     delete slot;
+}
+
+void GanttStatusView::unregisterNode( const QString& name )
+{
+    kdDebug() << "GanttStatusView::unregisterNode(): " << name << endl;
+    NodeLayoutMap::ConstIterator it = mNodeLayouts.find( name );
+    if ( it == mNodeLayouts.end() )
+        return;
+    // rows cannot be removed from QGridLayout :-/ , but at least show no slots
+    while( !mNodeMap[ name ].isEmpty())
+        removeSlot( name, mNodeMap[ name ].first());
+    mAgeMap[ name ] = -1;
 }
 
 void GanttStatusView::createHostColor( const QString &host )
@@ -390,12 +408,33 @@ void GanttStatusView::stop()
 {
   mRunning = false;
   m_progressTimer->stop();
+  m_ageTimer->stop();
 }
 
 void GanttStatusView::start()
 {
   mRunning = true;
   m_progressTimer->start( mUpdateInterval );
+  m_ageTimer->start( 5000 ); 
+}
+
+void GanttStatusView::checkAge()
+{
+    QStringList to_unregister;
+    for( AgeMap::Iterator it = mAgeMap.begin();
+         it != mAgeMap.end();
+         ++it ) {
+        if( *it > 1 )
+            to_unregister.append( it.key());
+        else if( *it < 0 )
+            ; // unregistered ones
+        else
+            ++(*it);
+    }
+    for( QStringList::ConstIterator it = to_unregister.begin();
+         it != to_unregister.end();
+         ++it )
+        unregisterNode( *it );
 }
 
 #include "ganttstatusview.moc"

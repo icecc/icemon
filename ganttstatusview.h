@@ -81,22 +81,27 @@ public slots:
 
 private slots:
     void updateGraphs();
+    void checkAge();
 
 private:
     GanttProgress *registerNode( const QString &name );
     void removeSlot( const QString& name, GanttProgress* slot );
+    void unregisterNode( const QString &name );
     void createHostColor( const QString &host );
 
     QGridLayout *m_topLayout;
     typedef QValueList<GanttProgress *> SlotList;
     typedef QMap<QString,SlotList> NodeMap;
     NodeMap mNodeMap;
+    typedef QMap<QString,int> AgeMap;
+    AgeMap mAgeMap;
     QMap<unsigned int, GanttProgress *> mJobMap;
     typedef QMap<QString,QVBoxLayout *> NodeLayoutMap;
     NodeLayoutMap mNodeLayouts;
     typedef QMap<QString,int> NodeRowMap;
     NodeRowMap mNodeRows;
     QTimer *m_progressTimer;
+    QTimer *m_ageTimer;
 
     QMap<QString,QColor> mHostColors;
 
