@@ -177,7 +177,6 @@ void Monitor::handle_local_done( Msg *_m )
     return;
   }
 
-  ( *it ).exitcode = m->exitcode;
   ( *it ).setState( Job::Finished );
   m_view->update( *it );
 
