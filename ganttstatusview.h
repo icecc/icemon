@@ -26,11 +26,28 @@
 #include <qmap.h>
 #include <qvaluelist.h>
 #include <qscrollview.h>
+#include <qdialog.h>
 
 class Job;
 class JobList;
 class QGridLayout;
 class QTimer;
+class QCheckBox;
+
+class GanttConfigDialog : public QDialog
+{
+    Q_OBJECT
+  public:
+    GanttConfigDialog( QWidget *parent );
+
+    bool isTimeScaleVisible();
+
+  signals:
+    void configChanged();
+
+  private:
+    QCheckBox *mTimeScaleVisibleCheck;
+};
 
 class GanttTimeScaleWidget : public QWidget
 {
@@ -111,6 +128,8 @@ class GanttStatusView : public QScrollView, public StatusView
     void stop();
     void checkNodes();
 
+    void configureView();
+
   public slots:
     virtual void update( const Job &job );
     virtual QWidget *widget();
@@ -119,6 +138,7 @@ class GanttStatusView : public QScrollView, public StatusView
     void viewportResizeEvent( QResizeEvent *e );
 
   private slots:
+    void slotConfigChanged();
     void updateGraphs();
     void checkAge();
 
@@ -127,8 +147,12 @@ class GanttStatusView : public QScrollView, public StatusView
     void removeSlot( unsigned int hostid, GanttProgress* slot );
     void unregisterNode( unsigned int hostid );
 
+    GanttConfigDialog *mConfigDialog;
+
     QWidget *mTopWidget;
     QGridLayout *m_topLayout;
+
+    GanttTimeScaleWidget *mTimeScale;
 
     typedef QValueList<GanttProgress *> SlotList;
     typedef QMap<unsigned int,SlotList> NodeMap;

@@ -28,9 +28,42 @@
 #include <qpainter.h>
 #include <qpixmap.h>
 #include <qtimer.h>
+#include <qcheckbox.h>
+#include <qpushbutton.h>
 
 #include <kdebug.h>
 #include <klocale.h>
+#include <kdialog.h>
+
+GanttConfigDialog::GanttConfigDialog( QWidget *parent )
+  : QDialog( parent )
+{
+  QBoxLayout *topLayout = new QVBoxLayout( this );
+  topLayout->setMargin( KDialog::marginHint() );
+  topLayout->setSpacing( KDialog::spacingHint() );
+
+  mTimeScaleVisibleCheck = new QCheckBox( i18n("Show time scale"), this );
+  topLayout->addWidget( mTimeScaleVisibleCheck );
+  connect( mTimeScaleVisibleCheck, SIGNAL( clicked() ),
+           SIGNAL( configChanged() ) );
+
+  QFrame *hline = new QFrame( this );
+  hline->setFrameShape( QFrame::HLine );
+  topLayout->addWidget( hline );
+
+  QBoxLayout *buttonLayout = new QHBoxLayout( topLayout );
+
+  buttonLayout->addStretch( 1 );
+
+  QPushButton *button = new QPushButton( i18n("Close"), this );
+  buttonLayout->addWidget( button );
+  connect( button, SIGNAL( clicked() ), SLOT( hide() ) );
+}
+
+bool GanttConfigDialog::isTimeScaleVisible()
+{
+  return mTimeScaleVisibleCheck->isChecked();
+}
 
 GanttTimeScaleWidget::GanttTimeScaleWidget( QWidget *parent, const char *name )
 	: QWidget( parent, name, WResizeNoErase | WRepaintNoErase ),
@@ -246,6 +279,10 @@ GanttStatusView::GanttStatusView( HostInfoManager *m, QWidget *parent,
   : QScrollView( parent, name, WRepaintNoErase | WResizeNoErase ),
     StatusView( m )
 {
+    mConfigDialog = new GanttConfigDialog( this );
+    connect( mConfigDialog, SIGNAL( configChanged() ),
+             SLOT( slotConfigChanged() ) );
+
     enableClipper( true );
     setHScrollBarMode( AlwaysOff );
     mTopWidget = new QWidget( viewport() );
@@ -258,9 +295,9 @@ GanttStatusView::GanttStatusView( HostInfoManager *m, QWidget *parent,
     m_topLayout->setMargin( 4 );
     m_topLayout->setColStretch( 1, 10 );
 
-    GanttTimeScaleWidget *timeScale = new GanttTimeScaleWidget( mTopWidget );
-    timeScale->setFixedHeight( 50 );
-    m_topLayout->addWidget( timeScale, 0, 1 );
+    mTimeScale = new GanttTimeScaleWidget( mTopWidget );
+    mTimeScale->setFixedHeight( 50 );
+    m_topLayout->addWidget( mTimeScale, 0, 1 );
 
     m_progressTimer = new QTimer( this );
     connect( m_progressTimer, SIGNAL( timeout() ), SLOT( updateGraphs() ) );
@@ -268,9 +305,11 @@ GanttStatusView::GanttStatusView( HostInfoManager *m, QWidget *parent,
     connect( m_ageTimer, SIGNAL( timeout() ), SLOT( checkAge() ) );
 
     mUpdateInterval = 25;
-    timeScale->setPixelsPerSecond( 1000 / mUpdateInterval );
+    mTimeScale->setPixelsPerSecond( 1000 / mUpdateInterval );
 
     mMinimumProgressHeight = QFontMetrics( font() ).height() + 6;
+
+    slotConfigChanged();
 
     start();
 }
@@ -529,6 +568,18 @@ void GanttStatusView::viewportResizeEvent( QResizeEvent *e )
   }
 
   QScrollView::viewportResizeEvent( e );
+}
+
+void GanttStatusView::configureView()
+{
+  mConfigDialog->show();
+  mConfigDialog->raise();
+}
+
+void GanttStatusView::slotConfigChanged()
+{
+  if ( mConfigDialog->isTimeScaleVisible() ) mTimeScale->show();
+  else mTimeScale->hide();
 }
 
 #include "ganttstatusview.moc"
