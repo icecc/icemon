@@ -30,11 +30,6 @@
 #include <kdebug.h>
 #include <klocale.h>
 
-#include <netdb.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-
 GanttTimeScaleWidget::GanttTimeScaleWidget( QWidget *parent, const char *name )
 	: QWidget( parent, name, WResizeNoErase | WRepaintNoErase ),
           mPixelsPerSecond( 40 )
@@ -87,15 +82,11 @@ void GanttTimeScaleWidget::paintEvent( QPaintEvent *pe )
 	bitBlt( this, r.topLeft(), &buffer );
 }
 
-GanttProgress::GanttProgress( QMap<QString,QColor> &hostColors, QWidget *parent, const char *name )
+GanttProgress::GanttProgress( StatusView *statusView, QWidget *parent,
+                              const char *name )
 	: QWidget( parent, name, WResizeNoErase | WRepaintNoErase ),
-          mHostColors( hostColors ), mClock( 0 ), mIsFree( true )
+          mStatusView( statusView ), mClock( 0 ), mIsFree( true )
 {
-}
-
-void GanttProgress::setHostColors( QMap<QString,QColor> &v )
-{
-    mHostColors = v;
 }
 
 void GanttProgress::progress()
@@ -222,14 +213,9 @@ QColor GanttProgress::colorForStatus( const Job &job ) const
     if ( job.state() == Job::Idle ) {
         return Qt::gray;
     } else {
-        QMap<QString,QColor>::ConstIterator it = mHostColors.find( job.client() );
-        if ( it != mHostColors.end() ) {
-            QColor c = it.data();
-            if ( job.state() == Job::LocalOnly )
-                return c.light();
-            return c;
-        }
-        else return Qt::blue;
+        QColor c = mStatusView->hostColor( job.client() );
+        if ( job.state() == Job::LocalOnly ) return c.light();
+        else return c;
     }
 }
 
@@ -328,7 +314,6 @@ void GanttStatusView::update( const Job &job )
       kdError() << "GanttStatusView::update(): Unable to find slot" << endl;
     } else {
       mJobMap.insert( job.jobId(), slot );
-      createHostColor( job.client() );
       slot->update( job );
       mAgeMap[ processor ] = 0;
     }
@@ -373,8 +358,7 @@ GanttProgress *GanttStatusView::registerNode( const QString &ip )
 
     static int lastRow = 0;
 
-    createHostColor( ip );
-    QColor color = mHostColors[ ip ];
+    QColor color = hostColor( ip );
 
     QVBoxLayout *nodeLayout;
 
@@ -406,7 +390,7 @@ GanttProgress *GanttStatusView::registerNode( const QString &ip )
       }
     }
 
-    GanttProgress *w = new GanttProgress( mHostColors, this );
+    GanttProgress *w = new GanttProgress( this, this );
     nodeLayout->addWidget( w );
 
     mNodeMap[ ip ].append( w );
@@ -417,38 +401,6 @@ GanttProgress *GanttStatusView::registerNode( const QString &ip )
     w->show();
 
     return w;
-}
-
-QString GanttStatusView::nameForIp( const QString &ip )
-{
-  if ( ip.isEmpty() ) {
-    kdError() << "Empty IP address" << endl;
-    return i18n("<unknown>");
-  }
-
-  QCString ipStr = ip.latin1();
-
-  struct in_addr addr;
-
-  int success = inet_aton( ipStr, &addr );
-  if ( !success ) {
-    kdDebug() << "IP address '" << ip << "' not valid." << endl;
-    return ip;
-  }
-
-  struct hostent *host = gethostbyaddr( (const char *)(&addr),
-                                        sizeof( in_addr ), AF_INET );
-  if ( !host ) {
-    kdDebug() << "Error getting name for IP address '" << ip << "': "
-              << hstrerror( h_errno ) << endl;
-    return ip;
-  } else {
-    QString name = host->h_name;
-    // Strip domain parts
-    int pos = name.find( '.' );
-    if ( pos > 0 ) name = name.left( pos );
-    return name;
-  }
 }
 
 void GanttStatusView::removeSlot( const QString& name, GanttProgress* slot )
@@ -486,20 +438,6 @@ void GanttStatusView::unregisterNode( const QString& name )
       mNodeLabels.remove( labelIt );
     }
     mAgeMap[ name ] = -1;
-}
-
-void GanttStatusView::createHostColor( const QString &host )
-{
-  if ( mHostColors.find( host ) != mHostColors.end() ) return;
-
-  static int num = 0;
-
-  QColor color( num, 255 - num, ( num * 3 ) % 255 );
-
-  mHostColors.insert( host, color );
-
-  num += 48;
-  num %= 255;
 }
 
 void GanttStatusView::updateGraphs()

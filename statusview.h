@@ -126,6 +126,14 @@ class StatusView
     virtual void checkNodes() {}
 
     virtual QString id() const = 0;
+
+    QString nameForIp( const QString &ip );
+
+    QColor hostColor( const QString &ip );
+
+  private:
+    QMap<QString,QString> mHostNameMap;
+    QMap<QString,QColor> mHostColorMap;
 };
 
 #endif

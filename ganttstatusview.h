@@ -34,70 +34,72 @@ class QTimer;
 
 class GanttTimeScaleWidget : public QWidget
 {
-	Q_OBJECT
-	public:
-		GanttTimeScaleWidget( QWidget *parent, const char *name = 0 );
+    Q_OBJECT
+  public:
+    GanttTimeScaleWidget( QWidget *parent, const char *name = 0 );
 
-                void setPixelsPerSecond( int );
+    void setPixelsPerSecond( int );
 
-	protected:
-		virtual void paintEvent( QPaintEvent *e );
+  protected:
+    virtual void paintEvent( QPaintEvent *e );
 
-        private:
-                int mPixelsPerSecond;
+  private:
+    int mPixelsPerSecond;
 };
 
 class GanttProgress : public QWidget
 {
-	Q_OBJECT
-	public:
-		GanttProgress( QMap<QString,QColor> &hostColors,
-                               QWidget *parent, const char *name = 0 );
+    Q_OBJECT
+  public:
+    GanttProgress( StatusView *statusView,
+                   QWidget *parent, const char *name = 0 );
 
-                void setHostColors( QMap<QString,QColor> & );
+    bool isFree() const { return mIsFree; }
+    bool fullyIdle() const { return m_jobs.count() == 1 && isFree(); }
 
-                bool isFree() const { return mIsFree; }
-                bool fullyIdle() const { return m_jobs.count() == 1 && isFree(); }
+  public slots:
+    void progress();
+    void update( const Job &job );
 
-	public slots:
-		void progress();
-		void update( const Job &job );
+  protected:
+    virtual void paintEvent( QPaintEvent *e );
+    virtual void resizeEvent( QResizeEvent *e );
 
-	protected:
-		virtual void paintEvent( QPaintEvent *e );
-		virtual void resizeEvent( QResizeEvent *e );
+  private:
+    void adjustGraph();
+    void drawGraph( QPainter &p );
+    QColor colorForStatus( const Job &job ) const;
 
-	private:
-		void adjustGraph();
-		void drawGraph( QPainter &p );
-		QColor colorForStatus( const Job &job ) const;
+    struct JobData
+    {
+      JobData( const Job& j, int c )
+        : job( j ), clock( c ), next_text_width( 0 ) {}
+      JobData() {}; // stupid QValueList
 
-                struct JobData
-                {
-                    JobData( const Job& j, int c )
-                        : job( j ), clock( c ), next_text_width( 0 ) {}
-                    Job job;
-                    int clock;
-                    mutable int next_text_width;
-                    mutable QPixmap text_cache;
-                    JobData() {}; // stupid QValueList
-                    bool operator==( const JobData& d )
-                        { return job == d.job && clock == d.clock; }
-                };
-		QValueList< JobData > m_jobs;
-                
-                QMap<QString,QColor> &mHostColors;
+      bool operator==( const JobData& d )
+      {
+        return job == d.job && clock == d.clock;
+      }
 
-                int mClock;
+      Job job;
+      int clock;
+      mutable int next_text_width;
+      mutable QPixmap text_cache;
+    };
 
-                bool mIsFree;
+    StatusView *mStatusView;
+
+    QValueList< JobData > m_jobs;
+
+    int mClock;
+
+    bool mIsFree;
 };
 
 class GanttStatusView : public QWidget, public StatusView
 {
     Q_OBJECT
-
-public:
+  public:
     GanttStatusView( QWidget *parent, const char *name = 0 );
     virtual ~GanttStatusView() {}
 
@@ -109,20 +111,18 @@ public:
     void stop();
     void checkNodes();
 
-public slots:
+  public slots:
     virtual void update( const Job &job );
     virtual QWidget *widget();
 
-private slots:
+  private slots:
     void updateGraphs();
     void checkAge();
 
-private:
+  private:
     GanttProgress *registerNode( const QString &name );
     void removeSlot( const QString& name, GanttProgress* slot );
     void unregisterNode( const QString &name );
-    void createHostColor( const QString &host );
-    QString nameForIp( const QString &ip );
 
     QGridLayout *m_topLayout;
     typedef QValueList<GanttProgress *> SlotList;
@@ -141,12 +141,10 @@ private:
     QTimer *m_progressTimer;
     QTimer *m_ageTimer;
 
-    QMap<QString,QColor> mHostColors;
-
     bool mRunning;
 
     int mUpdateInterval;
 };
 
-#endif // GANTTSTATUSVIEW_H
+#endif
 // vim:ts=4:sw=4:noet

@@ -2,6 +2,7 @@
     This file is part of Icecream.
 
     Copyright (c) 2003 Frerich Raabe <raabe@kde.org>
+    Copyright (c) 2004 Cornelius Schumacher <schumacher@kde.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,15 +33,34 @@
 
 using namespace std;
 
-class NodeItem : public QCanvasText
+class HostItem : public QCanvasText
 {
-public:
-    NodeItem( const QString &hostName, QCanvas *canvas )
-        : QCanvasText( hostName, canvas ),
-          m_hostName( hostName ),
-          m_stateItem( 0 )
-        {
-        }
+  public:
+    HostItem( const QString &hostName, QCanvas *canvas )
+      : QCanvasText( hostName, canvas ), m_hostName( hostName ),
+        m_stateItem( 0 )
+    {
+      setZ( 100 );
+
+      QRect r = boundingRect();
+    
+      m_boxItem = new QCanvasEllipse( r.width() + 10 , r.height() + 10,
+                                      canvas );
+      setColor( QColor( 200, 200, 200 ) );
+      m_boxItem->setZ( 80 );
+      m_boxItem->move( r.width() / 2, r.height() / 2 );
+      m_boxItem->show();
+    }
+
+    ~HostItem()
+    {
+//      delete m_boxItem;
+    }
+
+    void setColor( const QColor &color )
+    {
+      m_boxItem->setBrush( color );
+    }
 
     void setState( Job::State state ) { m_state = state; }
     Job::State state() const { return m_state; }
@@ -50,10 +70,21 @@ public:
 
     QString hostName() const { return m_hostName; }
 
-private:
+    void moveBy( double dx, double dy )
+    {
+      QCanvasText::moveBy( dx, dy );
+      
+      QRect r = boundingRect();
+      
+      m_boxItem->moveBy( dx, dy );
+    }
+
+  private:
     Job::State m_state;
     QString m_hostName;
     QCanvasItem *m_stateItem;
+
+    QCanvasEllipse *m_boxItem;
 };
 
 StarView::StarView( QWidget *parent, const char *name )
@@ -70,7 +101,7 @@ StarView::StarView( QWidget *parent, const char *name )
     m_canvasView->setHScrollBarMode( QScrollView::AlwaysOff );
     layout->addWidget( m_canvasView );
 
-    m_localhostItem = new QCanvasText( i18n( "localhost" ), m_canvas );
+    m_localhostItem = new HostItem( i18n( "localhost" ), m_canvas );
     centerLocalhostItem();
     m_localhostItem->show();
 
@@ -97,7 +128,7 @@ void StarView::resizeEvent( QResizeEvent * )
 {
     m_canvas->resize( width(), height() );
     centerLocalhostItem();
-    arrangeNodeItems();
+    arrangeHostItems();
     m_canvas->update();
 }
 
@@ -109,13 +140,13 @@ void StarView::centerLocalhostItem()
     m_localhostItem->move( newX, newY );
 }
 
-void StarView::arrangeNodeItems()
+void StarView::arrangeHostItems()
 {
     const int radius = kMin( m_canvas->width() / 2, m_canvas->height() / 2 );
-    const double step = 2 * M_PI / m_nodeItems.count();
+    const double step = 2 * M_PI / m_hostItems.count();
 
     double angle = 0.0;
-    QDictIterator<NodeItem> it( m_nodeItems );
+    QDictIterator<HostItem> it( m_hostItems );
     while ( it.current() != 0 ) {
         it.current()->move( m_localhostItem->x() + ( cos( angle ) * radius ),
                             m_localhostItem->y() + ( sin( angle ) * radius ) );
@@ -133,14 +164,15 @@ void StarView::checkForNewNode( const Job &job )
       kdDebug() << "Empty server" << endl;
       return;
     }
-    NodeItem *nodeItem = m_nodeItems.find( server );
-    if ( !nodeItem ) {
+    HostItem *hostItem = m_hostItems.find( server );
+    if ( !hostItem ) {
       kdDebug() << "New node for '" << server << "'" << endl;
-      nodeItem = new NodeItem( server, m_canvas );
-      m_nodeItems.insert( server, nodeItem );
-      nodeItem->show();
+      hostItem = new HostItem( nameForIp( server ), m_canvas );
+      hostItem->setColor( hostColor( server ) );
+      m_hostItems.insert( server, hostItem );
+      hostItem->show();
 
-      arrangeNodeItems();
+      arrangeHostItems();
 
       m_canvas->update();
     }
@@ -155,23 +187,23 @@ void StarView::updateNodeStatus( const Job &job )
       kdDebug() << "Empty server" << endl;
       return;
     }
-    NodeItem *nodeItem = m_nodeItems.find( server );
-    if ( !nodeItem ) {
-      kdError() << "NodeItem for '" << server << "' is missing." << endl;
+    HostItem *hostItem = m_hostItems.find( server );
+    if ( !hostItem ) {
+      kdError() << "HostItem for '" << server << "' is missing." << endl;
     } else {
-      nodeItem->setState( job.state() );
+      hostItem->setState( job.state() );
     }
 }
 
 void StarView::drawNodeStatus()
 {
-    QDictIterator<NodeItem> it( m_nodeItems );
+    QDictIterator<HostItem> it( m_hostItems );
     for ( ; it.current() != 0; ++it )
         drawState( it.current() );
     m_canvas->update();
 }
 
-void StarView::drawState( NodeItem *node )
+void StarView::drawState( HostItem *node )
 {
     delete node->stateItem();
     QCanvasItem *newItem = 0;

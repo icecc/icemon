@@ -2,6 +2,7 @@
     This file is part of Icecream.
 
     Copyright (c) 2003 Frerich Raabe <raabe@kde.org>
+    Copyright (c) 2004 Cornelius Schumacher <schumacher@kde.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
 class QCanvas;
 class QCanvasText;
 class QCanvasView;
-class NodeItem;
+class HostItem;
 
 class StarView : public QWidget, public StatusView
 {
@@ -46,16 +47,16 @@ class StarView : public QWidget, public StatusView
 
   private:
     void centerLocalhostItem();
-    void arrangeNodeItems();
+    void arrangeHostItems();
     void checkForNewNode( const Job &job );
     void updateNodeStatus( const Job &job );
     void drawNodeStatus();
-    void drawState( NodeItem *node );
+    void drawState( HostItem *node );
 
     QCanvas *m_canvas;
     QCanvasView *m_canvasView;
     QCanvasText *m_localhostItem;
-    QDict<NodeItem> m_nodeItems;
+    QDict<HostItem> m_hostItems;
 };
 
 #endif
