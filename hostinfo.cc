@@ -50,7 +50,7 @@ void HostInfo::initColorTable()
     initColor( "#1e1407", i18n("mocca"));
     initColor( "#29B450", i18n("kiwi"));
     initColor( "#f7d36f", i18n("maracuja"));
-    initColor( "#f8ffc8", i18n("zitrone"));
+    initColor( "#F8DD31", i18n("zitrone"));
     initColor( "#fa7e91", i18n("himbeere"));
     initColor( "#c5a243", i18n("karamel"));
     initColor( "#b8bcff", i18n("heidelbeere"));
