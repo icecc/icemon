@@ -326,7 +326,7 @@ void MainWindow::setupListView()
 
 void MainWindow::setupSummaryView()
 {
-//    setupView( new SummaryView( this ), false );
+    setupView( new SummaryView( this ), false );
 }
 
 void MainWindow::setupGanttView()

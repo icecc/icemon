@@ -100,7 +100,7 @@ void SummaryViewItem::update(const Job &job)
         m_stateWidget->setPaletteBackgroundColor(QColor("green"));
         m_jobsLabel->setText(QString::number(m_jobCount));
         m_fileLabel->setText(job.fileName());
-        m_sourceLabel->setText(job.client());
+        m_sourceLabel->setText( static_cast<SummaryView*>( parent() )->nameForHost( job.client() ));
         break;
     case Job::Failed:
         m_stateWidget->setPaletteBackgroundColor(QColor("red"));
@@ -141,12 +141,12 @@ QWidget *SummaryView::widget()
 
 void SummaryView::update(const Job &job)
 {
-    if(job.server().isNull())
+    if( !job.server() )
         return;
 
     SummaryViewItem *i = m_items[job.server()];
     if(!i) {
-        i = new SummaryViewItem(job.server(), this);
+        i = new SummaryViewItem(nameForHost( job.server() ), this);
         i->show();
         m_items.insert(job.server(), i);
     }
@@ -157,10 +157,10 @@ void SummaryView::checkNode(unsigned int hostid, const QString &statmsg )
 {
     StatusView::checkNode( hostid, statmsg );
 
-    if(!m_items[host]) {
-        SummaryViewItem *i = new SummaryViewItem(host, this);
+    if(!m_items[hostid]) {
+        SummaryViewItem *i = new SummaryViewItem( nameForHost( hostid ), this);
         i->show();
-        m_items.insert(host, i);
+        m_items.insert(hostid, i);
     }
 }
 

@@ -51,7 +51,7 @@ public:
     QString id() const { return "summary"; }
 
 private:
-    QDict<SummaryViewItem> m_items;
+    QMap<unsigned int, SummaryViewItem *> m_items;
 };
 
 #endif

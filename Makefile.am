@@ -2,7 +2,7 @@
 INCLUDES = -I$(KDEDIR)/include -I$(QTDIR)/include -I$(srcdir)/../services
 
 bin_PROGRAMS = icemon
-icemon_SOURCES = mon-kde.cc statusview.cc listview.cc ganttstatusview.cc # summaryview.cc starview.cc
+icemon_SOURCES = mon-kde.cc statusview.cc listview.cc ganttstatusview.cc summaryview.cc # starview.cc
 icemon_LDADD = ../services/libcommon.la -lkdeui
 icemon_LDFLAGS = -L$(KDEDIR)/lib -L$(QTDIR)/lib
 
