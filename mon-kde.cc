@@ -390,9 +390,8 @@ void MainWindow::setCurrentNet( const QString &netName )
 const char * rs_program_name = "icemon";
 const char * const appName = I18N_NOOP( "icemon" );
 const char * const version = "0.1";
-const char * const description = I18N_NOOP( "distcc monitor for KDE" );
-const char * const copyright = I18N_NOOP( "(c) 2003, Frerich Raabe <raabe@kde.org>" );
-const char * const bugsEmail = "raabe@kde.org";
+const char * const description = I18N_NOOP( "Icecream monitor for KDE" );
+const char * const copyright = I18N_NOOP( "(c) 2003,2004, The icecream developers" );
 
 static const KCmdLineOptions options[] =
 {
@@ -405,7 +404,11 @@ int main( int argc, char **argv )
 {
  	setup_debug(Debug|Info|Warning|Error,"");
 	KAboutData aboutData( rs_program_name, appName, version, description,
-	                      KAboutData::License_BSD, copyright, bugsEmail );
+	                      KAboutData::License_BSD, copyright );
+        aboutData.addAuthor( "Frerich Raabe", 0, "raabe@kde.org" );
+        aboutData.addAuthor( "Stephan Kulow", 0, "coolo@kde.org" );
+        aboutData.addAuthor( "Cornelius Schumacher", 0, "schumacher@kde.org" );
+        
 	KCmdLineArgs::init( argc, argv, &aboutData );
         KCmdLineArgs::addCmdLineOptions( options );
 

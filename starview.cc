@@ -218,15 +218,19 @@ class WhatsStat : public QToolTip
                "<p><table><tr><td>"
                "<img source=\"computer\"><br><b>" + item->hostName() +
                "</b><br>" +
-               i18n("IP:&nbsp;%1").arg( hostInfo->ip() ) + "<br>" +
-
-               i18n("Flavor:&nbsp;%1")
-               .arg( HostInfo::colorName( hostInfo->color() ) ) +
-               "</td><td>"
-               "<table>"
-               "<tr><td>Platform:</td><td>" + hostInfo->platform() + "</td></tr>"
-//               "<tr><td>File:</td><td>/etc/nowhere</td></tr>"
-               "</table></td></tr></table></p>" );
+               
+               "<table>" +
+               "<tr><td>" + i18n("IP:") + "</td><td>" + hostInfo->ip()
+               + "</td></tr>" +
+               "<tr><td>" + i18n("Platform:") + "</td><td>" +
+               hostInfo->platform() + "</td></tr>"
+               "<tr><td>" + i18n("Flavor:") + "</td><td>" +
+               HostInfo::colorName( hostInfo->color() ) + "</td></tr>" +
+               "<tr><td>" + i18n("Id:") + "</td><td>" + 
+               QString::number( hostInfo->id() ) + "</td></tr>" +
+               "</table>"
+               
+               "</td></tr></table></p>" );
         }
     }
 
@@ -289,6 +293,8 @@ void StarView::update( const Job &job )
       HostItem *clientItem = findHostItem( clientid );
       if ( clientItem ) clientItem->setIsActiveClient( false );
     }
+    drawNodeStatus();
+    m_canvas->update();
     return;
   }
 
