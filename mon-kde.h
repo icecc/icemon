@@ -108,6 +108,7 @@ public:
     virtual void checkNode( const QString &host, unsigned int max_kids );
     virtual void stop() {}
     virtual void start() {}
+    virtual void checkNodes() {}
 };
 
 class ListStatusViewItem : public QListViewItem
@@ -184,6 +185,7 @@ class MainWindow : public KMainWindow
 
     void stopView();
     void startView();
+    void checkNodes();
 
   private:
     void setupView( StatusView *view, bool rememberJobs );

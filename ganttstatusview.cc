@@ -355,17 +355,27 @@ GanttProgress *GanttStatusView::registerNode( const QString &name )
     if ( it == mNodeLayouts.end() ) {
       ++lastRow;
 
-      QLabel *l = new QLabel( name, this );
-      l->setPaletteForegroundColor( color );
-      m_topLayout->addWidget( l, lastRow, 0 );
-      l->show();
-
       nodeLayout = new QVBoxLayout( 0, ( name + "_layout" ).latin1() );
       m_topLayout->addLayout( nodeLayout, lastRow, 1 );
       mNodeLayouts.insert( name, nodeLayout );
       mNodeRows.insert( name, lastRow );
     } else {
       nodeLayout = it.data();
+    }
+
+    NodeRowMap::ConstIterator rowIt = mNodeRows.find( name );
+    if ( rowIt == mNodeRows.end() ) {
+      kdError() << "Unknown node row." << endl;
+    } else {
+      int row = *rowIt;
+      NodeLabelMap::ConstIterator labelIt = mNodeLabels.find( name );
+      if ( labelIt == mNodeLabels.end() ) {
+        QLabel *l = new QLabel( name, this );
+        l->setPaletteForegroundColor( color );
+        m_topLayout->addWidget( l, row, 0 );
+        l->show();
+        mNodeLabels.insert( name, l );
+      }
     }
 
     GanttProgress *w = new GanttProgress( mHostColors, this );
@@ -408,9 +418,13 @@ void GanttStatusView::unregisterNode( const QString& name )
     NodeLayoutMap::ConstIterator it = mNodeLayouts.find( name );
     if ( it == mNodeLayouts.end() )
         return;
-    // rows cannot be removed from QGridLayout :-/ , but at least show no slots
     while( !mNodeMap[ name ].isEmpty())
         removeSlot( name, mNodeMap[ name ].first());
+    NodeLabelMap::Iterator labelIt = mNodeLabels.find( name );
+    if ( labelIt != mNodeLabels.end() ) {
+      delete *labelIt;
+      mNodeLabels.remove( labelIt );
+    }
     mAgeMap[ name ] = -1;
 }
 
@@ -450,7 +464,12 @@ void GanttStatusView::start()
 {
   mRunning = true;
   m_progressTimer->start( mUpdateInterval );
-  m_ageTimer->start( 5000 ); 
+  m_ageTimer->start( 10000 ); 
+}
+
+void GanttStatusView::checkNodes()
+{
+  checkAge();
 }
 
 void GanttStatusView::checkAge()

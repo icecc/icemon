@@ -9,6 +9,8 @@
         </Menu>
         <Action name="view_start"/>
         <Action name="view_stop"/>
+        <Separator/>
+        <Action name="check_nodes"/>
     </Menu>
 </MenuBar>
 </kpartgui>

@@ -85,6 +85,7 @@ public:
 
     void start();
     void stop();
+    void checkNodes();
 
 public slots:
     virtual void update( const Job &job );
@@ -112,6 +113,8 @@ private:
     NodeLayoutMap mNodeLayouts;
     typedef QMap<QString,int> NodeRowMap;
     NodeRowMap mNodeRows;
+    typedef QMap<QString,QWidget *> NodeLabelMap;
+    NodeLabelMap mNodeLabels;
     QTimer *m_progressTimer;
     QTimer *m_ageTimer;
 
