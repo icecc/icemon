@@ -48,6 +48,8 @@ public:
     virtual void update(const Job &job);
     virtual void checkNode(const QString &host, unsigned int max_kids);
 
+    QString id() const { return "summary"; }
+
 private:
     QDict<SummaryViewItem> m_items;
 };
