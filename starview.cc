@@ -606,6 +606,8 @@ void StarView::arrangeHostItems()
     angle += step;
     ++i;
   }
+
+  m_canvas->update();
 }
 
 HostItem *StarView::createHostItem( unsigned int hostid )
