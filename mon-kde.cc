@@ -370,6 +370,7 @@ void MainWindow::msgReceived()
 {
     Msg *m = scheduler->get_msg ();
     if ( !m ) {
+        kdDebug() << "lost connection to scheduler\n";
         checkScheduler(true);
         return;
     }
@@ -387,6 +388,9 @@ void MainWindow::msgReceived()
     case M_END:
         cout << "END" << endl;
         checkScheduler( true );
+        break;
+    case M_MON_STATS:
+        handle_stats( m );
         break;
     default:
         cout << "UNKNOWN" << endl;
@@ -407,12 +411,29 @@ void MainWindow::handle_getcs(Msg *_m)
     m_view->update( m_rememberedJobs[m->job_id] );
 }
 
+void MainWindow::handle_stats( Msg *_m )
+{
+    MonStatsMsg *m = dynamic_cast<MonStatsMsg*>( _m );
+    if ( !m )
+        return;
+    cout << "load"
+         << " host=" << m->host
+         << " iceload=" << m->load
+         << " niceLoad=" << m->niceLoad
+         << " sysLoad=" << m->sysLoad
+         << " userLoad=" << m->userLoad
+         << " idleLoad=" << m->idleLoad
+         << " loadavg=(" << m->loadAvg1
+         << ", " << m->loadAvg5 << ", " << m->loadAvg10 << ")"
+         << " freemem=" << m->freeMem
+         << endl;
+}
+
 void MainWindow::handle_job_begin(Msg *_m)
 {
     MonJobBeginMsg *m = dynamic_cast<MonJobBeginMsg*>( _m );
     if ( !m )
         return;
-    kdDebug() << "handle JobDone " << m->job_id << endl;
     JobList::iterator it = m_rememberedJobs.find( m->job_id );
     if ( it == m_rememberedJobs.end() ) // we started in between
         return;
@@ -427,7 +448,6 @@ void MainWindow::handle_job_done(Msg *_m)
     MonJobDoneMsg *m = dynamic_cast<MonJobDoneMsg*>( _m );
     if ( !m )
         return;
-    kdDebug() << "handle JobDone " << m->job_id << endl;
     JobList::iterator it = m_rememberedJobs.find( m->job_id );
     if ( it == m_rememberedJobs.end() ) // we started in between
         return;

@@ -174,6 +174,7 @@ private:
     void handle_getcs( Msg *m );
     void handle_job_begin( Msg *m );
     void handle_job_done( Msg *m );
+    void handle_stats( Msg *m );
 
     StatusView *m_view;
     JobList m_rememberedJobs;
