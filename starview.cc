@@ -37,6 +37,8 @@
 #include <qslider.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
+#include <qlineedit.h>
+#include <qregexp.h>
 
 #include <math.h>
 
@@ -66,6 +68,13 @@ StarViewConfigDialog::StarViewConfigDialog( QWidget *parent )
   mNodesPerRingLabel = new QLabel( QString::number( nodesPerRing ), this );
   nodesLayout->addWidget( mNodesPerRingLabel );
 
+  label = new QLabel( i18n("Architecture filter:"), this );
+  topLayout->addWidget( label );
+  mArchFilterEdit = new QLineEdit( this );
+  topLayout->addWidget( mArchFilterEdit );
+  connect( mArchFilterEdit, SIGNAL( textChanged( const QString & ) ),
+           SIGNAL( configChanged() ) );
+
   QFrame *hline = new QFrame( this );
   hline->setFrameShape( QFrame::HLine );
   topLayout->addWidget( hline );
@@ -92,6 +101,11 @@ void StarViewConfigDialog::setMaxNodes( int maxNodes )
 int StarViewConfigDialog::nodesPerRing()
 {
   return mNodesPerRingSlider->value();
+}
+
+QString StarViewConfigDialog::archFilter()
+{
+  return mArchFilterEdit->text();
 }
 
 HostItem::HostItem( const QString &text, QCanvas *canvas )
@@ -337,6 +351,8 @@ void StarView::checkNode( unsigned int hostid )
 
   if ( !hostid ) return;
 
+  if ( !filterArch( hostid ) ) return;
+
   HostItem *hostItem = findHostItem( hostid );
   if ( !hostItem ) {
     hostItem = createHostItem( hostid );
@@ -352,42 +368,56 @@ void StarView::removeNode( unsigned int hostid )
   HostItem *hostItem = findHostItem( hostid );
 
   if ( hostItem && hostItem->hostInfo()->isOffline() ) {
-#if 0
-    kdDebug() << "StarView::removeNode() " << hostid << " ("
-              << int( hostItem ) << ")" << endl;
-#endif
-
-    m_hostItems.remove( hostid );
-
-    QValueList<unsigned int> obsoleteJobs;
-
-    QMap<unsigned int,HostItem *>::Iterator it;
-    for( it = mJobMap.begin(); it != mJobMap.end(); ++it ) {
-#if 0
-      kdDebug() << " JOB: " << it.key() << " (" << int( it.data() )
-                << ")" << endl;
-#endif
-      if ( it.data() == hostItem ) {
-#if 0
-        kdDebug() << " Delete Job " << it.key() << endl;
-#endif
-        obsoleteJobs.append( it.key() );
-      }
-    }
-
-    QValueList<unsigned int>::ConstIterator it2;
-    for( it2 = obsoleteJobs.begin(); it2 != obsoleteJobs.end(); ++it2 ) {
-      mJobMap.remove( *it2 );
-    }
-
-    hostItem->deleteSubItems();
-    delete hostItem;
-
-    arrangeHostItems();
-    drawNodeStatus();
-
-    m_canvas->update();
+    removeItem( hostItem );
   }
+}
+
+void StarView::forceRemoveNode( unsigned int hostid )
+{
+  HostItem *hostItem = findHostItem( hostid );
+
+  if ( hostItem ) {
+    removeItem( hostItem );
+  }
+}
+
+void StarView::removeItem( HostItem *hostItem )
+{
+#if 0
+  kdDebug() << "StarView::removeItem() " << hostid << " ("
+            << int( hostItem ) << ")" << endl;
+#endif
+
+  m_hostItems.remove( hostItem->hostInfo()->id() );
+
+  QValueList<unsigned int> obsoleteJobs;
+
+  QMap<unsigned int,HostItem *>::Iterator it;
+  for( it = mJobMap.begin(); it != mJobMap.end(); ++it ) {
+#if 0
+    kdDebug() << " JOB: " << it.key() << " (" << int( it.data() )
+              << ")" << endl;
+#endif
+    if ( it.data() == hostItem ) {
+#if 0
+      kdDebug() << " Delete Job " << it.key() << endl;
+#endif
+      obsoleteJobs.append( it.key() );
+    }
+  }
+
+  QValueList<unsigned int>::ConstIterator it2;
+  for( it2 = obsoleteJobs.begin(); it2 != obsoleteJobs.end(); ++it2 ) {
+    mJobMap.remove( *it2 );
+  }
+
+  hostItem->deleteSubItems();
+  delete hostItem;
+
+  arrangeHostItems();
+  drawNodeStatus();
+
+  m_canvas->update();
 }
 
 void StarView::updateSchedulerState( bool online )
@@ -441,6 +471,15 @@ void StarView::centerSchedulerItem()
 
 void StarView::slotConfigChanged()
 {
+//  kdDebug() << "StarView::slotConfigChanged()" << endl;
+
+  HostInfoManager::HostMap hostMap = hostInfoManager()->hostMap();
+  HostInfoManager::HostMap::ConstIterator it;
+  for( it = hostMap.begin(); it != hostMap.end(); ++it ) {
+    if ( filterArch( *it ) ) checkNode( it.key() );
+    else forceRemoveNode( it.key() );
+  }
+
   arrangeHostItems();
   drawNodeStatus();
   m_canvas->update();
@@ -569,6 +608,30 @@ void StarView::configureView()
 {
   mConfigDialog->show();
   mConfigDialog->raise();
+}
+
+bool StarView::filterArch( unsigned int hostid )
+{  
+  HostInfo *i = hostInfoManager()->find( hostid );
+  if ( !i ) {
+    kdError() << "No HostInfo for id " << hostid << endl;
+    return false;
+  }
+  
+  return filterArch( i );
+}
+
+bool StarView::filterArch( HostInfo *i )
+{
+  if ( mConfigDialog->archFilter().isEmpty() ) return true;
+
+  QRegExp regExp( mConfigDialog->archFilter() );
+
+  if ( regExp.search( i->platform() ) >= 0 ) {
+    return true;
+  }
+
+  return false;
 }
 
 #include "starview.moc"

@@ -31,6 +31,7 @@ class HostInfo;
 
 class QSlider;
 class QLabel;
+class QLineEdit;
 
 class StarViewConfigDialog : public QDialog
 {
@@ -42,6 +43,8 @@ class StarViewConfigDialog : public QDialog
 
     void setMaxNodes( int );
 
+    QString archFilter();
+
   protected slots:
     void slotNodesPerRingChanged( int nodes );
   
@@ -51,6 +54,7 @@ class StarViewConfigDialog : public QDialog
   private:
     QSlider *mNodesPerRingSlider;
     QLabel *mNodesPerRingLabel;
+    QLineEdit *mArchFilterEdit;
 };
 
 
@@ -135,6 +139,18 @@ class StarView : public QWidget, public StatusView
   protected:
     virtual void resizeEvent( QResizeEvent *e );
 
+    /**
+      Return true if node should be shown and false if not.
+    */
+    bool filterArch( unsigned int hostid );
+    /**
+      Return true if node should be shown and false if not.
+    */
+    bool filterArch( HostInfo * );
+
+    void removeItem( HostItem * );
+    void forceRemoveNode( unsigned int hostid );
+
   protected slots:
     void slotConfigChanged();
 
@@ -151,7 +167,7 @@ class StarView : public QWidget, public StatusView
     QCanvas *m_canvas;
     QCanvasView *m_canvasView;
     HostItem *m_schedulerItem;
-    QMap<unsigned int,HostItem*> m_hostItems;
+    QMap<unsigned int,HostItem *> m_hostItems;
     QMap<unsigned int,HostItem *> mJobMap;
 };
 
