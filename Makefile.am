@@ -1,10 +1,10 @@
 
-INCLUDES = -I$(KDEDIR)/include -I$(QTDIR)/include -I$(srcdir)/../services
+INCLUDES = -I$(srcdir)/../services $(all_includes)
 
 bin_PROGRAMS = icemon
 icemon_SOURCES = mon-kde.cc ganttstatusview.cc
 icemon_LDADD = ../services/libcommon.la -lkdeui
-icemon_LDFLAGS = -L$(KDEDIR)/lib -L$(QTDIR)/lib
+icemon_LDFLAGS = $(all_libraries)
 
 mon-kde.o: mon-kde.moc
 ganttstatusview.o: ganttstatusview.moc
