@@ -237,6 +237,8 @@ void HostListView::clear()
     mItems.clear();
 
     KListView::clear();
+
+    setActiveNode( 0 );
 }
 
 
