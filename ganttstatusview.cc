@@ -363,6 +363,15 @@ void GanttStatusView::removeSlot( const QString& name, GanttProgress* slot )
         return;
 
     mNodeMap[ name ].remove( slot );
+    JobMap newJobMap;
+    for( QMap<unsigned int, GanttProgress *>::Iterator it = mJobMap.begin();
+         it != mJobMap.end();  // QMap::remove doesn't return an iterator like
+         ++it ) {              // e.g. in QValueList, and I'm not sure if 'it'
+        if( (*it) != slot )    // or '++it' would be still valid, so let's copy
+            newJobMap[ it.key() ] = *it; // still valid items to a new map
+    }
+    mJobMap = newJobMap;
+
     m_topLayout->setRowStretch( mNodeRows[ name ], mNodeMap[ name ].size() );
     delete slot;
 }

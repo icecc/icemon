@@ -95,7 +95,8 @@ private:
     NodeMap mNodeMap;
     typedef QMap<QString,int> AgeMap;
     AgeMap mAgeMap;
-    QMap<unsigned int, GanttProgress *> mJobMap;
+    typedef QMap<unsigned int, GanttProgress *> JobMap;
+    JobMap mJobMap;
     typedef QMap<QString,QVBoxLayout *> NodeLayoutMap;
     NodeLayoutMap mNodeLayouts;
     typedef QMap<QString,int> NodeRowMap;
