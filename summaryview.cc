@@ -74,9 +74,14 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
     grid->setMargin(10);
     grid->setSpacing(5);
 
-    m_jobsLabel   = addLine(i18n("Jobs:"), detailsBox, grid, Qt::AlignBottom, "0");
+    m_jobsLabel = addLine(i18n("Jobs:"), detailsBox, grid, Qt::AlignBottom, "0");
 
     for(int i = 0; i < maxJobs; i++) {
+        if(maxJobs > 1) {
+            QSpacerItem *spacer  = new QSpacerItem(1, 8, QSizePolicy::Expanding);
+            const int row = grid->numRows();
+            grid->addMultiCell(spacer, row, row, 0, grid->numCols() - 1);
+        }
         m_jobHandlers[i].sourceLabel = addLine(i18n("Source:"), detailsBox, grid);
         m_jobHandlers[i].stateLabel = addLine(i18n("State:"), detailsBox, grid);
     }
