@@ -180,6 +180,7 @@ private:
     JobList m_rememberedJobs;
     MsgChannel *scheduler;
     QSocketNotifier *scheduler_read;
+    QString current_netname;
 };
 
 #endif // MON_KDE_H

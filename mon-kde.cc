@@ -349,7 +349,18 @@ void MainWindow::checkScheduler(bool deleteit)
 
 void MainWindow::slotCheckScheduler()
 {
-    scheduler = connect_scheduler ();
+    std::list<std::string> names = get_netnames (60);
+    if ( !names.empty() && current_netname.isEmpty() )
+    {
+        current_netname = names.front();
+    }
+
+    if ( current_netname.isEmpty() ) {
+        checkScheduler( true );
+        return;
+    }
+
+    scheduler = connect_scheduler ( current_netname.latin1() );
     if ( scheduler ) {
         if ( !scheduler->send_msg (MonLoginMsg()) )
         {
