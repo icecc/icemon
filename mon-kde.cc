@@ -228,7 +228,7 @@ void MainWindow::handle_local_begin( Msg *_m )
         return;
 
     m_rememberedJobs[m->job_id] = Job( m->job_id, m->hostid,
-                                       m->file,
+                                       m->file.c_str(),
                                        "C++" );
     m_rememberedJobs[m->job_id].setState( Job::LocalOnly );
     m_view->update( m_rememberedJobs[m->job_id] );
