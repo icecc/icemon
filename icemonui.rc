@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="distccmon-kde" version="2">
+<kpartgui name="distccmon-kde" version="3">
 <MenuBar>
     <Menu name="view"><text>&amp;View</text>
         <Menu name="view_mode"><text>&amp;Mode</text>
@@ -8,6 +8,7 @@
             <Action name="view_foo_view"/>
             <Action name="view_gantt_view"/>
             <Action name="view_host_view"/>
+            <Action name="view_detailed_host_view"/>
         </Menu>
         <Action name="view_start"/>
         <Action name="view_stop"/>

@@ -25,6 +25,7 @@
 #include "ganttstatusview.h"
 #include "listview.h"
 #include "starview.h"
+#include "detailedhostview.h"
 #include "hostinfo.h"
 #include "hostview.h"
 #include "monitor.h"
@@ -88,6 +89,11 @@ MainWindow::MainWindow( QWidget *parent, const char *name )
                           actionCollection(), "view_host_view" );
     a->setExclusiveGroup( "viewmode" );
 
+    a = new KRadioAction( i18n( "&Detailed Host View" ), 0,
+                          this, SLOT( setupDetailedHostView() ),
+                          actionCollection(), "view_detailed_host_view" );
+    a->setExclusiveGroup( "viewmode" );
+
     KStdAction::quit( this, SLOT( close() ), actionCollection() );
 
     new KAction( i18n("Stop"), 0, this, SLOT( stopView() ), actionCollection(),
@@ -125,6 +131,7 @@ void MainWindow::readSettings()
   else if ( viewId == "list" ) setupListView();
   else if ( viewId == "star" ) setupStarView();
   else if ( viewId == "host" ) setupHostView();
+  else if ( viewId == "detailedhost" ) setupDetailedHostView();
   else setupSummaryView();
 }
 
@@ -177,6 +184,14 @@ void MainWindow::setupHostView()
 {
     setupView( new HostView( true, m_hostInfoManager, this ), false );
     KAction* radioAction = actionCollection()->action( "view_host_view" );
+    if ( radioAction )
+        dynamic_cast<KRadioAction*>( radioAction )->setChecked( true );
+}
+
+void MainWindow::setupDetailedHostView()
+{
+    setupView( new DetailedHostView( m_hostInfoManager, this ), false );
+    KAction* radioAction = actionCollection()->action( "view_detailed_host_view" );
     if ( radioAction )
         dynamic_cast<KRadioAction*>( radioAction )->setChecked( true );
 }

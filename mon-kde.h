@@ -43,6 +43,7 @@ class MainWindow : public KMainWindow
     void setupSummaryView();
     void setupGanttView();
     void setupHostView();
+    void setupDetailedHostView();
 
     void stopView();
     void startView();

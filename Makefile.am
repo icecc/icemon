@@ -10,7 +10,8 @@ icemon_LDADD = libicemon_common.la -lkdeui
 icemon_LDFLAGS = $(all_libraries)
 
 noinst_LTLIBRARIES = libicemon_common.la
-libicemon_common_la_SOURCES = job.cc monitor.cc hostinfo.cc statusview.cc hostview.cc
+libicemon_common_la_SOURCES = job.cc monitor.cc hostinfo.cc statusview.cc \
+			      detailedhostview.cc hostlistview.cc hostview.cc
 libicemon_common_la_LIBADD = ../services/libcommon.la
 
 METASOURCES = AUTO

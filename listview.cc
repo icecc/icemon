@@ -167,4 +167,15 @@ void ListStatusView::update( const Job &job )
     }
 }
 
+void ListStatusView::removeJob( const Job& job )
+{
+    ItemMap::iterator it = items.find( job.jobId() );
+    if ( it != items.end() )
+    {
+        delete *it;
+        items.erase( it );
+    }
+}
+
+
 #include "listview.moc"

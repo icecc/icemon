@@ -46,8 +46,10 @@ public:
 
     QString id() const { return "list"; }
 
-    typedef QMap<unsigned int, ListStatusViewItem*> ItemMap;
+    void removeJob( const Job& job );
+
 private:
+    typedef QMap<unsigned int, ListStatusViewItem*> ItemMap;
     ItemMap items;
 };
 
