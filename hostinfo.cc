@@ -154,6 +154,9 @@ QColor HostInfo::createColor( const QString &name )
         }
     }
 
+    h += name.length() + ( name.length() << 17 );
+    h ^= h >> 2;
+
     // kdDebug() << "HostInfo::createColor: " << h % mColorTable.count() << ": " << name << endl;
 
     return mColorTable[ h % mColorTable.count() ];
