@@ -14,9 +14,9 @@ libicemon_common_la_LIBADD = ../services/libcommon.la
 METASOURCES = AUTO
 
 icedata_DATA = icemonui.rc
-icedatadir = $(kde_appsdir)/icemon
+icedatadir = $(kde_datadir)/icemon
 
-picsdir = $(kde_appsdir)/icemon/pics
+picsdir = $(kde_datadir)/icemon/pics
 pics_DATA = icemonnode.png
 
 kde_module_LTLIBRARIES = icemon_panelapplet.la
@@ -25,5 +25,5 @@ icemon_panelapplet_la_LDFLAGS = -module $(all_libraries)
 icemon_panelapplet_la_LIBADD = libicemon_common.la -lkdeui
 icemon_panelapplet_la_SOURCES = icemonapplet.cpp  
 
-lnkdir = $(kde_appsdir)/kicker/applets
+lnkdir = $(kde_datadir)/kicker/applets
 lnk_DATA = icemonapplet.desktop
