@@ -148,10 +148,18 @@ void SummaryView::update(const Job &job)
     if(!i) {
         i = new SummaryViewItem(job.server(), this);
         i->show();
-
         m_items.insert(job.server(), i);
     }
     i->update(job);
+}
+
+void SummaryView::checkNode(const QString &host, unsigned int)
+{
+    if(!m_items[host]) {
+        SummaryViewItem *i = new SummaryViewItem(host, this);
+        i->show();
+        m_items.insert(host, i);
+    }
 }
 
 #include "summaryview.moc"

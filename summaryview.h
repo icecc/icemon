@@ -43,9 +43,10 @@ class SummaryView : public QWidget, public StatusView
 public:
     SummaryView(QWidget *parent, const char *name = 0);
     ~SummaryView();
-    
+
     virtual QWidget *widget();
     virtual void update(const Job &job);
+    virtual void checkNode(const QString &host, unsigned int max_kids);
 
 private:
     QDict<SummaryViewItem> m_items;
