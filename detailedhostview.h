@@ -25,7 +25,7 @@
 
 
 class HostListView;
-class ListStatusView;
+class JobListView;
 
 
 class DetailedHostView : public QWidget, public StatusView
@@ -55,8 +55,8 @@ private slots:
 private:
 
     HostListView* mHostListView;
-    ListStatusView* mLocalJobsView;
-    ListStatusView* mRemoteJobsView;
+    JobListView* mLocalJobsView;
+    JobListView* mRemoteJobsView;
 };
 
 
