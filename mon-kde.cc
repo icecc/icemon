@@ -103,7 +103,7 @@ void MainWindow::readSettings()
 {
   KConfig *cfg = KGlobal::config();
   cfg->setGroup( "View" );
-  QString viewId = cfg->readEntry( "CurrentView" );
+  QString viewId = cfg->readEntry( "CurrentView", "star" );
   if ( viewId == "gantt" ) setupGanttView();
   else if ( viewId == "list" ) setupListView();
   else if ( viewId == "star" ) setupStarView();
