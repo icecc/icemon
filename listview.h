@@ -25,10 +25,17 @@
 
 #include <klistview.h>
 
+#include <qdatetime.h>
+#include <qpair.h>
+
+class QTimer;
+
 class ListStatusViewItem : public KListViewItem
 {
 public:
     ListStatusViewItem( KListView *parent, const Job &job );
+
+    const Job& job() const { return mJob; }
 
     void updateText( const Job &job);
 
@@ -36,7 +43,7 @@ public:
 
     virtual int compare( QListViewItem *i, int col, bool ascending ) const;
 private:
-    Job job;
+    Job mJob;
 };
 
 class ListStatusView :public KListView, public StatusView
@@ -50,8 +57,6 @@ public:
 
     QString id() const { return "list"; }
 
-    void removeJob( const Job& job );
-
     int numberOfFilePathParts() const;
     void setNumberOfFilePathParts( int number );
 
@@ -61,7 +66,19 @@ public:
     bool isServerColumnVisible() const;
     void setServerColumnVisible( bool visible );
 
+    int expireDuration() const;
+    void setExpireDuration( int duration );
+
+private slots:
+
+    void slotExpireFinishedJobs();
+
 private:
+
+    void expireItem( ListStatusViewItem* item );
+
+    void removeItem( ListStatusViewItem* item );
+
     typedef QMap<unsigned int, ListStatusViewItem*> ItemMap;
     ItemMap items;
 
@@ -74,6 +91,20 @@ private:
      * Default is 2.
      */
     int mNumberOfFilePathParts;
+
+    /**
+     * The number of seconds after which finished jobs should be expired.
+     * -  < 0 never
+     * - == 0 at once
+     * -  > 0 after some seconds.
+     */
+    int mExpireDuration;
+
+    QTimer* mExpireTimer;
+
+    typedef QPair<QTime, ListStatusViewItem*> FinishedJob;
+    typedef QValueList<FinishedJob> FinishedJobs;
+    FinishedJobs mFinishedJobs;
 };
 
 #endif

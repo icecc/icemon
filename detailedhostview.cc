@@ -69,6 +69,7 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
   new QLabel( i18n( "Outgoing jobs" ), locals );
   mLocalJobsView = new ListStatusView( manager, locals, "LocalJobs" );
   mLocalJobsView->setClientColumnVisible( false );
+  mLocalJobsView->setExpireDuration( 10 );
 
   QVBox* remotes = new QVBox( viewSplitter );
   remotes->setSpacing( KDialog::spacingHint() );
@@ -76,6 +77,7 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
   new QLabel( i18n( "Incoming jobs" ), remotes );
   mRemoteJobsView = new ListStatusView( manager, remotes, "RemoteJobs" );
   mRemoteJobsView->setServerColumnVisible( false );
+  mRemoteJobsView->setExpireDuration( 10 );
 
   connect(mHostListView, SIGNAL( nodeActivated( unsigned int ) ),
           this, SLOT( slotNodeActivated() ) );
@@ -101,16 +103,6 @@ void DetailedHostView::update( const Job &job )
         mLocalJobsView->update( job );
     else
         mRemoteJobsView->update( job );
-
-    const bool finished = job.state() == Job::Finished || job.state() == Job::Failed;
-
-    if ( finished )
-    {
-        if ( job.client() == hostid )
-            mLocalJobsView->removeJob( job );
-        else
-            mRemoteJobsView->removeJob( job );
-    }
 }
 
 

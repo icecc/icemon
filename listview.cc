@@ -24,6 +24,7 @@
 #include <klocale.h>
 
 #include <qdir.h>
+#include <qtimer.h>
 
 QString convertSize( unsigned int size )
 {
@@ -65,17 +66,17 @@ enum Columns
     ColumnSizeOut
 };
 
-ListStatusViewItem::ListStatusViewItem( KListView *parent, const Job &_job )
+ListStatusViewItem::ListStatusViewItem( KListView* parent, const Job& job )
     :  KListViewItem( parent )
 {
-    updateText( _job );
+    updateText( job );
 }
 
 void ListStatusViewItem::updateText( const Job &job)
 {
-    const bool fileNameChanged( this->job.fileName() != job.fileName() );
+    const bool fileNameChanged( mJob.fileName() != job.fileName() );
 
-    this->job = job;
+    mJob = job;
 
     setText( ColumnID, QString::number( job.jobId() ) );
     ListStatusView *p = dynamic_cast<ListStatusView*>( listView() );
@@ -105,7 +106,7 @@ void ListStatusViewItem::updateFileName()
 
     const char separator = QDir::separator();
 
-    QString fileName = job.fileName();
+    QString fileName = mJob.fileName();
 
     const int numberOfFilePathParts = view->numberOfFilePathParts();
     if ( numberOfFilePathParts > 0 )
@@ -147,17 +148,17 @@ int ListStatusViewItem::compare( QListViewItem *i, int col,
 
     switch ( col ) {
     case ColumnID:
-        return ::compare( first->job.jobId(), other->job.jobId() );
+        return ::compare( first->mJob.jobId(), other->mJob.jobId() );
     case ColumnReal:
-        return ::compare( first->job.real_msec, other->job.real_msec );
+        return ::compare( first->mJob.real_msec, other->mJob.real_msec );
     case ColumnUser:
-        return ::compare( first->job.user_msec, other->job.user_msec );
+        return ::compare( first->mJob.user_msec, other->mJob.user_msec );
     case ColumnFaults:
-        return ::compare( first->job.majflt, other->job.majflt );
+        return ::compare( first->mJob.majflt, other->mJob.majflt );
     case ColumnSizeIn:
-        return ::compare( first->job.in_uncompressed, other->job.in_uncompressed );
+        return ::compare( first->mJob.in_uncompressed, other->mJob.in_uncompressed );
     case ColumnSizeOut:
-        return ::compare( first->job.out_uncompressed, other->job.out_uncompressed );
+        return ::compare( first->mJob.out_uncompressed, other->mJob.out_uncompressed );
     default:
         return first->text(col).compare( other->text( col ) );
     }
@@ -167,7 +168,9 @@ ListStatusView::ListStatusView( HostInfoManager *m, QWidget *parent,
                                 const char *name )
     : KListView( parent, name ),
       StatusView( m ),
-      mNumberOfFilePathParts( 2 )
+      mNumberOfFilePathParts( 2 ),
+      mExpireDuration( -1 ),
+      mExpireTimer( new QTimer( this ) )
 {
     addColumn( i18n( "ID" ) );
     addColumn( i18n( "Filename" ) );
@@ -188,6 +191,9 @@ ListStatusView::ListStatusView( HostInfoManager *m, QWidget *parent,
     setColumnAlignment( ColumnSizeOut, Qt::AlignRight );
 
     setAllColumnsShowFocus(true);
+
+    connect(mExpireTimer, SIGNAL( timeout() ),
+            this, SLOT( slotExpireFinishedJobs() ) );
 }
 
 void ListStatusView::update( const Job &job )
@@ -195,21 +201,16 @@ void ListStatusView::update( const Job &job )
     ItemMap::iterator it = items.find( job.jobId() );
     if ( it == items.end() )
     {
-        items[job.jobId()] = new ListStatusViewItem( this, job );
+        items.insert( job.jobId(), new ListStatusViewItem( this, job ) );
 
-    } else
+    }
+    else
     {
         ( *it )->updateText( job );
-    }
-}
 
-void ListStatusView::removeJob( const Job& job )
-{
-    ItemMap::iterator it = items.find( job.jobId() );
-    if ( it != items.end() )
-    {
-        delete *it;
-        items.erase( it );
+        const bool finished = ( job.state() == Job::Finished ) || ( job.state() == Job::Failed );
+        if ( finished )
+            expireItem( *it );
     }
 }
 
@@ -266,6 +267,55 @@ void ListStatusView::setServerColumnVisible( bool visible )
         setColumnWidthMode( ColumnServer, Manual );
         setColumnWidth( ColumnServer, 0 );
     }
+}
+
+int ListStatusView::expireDuration() const
+{
+    return mExpireDuration;
+}
+
+void ListStatusView::setExpireDuration( int duration )
+{
+    mExpireDuration = duration;
+}
+
+void ListStatusView::slotExpireFinishedJobs()
+{
+    const QTime currentTime = QTime::currentTime();
+
+    FinishedJobs::iterator it = mFinishedJobs.begin();
+    for ( const FinishedJobs::iterator itEnd = mFinishedJobs.end(); it != itEnd; ++it )
+    {
+        if ( ( *it ).first.secsTo( currentTime ) < mExpireDuration )
+            break;
+
+        removeItem( ( *it ).second );
+    }
+
+    mFinishedJobs.erase( mFinishedJobs.begin(), it );
+
+    if ( mFinishedJobs.empty() )
+        mExpireTimer->stop();
+}
+
+void ListStatusView::expireItem( ListStatusViewItem* item )
+{
+    if ( mExpireDuration == 0 )
+    {
+        removeItem( item );
+    }
+    else if ( mExpireDuration > 0 )
+    {
+        mFinishedJobs.push_back( FinishedJob( QTime::currentTime(), item ) );
+
+        mExpireTimer->start( 1000 );
+    }
+}
+
+void ListStatusView::removeItem( ListStatusViewItem* item )
+{
+    items.remove( item->job().jobId() );
+    delete item;
 }
 
 
