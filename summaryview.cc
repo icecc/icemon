@@ -135,6 +135,7 @@ SummaryView::SummaryView(HostInfoManager *m, QWidget *parent, const char *name)
     m_layout->setMargin(5);
 
     setHScrollBarMode(AlwaysOff);
+    setMinimumHeight(150);
 }
 
 SummaryView::~SummaryView()
@@ -175,7 +176,7 @@ void SummaryView::viewportResizeEvent(QResizeEvent *e)
     setMinimumWidth(m_base->sizeHint().width() + verticalScrollBar()->width());
     m_base->setMinimumWidth(s.width());
 
-    if(m_base->height() < s.height())
+    if(m_base->height() <= s.height())
         m_base->setMinimumHeight(s.height());
     else
         m_base->setMinimumHeight(m_base->sizeHint().height());
