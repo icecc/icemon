@@ -332,7 +332,10 @@ void StarView::update( const Job &job )
   if ( job.state() == Job::Compiling ) {
     unsigned int clientid = job.client();
     HostItem *clientItem = findHostItem( clientid );
-    if ( clientItem ) clientItem->setIsActiveClient( true );
+    if ( clientItem ) {
+      clientItem->setClient( clientid );
+      clientItem->setIsActiveClient( true );
+    }
   }
 
   drawNodeStatus();
