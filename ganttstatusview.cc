@@ -330,8 +330,10 @@ QWidget * GanttStatusView::widget()
     return this;
 }
 
-void GanttStatusView::checkNode( const QString &host, unsigned int max_kids )
+void GanttStatusView::checkNode( unsigned int hostid, const QString &statmsg )
 {
+    StatusView::checkNode( hostid, statmsg );
+
     if ( !mRunning ) return;
 
     if ( mNodeMap.find( host ) == mNodeMap.end())
@@ -468,7 +470,7 @@ void GanttStatusView::start()
 {
   mRunning = true;
   m_progressTimer->start( mUpdateInterval );
-  m_ageTimer->start( 10000 ); 
+  m_ageTimer->start( 10000 );
 }
 
 void GanttStatusView::checkNodes()

@@ -132,32 +132,34 @@ void MainWindow::checkScheduler(bool deleteit)
 
 void MainWindow::slotCheckScheduler()
 {
-    std::list<std::string> names = get_netnames (60);
-    if ( !names.empty() && m_current_netname.isEmpty() )
-    {
-        m_current_netname = names.front().c_str();
-    }
-
-    if ( m_current_netname.isEmpty() ) {
+    list<string> names = get_netnames (60);
+    if ( names.empty() ) {
         checkScheduler( true );
         return;
     }
 
-    m_scheduler = connect_scheduler ( m_current_netname.latin1() );
-    if ( m_scheduler ) {
-        if ( !m_scheduler->send_msg (MonLoginMsg()) )
-        {
-            checkScheduler( true );
-            return;
+    if ( !m_current_netname.isEmpty() )
+        names.push_front( m_current_netname );
+
+    for ( list<string>::const_iterator it = names.begin(); it != names.end(); ++it )
+    {
+        m_current_netname = it->c_str();
+        m_scheduler = connect_scheduler ( m_current_netname.latin1() );
+        if ( m_scheduler ) {
+            if ( !m_scheduler->send_msg (MonLoginMsg()) )
+            {
+                delete m_scheduler;
+            } else {
+                m_scheduler_read = new QSocketNotifier( m_scheduler->fd,
+                                                        QSocketNotifier::Read,
+                                                        this );
+                QObject::connect( m_scheduler_read, SIGNAL(activated(int)),
+                                  SLOT( msgReceived()) );
+                return;
+            }
         }
-        m_scheduler_read = new QSocketNotifier( m_scheduler->fd,
-                                                QSocketNotifier::Read,
-                                                this );
-        QObject::connect( m_scheduler_read, SIGNAL(activated(int)),
-                          SLOT( msgReceived()) );
-    } else {
-        checkScheduler( true );
     }
+    checkScheduler( true );
 }
 
 void MainWindow::msgReceived()
@@ -204,7 +206,7 @@ void MainWindow::handle_getcs(Msg *_m)
     MonGetCSMsg *m = dynamic_cast<MonGetCSMsg*>( _m );
     if ( !m )
         return;
-    m_rememberedJobs[m->job_id] = Job( m->job_id, m->client.c_str(),
+    m_rememberedJobs[m->job_id] = Job( m->job_id, m->clientid,
                                        m->filename.c_str(),
                                        m->version.c_str(),
                                        m->lang == CompileJob::Lang_C ? "C" : "C++" );
@@ -217,7 +219,7 @@ void MainWindow::handle_local_begin( Msg *_m )
     if ( !m )
         return;
 
-    m_rememberedJobs[m->job_id] = Job( m->job_id, m->host.c_str(),
+    m_rememberedJobs[m->job_id] = Job( m->job_id, m->hostid,
                                        QString::null,
                                        QString::null,
                                        "C++" );
@@ -244,21 +246,8 @@ void MainWindow::handle_stats( Msg *_m )
     MonStatsMsg *m = dynamic_cast<MonStatsMsg*>( _m );
     if ( !m )
         return;
-#if 0
-    cout << "load"
-         << " host=" << m->host
-         << " iceload=" << m->load
-         << " niceLoad=" << m->niceLoad
-         << " sysLoad=" << m->sysLoad
-         << " userLoad=" << m->userLoad
-         << " idleLoad=" << m->idleLoad
-         << " loadavg=(" << m->loadAvg1
-         << ", " << m->loadAvg5 << ", " << m->loadAvg10 << ")"
-         << " freemem=" << m->freeMem
-         << endl;
-#endif
 
-  m_view->checkNode( m->host.c_str(), m->max_kids );
+    m_view->checkNode( m->hostid, m->statmsg );
 }
 
 void MainWindow::handle_job_begin(Msg *_m)
@@ -269,7 +258,7 @@ void MainWindow::handle_job_begin(Msg *_m)
     JobList::iterator it = m_rememberedJobs.find( m->job_id );
     if ( it == m_rememberedJobs.end() ) // we started in between
         return;
-    ( *it ).setServer( m->host.c_str() );
+    ( *it ).setServer( m->hostid );
     ( *it ).setStartTime( m->stime );
     ( *it ).setState( Job::Compiling );
 
@@ -337,17 +326,17 @@ void MainWindow::setupListView()
 
 void MainWindow::setupSummaryView()
 {
-    setupView( new SummaryView( this ), false );
+//    setupView( new SummaryView( this ), false );
 }
 
 void MainWindow::setupGanttView()
 {
-    setupView( new GanttStatusView( this ), false );
+//    setupView( new GanttStatusView( this ), false );
 }
 
 void MainWindow::setupStarView()
 {
-    setupView( new StarView( this ), false );
+//    setupView( new StarView( this ), false );
 }
 
 void MainWindow::stopView()
@@ -386,7 +375,7 @@ static const KCmdLineOptions options[] =
 
 int main( int argc, char **argv )
 {
- 	setup_debug(Warning|Error,"");
+ 	setup_debug(Debug|Info|Warning|Error,"");
 	KAboutData aboutData( rs_program_name, appName, version, description,
 	                      KAboutData::License_BSD, copyright, bugsEmail );
 	KCmdLineArgs::init( argc, argv, &aboutData );

@@ -105,7 +105,7 @@ class GanttStatusView : public QWidget, public StatusView
 
     QString id() const { return "gantt"; }
 
-    void checkNode( const QString &host, unsigned int max_kids );
+    virtual void checkNode( unsigned int hostid, const QString &statmsg );
 
     void start();
     void stop();

@@ -37,8 +37,14 @@ void ListStatusViewItem::updateText( const Job &job)
     this->job = job;
     setText( 0, QString::number( job.jobId() ) );
     setText( 1, job.fileName() );
-    setText( 2, job.client() );
-    setText( 3, job.server() );
+    ListStatusView *p = dynamic_cast<ListStatusView*>( listView() );
+    if ( p ) {
+        setText( 2, p->nameForHost( job.client() ) );
+        if ( job.server() )
+            setText( 3, p->nameForHost( job.server() ) );
+        else
+            setText( 3, QString::null );
+    }
     setText( 4, job.stateAsString() );
     setText( 5, QString::number( job.real_msec ) );
     setText( 6, QString::number( job.user_msec ) );

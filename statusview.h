@@ -32,7 +32,7 @@ class Job
   public:
     enum State { WaitingForCS, LocalOnly, Compiling, Finished, Failed, Idle };
     Job(unsigned int id = 0,
-        const QString &client = QString::null,
+        unsigned int client = 0,
         const QString &filename = QString::null,
         const QString &environment = QString::null,
         const QString &lang = QString::null)
@@ -51,6 +51,7 @@ class Job
         majflt = 0;
         nswap = 0;
         exitcode = 0;
+        m_server = 0;
         in_compressed = in_uncompressed = out_compressed = out_uncompressed = 0;
     }
 
@@ -59,14 +60,14 @@ class Job
 
     unsigned int jobId() const { return m_id; }
     QString fileName() const { return m_fileName; }
-    QString client() const { return m_client; }
-    QString server() const { return m_server; }
+    int client() const { return m_client; }
+    int server() const { return m_server; }
     State state() const { return m_state; }
     QString stateAsString() const;
     time_t stime() const { return m_stime; }
 
-    void setServer( const QString & host ) {
-        m_server = host;
+    void setServer( unsigned int hostid ) {
+        m_server = hostid;
     }
     void setStartTime( time_t t ) {
         m_stime = t;
@@ -78,8 +79,8 @@ class Job
   private:
     unsigned int m_id;
     QString m_fileName;
-    QString m_server;
-    QString m_client;
+    unsigned int m_server;
+    unsigned int m_client;
     QString m_lang;
     QString m_env;
     State m_state;
@@ -121,20 +122,20 @@ class StatusView
     virtual ~StatusView() {}
     virtual void update( const Job &job ) = 0;
     virtual QWidget *widget() = 0;
-    virtual void checkNode( const QString &host, unsigned int max_kids );
+    virtual void checkNode( unsigned int hostid, const QString &statmsg );
     virtual void stop() {}
     virtual void start() {}
     virtual void checkNodes() {}
 
     virtual QString id() const = 0;
 
-    QString nameForIp( const QString &ip );
+    QString nameForHost( unsigned int hostid );
 
-    QColor hostColor( const QString &ip );
+    QColor hostColor( unsigned int hostid );
 
   private:
-    QMap<QString,QString> mHostNameMap;
-    QMap<QString,QColor> mHostColorMap;
+    QMap<unsigned int,QString> mHostNameMap;
+    QMap<unsigned int,QColor> mHostColorMap;
 };
 
 #endif

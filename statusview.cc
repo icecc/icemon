@@ -55,56 +55,39 @@ QString Job::stateAsString() const
     return QString::null;
 }
 
-void StatusView::checkNode( const QString &, unsigned int )
+void StatusView::checkNode( unsigned int hostid, const QString &statmsg )
 {
-}
-
-QString StatusView::nameForIp( const QString &ip )
-{
-  if ( ip.isEmpty() ) {
-    kdError() << "Empty IP address" << endl;
-    return i18n("<unknown>");
-  }
-
-  QMap<QString,QString>::ConstIterator it;
-  it = mHostNameMap.find( ip );
-  if ( it != mHostNameMap.end() ) {
-    return *it;
-  }
-
-  QCString ipStr = ip.latin1();
-
-  QString hostName = ip;
-
-  struct in_addr addr;
-
-  int success = inet_aton( ipStr, &addr );
-  if ( !success ) {
-    kdDebug() << "IP address '" << ip << "' not valid." << endl;
-  } else {
-    struct hostent *host = gethostbyaddr( (const char *)(&addr),
-                                          sizeof( in_addr ), AF_INET );
-    if ( !host ) {
-      kdDebug() << "Error getting name for IP address '" << ip << "': "
-                << hstrerror( h_errno ) << endl;
-    } else {
-      QString name = host->h_name;
-      // Strip domain parts
-      int pos = name.find( '.' );
-      if ( pos > 0 ) name = name.left( pos );
-      hostName = name;
+    QString first = statmsg.left( statmsg.find( '\n' ) );
+    if ( first.startsWith( "Name:" ) ) {
+        first = first.mid( 5 ).stripWhiteSpace();
+        kdDebug() << "host " << hostid << " " << first << endl;
+        if ( mHostNameMap[hostid] != first ) {
+            mHostColorMap[hostid] = QColor();
+            mHostNameMap[hostid] = first;
+        }
     }
-  }
-  
-  mHostNameMap.insert( ip, hostName );
-  
-  return hostName;
 }
 
-QColor StatusView::hostColor( const QString &ip )
+QString StatusView::nameForHost( unsigned int id )
 {
-  QMap<QString,QColor>::ConstIterator it;
-  it = mHostColorMap.find( ip );
+    if ( !id ) {
+        kdError() << "Unknown host" << endl;
+        return i18n("<unknown>");
+    }
+
+    QMap<unsigned int,QString>::ConstIterator it;
+    it = mHostNameMap.find( id );
+    if ( it != mHostNameMap.end() ) {
+        return *it;
+    }
+
+    return i18n("<unknown>");
+}
+
+QColor StatusView::hostColor( unsigned int id )
+{
+  QMap<unsigned int,QColor>::ConstIterator it;
+  it = mHostColorMap.find( id );
   if ( it != mHostColorMap.end() ) {
     return *it;
   }
@@ -113,7 +96,7 @@ QColor StatusView::hostColor( const QString &ip )
 
   QColor color( num, 255 - num, ( num * 3 ) % 255 );
 
-  mHostColorMap.insert( ip, color );
+  mHostColorMap.insert( id, color );
 
   num += 48;
   num %= 255;

@@ -82,8 +82,8 @@ class HostItem : public QCanvasText
     void setStateItem( QCanvasItem *item ) { m_stateItem = item; }
     QCanvasItem *stateItem() { return m_stateItem; }
 
-    void setClient( const QString &client ) { m_client = client; }
-    QString client() const { return m_client; }
+    void setClient( unsigned int client ) { m_client = client; }
+    unsigned int client() const { return m_client; }
 
     QString hostName() const { return m_hostName; }
 
@@ -124,7 +124,7 @@ class HostItem : public QCanvasText
     Job::State m_state;
     QString m_hostName;
     QCanvasItem *m_stateItem;
-    QString m_client;
+    unsigned int m_client;
 
     int mBaseWidth;
     int mBaseHeight;
