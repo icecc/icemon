@@ -96,6 +96,11 @@ QString HostInfo::name() const
   return mName;
 }
 
+QString HostInfo::ip() const
+{
+  return mIp;
+}
+
 unsigned int HostInfo::maxJobs() const
 {
   return mMaxJobs;
@@ -115,6 +120,7 @@ void HostInfo::updateFromStatsMap( const StatsMap &stats )
   if ( name != mName ) {
     mName = name;
     mColor = createColor( mName );
+    mIp = stats["IP"];
   }
 
   mMaxJobs = stats["MaxJobs"].toUInt();
@@ -124,8 +130,7 @@ void HostInfo::updateFromStatsMap( const StatsMap &stats )
 QColor HostInfo::createColor( const QString &name )
 {
   int n = 0;
-  int i;
-  for( i = 0; i < name.length(); ++i ) {
+  for( uint i = 0; i < name.length(); ++i ) {
     n += name[ i ].unicode();
   }
 

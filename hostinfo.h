@@ -35,6 +35,8 @@ class HostInfo
     QString name() const;
     QColor color() const;
 
+    QString ip() const;
+
     unsigned int maxJobs() const;
     bool isOffline() const;
 
@@ -54,6 +56,9 @@ class HostInfo
     unsigned int mId;
     QString mName;
     QColor mColor;
+    
+    QString mIp;
+    
     unsigned int mMaxJobs;
     bool mOffline;
 

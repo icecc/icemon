@@ -44,27 +44,17 @@ class HostItem : public QCanvasText
   public:
     enum { RttiHostItem = 1000 };
 
-    HostItem( const QString &hostName, QCanvas *canvas )
-      : QCanvasText( hostName, canvas ), m_hostName( hostName ),
+    HostItem( const QString &text, QCanvas *canvas )
+      : QCanvasText( text, canvas ), mHostInfo( 0 ), m_stateItem( 0 )
+    {
+      init();
+    }
+
+    HostItem( HostInfo *hostInfo, QCanvas *canvas )
+      : QCanvasText( hostInfo->name(), canvas ), mHostInfo( hostInfo ),
         m_stateItem( 0 )
     {
-      setZ( 100 );
-
-      QRect r = boundingRect();
-      mBaseWidth = r.width() + 10;
-      mBaseHeight = r.height() + 10;
-
-      m_boxItem = new QCanvasEllipse( mBaseWidth, mBaseHeight, canvas );
-      m_boxItem->setZ( 80 );
-      m_boxItem->move( r.width() / 2, r.height() / 2 );
-      m_boxItem->show();
-
-      m_jobHalo = new QCanvasEllipse( mBaseWidth, mBaseHeight, canvas );
-      m_jobHalo->setZ( 70 );
-      m_jobHalo->move( r.width() / 2, r.height() / 2 );
-      m_jobHalo->show();
-
-      setHostColor( QColor( 200, 200, 200 ) );
+      init();
     }
 
     ~HostItem()
@@ -73,10 +63,10 @@ class HostItem : public QCanvasText
 
     int rtti() const { return RttiHostItem; }
 
+    HostInfo *hostInfo() const { return mHostInfo; }
+
     void setHostColor( const QColor &color )
     {
-      m_color = color;
-
       m_boxItem->setBrush( color );
       m_jobHalo->setBrush( color.light() );
 
@@ -84,10 +74,6 @@ class HostItem : public QCanvasText
                         ( color.blue() * 0.114 );
       if ( luminance > 140.0 ) setColor( black );
       else setColor( white );
-    }
-    QColor hostColor() const
-    {
-      return m_color;
     }
 
     void setState( Job::State state ) { m_state = state; }
@@ -99,7 +85,7 @@ class HostItem : public QCanvasText
     void setClient( unsigned int client ) { m_client = client; }
     unsigned int client() const { return m_client; }
 
-    QString hostName() const { return m_hostName; }
+    QString hostName() const { return mHostInfo->name(); }
 
     void moveBy( double dx, double dy )
     {
@@ -135,9 +121,30 @@ class HostItem : public QCanvasText
     }
 
   private:
+    void init()
+    {
+      setZ( 100 );
+
+      QRect r = boundingRect();
+      mBaseWidth = r.width() + 10;
+      mBaseHeight = r.height() + 10;
+
+      m_boxItem = new QCanvasEllipse( mBaseWidth, mBaseHeight, canvas() );
+      m_boxItem->setZ( 80 );
+      m_boxItem->move( r.width() / 2, r.height() / 2 );
+      m_boxItem->show();
+
+      m_jobHalo = new QCanvasEllipse( mBaseWidth, mBaseHeight, canvas() );
+      m_jobHalo->setZ( 70 );
+      m_jobHalo->move( r.width() / 2, r.height() / 2 );
+      m_jobHalo->show();
+
+      setHostColor( QColor( 200, 200, 200 ) );
+    }
+
+    HostInfo *mHostInfo;
+  
     Job::State m_state;
-    QString m_hostName;
-    QColor m_color;
     QCanvasItem *m_stateItem;
     unsigned int m_client;
 
@@ -173,19 +180,24 @@ class WhatsStat : public QToolTip
           }
         }
         if ( item ) {
+          HostInfo *hostInfo = item->hostInfo();
+          if ( !hostInfo ) return;
+
           tip( QRect( p.x() - 20, p.y() - 20, 40, 40 ),
                "<p><table><tr><td>"
                "<img source=\"computer\"><br><b>" + item->hostName() +
                "</b><br>" +
+               i18n("IP: %1").arg( hostInfo->ip() ) + "<br>" +
                i18n("Flavor: %1")
-               .arg( HostInfo::colorName( item->hostColor() ) ) + "</td><td>"
+               .arg( HostInfo::colorName( hostInfo->color() ) ) +
+               "</td><td>"
                "<table>"
                "<tr><td>Jobs:</td><td>7</td></tr>"
                "<tr><td>File:</td><td>/etc/nowhere</td></tr>"
                "</table></td></tr></table></p>" );
         }
     }
-  
+
   private:
     QCanvas *mCanvas;
 };
@@ -321,7 +333,8 @@ HostItem *StarView::createHostItem( unsigned int hostid )
 {
 //  kdDebug() << "New node for '" << hostid << "'" << endl;
 
-  HostItem *hostItem = new HostItem( nameForHost( hostid ), m_canvas );
+  HostItem *hostItem = new HostItem( hostInfoManager()->find( hostid ),
+                                     m_canvas );
   hostItem->setHostColor( hostColor( hostid ) );
   m_hostItems.insert( hostid, hostItem );
   hostItem->show();
