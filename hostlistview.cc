@@ -35,7 +35,8 @@ enum Columns
     ColumnIP,
     ColumnPlatform,
     ColumnMaxJobs,
-    ColumnSpeed
+    ColumnSpeed,
+    ColumnLoad
 };
 
 
@@ -72,6 +73,7 @@ void HostListViewItem::updateText( const HostInfo& info )
     setText( ColumnPlatform, info.platform() );
     setText( ColumnMaxJobs, QString::number( info.maxJobs() ) );
     setText( ColumnSpeed, KGlobal::locale()->formatNumber( info.serverSpeed(), 1 ) );
+    setText( ColumnLoad, QString::number( info.serverLoad() ) );
 }
 
 
@@ -102,6 +104,8 @@ int HostListViewItem::compare( QListViewItem *i, int col,
         return ::compare( first->mHostInfo.maxJobs(), other->mHostInfo.maxJobs() );
     case ColumnSpeed:
         return ::compare( first->mHostInfo.serverSpeed(), other->mHostInfo.serverSpeed() );
+    case ColumnLoad:
+        return ::compare( first->mHostInfo.serverLoad(), other->mHostInfo.serverLoad() );
     default:
         return first->text(col).compare( other->text( col ) );
     }
@@ -164,10 +168,12 @@ HostListView::HostListView( HostInfoManager* manager,
     addColumn( i18n( "Platform" ) );
     addColumn( i18n( "Max Jobs" ) );
     addColumn( i18n( "Speed" ) );
+    addColumn( i18n( "Load" ) );
 
     setColumnAlignment( ColumnID, Qt::AlignRight );
     setColumnAlignment( ColumnMaxJobs, Qt::AlignRight );
     setColumnAlignment( ColumnSpeed, Qt::AlignRight );
+    setColumnAlignment( ColumnLoad, Qt::AlignRight );
 
     setAllColumnsShowFocus(true);
 

@@ -121,6 +121,11 @@ float HostInfo::serverSpeed() const
     return mServerSpeed;
 }
 
+unsigned int HostInfo::serverLoad() const
+{
+    return mServerLoad;
+}
+
 void HostInfo::updateFromStatsMap( const StatsMap &stats )
 {
 #if 0
@@ -144,6 +149,8 @@ void HostInfo::updateFromStatsMap( const StatsMap &stats )
   mOffline = ( stats["State"] == "Offline" );
 
   mServerSpeed = stats["Speed"].toFloat();
+
+  mServerLoad = stats["Load"].toUInt();
 }
 
 QColor HostInfo::createColor( const QString &name )
