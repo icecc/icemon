@@ -25,8 +25,34 @@
 
 #include <qdict.h>
 #include <qcanvas.h>
+#include <qdialog.h>
 
 class HostInfo;
+
+class QSlider;
+class QLabel;
+
+class StarViewConfigDialog : public QDialog
+{
+    Q_OBJECT
+  public:
+    StarViewConfigDialog( QWidget *parent );
+
+    int nodesPerRing();
+
+    void setMaxNodes( int );
+
+  protected slots:
+    void slotNodesPerRingChanged( int nodes );
+  
+  signals:
+    void configChanged();
+
+  private:
+    QSlider *mNodesPerRingSlider;
+    QLabel *mNodesPerRingLabel;
+};
+
 
 class HostItem : public QCanvasText
 {
@@ -104,16 +130,23 @@ class StarView : public QWidget, public StatusView
 
     void removeNode( unsigned int hostid );
 
+    void configureView();
+
   protected:
     virtual void resizeEvent( QResizeEvent *e );
+
+  protected slots:
+    void slotConfigChanged();
 
   private:
     void createKnownHosts();
     void centerLocalhostItem();
-    void arrangeHostItems();
     HostItem *createHostItem( unsigned int hostid );
+    void arrangeHostItems();
     void drawNodeStatus();
     void drawState( HostItem *node );
+
+    StarViewConfigDialog *mConfigDialog;
 
     QCanvas *m_canvas;
     QCanvasView *m_canvasView;

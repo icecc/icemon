@@ -28,15 +28,71 @@
 #include <klocale.h>
 #include <kdebug.h>
 #include <kiconloader.h>
+#include <kdialog.h>
 
 #include <qlayout.h>
 #include <qtimer.h>
 #include <qvaluelist.h>
 #include <qtooltip.h>
+#include <qslider.h>
+#include <qlabel.h>
+#include <qpushbutton.h>
 
 #include <math.h>
 
 using namespace std;
+
+StarViewConfigDialog::StarViewConfigDialog( QWidget *parent )
+  : QDialog( parent )
+{
+  QBoxLayout *topLayout = new QVBoxLayout( this );
+  topLayout->setMargin( KDialog::marginHint() );
+  topLayout->setSpacing( KDialog::spacingHint() );
+
+  QLabel *label = new QLabel( i18n("Number of nodes per ring"), this );
+  topLayout->addWidget( label );
+
+  QBoxLayout *nodesLayout = new QHBoxLayout( topLayout );
+
+  int nodesPerRing = 25;
+
+  mNodesPerRingSlider = new QSlider( 1, 50, 1, nodesPerRing, Horizontal, this );
+  nodesLayout->addWidget( mNodesPerRingSlider );
+  connect( mNodesPerRingSlider, SIGNAL( valueChanged( int ) ),
+           SIGNAL( configChanged() ) );
+  connect( mNodesPerRingSlider, SIGNAL( valueChanged( int ) ),
+           SLOT( slotNodesPerRingChanged( int ) ) );
+
+  mNodesPerRingLabel = new QLabel( QString::number( nodesPerRing ), this );
+  nodesLayout->addWidget( mNodesPerRingLabel );
+
+  QFrame *hline = new QFrame( this );
+  hline->setFrameShape( QFrame::HLine );
+  topLayout->addWidget( hline );
+
+  QBoxLayout *buttonLayout = new QHBoxLayout( topLayout );
+
+  buttonLayout->addStretch( 1 );
+
+  QPushButton *button = new QPushButton( i18n("Close"), this );
+  buttonLayout->addWidget( button );
+  connect( button, SIGNAL( clicked() ), SLOT( hide() ) );
+}
+
+void StarViewConfigDialog::slotNodesPerRingChanged( int nodes )
+{
+  mNodesPerRingLabel->setText( QString::number( nodes ) );
+}
+
+void StarViewConfigDialog::setMaxNodes( int maxNodes )
+{
+  mNodesPerRingSlider->setMaxValue( maxNodes + 1 );
+}
+
+int StarViewConfigDialog::nodesPerRing()
+{
+  return mNodesPerRingSlider->value();
+}
 
 HostItem::HostItem( const QString &text, QCanvas *canvas )
   : QCanvasText( text, canvas ), mHostInfo( 0 ), m_stateItem( 0 )
@@ -183,6 +239,10 @@ class WhatsStat : public QToolTip
 StarView::StarView( HostInfoManager *m, QWidget *parent, const char *name )
   : QWidget( parent, name, WRepaintNoErase | WResizeNoErase ), StatusView( m )
 {
+    mConfigDialog = new StarViewConfigDialog( this );
+    connect( mConfigDialog, SIGNAL( configChanged() ),
+             SLOT( slotConfigChanged() ) );
+
     m_canvas = new QCanvas( this );
     m_canvas->resize( width(), height() );
 
@@ -215,6 +275,7 @@ void StarView::update( const Job &job )
 
   if ( job.state() == Job::WaitingForCS ) {
     drawNodeStatus();
+    m_canvas->update();
     return;
   }
 
@@ -253,6 +314,7 @@ void StarView::update( const Job &job )
   }
 
   drawNodeStatus();
+  m_canvas->update();
 }
 
 HostItem *StarView::findHostItem( unsigned int hostid )
@@ -309,20 +371,46 @@ void StarView::centerLocalhostItem()
     m_localhostItem->move( newX, newY );
 }
 
+void StarView::slotConfigChanged()
+{
+  arrangeHostItems();
+  drawNodeStatus();
+  m_canvas->update();
+}
+
 void StarView::arrangeHostItems()
 {
-    const int xRadius = int( m_canvas->width() / 2.5 );
-    const int yRadius = int( m_canvas->height() / 2.5 );
+//  kdDebug() << "StarView::arrangeHostItems()" << endl;
 
-    const double step = 2 * M_PI / m_hostItems.count();
+  int count = m_hostItems.count();
 
-    double angle = 0.0;
-    for ( QMap<unsigned int, HostItem*>::ConstIterator it = m_hostItems.begin(); it != m_hostItems.end(); ++it )
-    {
-        it.data()->move( m_localhostItem->x() + ( cos( angle ) * xRadius ),
-                         m_localhostItem->y() + ( sin( angle ) * yRadius ) );
-        angle += step;
-    }
+//  kdDebug() << "  Count: " << count << endl;
+
+  int nodesPerRing = mConfigDialog->nodesPerRing();
+
+  int ringCount = int( count / nodesPerRing ) + 1;
+
+//  kdDebug() << "  Rings: " << ringCount << endl;
+
+  const int xRadius = int( m_canvas->width() / 2.5 );
+  const int yRadius = int( m_canvas->height() / 2.5 );
+
+  const double step = 2 * M_PI / count;
+
+  double angle = 0.0;
+  int i = 0;
+  QMap<unsigned int, HostItem*>::ConstIterator it;
+  for ( it = m_hostItems.begin(); it != m_hostItems.end(); ++it ) {
+    float factor = 1 - ( 1.0 / ( ringCount + 1 ) ) * ( i % ringCount );
+
+    int xr = int( xRadius * factor );
+    int yr = int( yRadius * factor );
+
+    it.data()->move( m_localhostItem->x() + ( cos( angle ) * xr ),
+                     m_localhostItem->y() + ( sin( angle ) * yr ) );
+    angle += step;
+    ++i;
+  }
 }
 
 unsigned int StarView::processor( const Job &job )
@@ -348,14 +436,19 @@ HostItem *StarView::createHostItem( unsigned int hostid )
 
   m_canvas->update();
 
+  if ( m_hostItems.count() > 25 ) {
+    mConfigDialog->setMaxNodes( m_hostItems.count() );
+  }
+
   return hostItem;
 }
 
 void StarView::drawNodeStatus()
 {
-    for ( QMap<unsigned int, HostItem*>::ConstIterator it = m_hostItems.begin(); it != m_hostItems.end(); ++it )
-        drawState( *it );
-    m_canvas->update();
+  QMap<unsigned int, HostItem*>::ConstIterator it;
+  for ( it = m_hostItems.begin(); it != m_hostItems.end(); ++it ) {
+    drawState( *it );
+  }
 }
 
 void StarView::drawState( HostItem *node )
@@ -401,6 +494,12 @@ void StarView::createKnownHosts()
     unsigned int id = (*it)->id();
     if ( !findHostItem( id ) ) createHostItem( id );
   }
+}
+
+void StarView::configureView()
+{
+  mConfigDialog->show();
+  mConfigDialog->raise();
 }
 
 #include "starview.moc"

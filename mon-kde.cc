@@ -91,6 +91,9 @@ MainWindow::MainWindow( QWidget *parent, const char *name )
     new KAction( i18n("Check Nodes"), 0, this, SLOT( checkNodes() ),
                  actionCollection(), "check_nodes" );
 
+    new KAction( i18n("Configure View"), 0, this, SLOT( configureView() ),
+                 actionCollection(), "configure_view" );
+
     createGUI();
     readSettings();
     checkScheduler();
@@ -372,6 +375,11 @@ void MainWindow::startView()
 void MainWindow::checkNodes()
 {
   m_view->checkNodes();
+}
+
+void MainWindow::configureView()
+{
+  m_view->configureView();
 }
 
 void MainWindow::setCurrentNet( const QString &netName )

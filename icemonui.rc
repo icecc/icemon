@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="distccmon-kde" version="1">
+<kpartgui name="distccmon-kde" version="2">
 <MenuBar>
     <Menu name="view"><text>&amp;View</text>
         <Menu name="view_mode"><text>&amp;Mode</text>
@@ -12,6 +12,8 @@
         <Action name="view_stop"/>
         <Separator/>
         <Action name="check_nodes"/>
+        <Separator/>
+        <Action name="configure_view"/>
     </Menu>
 </MenuBar>
 </kpartgui>

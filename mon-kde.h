@@ -53,6 +53,7 @@ class MainWindow : public KMainWindow
     void stopView();
     void startView();
     void checkNodes();
+    void configureView();
 
   private:
     void readSettings();

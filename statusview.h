@@ -46,6 +46,7 @@ class StatusView
     virtual void stop() {}
     virtual void start() {}
     virtual void checkNodes() {}
+    virtual void configureView() {}
 
     virtual QString id() const = 0;
 
