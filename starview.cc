@@ -217,8 +217,6 @@ void HostItem::createJobHalo( const Job &job )
   halo->setZ( 70 - m_jobHalos.size() );
   QRect r = boundingRect();
   halo->move( x() + r.width() / 2, y() + r.height() / 2 );
-  halo->setSize( mBaseWidth + m_jobs.count() * 5,
-                 mBaseHeight + m_jobs.count() * 5 );
   halo->show();
 
   m_jobHalos.insert( job, halo );
@@ -245,7 +243,7 @@ void HostItem::updateHalos()
   QMap<Job,QCanvasEllipse*>::Iterator it;
   for( it = m_jobHalos.begin(); it != m_jobHalos.end(); ++it ) {
     QCanvasEllipse *halo = it.data();
-    halo->setSize( mBaseWidth + count * 4, mBaseHeight + count * 4 );
+    halo->setSize( mBaseWidth + count * 6, mBaseHeight + count * 6 );
     halo->setBrush( mHostInfoManager->hostColor( it.key().client() ) );
     ++count;
   }
