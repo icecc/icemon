@@ -47,7 +47,7 @@ HostViewConfigDialog::HostViewConfigDialog( QWidget *parent )
   topLayout->setMargin( KDialog::marginHint() );
   topLayout->setSpacing( KDialog::spacingHint() );
 
-  QLabel *label = new QLabel( i18n("Host Name"), this );
+  QLabel *label = new QLabel( i18n("Host name:"), this );
   topLayout->addWidget( label );
 
   mHostNameEdit = new QLineEdit( this );
@@ -59,7 +59,7 @@ HostViewConfigDialog::HostViewConfigDialog( QWidget *parent )
 
   buttonLayout->addStretch( 1 );
 
-  QPushButton *button = new QPushButton( i18n("Ok"), this );
+  QPushButton *button = new QPushButton( i18n("&OK"), this );
   buttonLayout->addWidget( button );
   connect( button, SIGNAL( clicked() ), SLOT( slotOk() ) );
 }
@@ -107,17 +107,17 @@ HostView::HostView( bool detailed, HostInfoManager *m, QWidget *parent,
   ledLayout->setSpacing( 4 );
 
   ledLayout->addStretch( 1 );
-  
+
   mOwnLed = new KLed( "red", this );
   ledLayout->addWidget( mOwnLed );
-  
+
   mOthersLed = new KLed( "green", this );
-  ledLayout->addWidget( mOthersLed );  
+  ledLayout->addWidget( mOthersLed );
 
   ledLayout->addStretch( 1 );
 
   marginLayout->addStretch( 1 );
-  
+
   mHostNameLabel = new QLabel( this );
   mHostNameLabel->setAlignment( AlignCenter );
   statusLayout->addWidget( mHostNameLabel, 1 );
@@ -129,17 +129,17 @@ HostView::HostView( bool detailed, HostInfoManager *m, QWidget *parent,
   jobLayout->setSpacing( KDialog::spacingHint() );
   jobLayout->setMargin( KDialog::marginHint() );
 
-  QLabel *label = new QLabel( i18n("Local Jobs:"), jobWidget );
+  QLabel *label = new QLabel( i18n("Local jobs:"), jobWidget );
   jobLayout->addWidget( label, 0, 0 );
   mLocalJobsLabel = new QLabel( jobWidget );
   jobLayout->addWidget( mLocalJobsLabel, 0, 1 );
 
-  label = new QLabel( i18n("Remote Jobs:"), jobWidget );
+  label = new QLabel( i18n("Remote jobs:"), jobWidget );
   jobLayout->addWidget( label, 1, 0 );
   mRemoteJobsLabel = new QLabel( jobWidget );
   jobLayout->addWidget( mRemoteJobsLabel, 1, 1 );
 
-  label = new QLabel( i18n("Compile Jobs:"), jobWidget );
+  label = new QLabel( i18n("Compile jobs:"), jobWidget );
   jobLayout->addWidget( label, 2, 0 );
   mCompileJobsLabel = new QLabel( jobWidget );
   jobLayout->addWidget( mCompileJobsLabel, 2, 1 );
@@ -165,13 +165,13 @@ void HostView::update( const Job &job )
 
   if ( finished ) {
     QValueList<unsigned int>::Iterator it;
-    
+
     it = mLocalJobs.find( job.jobId() );
     if ( it != mLocalJobs.end() ) mLocalJobs.remove( it );
-    
+
     it = mRemoteJobs.find( job.jobId() );
     if ( it != mRemoteJobs.end() ) mRemoteJobs.remove( it );
-    
+
     it = mCompileJobs.find( job.jobId() );
     if ( it != mCompileJobs.end() ) mCompileJobs.remove( it );
 

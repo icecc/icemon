@@ -55,7 +55,7 @@ GanttConfigDialog::GanttConfigDialog( QWidget *parent )
 
   buttonLayout->addStretch( 1 );
 
-  QPushButton *button = new QPushButton( i18n("Close"), this );
+  QPushButton *button = new QPushButton( i18n("&Close"), this );
   buttonLayout->addWidget( button );
   connect( button, SIGNAL( clicked() ), SLOT( hide() ) );
 }

@@ -51,7 +51,7 @@ StarViewConfigDialog::StarViewConfigDialog( QWidget *parent )
   topLayout->setMargin( KDialog::marginHint() );
   topLayout->setSpacing( KDialog::spacingHint() );
 
-  QLabel *label = new QLabel( i18n("Number of nodes per ring"), this );
+  QLabel *label = new QLabel( i18n("Number of nodes per ring:"), this );
   topLayout->addWidget( label );
 
   QBoxLayout *nodesLayout = new QHBoxLayout( topLayout );
@@ -83,7 +83,7 @@ StarViewConfigDialog::StarViewConfigDialog( QWidget *parent )
 
   buttonLayout->addStretch( 1 );
 
-  QPushButton *button = new QPushButton( i18n("Close"), this );
+  QPushButton *button = new QPushButton( i18n("&Close"), this );
   buttonLayout->addWidget( button );
   connect( button, SIGNAL( clicked() ), SLOT( hide() ) );
 }
