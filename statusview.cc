@@ -103,3 +103,9 @@ QColor StatusView::hostColor( unsigned int id )
 
   return color;
 }
+
+void StatusView::inherit( StatusView *old )
+{
+    mHostColorMap = old->mHostColorMap;
+    mHostNameMap = old->mHostNameMap;
+}

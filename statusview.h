@@ -133,6 +133,8 @@ class StatusView
 
     QColor hostColor( unsigned int hostid );
 
+    void inherit( StatusView *old );
+
   private:
     QMap<unsigned int,QString> mHostNameMap;
     QMap<unsigned int,QColor> mHostColorMap;

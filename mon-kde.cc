@@ -308,6 +308,8 @@ void MainWindow::handle_job_done(Msg *_m)
 
 void MainWindow::setupView( StatusView *view, bool rememberJobs )
 {
+    if ( m_view )
+        view->inherit( m_view );
     delete m_view;
     m_view = view;
     if ( rememberJobs ) {
