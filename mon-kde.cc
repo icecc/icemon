@@ -146,9 +146,6 @@ void ListStatusView::update( const Job &job )
     {
         ( *it )->updateText( job );
     }
-
-    setUpdatesEnabled( true );
-    triggerUpdate();
 }
 
 #if 0
