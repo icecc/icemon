@@ -77,6 +77,10 @@ void StatusView::checkForNewNode( const QString & )
 {
 }
 
+void StatusView::updateStats( const QString & )
+{
+}
+
 ListStatusViewItem::ListStatusViewItem( QListView *parent, const Job &_job )
     :  QListViewItem( parent ), job( _job )
 {
@@ -483,7 +487,6 @@ void MainWindow::handle_stats( Msg *_m )
     MonStatsMsg *m = dynamic_cast<MonStatsMsg*>( _m );
     if ( !m )
         return;
-#if 0
     cout << "load"
          << " host=" << m->host
          << " iceload=" << m->load
@@ -495,9 +498,9 @@ void MainWindow::handle_stats( Msg *_m )
          << ", " << m->loadAvg5 << ", " << m->loadAvg10 << ")"
          << " freemem=" << m->freeMem
          << endl;
-#endif
 
-  m_view->checkForNewNode( m->host.c_str() );
+  m_view->updateStats( m->host.c_str() );
+//  m_view->checkForNewNode( m->host.c_str() );
 }
 
 void MainWindow::handle_job_begin(Msg *_m)

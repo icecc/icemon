@@ -70,6 +70,7 @@ public:
     virtual ~GanttStatusView() {}
 
     void checkForNewNode( const QString &host );
+    void updateStats( const QString &host );
 
     void start();
     void stop();
@@ -80,6 +81,7 @@ public slots:
 
 private slots:
     void updateGraphs();
+    void removeStaleNodes();
 
 private:
     GanttProgress *registerNode( const QString &name );

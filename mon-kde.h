@@ -106,6 +106,7 @@ public:
     virtual void update( const Job &job ) = 0;
     virtual QWidget *widget() = 0;
     virtual void checkForNewNode( const QString &host );
+    virtual void updateStats( const QString &host );
     virtual void stop() {}
     virtual void start() {}
 };
