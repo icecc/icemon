@@ -69,6 +69,8 @@ public:
     int expireDuration() const;
     void setExpireDuration( int duration );
 
+    virtual void clear();
+
 private slots:
 
     void slotExpireFinishedJobs();

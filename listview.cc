@@ -279,6 +279,16 @@ void ListStatusView::setExpireDuration( int duration )
     mExpireDuration = duration;
 }
 
+void ListStatusView::clear()
+{
+    mExpireTimer->stop();
+
+    items.clear();
+    mFinishedJobs.clear();
+
+    KListView::clear();
+}
+
 void ListStatusView::slotExpireFinishedJobs()
 {
     const QTime currentTime = QTime::currentTime();
