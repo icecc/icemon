@@ -133,7 +133,7 @@ void MainWindow::checkScheduler(bool deleteit)
         m_scheduler_read = 0;
     } else if ( m_scheduler )
         return;
-    QTimer::singleShot( 300, this, SLOT( slotCheckScheduler() ) );
+    QTimer::singleShot( 1800, this, SLOT( slotCheckScheduler() ) );
 }
 
 void MainWindow::slotCheckScheduler()
