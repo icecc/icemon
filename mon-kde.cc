@@ -98,13 +98,11 @@ inline int compare( unsigned int i1, unsigned int i2 )
 }
 
 int ListStatusViewItem::compare( QListViewItem *i, int col,
-                                 bool ascending ) const
+                                 bool ) const
 {
     const ListStatusViewItem *first = this;
     const ListStatusViewItem *other = dynamic_cast<ListStatusViewItem*>( i );
     assert( other );
-    if ( !ascending )
-        std::swap( first, other );
 
     switch ( col ) {
     case 0:
