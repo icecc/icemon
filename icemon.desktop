@@ -26,4 +26,7 @@ Comment[ta]=செயலிக் கண்காணிச் செருகல
 Comment[xx]=xxIcecream-monitor appletxx
 Exec=icemon
 Icon=icemonnode
-
+DocPath=icemon/index.html
+Type=Application
+Terminal=false
+Categories=Qt;KDE;Development;
