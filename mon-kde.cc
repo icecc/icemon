@@ -352,7 +352,7 @@ void MainWindow::slotCheckScheduler()
     std::list<std::string> names = get_netnames (60);
     if ( !names.empty() && current_netname.isEmpty() )
     {
-        current_netname = names.front();
+        current_netname = names.front().c_str();
     }
 
     if ( current_netname.isEmpty() ) {
