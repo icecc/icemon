@@ -123,10 +123,7 @@ void HostItem::setHostColor( const QColor &color )
   m_boxItem->setBrush( color );
   m_jobHalo->setBrush( color.light() );
 
-  float luminance = ( color.red() * 0.299 ) + ( color.green() * 0.587 ) +
-                    ( color.blue() * 0.114 );
-  if ( luminance > 140.0 ) setColor( black );
-  else setColor( white );
+  setColor( StatusView::textColor( color ) );
 }
 
 QString HostItem::hostName() const

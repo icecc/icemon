@@ -53,6 +53,8 @@ class StatusView
     QString nameForHost( unsigned int hostid );
     QColor hostColor( unsigned int hostid );
 
+    static QColor textColor( const QColor &backGroundColor );
+
   private:
     HostInfoManager *mHostInfoManager;
 };
