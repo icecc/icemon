@@ -68,12 +68,14 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
 
   new QLabel( i18n( "Outgoing jobs" ), locals );
   mLocalJobsView = new ListStatusView( manager, locals, "LocalJobs" );
+  mLocalJobsView->setClientColumnVisible( false );
 
   QVBox* remotes = new QVBox( viewSplitter );
   remotes->setSpacing( KDialog::spacingHint() );
 
   new QLabel( i18n( "Incoming jobs" ), remotes );
   mRemoteJobsView = new ListStatusView( manager, remotes, "RemoteJobs" );
+  mRemoteJobsView->setServerColumnVisible( false );
 
   connect(mHostListView, SIGNAL( nodeActivated( unsigned int ) ),
           this, SLOT( slotNodeActivated() ) );

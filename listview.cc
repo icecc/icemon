@@ -224,5 +224,49 @@ void ListStatusView::setNumberOfFilePathParts( int number )
         return;
 }
 
+bool ListStatusView::isClientColumnVisible() const
+{
+    return columnWidth( ColumnClient );
+}
+
+void ListStatusView::setClientColumnVisible( bool visible )
+{
+    if ( visible == isClientColumnVisible() )
+        return;
+
+    if ( visible )
+    {
+        setColumnWidthMode( ColumnClient, Maximum );
+        setColumnWidth( ColumnClient, 50 ); // at least the user can see it again
+    }
+    else
+    {
+        setColumnWidthMode( ColumnClient, Manual );
+        setColumnWidth( ColumnClient, 0 );
+    }
+}
+
+bool ListStatusView::isServerColumnVisible() const
+{
+    return columnWidth( ColumnServer );
+}
+
+void ListStatusView::setServerColumnVisible( bool visible )
+{
+    if ( visible == isServerColumnVisible() )
+        return;
+
+    if ( visible )
+    {
+        setColumnWidthMode( ColumnServer, Maximum );
+        setColumnWidth( ColumnServer, 50 ); // at least the user can see it again
+    }
+    else
+    {
+        setColumnWidthMode( ColumnServer, Manual );
+        setColumnWidth( ColumnServer, 0 );
+    }
+}
+
 
 #include "listview.moc"

@@ -55,6 +55,12 @@ public:
     int numberOfFilePathParts() const;
     void setNumberOfFilePathParts( int number );
 
+    bool isClientColumnVisible() const;
+    void setClientColumnVisible( bool visible );
+
+    bool isServerColumnVisible() const;
+    void setServerColumnVisible( bool visible );
+
 private:
     typedef QMap<unsigned int, ListStatusViewItem*> ItemMap;
     ItemMap items;
