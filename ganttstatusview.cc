@@ -120,18 +120,14 @@ void GanttProgress::drawGraph( QPainter &p )
         p.setPen( color.dark() );
         p.drawRect( xStart, 0, xWidth, height() );
 
-        // If the rectangle is too small, we just print "..." instead of the
-        // filename
-        QString s;
-        if ( p.fontMetrics().width( "..." ) >= xWidth - 3 )
-            s = "...";
-        else
-            s = ( *it ).first.fileName();
+        QString s = ( *it ).first.fileName();
+        s = s.mid( s.findRev( '/' ) + 1, s.length() );
+        s = s.left( s.findRev( '.' ) );
+        s[0] = s[0].upper();
 
         // If we print the filename, check whether we need to truncate it and
         // append "..." at the end.
-        if ( s == ( *it ).first.fileName() &&
-             p.fontMetrics().width( s ) >= xWidth - 3 ) {
+        if ( p.fontMetrics().width( s ) >= xWidth - 3 ) {
             int newLength = 0;
             int threeDotsWidth = p.fontMetrics().width( "..." );
             while ( p.fontMetrics().width( s.left( newLength ) ) +
@@ -206,7 +202,7 @@ QWidget * GanttStatusView::widget()
 void GanttStatusView::checkForNewNode( const QString &host )
 {
     if ( m_nodeMap.find( host ) != m_nodeMap.end() ) return;
-    
+
     registerNode( host );
 }
 
