@@ -309,15 +309,16 @@ void StarView::centerLocalhostItem()
 
 void StarView::arrangeHostItems()
 {
-    const int radius = int( kMin( m_canvas->width() / 2.5,
-                                  m_canvas->height() / 2.5 ) );
+    const int xRadius = int( m_canvas->width() / 2.5 );
+    const int yRadius = int( m_canvas->height() / 2.5 );
+
     const double step = 2 * M_PI / m_hostItems.count();
 
     double angle = 0.0;
     for ( QMap<unsigned int, HostItem*>::ConstIterator it = m_hostItems.begin(); it != m_hostItems.end(); ++it )
     {
-        it.data()->move( m_localhostItem->x() + ( cos( angle ) * radius ),
-                         m_localhostItem->y() + ( sin( angle ) * radius ) );
+        it.data()->move( m_localhostItem->x() + ( cos( angle ) * xRadius ),
+                         m_localhostItem->y() + ( sin( angle ) * yRadius ) );
         angle += step;
     }
 }
