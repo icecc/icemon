@@ -182,6 +182,13 @@ void Monitor::handle_local_done( Msg *_m )
   ( *it ).exitcode = m->exitcode;
   ( *it ).setState( Job::Finished );
   m_view->update( *it );
+
+  if ( m_rememberedJobs.size() > 3000 ) { // now remove 1000
+      uint count = 1000;
+
+      while ( --count )
+          m_rememberedJobs.erase( m_rememberedJobs.begin() );
+  }
 }
 
 void Monitor::handle_stats( Msg *_m )
@@ -219,7 +226,7 @@ void Monitor::handle_job_begin( Msg *_m )
     // we started in between
     return;
   }
-  
+
   ( *it ).setServer( m->hostid );
   ( *it ).setStartTime( m->stime );
   ( *it ).setState( Job::Compiling );
