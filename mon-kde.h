@@ -105,6 +105,7 @@ class ListStatusViewItem : public QListViewItem
 public:
     ListStatusViewItem( QListView *parent, const Job &job );
     void updateText( const Job &job);
+    int compare( QListViewItem *i, int col, bool ascending ) const;
 private:
     Job job;
 };

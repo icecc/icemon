@@ -18,6 +18,7 @@
 
 #include <iostream>
 #include <comm.h>
+#include <cassert>
 
 using namespace std;
 
@@ -72,12 +73,51 @@ void ListStatusViewItem::updateText( const Job &job)
     this->job = job;
     setText( 0, QString::number( job.jobId() ) );
     setText( 1, job.fileName() );
-    setText( 2, job.client() + "/" + job.server() );
-    setText( 3, job.stateAsString() );
-    setText( 4, QString::number( job.real_msec ) + "/" + QString::number( job.user_msec ) );
-    setText( 5, QString::number( job.majflt ) );
-    setText( 6, QString::number( job.in_uncompressed ) );
-    setText( 7, QString::number( job.out_uncompressed ) );
+    setText( 2, job.client() );
+    setText( 4, job.server() );
+    setText( 5, job.stateAsString() );
+    setText( 6, QString::number( job.real_msec ) );
+    setText( 7, QString::number( job.user_msec ) );
+    setText( 8, QString::number( job.majflt ) );
+    setText( 9, QString::number( job.in_uncompressed ) );
+    setText( 10, QString::number( job.out_uncompressed ) );
+}
+
+inline int compare( unsigned int i1, unsigned int i2 )
+{
+    if ( i1 < i2 )
+        return -1;
+    else if ( i1 == i2 )
+        return 0;
+    else
+        return 1;
+}
+
+int ListStatusViewItem::compare( QListViewItem *i, int col,
+                                 bool ascending ) const
+{
+    const ListStatusViewItem *first = this;
+    const ListStatusViewItem *other = dynamic_cast<ListStatusViewItem*>( i );
+    assert( other );
+    if ( !ascending )
+        std::swap( first, other );
+
+    switch ( col ) {
+    case 0:
+        return ::compare( first->job.jobId(), other->job.jobId() );
+    case 6:
+        return ::compare( first->job.real_msec, other->job.real_msec );
+    case 7:
+        return ::compare( first->job.user_msec, other->job.user_msec );
+    case 8:
+        return ::compare( first->job.majflt, other->job.majflt );
+    case 9:
+        return ::compare( first->job.in_uncompressed, other->job.in_uncompressed );
+    case 10:
+        return ::compare( first->job.out_uncompressed, other->job.out_uncompressed );
+    default:
+        return first->text(col).compare( other->text( col ) );
+    }
 }
 
 ListStatusView::ListStatusView( QWidget *parent, const char *name )
@@ -85,9 +125,11 @@ ListStatusView::ListStatusView( QWidget *parent, const char *name )
 {
     addColumn( i18n( "ID" ) );
     addColumn( i18n( "Filename" ) );
-    addColumn( i18n( "Client / Server" ) );
+    addColumn( i18n( "Client" ) );
+    addColumn( i18n( "Server" ) );
     addColumn( i18n( "State" ) );
-    addColumn( i18n( "Real / User" ) );
+    addColumn( i18n( "Real" ) );
+    addColumn( i18n( "User" ) );
     addColumn( i18n( "Faults" ) );
     addColumn( i18n( "Size In" ) );
     addColumn( i18n( "Size Out" ) );
