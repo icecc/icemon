@@ -207,6 +207,8 @@ JobListView::JobListView( const HostInfoManager* manager,
 
     setAllColumnsShowFocus(true);
 
+    setSorting( ColumnID, false );
+
     connect(mExpireTimer, SIGNAL( timeout() ),
             this, SLOT( slotExpireFinishedJobs() ) );
 }
