@@ -200,7 +200,7 @@ void GanttProgress::drawGraph( QPainter &p )
                         QPainter painter( &(*it).text_cache );
                         painter.setPen( StatusView::textColor( color ) );
                         painter.drawText( 0, 0, text_width, height() - 4,
-                                    Qt::AlignTop | Qt::AlignLeft, s );
+                                          Qt::AlignVCenter | Qt::AlignLeft, s );
                     }
                 }
                 if( !(*it).text_cache.isNull())
