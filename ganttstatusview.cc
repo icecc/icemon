@@ -245,10 +245,14 @@ void GanttStatusView::update( const Job &job )
 
     GanttProgress *slot = 0;
 
-    NodeMap::ConstIterator it2 = mNodeMap.find( job.server() );
+    QString processor;
+    if ( job.state() == Job::LocalOnly ) processor = job.client();
+    else processor = job.server();
+
+    NodeMap::ConstIterator it2 = mNodeMap.find( processor );
     if ( it2 == mNodeMap.end() ) {
 //        kdDebug() << "  Server not known" << endl;
-        slot = registerNode( job.server() );
+        slot = registerNode( processor );
     } else {
         SlotList slotList = it2.data();
         SlotList::ConstIterator it3;
@@ -261,7 +265,7 @@ void GanttStatusView::update( const Job &job )
         }
         if ( it3 == slotList.end() ) {
 //            kdDebug() << "  Create new slot" << endl;
-            slot = registerNode( job.server() );
+            slot = registerNode( processor );
         }
     }
 
