@@ -203,13 +203,19 @@ void StarView::update( const Job &job )
     return;
   }
 
-  QString host = processor( job );
-  if ( host.isEmpty() ) {
+  unsigned int hostid = processor( job );
+  if ( !hostid ) {
     kdDebug() << "Empty host" << endl;
     return;
   }
-  HostItem *hostItem = m_hostItems.find( host );
-  if ( !hostItem ) hostItem = createHostItem( host );
+
+  HostItem *hostItem = 0;
+  QMapIterator<unsigned int, HostItem*> it2 = m_hostItems.find( hostid );
+
+  if ( it2 != m_hostItems.end() )
+      hostItem = it2.data();
+
+  if ( !hostItem ) hostItem = createHostItem( hostid );
 
   hostItem->update( job );
 
@@ -246,16 +252,15 @@ void StarView::arrangeHostItems()
     const double step = 2 * M_PI / m_hostItems.count();
 
     double angle = 0.0;
-    QDictIterator<HostItem> it( m_hostItems );
-    while ( it.current() != 0 ) {
-        it.current()->move( m_localhostItem->x() + ( cos( angle ) * radius ),
-                            m_localhostItem->y() + ( sin( angle ) * radius ) );
+    for ( QMap<unsigned int, HostItem*>::ConstIterator it = m_hostItems.begin(); it != m_hostItems.end(); ++it )
+    {
+        it.data()->move( m_localhostItem->x() + ( cos( angle ) * radius ),
+                         m_localhostItem->y() + ( sin( angle ) * radius ) );
         angle += step;
-        ++it;
     }
 }
 
-QString StarView::processor( const Job &job )
+unsigned int StarView::processor( const Job &job )
 {
   if ( job.state() == Job::LocalOnly || job.state() == Job::WaitingForCS ) {
     return job.client();
@@ -264,13 +269,13 @@ QString StarView::processor( const Job &job )
   }
 }
 
-HostItem *StarView::createHostItem( const QString &host )
+HostItem *StarView::createHostItem( unsigned int hostid )
 {
-  kdDebug() << "New node for '" << host << "'" << endl;
+  kdDebug() << "New node for '" << hostid << "'" << endl;
 
-  HostItem *hostItem = new HostItem( nameForIp( host ), m_canvas );
-  hostItem->setHostColor( hostColor( host ) );
-  m_hostItems.insert( host, hostItem );
+  HostItem *hostItem = new HostItem( nameForHost( hostid ), m_canvas );
+  hostItem->setHostColor( hostColor( hostid ) );
+  m_hostItems.insert( hostid, hostItem );
   hostItem->show();
 
   arrangeHostItems();
@@ -282,9 +287,8 @@ HostItem *StarView::createHostItem( const QString &host )
 
 void StarView::drawNodeStatus()
 {
-    QDictIterator<HostItem> it( m_hostItems );
-    for ( ; it.current() != 0; ++it )
-        drawState( it.current() );
+    for ( QMap<unsigned int, HostItem*>::ConstIterator it = m_hostItems.begin(); it != m_hostItems.end(); ++it )
+        drawState( *it );
     m_canvas->update();
 }
 
@@ -300,8 +304,8 @@ void StarView::drawState( HostItem *node )
         case Job::Compiling: {
             QCanvasLine *line = new QCanvasLine( m_canvas );
             QColor color;
-            QString client = node->client();
-            if ( client.isEmpty() ) color = Qt::green;
+            unsigned int client = node->client();
+            if ( !client ) color = Qt::green;
             else color = hostColor( client );
             line->setPen( color );
 

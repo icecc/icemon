@@ -336,7 +336,7 @@ void MainWindow::setupGanttView()
 
 void MainWindow::setupStarView()
 {
-//    setupView( new StarView( this ), false );
+    setupView( new StarView( this ), false );
 }
 
 void MainWindow::stopView()
