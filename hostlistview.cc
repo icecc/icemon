@@ -232,6 +232,14 @@ void HostListView::removeNode( unsigned int hostid )
 }
 
 
+void HostListView::clear()
+{
+    mItems.clear();
+
+    KListView::clear();
+}
+
+
 void HostListView::slotNodeActivated( QListViewItem* item )
 {
     HostListViewItem* hostItem = dynamic_cast<HostListViewItem*>( item );

@@ -69,6 +69,8 @@ public:
 
     void removeNode( unsigned int hostid );
 
+    virtual void clear();
+
 signals:
 
     void nodeActivated( unsigned int hostid );
@@ -91,4 +93,3 @@ private:
 
 
 #endif
-// vim:ts=4:sw=4:noet
