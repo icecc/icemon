@@ -100,6 +100,7 @@ private:
     void removeSlot( const QString& name, GanttProgress* slot );
     void unregisterNode( const QString &name );
     void createHostColor( const QString &host );
+    QString nameForIp( const QString &ip );
 
     QGridLayout *m_topLayout;
     typedef QValueList<GanttProgress *> SlotList;

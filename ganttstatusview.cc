@@ -6,7 +6,13 @@
 #include <qpainter.h>
 #include <qpixmap.h>
 #include <qtimer.h>
+
 #include <kdebug.h>
+
+#include <netdb.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 GanttTimeScaleWidget::GanttTimeScaleWidget( QWidget *parent, const char *name )
 	: QWidget( parent, name, WResizeNoErase | WRepaintNoErase ),
@@ -340,55 +346,83 @@ void GanttStatusView::checkNode( const QString &host, unsigned int max_kids )
     }
 }
 
-GanttProgress *GanttStatusView::registerNode( const QString &name )
+GanttProgress *GanttStatusView::registerNode( const QString &ip )
 {
-    kdDebug() << "GanttStatusView::registerNode(): " << name << endl;
+    kdDebug() << "GanttStatusView::registerNode(): " << ip << endl;
 
     static int lastRow = 0;
 
-    createHostColor( name );
-    QColor color = mHostColors[ name ];
+    createHostColor( ip );
+    QColor color = mHostColors[ ip ];
 
     QVBoxLayout *nodeLayout;
 
-    NodeLayoutMap::ConstIterator it = mNodeLayouts.find( name );
+    NodeLayoutMap::ConstIterator it = mNodeLayouts.find( ip );
     if ( it == mNodeLayouts.end() ) {
       ++lastRow;
 
-      nodeLayout = new QVBoxLayout( 0, ( name + "_layout" ).latin1() );
+      nodeLayout = new QVBoxLayout( 0, ( ip + "_layout" ).latin1() );
       m_topLayout->addLayout( nodeLayout, lastRow, 1 );
-      mNodeLayouts.insert( name, nodeLayout );
-      mNodeRows.insert( name, lastRow );
+      mNodeLayouts.insert( ip, nodeLayout );
+      mNodeRows.insert( ip, lastRow );
     } else {
       nodeLayout = it.data();
     }
 
-    NodeRowMap::ConstIterator rowIt = mNodeRows.find( name );
+    NodeRowMap::ConstIterator rowIt = mNodeRows.find( ip );
     if ( rowIt == mNodeRows.end() ) {
       kdError() << "Unknown node row." << endl;
     } else {
       int row = *rowIt;
-      NodeLabelMap::ConstIterator labelIt = mNodeLabels.find( name );
+      NodeLabelMap::ConstIterator labelIt = mNodeLabels.find( ip );
       if ( labelIt == mNodeLabels.end() ) {
+        QString name = nameForIp( ip );
         QLabel *l = new QLabel( name, this );
         l->setPaletteForegroundColor( color );
         m_topLayout->addWidget( l, row, 0 );
         l->show();
-        mNodeLabels.insert( name, l );
+        mNodeLabels.insert( ip, l );
       }
     }
 
     GanttProgress *w = new GanttProgress( mHostColors, this );
     nodeLayout->addWidget( w );
 
-    mNodeMap[ name ].append( w );
-    mAgeMap[ name ] = 0;
+    mNodeMap[ ip ].append( w );
+    mAgeMap[ ip ] = 0;
 
-    m_topLayout->setRowStretch( mNodeRows[ name ], mNodeMap[ name ].size() );
+    m_topLayout->setRowStretch( mNodeRows[ ip ], mNodeMap[ ip ].size() );
 
     w->show();
 
     return w;
+}
+
+QString GanttStatusView::nameForIp( const QString &ip )
+{
+  QCString ipStr = ip.latin1();
+
+  struct in_addr addr;
+
+  int success = inet_aton( ipStr, &addr );
+  if ( !success ) {
+    kdDebug() << "IP address '" << ip << "' not valid." << endl;
+    return ip;
+  }
+
+  struct hostent *host = gethostbyaddr( (const char *)(&addr),
+                                        sizeof( in_addr ), AF_INET );
+  if ( !host ) {
+    kdDebug() << "Error getting name for IP address '" << ip << "': "
+              << hstrerror( h_errno ) << endl;
+    return ip;
+  } else {
+    QString name = host->h_name;
+    // Strip domain parts
+    int pos = name.find( '.' );
+    if ( pos > 0 ) name = name.left( pos );
+    return name;
+  }
 }
 
 void GanttStatusView::removeSlot( const QString& name, GanttProgress* slot )
