@@ -81,7 +81,7 @@ void SummaryViewItem::update(const Job &job)
         m_jobCount++;
         m_stateWidget->setPaletteBackgroundColor(QColor("green"));
         m_jobsLabel->setText(QString::number(m_jobCount));
-        m_fileLabel->setText(job.fileName());
+        m_fileLabel->setText(job.fileName().section('/', -1));
         m_sourceLabel->setText(m_parent->nameForHost(job.client()));
         break;
     case Job::Failed:
