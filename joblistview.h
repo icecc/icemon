@@ -28,7 +28,6 @@
 
 #include <klistview.h>
 
-#include <qdatetime.h>
 #include <qpair.h>
 
 
@@ -119,7 +118,7 @@ private:
 
     QTimer* mExpireTimer;
 
-    typedef QPair<QTime, JobListViewItem*> FinishedJob;
+    typedef QPair<uint, JobListViewItem*> FinishedJob;
     typedef QValueList<FinishedJob> FinishedJobs;
     FinishedJobs mFinishedJobs;
 };

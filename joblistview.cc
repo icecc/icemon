@@ -27,6 +27,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 
+#include <qdatetime.h>
 #include <qdir.h>
 #include <qtimer.h>
 
@@ -321,14 +322,14 @@ void JobListView::clear()
 
 void JobListView::slotExpireFinishedJobs()
 {
-    const QTime currentTime = QTime::currentTime();
+    const uint currentTime = QDateTime::currentDateTime().toTime_t();
 
     // this list is sorted by the age of the finished jobs, the oldest is the first
     // so we've to find the first job which isn't old enough to expire
     FinishedJobs::iterator it = mFinishedJobs.begin();
     for ( const FinishedJobs::iterator itEnd = mFinishedJobs.end(); it != itEnd; ++it )
     {
-        if ( ( *it ).first.secsTo( currentTime ) < mExpireDuration )
+        if ( currentTime - ( *it ).first < mExpireDuration )
             break;
 
         removeItem( ( *it ).second );
@@ -349,7 +350,7 @@ void JobListView::expireItem( JobListViewItem* item )
     }
     else if ( mExpireDuration > 0 )
     {
-        mFinishedJobs.push_back( FinishedJob( QTime::currentTime(), item ) );
+        mFinishedJobs.push_back( FinishedJob( QDateTime::currentDateTime().toTime_t(), item ) );
 
         if ( !mExpireTimer->isActive() )
             mExpireTimer->start( 1000 );
