@@ -29,7 +29,7 @@ class HostInfo
 {
   public:
     HostInfo( unsigned int id );
-    
+
     unsigned int id() const;
 
     QString name() const;
@@ -47,7 +47,7 @@ class HostInfo
     static QString colorName( const QColor & );
 
   protected:
-    static void initColor( int r, int g, int b, const QString &name );
+    static void initColor( const QString &value, const QString &name );
 
     QColor HostInfo::createColor();
     QColor createColor( const QString &name );
@@ -56,9 +56,9 @@ class HostInfo
     unsigned int mId;
     QString mName;
     QColor mColor;
-    
+
     QString mIp;
-    
+
     unsigned int mMaxJobs;
     bool mOffline;
 

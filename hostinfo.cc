@@ -28,43 +28,44 @@ QMap<int,QString> HostInfo::mColorNameMap;
 
 void HostInfo::initColorTable()
 {
-  // Sorry, the names are in german as my knowledge of the english language
-  // doesn't seem to be good enough to translate icecream flavors.
-  initColor( 210,  21, 100 , i18n("kirsche") );
-  initColor( 118, 210, 111 , i18n("pistazie") );
-  initColor( 102,  74,   8 , i18n("schokolade") );
-  initColor( 255, 248, 167 , i18n("vanille") );
-  initColor(  76, 157, 255 , i18n("schlumpf-eis") );
-  initColor( 108,  44, 168 , i18n("blaubeere") );
-  initColor( 250, 131,  68 , i18n("orange") );
-  initColor( 181, 255, 224 , i18n("minze") );
-  initColor( 219,  18,  48 , i18n("erdbeer") );
-  initColor( 166, 234,  94 , i18n("apfel") );
-  initColor( 245, 186, 247 , i18n("kaugummi") );
-  initColor( 242, 170,  77 , i18n("pfirsich") );
-  initColor( 170,  19, 135 , i18n("pflaume") );
-  initColor(  38, 195, 247 , i18n("eismeer") );
-  initColor( 184, 133,  14 , i18n("nuss") );
-  initColor( 106,  24, 141 , i18n("brombeere") );
-  initColor(  36, 176,  99 , i18n("waldmeister") );
-  initColor( 255, 255,  15 , i18n("banane") );
-  initColor(  30,  20,   7 , i18n("mocca") );
-  initColor(  60, 183,  73 , i18n("kiwi") );
-  initColor( 247, 211, 111 , i18n("maracuja") );
-  initColor( 248, 255, 200 , i18n("zitrone") );
-  initColor( 250, 126, 145 , i18n("himbeere") );
-  initColor( 197, 162,  67 , i18n("karamel") );
-  initColor( 184, 188, 255 , i18n("heidelbeere") );
-  initColor( 255, 184, 192 , i18n("johannisbeere") );
-  initColor( 213,  16,  19 , i18n("granatapfel") );
-  initColor( 183, 122,  42 , i18n("zimt") );
+    // Sorry, the names are in german as my knowledge of the english language
+    // doesn't seem to be good enough to translate icecream flavors.
+    initColor( "#d21564", i18n("kirsche") );
+    initColor( "#76d26f", i18n("pistazie"));
+    initColor( "#664a08", i18n("schokolade"));
+    initColor( "#fff8a7", i18n("vanille"));
+    initColor( "#4c9dff", i18n("schlumpf-eis"));
+    initColor( "#6c2ca8", i18n("blaubeere"));
+    initColor( "#fa8344", i18n("orange"));
+    initColor( "#b5ffe0", i18n("minze"));
+    initColor( "#db1230", i18n("erdbeer"));
+    initColor( "#a6ea5e", i18n("apfel"));
+    initColor( "#f5baf7", i18n("kaugummi"));
+    initColor( "#f2aa4d", i18n("pfirsich"));
+    initColor( "#aa1387", i18n("pflaume"));
+    initColor( "#26c3f7", i18n("eismeer"));
+    initColor( "#b8850e", i18n("nuss"));
+    initColor( "#6a188d", i18n("brombeere"));
+    initColor( "#24b063", i18n("waldmeister"));
+    initColor( "#ffff0f", i18n("banane"));
+    initColor( "#1e1407", i18n("mocca"));
+    initColor( "#3cb749", i18n("kiwi"));
+    initColor( "#f7d36f", i18n("maracuja"));
+    initColor( "#f8ffc8", i18n("zitrone"));
+    initColor( "#fa7e91", i18n("himbeere"));
+    initColor( "#c5a243", i18n("karamel"));
+    initColor( "#b8bcff", i18n("heidelbeere"));
+    initColor( "#ffb8c0", i18n("johannisbeere"));
+    initColor( "#d51013", i18n("granatapfel"));
+    initColor( "#b77a2a", i18n("zimt"));
 }
 
-void HostInfo::initColor( int r, int g, int b, const QString &name )
+void HostInfo::initColor( const QString &value , const QString &name )
 {
-  mColorTable.append( QColor( r, g, b ) );
+    QColor c( value );
+    mColorTable.append( c );
 
-  mColorNameMap.insert( r + g * 256 + b * 65536, name );
+    mColorNameMap.insert( c.red() + c.green() * 256 + c.blue() * 65536, name );
 }
 
 QString HostInfo::colorName( const QColor &c )
@@ -135,7 +136,7 @@ QColor HostInfo::createColor( const QString &name )
   }
 
 //  kdDebug() << "HostInfo::createColor: " << name << ": " << n << endl;
-  
+
   return mColorTable[ n % mColorTable.count() ];
 }
 
@@ -208,7 +209,7 @@ QColor HostInfoManager::hostColor( unsigned int id ) const
     HostInfo *hostInfo = find( id );
     if ( hostInfo ) return hostInfo->color();
   }
-  
+
   return QColor( 0, 0, 0 );
 }
 
@@ -218,6 +219,6 @@ unsigned int HostInfoManager::maxJobs( unsigned int id ) const
     HostInfo *hostInfo = find( id );
     if ( hostInfo ) return hostInfo->maxJobs();
   }
-  
+
   return 0;
 }
