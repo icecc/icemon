@@ -58,9 +58,13 @@ QString Job::stateAsString() const
 void StatusView::checkNode( unsigned int hostid, const StatsMap &statmsg )
 {
     QString name = statmsg["Name"];
-    if ( mHostNameMap[hostid] != name ) {
+    if ( !name.isEmpty() && mHostNameMap[hostid] != name ) {
         mHostColorMap[hostid] = QColor();
         mHostNameMap[hostid] = name;
+    }
+    if ( statmsg["State"] == "Offline" ) {
+        mHostNameMap.erase( hostid );
+        mHostColorMap.erase( hostid );
     }
 }
 
