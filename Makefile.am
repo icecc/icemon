@@ -31,3 +31,6 @@ icemon_panelapplet_la_SOURCES = icemonapplet.cpp
 
 lnkdir = $(kde_datadir)/kicker/applets
 lnk_DATA = icemonapplet.desktop
+
+xdg_apps_data = icemon.desktop
+
