@@ -58,18 +58,18 @@ static QString convertSize( unsigned int size )
 }
 
 
-enum Columns
+enum JobJobColumns
 {
-    ColumnID,
-    ColumnFilename,
-    ColumnClient,
-    ColumnServer,
-    ColumnState,
-    ColumnReal,
-    ColumnUser,
-    ColumnFaults,
-    ColumnSizeIn,
-    ColumnSizeOut
+    JobColumnID,
+    JobColumnFilename,
+    JobColumnClient,
+    JobColumnServer,
+    JobColumnState,
+    JobColumnReal,
+    JobColumnUser,
+    JobColumnFaults,
+    JobColumnSizeIn,
+    JobColumnSizeOut
 };
 
 
@@ -86,21 +86,21 @@ void JobListViewItem::updateText( const Job& job)
 
     mJob = job;
 
-    setText( ColumnID, QString::number( job.jobId() ) );
+    setText( JobColumnID, QString::number( job.jobId() ) );
     if ( JobListView* view = dynamic_cast<JobListView*>( listView() ) )
     {
-        setText( ColumnClient, view->hostInfoManager()->nameForHost( job.client() ) );
+        setText( JobColumnClient, view->hostInfoManager()->nameForHost( job.client() ) );
         if ( job.server() )
-            setText( ColumnServer, view->hostInfoManager()->nameForHost( job.server() ) );
+            setText( JobColumnServer, view->hostInfoManager()->nameForHost( job.server() ) );
         else
-            setText( ColumnServer, QString::null );
+            setText( JobColumnServer, QString::null );
     }
-    setText( ColumnState, job.stateAsString() );
-    setText( ColumnReal, QString::number( job.real_msec ) );
-    setText( ColumnUser, QString::number( job.user_msec ) );
-    setText( ColumnFaults, QString::number( job.majflt ) );
-    setText( ColumnSizeIn, convertSize( job.in_uncompressed ) );
-    setText( ColumnSizeOut, convertSize( job.out_uncompressed ) );
+    setText( JobColumnState, job.stateAsString() );
+    setText( JobColumnReal, QString::number( job.real_msec ) );
+    setText( JobColumnUser, QString::number( job.user_msec ) );
+    setText( JobColumnFaults, QString::number( job.majflt ) );
+    setText( JobColumnSizeIn, convertSize( job.in_uncompressed ) );
+    setText( JobColumnSizeOut, convertSize( job.out_uncompressed ) );
 
     if ( fileNameChanged )
         updateFileName();
@@ -136,7 +136,7 @@ void JobListViewItem::updateFileName()
         fileName = fileName.mid( fileName.findRev( separator ) + 1);
     }
 
-    setText( ColumnFilename, fileName );
+    setText( JobColumnFilename, fileName );
 }
 
 
@@ -160,17 +160,17 @@ int JobListViewItem::compare( QListViewItem* item,
 
     switch ( column )
     {
-    case ColumnID:
+    case JobColumnID:
         return ::compare( first->mJob.jobId(), other->mJob.jobId() );
-    case ColumnReal:
+    case JobColumnReal:
         return ::compare( first->mJob.real_msec, other->mJob.real_msec );
-    case ColumnUser:
+    case JobColumnUser:
         return ::compare( first->mJob.user_msec, other->mJob.user_msec );
-    case ColumnFaults:
+    case JobColumnFaults:
         return ::compare( first->mJob.majflt, other->mJob.majflt );
-    case ColumnSizeIn:
+    case JobColumnSizeIn:
         return ::compare( first->mJob.in_uncompressed, other->mJob.in_uncompressed );
-    case ColumnSizeOut:
+    case JobColumnSizeOut:
         return ::compare( first->mJob.out_uncompressed, other->mJob.out_uncompressed );
     default:
         return first->text( column ).compare( other->text( column ) );
@@ -198,16 +198,16 @@ JobListView::JobListView( const HostInfoManager* manager,
     addColumn( i18n( "Size In" ) );
     addColumn( i18n( "Size Out" ) );
 
-    setColumnAlignment( ColumnID, Qt::AlignRight );
-    setColumnAlignment( ColumnReal, Qt::AlignRight );
-    setColumnAlignment( ColumnUser, Qt::AlignRight );
-    setColumnAlignment( ColumnFaults, Qt::AlignRight );
-    setColumnAlignment( ColumnSizeIn, Qt::AlignRight );
-    setColumnAlignment( ColumnSizeOut, Qt::AlignRight );
+    setColumnAlignment( JobColumnID, Qt::AlignRight );
+    setColumnAlignment( JobColumnReal, Qt::AlignRight );
+    setColumnAlignment( JobColumnUser, Qt::AlignRight );
+    setColumnAlignment( JobColumnFaults, Qt::AlignRight );
+    setColumnAlignment( JobColumnSizeIn, Qt::AlignRight );
+    setColumnAlignment( JobColumnSizeOut, Qt::AlignRight );
 
     setAllColumnsShowFocus(true);
 
-    setSorting( ColumnID, false );
+    setSorting( JobColumnID, false );
 
     connect(mExpireTimer, SIGNAL( timeout() ),
             this, SLOT( slotExpireFinishedJobs() ) );
@@ -243,7 +243,7 @@ void JobListView::setNumberOfFilePathParts( int number )
 
 bool JobListView::isClientColumnVisible() const
 {
-    return columnWidth( ColumnClient );
+    return columnWidth( JobColumnClient );
 }
 
 
@@ -254,20 +254,20 @@ void JobListView::setClientColumnVisible( bool visible )
 
     if ( visible )
     {
-        setColumnWidthMode( ColumnClient, Maximum );
-        setColumnWidth( ColumnClient, 50 ); // at least the user can see it again
+        setColumnWidthMode( JobColumnClient, Maximum );
+        setColumnWidth( JobColumnClient, 50 ); // at least the user can see it again
     }
     else
     {
-        setColumnWidthMode( ColumnClient, Manual );
-        setColumnWidth( ColumnClient, 0 );
+        setColumnWidthMode( JobColumnClient, Manual );
+        setColumnWidth( JobColumnClient, 0 );
     }
 }
 
 
 bool JobListView::isServerColumnVisible() const
 {
-    return columnWidth( ColumnServer );
+    return columnWidth( JobColumnServer );
 }
 
 
@@ -278,13 +278,13 @@ void JobListView::setServerColumnVisible( bool visible )
 
     if ( visible )
     {
-        setColumnWidthMode( ColumnServer, Maximum );
-        setColumnWidth( ColumnServer, 50 ); // at least the user can see it again
+        setColumnWidthMode( JobColumnServer, Maximum );
+        setColumnWidth( JobColumnServer, 50 ); // at least the user can see it again
     }
     else
     {
-        setColumnWidthMode( ColumnServer, Manual );
-        setColumnWidth( ColumnServer, 0 );
+        setColumnWidthMode( JobColumnServer, Manual );
+        setColumnWidth( JobColumnServer, 0 );
     }
 }
 

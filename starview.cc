@@ -37,6 +37,8 @@
 #include <qlineedit.h>
 #include <qregexp.h>
 
+#include <math.h>
+
 StarViewConfigDialog::StarViewConfigDialog( QWidget *parent )
   : QDialog( parent )
 {
@@ -221,7 +223,7 @@ void HostItem::deleteJobHalo( const Job &job )
 {
   QMap<Job,QCanvasEllipse*>::Iterator it = m_jobHalos.find( job );
   if ( it == m_jobHalos.end() ) return;
-  
+
   QCanvasEllipse *halo = *it;
   delete halo;
   m_jobHalos.remove( it );
