@@ -115,6 +115,11 @@ bool HostInfo::isOffline() const
   return mOffline;
 }
 
+float HostInfo::serverSpeed() const
+{
+    return mServerSpeed;
+}
+
 void HostInfo::updateFromStatsMap( const StatsMap &stats )
 {
 #if 0
@@ -136,6 +141,8 @@ void HostInfo::updateFromStatsMap( const StatsMap &stats )
 
   mMaxJobs = stats["MaxJobs"].toUInt();
   mOffline = ( stats["State"] == "Offline" );
+
+  mServerSpeed = stats["Speed"].toFloat();
 }
 
 QColor HostInfo::createColor( const QString &name )

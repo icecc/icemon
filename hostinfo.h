@@ -47,6 +47,8 @@ class HostInfo
     static void initColorTable();
     static QString colorName( const QColor & );
 
+    float serverSpeed() const;
+
   protected:
     static void initColor( const QString &value, const QString &name );
 
@@ -63,6 +65,8 @@ class HostInfo
 
     unsigned int mMaxJobs;
     bool mOffline;
+
+    float mServerSpeed;
 
     static QValueVector<QColor> mColorTable;
     static QMap<int,QString> mColorNameMap;

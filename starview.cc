@@ -218,7 +218,7 @@ class WhatsStat : public QToolTip
                "<p><table><tr><td>"
                "<img source=\"computer\"><br><b>" + item->hostName() +
                "</b><br>" +
-               
+
                "<table>" +
                "<tr><td>" + i18n("IP:") + "</td><td>" + hostInfo->ip()
                + "</td></tr>" +
@@ -226,10 +226,12 @@ class WhatsStat : public QToolTip
                hostInfo->platform() + "</td></tr>"
                "<tr><td>" + i18n("Flavor:") + "</td><td>" +
                HostInfo::colorName( hostInfo->color() ) + "</td></tr>" +
-               "<tr><td>" + i18n("Id:") + "</td><td>" + 
+               "<tr><td>" + i18n("Id:") + "</td><td>" +
                QString::number( hostInfo->id() ) + "</td></tr>" +
+               "<tr><td>" + i18n("Speed:") + "</td><td>" +
+               QString::number( hostInfo->serverSpeed() ) + "</td></tr>" +
                "</table>"
-               
+
                "</td></tr></table></p>" );
         }
     }
