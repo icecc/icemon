@@ -27,6 +27,46 @@
 
 using namespace std;
 
+QString convertSize( unsigned int size )
+{
+    int divisor;
+    QString str;
+
+    if ( size >= (1 << 20) )
+    {
+        divisor = 1 << 20;
+        str = i18n( "%1 MB" );
+    }
+
+    else if ( size >= (1 << 10) )
+    {
+        divisor = 1 << 10;
+        str = i18n( "%1 KB" );
+    }
+
+    else
+    {
+        divisor = 1;
+        str = i18n( "%1 B" );
+    }
+
+    return str.arg( KGlobal::locale()->formatNumber( static_cast<double>(size) / divisor, 1 ) );
+}
+
+enum Columns
+{
+    ColumnID,
+    ColumnFilename,
+    ColumnClient,
+    ColumnServer,
+    ColumnState,
+    ColumnReal,
+    ColumnUser,
+    ColumnFaults,
+    ColumnSizeIn,
+    ColumnSizeOut
+};
+
 ListStatusViewItem::ListStatusViewItem( QListView *parent, const Job &_job )
     :  QListViewItem( parent ), job( _job )
 {
@@ -36,22 +76,22 @@ ListStatusViewItem::ListStatusViewItem( QListView *parent, const Job &_job )
 void ListStatusViewItem::updateText( const Job &job)
 {
     this->job = job;
-    setText( 0, QString::number( job.jobId() ) );
-    setText( 1, job.fileName() );
+    setText( ColumnID, QString::number( job.jobId() ) );
+    setText( ColumnFilename, job.fileName() );
     ListStatusView *p = dynamic_cast<ListStatusView*>( listView() );
     if ( p ) {
-        setText( 2, p->nameForHost( job.client() ) );
+        setText( ColumnClient, p->nameForHost( job.client() ) );
         if ( job.server() )
-            setText( 3, p->nameForHost( job.server() ) );
+            setText( ColumnServer, p->nameForHost( job.server() ) );
         else
-            setText( 3, QString::null );
+            setText( ColumnServer, QString::null );
     }
-    setText( 4, job.stateAsString() );
-    setText( 5, QString::number( job.real_msec ) );
-    setText( 6, QString::number( job.user_msec ) );
-    setText( 7, QString::number( job.majflt ) );
-    setText( 8, QString::number( job.in_uncompressed ) );
-    setText( 9, QString::number( job.out_uncompressed ) );
+    setText( ColumnState, job.stateAsString() );
+    setText( ColumnReal, QString::number( job.real_msec ) );
+    setText( ColumnUser, QString::number( job.user_msec ) );
+    setText( ColumnFaults, QString::number( job.majflt ) );
+    setText( ColumnSizeIn, convertSize( job.in_uncompressed ) );
+    setText( ColumnSizeOut, convertSize( job.out_uncompressed ) );
 }
 
 inline int compare( unsigned int i1, unsigned int i2 )
@@ -72,17 +112,17 @@ int ListStatusViewItem::compare( QListViewItem *i, int col,
     assert( other );
 
     switch ( col ) {
-    case 0:
+    case ColumnID:
         return ::compare( first->job.jobId(), other->job.jobId() );
-    case 5:
+    case ColumnReal:
         return ::compare( first->job.real_msec, other->job.real_msec );
-    case 6:
+    case ColumnUser:
         return ::compare( first->job.user_msec, other->job.user_msec );
-    case 7:
+    case ColumnFaults:
         return ::compare( first->job.majflt, other->job.majflt );
-    case 8:
+    case ColumnSizeIn:
         return ::compare( first->job.in_uncompressed, other->job.in_uncompressed );
-    case 9:
+    case ColumnSizeOut:
         return ::compare( first->job.out_uncompressed, other->job.out_uncompressed );
     default:
         return first->text(col).compare( other->text( col ) );
@@ -103,6 +143,15 @@ ListStatusView::ListStatusView( HostInfoManager *m, QWidget *parent,
     addColumn( i18n( "Faults" ) );
     addColumn( i18n( "Size In" ) );
     addColumn( i18n( "Size Out" ) );
+
+    setColumnAlignment( ColumnID, Qt::AlignRight );
+    setColumnAlignment( ColumnReal, Qt::AlignRight );
+    setColumnAlignment( ColumnUser, Qt::AlignRight );
+    setColumnAlignment( ColumnFaults, Qt::AlignRight );
+    setColumnAlignment( ColumnSizeIn, Qt::AlignRight );
+    setColumnAlignment( ColumnSizeOut, Qt::AlignRight );
+
+    setAllColumnsShowFocus(true);
 }
 
 void ListStatusView::update( const Job &job )
