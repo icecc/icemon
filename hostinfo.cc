@@ -101,6 +101,11 @@ QString HostInfo::ip() const
   return mIp;
 }
 
+QString HostInfo::platform() const
+{
+    return mPlatform;
+}
+
 unsigned int HostInfo::maxJobs() const
 {
   return mMaxJobs;
@@ -126,6 +131,7 @@ void HostInfo::updateFromStatsMap( const StatsMap &stats )
     mName = name;
     mColor = createColor( mName );
     mIp = stats["IP"];
+    mPlatform = stats["Platform"];
   }
 
   mMaxJobs = stats["MaxJobs"].toUInt();

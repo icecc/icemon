@@ -218,13 +218,14 @@ class WhatsStat : public QToolTip
                "<p><table><tr><td>"
                "<img source=\"computer\"><br><b>" + item->hostName() +
                "</b><br>" +
-               i18n("IP: %1").arg( hostInfo->ip() ) + "<br>" +
-               i18n("Flavor: %1")
+               i18n("IP:&nbsp;%1").arg( hostInfo->ip() ) + "<br>" +
+
+               i18n("Flavor:&nbsp;%1")
                .arg( HostInfo::colorName( hostInfo->color() ) ) +
                "</td><td>"
                "<table>"
-               "<tr><td>Jobs:</td><td>7</td></tr>"
-               "<tr><td>File:</td><td>/etc/nowhere</td></tr>"
+               "<tr><td>Platform:</td><td>" + hostInfo->platform() + "</td></tr>"
+//               "<tr><td>File:</td><td>/etc/nowhere</td></tr>"
                "</table></td></tr></table></p>" );
         }
     }
@@ -336,12 +337,12 @@ void StarView::removeNode( unsigned int hostid )
   if ( hostItem && hostItem->hostInfo()->isOffline() ) {
     m_hostItems.remove( hostid );
 
-    hostItem->deleteSubItems();  
+    hostItem->deleteSubItems();
     delete hostItem;
-  
+
     arrangeHostItems();
     drawNodeStatus();
-  
+
     m_canvas->update();
   }
 }
@@ -407,7 +408,7 @@ void StarView::arrangeHostItems()
 
     QRect rect = item->boundingRect();
     int xOffset = rect.width() / 2;
-    int yOffset = rect.height() / 2;    
+    int yOffset = rect.height() / 2;
 
     item->move( width() / 2 + ( cos( angle ) * xr ) - xOffset,
                 height() / 2 + ( sin( angle ) * yr ) - yOffset );
