@@ -74,6 +74,10 @@ class HostInfoManager
 
     HostInfo *find( unsigned int hostid ) const;
 
+    typedef QMap<unsigned int,HostInfo *> HostMap;
+
+    HostMap hostMap() const;
+
     void checkNode( unsigned int hostid, const HostInfo::StatsMap &statmsg );
 
     QString nameForHost( unsigned int id ) const;
@@ -81,7 +85,6 @@ class HostInfoManager
     unsigned int maxJobs( unsigned int id ) const;
 
   private:
-    typedef QMap<unsigned int,HostInfo *> HostMap;
     HostMap mHostMap;
 };
 

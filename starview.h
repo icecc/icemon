@@ -52,6 +52,7 @@ class StarView : public QWidget, public StatusView
     virtual void resizeEvent( QResizeEvent *e );
 
   private:
+    void createKnownHosts();
     void centerLocalhostItem();
     void arrangeHostItems();
     HostItem *createHostItem( unsigned int hostid );

@@ -228,11 +228,11 @@ StarView::StarView( HostInfoManager *m, QWidget *parent, const char *name )
     centerLocalhostItem();
     m_localhostItem->show();
 
+    createKnownHosts();
+
     m_canvas->update();
 
-#if 1
     new WhatsStat( m_canvas, this );
-#endif
 }
 
 void StarView::update( const Job &job )
@@ -403,6 +403,17 @@ void StarView::drawState( HostItem *node )
     }
 
     node->setStateItem( newItem );
+}
+
+void StarView::createKnownHosts()
+{
+  HostInfoManager::HostMap hosts = hostInfoManager()->hostMap();
+
+  HostInfoManager::HostMap::ConstIterator it;
+  for( it = hosts.begin(); it != hosts.end(); ++it ) {
+    unsigned int id = (*it)->id();
+    if ( !findHostItem( id ) ) createHostItem( id );
+  }
 }
 
 #include "starview.moc"

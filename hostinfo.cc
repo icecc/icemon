@@ -221,3 +221,8 @@ unsigned int HostInfoManager::maxJobs( unsigned int id ) const
 
   return 0;
 }
+
+HostInfoManager::HostMap HostInfoManager::hostMap() const
+{
+  return mHostMap;
+}
