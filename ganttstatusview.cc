@@ -290,6 +290,12 @@ void GanttStatusView::update( const Job &job )
     if ( job.state() == Job::LocalOnly ) processor = job.client();
     else processor = job.server();
 
+    if ( processor.isEmpty() ) {
+      kdDebug() << "GanttStatusView::update(): processor for job "
+                << job.jobId() << " is empty." << endl;
+      return;
+    }
+
     NodeMap::ConstIterator it2 = mNodeMap.find( processor );
     if ( it2 == mNodeMap.end() ) {
 //        kdDebug() << "  Server not known" << endl;

@@ -43,23 +43,30 @@ class HostItem : public QCanvasText
       setZ( 100 );
 
       QRect r = boundingRect();
+      mBaseWidth = r.width() + 10;
+      mBaseHeight = r.height() + 10;
     
-      m_boxItem = new QCanvasEllipse( r.width() + 10 , r.height() + 10,
-                                      canvas );
-      setColor( QColor( 200, 200, 200 ) );
+      m_boxItem = new QCanvasEllipse( mBaseWidth, mBaseHeight, canvas );
       m_boxItem->setZ( 80 );
       m_boxItem->move( r.width() / 2, r.height() / 2 );
       m_boxItem->show();
+
+      m_jobHalo = new QCanvasEllipse( mBaseWidth, mBaseHeight, canvas );
+      m_jobHalo->setZ( 70 );
+      m_jobHalo->move( r.width() / 2, r.height() / 2 );
+      m_jobHalo->show();
+    
+      setColor( QColor( 200, 200, 200 ) );
     }
 
     ~HostItem()
     {
-//      delete m_boxItem;
     }
 
     void setColor( const QColor &color )
     {
       m_boxItem->setBrush( color );
+      m_jobHalo->setBrush( color.light() );
     }
 
     void setState( Job::State state ) { m_state = state; }
@@ -77,6 +84,25 @@ class HostItem : public QCanvasText
       QRect r = boundingRect();
       
       m_boxItem->moveBy( dx, dy );
+      m_jobHalo->moveBy( dx, dy );
+    }
+
+    void update( const Job &job )
+    {
+      bool finished = job.state() == Job::Finished ||
+                      job.state() == Job::Failed;
+
+      JobList::Iterator it = m_jobs.find( job.jobId() );
+      bool newJob = ( it == m_jobs.end() );
+
+      if ( newJob && finished ) return;
+      if ( !newJob && !finished ) return;
+
+      if ( newJob ) m_jobs.insert( job.jobId(), job );
+      else if ( finished ) m_jobs.remove( it );
+      
+      m_jobHalo->setSize( mBaseWidth + m_jobs.count() * 4,
+                          mBaseHeight + m_jobs.count() * 4 );
     }
 
   private:
@@ -84,7 +110,14 @@ class HostItem : public QCanvasText
     QString m_hostName;
     QCanvasItem *m_stateItem;
 
+    int mBaseWidth;
+    int mBaseHeight;
+
     QCanvasEllipse *m_boxItem;
+
+    QCanvasEllipse *m_jobHalo;
+
+    JobList m_jobs;
 };
 
 StarView::StarView( QWidget *parent, const char *name )
@@ -142,7 +175,8 @@ void StarView::centerLocalhostItem()
 
 void StarView::arrangeHostItems()
 {
-    const int radius = kMin( m_canvas->width() / 2, m_canvas->height() / 2 );
+    const int radius = int( kMin( m_canvas->width() / 2.5,
+                                  m_canvas->height() / 2.5 ) );
     const double step = 2 * M_PI / m_hostItems.count();
 
     double angle = 0.0;
@@ -192,6 +226,7 @@ void StarView::updateNodeStatus( const Job &job )
       kdError() << "HostItem for '" << server << "' is missing." << endl;
     } else {
       hostItem->setState( job.state() );
+      hostItem->update( job );
     }
 }
 
