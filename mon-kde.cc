@@ -15,6 +15,11 @@
 #include <qvaluelist.h>
 #include <math.h>
 
+#include <iostream>
+#include <comm.h>
+
+using namespace std;
+
 class NodeItem : public QCanvasText
 {
 	public:
@@ -451,6 +456,24 @@ int main( int argc, char **argv )
 	MainWindow *mainWidget = new MainWindow( 0 );
 	app.setMainWidget( mainWidget );
 	mainWidget->show();
+
+	MsgChannel *scheduler = connect_scheduler ();
+	if (scheduler
+	    && scheduler->send_msg (MonLoginMsg()))
+	  while (Msg *m = scheduler->get_msg ())
+	    {
+	      switch (m->type)
+	        {
+		case M_MON_GET_CS: cout << "GET_CS" << endl; break;
+		case M_MON_JOB_BEGIN: cout << "JOB_BEGIN" << endl; break;
+		case M_MON_JOB_END: cout << "JOB_END" << endl; break;
+		case M_END: cout << "END" << endl; m = 0; break;
+		default: cout << "UNKNOWN" << endl; break;
+		}
+	      if (!m)
+	        break;
+	    }
+	delete scheduler;
 
 	return app.exec();
 }
