@@ -42,7 +42,7 @@ using namespace std;
 
 Monitor::Monitor( HostInfoManager *m, QObject *parent, const char *name )
   : QObject( parent, name ), m_hostInfoManager( m ), m_view( 0 ),
-    m_scheduler( 0 ), m_scheduler_read( 0 )
+    m_scheduler( 0 ), m_scheduler_read( 0 ), mSchedulerOnline( false )
 {
   checkScheduler();
 }
@@ -74,7 +74,7 @@ void Monitor::slotCheckScheduler()
     names = get_netnames( 60 );
     if ( names.empty() ) {
       checkScheduler( true );
-      m_view->updateSchedulerState( false );
+      setSchedulerState( false );
       return;
     }
   }
@@ -92,13 +92,13 @@ void Monitor::slotCheckScheduler()
                                                 this );
         QObject::connect( m_scheduler_read, SIGNAL( activated( int ) ),
                           SLOT( msgReceived() ) );
-        m_view->updateSchedulerState( true );
+        setSchedulerState( true );
         return;
       }
     }
   }
   checkScheduler( true );
-  m_view->updateSchedulerState( false );
+  setSchedulerState( false );
 }
 
 void Monitor::msgReceived()
@@ -107,7 +107,7 @@ void Monitor::msgReceived()
   if ( !m ) {
     kdDebug() << "lost connection to scheduler\n";
     checkScheduler( true );
-    m_view->updateSchedulerState( false );
+    setSchedulerState( false );
     return;
   }
 
@@ -268,6 +268,9 @@ void Monitor::handle_job_done( Msg *_m )
 void Monitor::setCurrentView( StatusView *view, bool rememberJobs )
 {
   m_view = view;
+
+  m_view->updateSchedulerState( mSchedulerOnline );
+
   if ( rememberJobs ) {
     JobList::ConstIterator it = m_rememberedJobs.begin();
     for ( ; it != m_rememberedJobs.end(); ++it )
@@ -278,6 +281,12 @@ void Monitor::setCurrentView( StatusView *view, bool rememberJobs )
 void Monitor::setCurrentNet( const QString &netName )
 {
   m_current_netname = netName;
+}
+
+void Monitor::setSchedulerState( bool online )
+{
+  mSchedulerOnline = online;
+  m_view->updateSchedulerState( online );
 }
 
 #include "monitor.moc"

@@ -43,6 +43,9 @@ class Monitor : public QObject
     void setCurrentNet( const QString & );
     void setCurrentView( StatusView *, bool rememberJobs );
 
+  protected:
+    void setSchedulerState( bool );
+
   private slots:
     void slotCheckScheduler();
     void msgReceived();
@@ -62,6 +65,8 @@ class Monitor : public QObject
     MsgChannel *m_scheduler;
     QSocketNotifier *m_scheduler_read;
     QString m_current_netname;
+
+    bool mSchedulerOnline;
 };
 
 #endif // MON_KDE_H
