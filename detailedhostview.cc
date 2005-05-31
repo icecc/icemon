@@ -53,6 +53,7 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
       StatusView( manager )
 {
   QBoxLayout* topLayout = new QVBoxLayout( this );
+  topLayout->setMargin( KDialog::marginHint() );
 
   QSplitter* viewSplitter = new QSplitter( Qt::Vertical, this );
   topLayout->addWidget( viewSplitter );
