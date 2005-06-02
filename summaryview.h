@@ -16,7 +16,7 @@
 #include <qscrollview.h>
 #include <qvaluevector.h>
 
-class KSqueezedTextLabel;
+class QLabel;
 class QGridLayout;
 
 class SummaryView;
@@ -29,7 +29,7 @@ public:
     void update(const Job &job);
 
 private:
-    KSqueezedTextLabel *addLine(const QString &caption, QWidget *parent, QGridLayout *grid,
+    QLabel *addLine(const QString &caption, QWidget *parent, QGridLayout *grid,
                                 int flags = Qt::AlignTop,
                                 const QString &status = QString::null);
 
@@ -38,14 +38,14 @@ private:
         JobHandler() : stateWidget(0), sourceLabel(0), stateLabel(0) {}
 
         QFrame *stateWidget;
-        KSqueezedTextLabel *sourceLabel;
-        KSqueezedTextLabel *stateLabel;
+        QLabel *sourceLabel;
+        QLabel *stateLabel;
         QString currentFile;
     };
 
     QFrame *m_stateWidget;
-    KSqueezedTextLabel *m_jobsLabel;
-    KSqueezedTextLabel *m_sourceLabel;
+    QLabel *m_jobsLabel;
+    QLabel *m_sourceLabel;
 
     int m_jobCount;
     SummaryView *m_view;

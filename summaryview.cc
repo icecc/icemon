@@ -180,7 +180,7 @@ void SummaryViewItem::update(const Job &job)
     }
 }
 
-KSqueezedTextLabel *SummaryViewItem::addLine(const QString &caption, QWidget *parent,
+QLabel *SummaryViewItem::addLine(const QString &caption, QWidget *parent,
                                              QGridLayout *grid, int flags,
                                              const QString &status)
 {
@@ -258,7 +258,7 @@ void SummaryView::viewportResizeEvent(QResizeEvent *e)
 {
     QSize s = e->size();
 
-    setMinimumWidth(m_base->sizeHint().width() + verticalScrollBar()->width());
+    setMinimumWidth(m_base->minimumSizeHint().width() + verticalScrollBar()->width());
     m_base->setMinimumWidth(s.width());
 
     if(m_base->height() <= s.height())
