@@ -1,6 +1,10 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Icecream Monitor
+Name[ga]=Monatóir Icecream
+Name[pt]=Monitor de Icecream
+Name[pt_BR]=Monitor de Icecream
+Name[sv]=Icecream-övervakare
 Comment=Icecream-monitor applet
 Comment[bg]=Аплет за монитор на Icecream
 Comment[da]=Icecream overvågnings-applet
