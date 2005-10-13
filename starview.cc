@@ -299,6 +299,9 @@ class WhatsStat : public QToolTip
                                                          UserIcon("icemonnode") );
     }
 
+    // avoid warning - lack of ~QToolTip is the real bug
+    virtual ~WhatsStat() {}
+
     virtual void maybeTip ( const QPoint &p )
     {
         HostItem *item = 0;
