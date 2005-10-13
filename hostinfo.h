@@ -54,7 +54,7 @@ class HostInfo
   protected:
     static void initColor( const QString &value, const QString &name );
 
-    QColor HostInfo::createColor();
+    QColor createColor();
     QColor createColor( const QString &name );
 
   private:
