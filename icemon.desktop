@@ -2,7 +2,7 @@
 Encoding=UTF-8
 GenericName=Icecream Monitor
 GenericName[da]=Icecream overvåger
-GenericName[es]=Monitor de helado
+GenericName[es]=Monitor de Icecream
 GenericName[ga]=Monatóir Icecream
 GenericName[pt]=Monitor de Icecream
 GenericName[pt_BR]=Monitor de Icecream
@@ -11,6 +11,7 @@ GenericName[xx]=xxIcecream Monitorxx
 Name=Icemon
 Name[xx]=xxIcemonxx
 Comment=A monitor for an Icecream compilation network
+Comment[es]=Un monitor para una red de compilación Icecream
 Comment[pt]=Um monitor para a rede de compilação Icecream
 Comment[pt_BR]=Um monitor para a rede de compilação Icecream
 Comment[sv]=Övervakning av ett Icecream-kompileringsnätverk

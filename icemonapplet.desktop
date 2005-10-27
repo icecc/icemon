@@ -2,13 +2,14 @@
 Encoding=UTF-8
 Name=Icecream Monitor
 Name[da]=Icecream overvåger
-Name[es]=Monitor de helado
+Name[es]=Monitor de Icecream
 Name[ga]=Monatóir Icecream
 Name[pt]=Monitor de Icecream
 Name[pt_BR]=Monitor de Icecream
 Name[sv]=Icecream-övervakare
 Name[xx]=xxIcecream Monitorxx
 Comment=Monitor for an Icecream compilation network
+Comment[es]=Monitor para una red de compilación Icecream
 Comment[pt]=Monitor para a rede de compilação Icecream
 Comment[pt_BR]=Monitor para a rede de compilação Icecream
 Comment[sv]=Övervakning av Icecream-kompileringsnätverk
