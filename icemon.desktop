@@ -12,6 +12,7 @@ GenericName[xx]=xxIcecream Monitorxx
 Name=Icemon
 Name[xx]=xxIcemonxx
 Comment=A monitor for an Icecream compilation network
+Comment[da]=Overvågning af et Icecream-kompileringsnetværk
 Comment[es]=Un monitor para una red de compilación Icecream
 Comment[fr]=Un surveillant de réseau de compilation Icecream
 Comment[pt]=Um monitor para a rede de compilação Icecream

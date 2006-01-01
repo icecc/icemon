@@ -10,6 +10,7 @@ Name[pt_BR]=Monitor de Icecream
 Name[sv]=Icecream-övervakare
 Name[xx]=xxIcecream Monitorxx
 Comment=Monitor for an Icecream compilation network
+Comment[da]=Overvågning af Icecream-kompileringsnetværk
 Comment[es]=Monitor para una red de compilación Icecream
 Comment[fr]=Surveillance d'un réseau de compilation Icecream
 Comment[pt]=Monitor para a rede de compilação Icecream
