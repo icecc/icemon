@@ -183,6 +183,7 @@ HostListView::HostListView( HostInfoManager* manager,
             this, SLOT( slotNodeActivated( QListViewItem* ) ) );
     connect(this, SIGNAL( spacePressed( QListViewItem* ) ),
             this, SLOT( slotNodeActivated( QListViewItem* ) ) );
+    connect( &mUpdateSortTimer, SIGNAL( timeout()), SLOT( updateSort()));
 }
 
 
@@ -215,6 +216,7 @@ void HostListView::checkNode( unsigned int hostid )
         mItems[hostid] = new HostListViewItem( this, *info );
     else
         ( *it )->updateText( *info );
+    mUpdateSortTimer.start( 0, true );
 }
 
 
@@ -258,5 +260,10 @@ void HostListView::setActiveNode( unsigned int hostid,
         (*it)->setActiveNode( active );
 }
 
+void HostListView::updateSort()
+{
+    if( sortColumn() != 0 )
+        sort();
+}
 
 #include "hostlistview.moc"

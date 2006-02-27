@@ -25,6 +25,7 @@
 #include "hostinfo.h"
 
 #include <klistview.h>
+#include <qtimer.h>
 
 
 class HostListViewItem : public KListViewItem
@@ -79,6 +80,8 @@ private slots:
 
     void slotNodeActivated( QListViewItem* item );
 
+    void updateSort();
+
 private:
 
     void setActiveNode( unsigned int hostid, bool active );
@@ -89,6 +92,8 @@ private:
 
     typedef QMap<unsigned int, HostListViewItem*> ItemMap;
     ItemMap mItems;
+
+    QTimer mUpdateSortTimer;
 };
 
 
