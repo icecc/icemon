@@ -133,7 +133,7 @@ void Monitor::msgReceived()
     case M_MON_LOCAL_JOB_BEGIN:
       handle_local_begin( m );
       break;
-    case M_MON_LOCAL_JOB_DONE:
+    case M_JOB_LOCAL_DONE:
       handle_local_done( m );
       break;
     default:
@@ -168,7 +168,7 @@ void Monitor::handle_local_begin( Msg *_m )
 
 void Monitor::handle_local_done( Msg *_m )
 {
-  MonLocalJobDoneMsg *m = dynamic_cast<MonLocalJobDoneMsg*>( _m );
+  JobLocalDoneMsg *m = dynamic_cast<JobLocalDoneMsg*>( _m );
   if ( !m ) return;
 
   JobList::iterator it = m_rememberedJobs.find( m->job_id );
