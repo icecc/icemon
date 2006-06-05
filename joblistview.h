@@ -26,9 +26,9 @@
 
 #include "job.h"
 
-#include <klistview.h>
-
+#include <q3listview.h>
 #include <qpair.h>
+#include <Q3ValueList>
 
 
 class HostInfoManager;
@@ -36,11 +36,11 @@ class HostInfoManager;
 class QTimer;
 
 
-class JobListViewItem : public KListViewItem
+class JobListViewItem : public Q3ListViewItem
 {
 public:
 
-    JobListViewItem( KListView* parent, const Job& job );
+    JobListViewItem( Q3ListView* parent, const Job& job );
 
     const Job& job() const { return mJob; }
 
@@ -48,7 +48,7 @@ public:
 
     void updateFileName();
 
-    virtual int compare( QListViewItem* item, int column, bool ascending ) const;
+    virtual int compare( Q3ListViewItem* item, int column, bool ascending ) const;
 
 private:
 
@@ -56,7 +56,7 @@ private:
 };
 
 
-class JobListView :public KListView
+class JobListView :public Q3ListView
 {
     Q_OBJECT
 
@@ -119,7 +119,7 @@ private:
     QTimer* mExpireTimer;
 
     typedef QPair<uint, JobListViewItem*> FinishedJob;
-    typedef QValueList<FinishedJob> FinishedJobs;
+    typedef Q3ValueList<FinishedJob> FinishedJobs;
     FinishedJobs mFinishedJobs;
 };
 

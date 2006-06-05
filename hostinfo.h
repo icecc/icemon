@@ -23,7 +23,7 @@
 #include <qstring.h>
 #include <qcolor.h>
 #include <qmap.h>
-#include <qvaluevector.h>
+#include <q3valuevector.h>
 
 class HostInfo
 {
@@ -72,7 +72,7 @@ class HostInfo
 
     unsigned int mServerLoad;
 
-    static QValueVector<QColor> mColorTable;
+    static Q3ValueVector<QColor> mColorTable;
     static QMap<int,QString> mColorNameMap;
 };
 

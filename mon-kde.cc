@@ -31,7 +31,7 @@
 #include "starview.h"
 #include "summaryview.h"
 
-#include <services/logging.h>
+#include "../services/logging.h"
 
 #include <kaboutdata.h>
 #include <kaction.h>
@@ -42,6 +42,8 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kstdaction.h>
+#include <ktoggleaction.h>
+#include <kactioncollection.h>
 
 MainWindow::MainWindow( QWidget *parent, const char *name )
   : KMainWindow( parent, name ), m_view( 0 )
@@ -50,35 +52,31 @@ MainWindow::MainWindow( QWidget *parent, const char *name )
 
     m_monitor = new Monitor( m_hostInfoManager, this );
 
-    KRadioAction *a = new KRadioAction( i18n( "&List View" ), 0,
+    QActionGroup* viewGroup = new QActionGroup(this);
+
+    KToggleAction *a = new KToggleAction( i18n( "&List View" ), 0,
                                         this, SLOT( setupListView() ),
                                         actionCollection(), "view_list_view" );
-    a->setExclusiveGroup( "viewmode" );
 
-    a = new KRadioAction( i18n( "&Star View" ), 0,
+    a = new KToggleAction( i18n( "&Star View" ), 0,
                           this, SLOT( setupStarView() ),
                           actionCollection(), "view_star_view" );
-    a->setExclusiveGroup( "viewmode" );
 
-    a = new KRadioAction( i18n( "&Gantt View" ), 0,
+    a = new KToggleAction( i18n( "&Gantt View" ), 0,
                           this, SLOT( setupGanttView() ),
                           actionCollection(), "view_gantt_view" );
-    a->setExclusiveGroup( "viewmode" );
 
-    a = new KRadioAction( i18n( "Summary &View" ), 0,
+    a = new KToggleAction( i18n( "Summary &View" ), 0,
                           this, SLOT( setupSummaryView() ),
                           actionCollection(), "view_foo_view" );
-    a->setExclusiveGroup( "viewmode" );
 
-    a = new KRadioAction( i18n( "&Host View" ), 0,
+    a = new KToggleAction( i18n( "&Host View" ), 0,
                           this, SLOT( setupHostView() ),
                           actionCollection(), "view_host_view" );
-    a->setExclusiveGroup( "viewmode" );
 
-    a = new KRadioAction( i18n( "&Detailed Host View" ), 0,
+    a = new KToggleAction( i18n( "&Detailed Host View" ), 0,
                           this, SLOT( setupDetailedHostView() ),
                           actionCollection(), "view_detailed_host_view" );
-    a->setExclusiveGroup( "viewmode" );
 
     KStdAction::quit( this, SLOT( close() ), actionCollection() );
 
@@ -98,7 +96,7 @@ MainWindow::MainWindow( QWidget *parent, const char *name )
     readSettings();
 //    checkScheduler();
 
-    setAutoSaveSettings();
+    //setAutoSaveSettings();
 }
 
 MainWindow::~MainWindow()
@@ -147,7 +145,7 @@ void MainWindow::setupSummaryView()
     setupView( new SummaryView( m_hostInfoManager, this ), false );
     KAction* radioAction = actionCollection()->action( "view_foo_view" );
     if ( radioAction )
-        dynamic_cast<KRadioAction*>( radioAction )->setChecked( true );
+        dynamic_cast<KToggleAction*>( radioAction )->setChecked( true );
 }
 
 void MainWindow::setupGanttView()
@@ -155,7 +153,7 @@ void MainWindow::setupGanttView()
     setupView( new GanttStatusView( m_hostInfoManager, this ), false );
     KAction* radioAction = actionCollection()->action( "view_gantt_view" );
     if ( radioAction )
-        dynamic_cast<KRadioAction*>( radioAction )->setChecked( true );
+        dynamic_cast<KToggleAction*>( radioAction )->setChecked( true );
 }
 
 void MainWindow::setupStarView()
@@ -163,7 +161,7 @@ void MainWindow::setupStarView()
     setupView( new StarView( m_hostInfoManager, this ), false );
     KAction* radioAction = actionCollection()->action( "view_star_view" );
     if ( radioAction )
-        dynamic_cast<KRadioAction*>( radioAction )->setChecked( true );
+        dynamic_cast<KToggleAction*>( radioAction )->setChecked( true );
 }
 
 void MainWindow::setupHostView()
@@ -171,7 +169,7 @@ void MainWindow::setupHostView()
     setupView( new HostView( true, m_hostInfoManager, this ), false );
     KAction* radioAction = actionCollection()->action( "view_host_view" );
     if ( radioAction )
-        dynamic_cast<KRadioAction*>( radioAction )->setChecked( true );
+        dynamic_cast<KToggleAction*>( radioAction )->setChecked( true );
 }
 
 void MainWindow::setupDetailedHostView()
@@ -179,7 +177,7 @@ void MainWindow::setupDetailedHostView()
     setupView( new DetailedHostView( m_hostInfoManager, this ), false );
     KAction* radioAction = actionCollection()->action( "view_detailed_host_view" );
     if ( radioAction )
-        dynamic_cast<KRadioAction*>( radioAction )->setChecked( true );
+        dynamic_cast<KToggleAction*>( radioAction )->setChecked( true );
 }
 
 void MainWindow::stopView()
@@ -231,7 +229,6 @@ int main( int argc, char **argv )
 
   KCmdLineArgs::init( argc, argv, &aboutData );
   KCmdLineArgs::addCmdLineOptions( options );
-
   KApplication app;
   MainWindow *mainWidget = new MainWindow( 0 );
 
@@ -246,5 +243,3 @@ int main( int argc, char **argv )
 
   return app.exec();
 }
-
-#include "mon-kde.moc"

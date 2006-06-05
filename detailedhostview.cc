@@ -24,14 +24,11 @@
 #include "hostlistview.h"
 #include "joblistview.h"
 
-#include <kdebug.h>
-#include <kdialog.h>
-#include <klocale.h>
-
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qsplitter.h>
-#include <qvbox.h>
+#include <q3vbox.h>
+#include <Q3VBoxLayout>
 
 #include <sys/utsname.h>
 
@@ -45,6 +42,7 @@ static QString myHostName()
         return QString::null;
 }
 
+#define i18n
 
 DetailedHostView::DetailedHostView( HostInfoManager* manager,
                                     QWidget* parent,
@@ -52,28 +50,28 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
     : QWidget( parent, name ),
       StatusView( manager )
 {
-  QBoxLayout* topLayout = new QVBoxLayout( this );
-  topLayout->setMargin( KDialog::marginHint() );
+  Q3BoxLayout* topLayout = new Q3VBoxLayout( this );
+  topLayout->setMargin( 10 );
 
   QSplitter* viewSplitter = new QSplitter( Qt::Vertical, this );
   topLayout->addWidget( viewSplitter );
 
-  QVBox* hosts = new QVBox( viewSplitter );
-  hosts->setSpacing( KDialog::spacingHint() );
+  Q3VBox* hosts = new Q3VBox( viewSplitter );
+  hosts->setSpacing( 10 );
 
   new QLabel( i18n( "Hosts" ), hosts );
   mHostListView = new HostListView( manager, hosts, "HostListView" );
 
-  QVBox* locals = new QVBox( viewSplitter );
-  locals->setSpacing( KDialog::spacingHint() );
+  Q3VBox* locals = new Q3VBox( viewSplitter );
+  locals->setSpacing( 10 );
 
   new QLabel( i18n( "Outgoing jobs" ), locals );
   mLocalJobsView = new JobListView( manager, locals, "LocalJobs" );
   mLocalJobsView->setClientColumnVisible( false );
   mLocalJobsView->setExpireDuration( 5 );
 
-  QVBox* remotes = new QVBox( viewSplitter );
-  remotes->setSpacing( KDialog::spacingHint() );
+  Q3VBox* remotes = new Q3VBox( viewSplitter );
+  remotes->setSpacing( 10 );
 
   new QLabel( i18n( "Incoming jobs" ), remotes );
   mRemoteJobsView = new JobListView( manager, remotes, "RemoteJobs" );
@@ -87,12 +85,6 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
 
 void DetailedHostView::update( const Job &job )
 {
-#if 0
-    kdDebug() << "DetailedHostView::update() " << job.jobId()
-              << " server: " << job.server() << " client: " << job.client()
-              << " state: " << job.stateAsString() << endl;
-#endif
-
     const unsigned int hostid = mHostListView->activeNode();
 
     if ( !hostid )
@@ -115,8 +107,6 @@ void DetailedHostView::checkNode( unsigned int hostid )
 
     mHostListView->checkNode( hostid );
 
-//  kdDebug() << "DetailedHostView::checkNode(): " << hostid << endl;
-
     const unsigned int activeNode = mHostListView->activeNode();
 
     if ( !activeNode )
@@ -130,8 +120,6 @@ void DetailedHostView::checkNode( unsigned int hostid )
 
 void DetailedHostView::removeNode( unsigned int hostid )
 {
-//   kdDebug() << "DetailedHostView::removeNode(): " << hostid << endl;
-
     mHostListView->removeNode( hostid );
 }
 
@@ -158,6 +146,3 @@ QWidget* DetailedHostView::widget()
 {
   return this;
 }
-
-
-#include "detailedhostview.moc"

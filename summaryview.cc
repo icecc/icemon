@@ -20,14 +20,20 @@
 
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qvbox.h>
+#include <q3vbox.h>
 #include <qpainter.h>
+//Added by qt3to4:
+#include <QResizeEvent>
+#include <Q3GridLayout>
+#include <Q3Frame>
+#include <Q3ValueList>
+#include <Q3VBoxLayout>
 
-class NodeInfoFrame : public QFrame
+class NodeInfoFrame : public Q3Frame
 {
 public:
     NodeInfoFrame(QWidget *parent, const QColor &frameColor) :
-        QFrame(parent), m_frameColor(frameColor) {}
+        Q3Frame(parent), m_frameColor(frameColor) {}
 protected:
     virtual void drawFrame(QPainter *p)
     {
@@ -57,7 +63,7 @@ private:
 // SummaryViewItem implementation
 ////////////////////////////////////////////////////////////////////////////////
 
-SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryView *view, QGridLayout *layout) :
+SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryView *view, Q3GridLayout *layout) :
     m_jobCount(0),
     m_view(view)
 {
@@ -71,7 +77,7 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
     labelBox->setMinimumWidth(75);
     m_widgets.append(labelBox);
 
-    QVBoxLayout *labelLayout = new QVBoxLayout(labelBox);
+    Q3VBoxLayout *labelLayout = new Q3VBoxLayout(labelBox);
     labelLayout->setAutoAdd(true);
     labelLayout->setMargin(10);
     labelLayout->setSpacing(5);
@@ -92,8 +98,8 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
     m_jobHandlers.resize(maxJobs);
 
     for(int i = 0; i < maxJobs; i++) {
-        m_jobHandlers[i].stateWidget = new QFrame(labelBox);
-        m_jobHandlers[i].stateWidget->setFrameStyle(QFrame::Box | QFrame::Plain);
+        m_jobHandlers[i].stateWidget = new Q3Frame(labelBox);
+        m_jobHandlers[i].stateWidget->setFrameStyle(Q3Frame::Box | Q3Frame::Plain);
         m_jobHandlers[i].stateWidget->setLineWidth(2);
         m_jobHandlers[i].stateWidget->setFixedHeight(15);
         m_jobHandlers[i].stateWidget->setPaletteBackgroundColor(QColor("black"));
@@ -106,7 +112,7 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
     detailsBox->show();
     m_widgets.append(detailsBox);
 
-    QGridLayout *grid = new QGridLayout(detailsBox);
+    Q3GridLayout *grid = new Q3GridLayout(detailsBox);
     grid->setMargin(10);
     grid->setSpacing(5);
 
@@ -129,7 +135,7 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
 
 SummaryViewItem::~SummaryViewItem()
 {
-    for(QValueList<QWidget *>::ConstIterator it = m_widgets.begin();
+    for(Q3ValueList<QWidget *>::ConstIterator it = m_widgets.begin();
         it != m_widgets.end();
         ++it)
     {
@@ -145,7 +151,7 @@ void SummaryViewItem::update(const Job &job)
         m_jobCount++;
         m_jobsLabel->setText(QString::number(m_jobCount));
 
-        QValueVector<JobHandler>::Iterator it = m_jobHandlers.begin();
+        Q3ValueVector<JobHandler>::Iterator it = m_jobHandlers.begin();
         while(it != m_jobHandlers.end() && !(*it).currentFile.isNull())
             ++it;
 
@@ -163,7 +169,7 @@ void SummaryViewItem::update(const Job &job)
     case Job::Finished:
     case Job::Failed:
     {
-        QValueVector<JobHandler>::Iterator it = m_jobHandlers.begin();
+        Q3ValueVector<JobHandler>::Iterator it = m_jobHandlers.begin();
         while(it != m_jobHandlers.end() && (*it).currentFile != job.fileName())
             ++it;
 
@@ -181,7 +187,7 @@ void SummaryViewItem::update(const Job &job)
 }
 
 QLabel *SummaryViewItem::addLine(const QString &caption, QWidget *parent,
-                                             QGridLayout *grid, int flags,
+                                             Q3GridLayout *grid, int flags,
                                              const QString &status)
 {
     QLabel *label = new QLabel(caption, parent);
@@ -189,7 +195,7 @@ QLabel *SummaryViewItem::addLine(const QString &caption, QWidget *parent,
     const int row = grid->numRows();
     grid->addWidget(label, row, 0);
     KSqueezedTextLabel *statusLabel = new KSqueezedTextLabel(status, parent);
-    statusLabel->setAlignment(Qt::AlignAuto | flags);
+    //statusLabel->setAlignment(Qt::AlignLeft | flags);
     grid->addWidget(statusLabel, row, 1);
     label->show();
     statusLabel->show();
@@ -202,13 +208,13 @@ QLabel *SummaryViewItem::addLine(const QString &caption, QWidget *parent,
 ////////////////////////////////////////////////////////////////////////////////
 
 SummaryView::SummaryView(HostInfoManager *h, QWidget *parent, const char *name) :
-    QScrollView(parent, name), StatusView(h)
+    Q3ScrollView(parent, name), StatusView(h)
 {
     enableClipper(true);
     m_base = new QWidget(viewport());
     addChild(m_base);
 
-    m_layout = new QGridLayout(m_base);
+    m_layout = new Q3GridLayout(m_base);
     m_layout->setColStretch(1, 1);
     m_layout->setSpacing(5);
     m_layout->setMargin(5);
@@ -266,7 +272,5 @@ void SummaryView::viewportResizeEvent(QResizeEvent *e)
     else
         m_base->setMinimumHeight(m_base->sizeHint().height());
         
-    QScrollView::viewportResizeEvent(e);
+    Q3ScrollView::viewportResizeEvent(e);
 }
-
-#include "summaryview.moc"

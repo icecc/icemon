@@ -24,9 +24,11 @@
 
 #include "hostinfo.h"
 
-#include <kglobal.h>
-#include <klocale.h>
+//#include <kglobal.h>
 
+#define i18n
+
+#include <QLocale>
 #include <qdatetime.h>
 #include <qdir.h>
 #include <qtimer.h>
@@ -55,7 +57,7 @@ static QString convertSize( unsigned int size )
         str = i18n( "%1 B" );
     }
 
-    return str.arg( KGlobal::locale()->formatNumber( static_cast<double>(size) / divisor, 1 ) );
+    return str.arg( QLocale::system().toString( static_cast<double>(size) / divisor, 1 ) );
 }
 
 
@@ -74,8 +76,8 @@ enum JobJobColumns
 };
 
 
-JobListViewItem::JobListViewItem( KListView* parent, const Job& job )
-    :  KListViewItem( parent )
+JobListViewItem::JobListViewItem( Q3ListView* parent, const Job& job )
+    :  Q3ListViewItem( parent )
 {
     updateText( job );
 }
@@ -114,7 +116,7 @@ void JobListViewItem::updateFileName()
     if ( !view )
         return;
 
-    const char separator = QDir::separator();
+    QChar separator = QDir::separator();
 
     QString fileName = mJob.fileName();
 
@@ -152,7 +154,7 @@ inline int compare( unsigned int i1, unsigned int i2 )
 }
 
 
-int JobListViewItem::compare( QListViewItem* item,
+int JobListViewItem::compare( Q3ListViewItem* item,
                               int column,
                               bool ) const
 {
@@ -182,7 +184,7 @@ int JobListViewItem::compare( QListViewItem* item,
 JobListView::JobListView( const HostInfoManager* manager,
                           QWidget* parent,
                           const char* name )
-    : KListView( parent, name ),
+    : Q3ListView( parent, name ),
       mHostInfoManager( manager ),
       mNumberOfFilePathParts( 2 ),
       mExpireDuration( -1 ),
@@ -316,7 +318,7 @@ void JobListView::clear()
     mItems.clear();
     mFinishedJobs.clear();
 
-    KListView::clear();
+    Q3ListView::clear();
 }
 
 
@@ -364,5 +366,3 @@ void JobListView::removeItem( JobListViewItem* item )
     delete item;
 }
 
-
-#include "joblistview.moc"

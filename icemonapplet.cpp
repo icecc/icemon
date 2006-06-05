@@ -28,8 +28,10 @@
 #include <qfont.h>
 #include <qstringlist.h>
 #include <qpushbutton.h>
-#include <qhbox.h>
+#include <q3hbox.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3VBoxLayout>
 
 #include <kapplication.h>
 #include <kglobal.h>
@@ -64,7 +66,7 @@ IcemonApplet::IcemonApplet( const QString &configFile, Type type, int actions,
 
   mMonitor = new Monitor( mHostInfoManager, this );
 
-  QBoxLayout *topLayout = new QVBoxLayout( this );
+  Q3BoxLayout *topLayout = new Q3VBoxLayout( this );
 
   mHostView = new HostView( false, mHostInfoManager, this );
   topLayout->addWidget( mHostView );
@@ -76,5 +78,3 @@ IcemonApplet::~IcemonApplet()
 {
   delete mHostInfoManager;
 }
-
-#include "icemonapplet.moc"

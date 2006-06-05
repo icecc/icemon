@@ -24,6 +24,7 @@
 #include "job.h"
 #include "hostinfo.h"
 
+#include <QDebug>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpainter.h>
@@ -31,28 +32,33 @@
 #include <qtimer.h>
 #include <qcheckbox.h>
 #include <qpushbutton.h>
+#include <Q3HBoxLayout>
+#include <Q3ValueList>
+#include <Q3GridLayout>
+#include <Q3Frame>
+#include <QResizeEvent>
+#include <Q3VBoxLayout>
+#include <QPaintEvent>
 
-#include <kdebug.h>
-#include <klocale.h>
-#include <kdialog.h>
+#define i18n
 
 GanttConfigDialog::GanttConfigDialog( QWidget *parent )
   : QDialog( parent )
 {
-  QBoxLayout *topLayout = new QVBoxLayout( this );
-  topLayout->setMargin( KDialog::marginHint() );
-  topLayout->setSpacing( KDialog::spacingHint() );
+  Q3BoxLayout *topLayout = new Q3VBoxLayout( this );
+  topLayout->setMargin( 10 );
+  topLayout->setSpacing( 10 );
 
   mTimeScaleVisibleCheck = new QCheckBox( i18n("Show time scale"), this );
   topLayout->addWidget( mTimeScaleVisibleCheck );
   connect( mTimeScaleVisibleCheck, SIGNAL( clicked() ),
            SIGNAL( configChanged() ) );
 
-  QFrame *hline = new QFrame( this );
-  hline->setFrameShape( QFrame::HLine );
+  Q3Frame *hline = new Q3Frame( this );
+  hline->setFrameShape( Q3Frame::HLine );
   topLayout->addWidget( hline );
 
-  QBoxLayout *buttonLayout = new QHBoxLayout( topLayout );
+  Q3BoxLayout *buttonLayout = new Q3HBoxLayout( topLayout );
 
   buttonLayout->addStretch( 1 );
 
@@ -67,7 +73,7 @@ bool GanttConfigDialog::isTimeScaleVisible()
 }
 
 GanttTimeScaleWidget::GanttTimeScaleWidget( QWidget *parent, const char *name )
-	: QWidget( parent, name, WResizeNoErase | WRepaintNoErase ),
+	: QWidget( parent, name, Qt::WResizeNoErase | Qt::WNoAutoErase ),
           mPixelsPerSecond( 40 )
 {
   setPaletteBackgroundColor( Qt::white );
@@ -121,7 +127,7 @@ void GanttTimeScaleWidget::paintEvent( QPaintEvent *pe )
 
 GanttProgress::GanttProgress( StatusView *statusView, QWidget *parent,
                               const char *name )
-	: QWidget( parent, name, WResizeNoErase | WRepaintNoErase ),
+	: QWidget( parent, name, Qt::WResizeNoErase | Qt::WNoAutoErase ),
           mStatusView( statusView ), mClock( 0 ), mIsFree( true )
 {
   setPaletteBackgroundColor( Qt::white );
@@ -177,7 +183,7 @@ void GanttProgress::drawGraph( QPainter &p )
 
     bool lastBox = false;
     int xStart = 0;
-    QValueList< JobData >::ConstIterator it = m_jobs.begin();
+    Q3ValueList< JobData >::ConstIterator it = m_jobs.begin();
     for ( ; ( it != m_jobs.end() ) && !lastBox; ++it ) {
         int xEnd = mClock - (*it).clock;
 
@@ -277,7 +283,7 @@ void GanttProgress::resizeEvent( QResizeEvent * )
 
 GanttStatusView::GanttStatusView( HostInfoManager *m, QWidget *parent,
                                   const char *name )
-  : QScrollView( parent, name, WRepaintNoErase | WResizeNoErase ),
+  : Q3ScrollView( parent, name, Qt::WNoAutoErase | Qt::WResizeNoErase ),
     StatusView( m )
 {
     mConfigDialog = new GanttConfigDialog( this );
@@ -291,7 +297,7 @@ GanttStatusView::GanttStatusView( HostInfoManager *m, QWidget *parent,
 
     mTopWidget->setPaletteBackgroundColor( Qt::white );
 
-    m_topLayout = new QGridLayout( mTopWidget, 2, 2, 0, -1, "topLayout" );
+    m_topLayout = new Q3GridLayout( mTopWidget, 2, 2, 0, -1, "topLayout" );
     m_topLayout->setSpacing( 5 );
     m_topLayout->setMargin( 4 );
     m_topLayout->setColStretch( 1, 10 );
@@ -347,8 +353,8 @@ void GanttStatusView::update( const Job &job )
     else processor = job.server();
 
     if ( !processor ) {
-      kdDebug() << "GanttStatusView::update(): processor for job "
-                << job.jobId() << " is empty." << endl;
+      qDebug() << "GanttStatusView::update(): processor for job "
+                << job.jobId() << " is empty.";
       return;
     }
 
@@ -372,13 +378,10 @@ void GanttStatusView::update( const Job &job )
         }
     }
 
-    if ( !slot ) {
-      kdError() << "GanttStatusView::update(): Unable to find slot" << endl;
-    } else {
-      mJobMap.insert( job.jobId(), slot );
-      slot->update( job );
-      mAgeMap[ processor ] = 0;
-    }
+    Q_ASSERT(slot);
+    mJobMap.insert( job.jobId(), slot );
+    slot->update( job );
+    mAgeMap[ processor ] = 0;
 }
 
 QWidget * GanttStatusView::widget()
@@ -423,13 +426,13 @@ GanttProgress *GanttStatusView::registerNode( unsigned int hostid )
 
     QColor color = hostColor( hostid );
 
-    QVBoxLayout *nodeLayout;
+    Q3VBoxLayout *nodeLayout;
 
     NodeLayoutMap::ConstIterator it = mNodeLayouts.find( hostid );
     if ( it == mNodeLayouts.end() ) {
       ++lastRow;
 
-      nodeLayout = new QVBoxLayout( 0, ( QString::number( hostid ) + "_layout" ).latin1() );
+      nodeLayout = new Q3VBoxLayout( 0, ( QString::number( hostid ) + "_layout" ).latin1() );
       m_topLayout->addLayout( nodeLayout, lastRow, 1 );
       mNodeLayouts.insert( hostid, nodeLayout );
       mNodeRows.insert( hostid, lastRow );
@@ -439,7 +442,7 @@ GanttProgress *GanttStatusView::registerNode( unsigned int hostid )
 
     NodeRowMap::ConstIterator rowIt = mNodeRows.find( hostid );
     if ( rowIt == mNodeRows.end() ) {
-      kdError() << "Unknown node row." << endl;
+      qDebug() << "Unknown node row.";
     } else {
       int row = *rowIt;
       NodeLabelMap::ConstIterator labelIt = mNodeLabels.find( hostid );
@@ -475,7 +478,6 @@ GanttProgress *GanttStatusView::registerNode( unsigned int hostid )
 
 void GanttStatusView::removeSlot( unsigned int hostid, GanttProgress* slot )
 {
-    kdDebug() << "GanttStatusView::removeSlot(): " << hostid << endl;
     NodeLayoutMap::ConstIterator it = mNodeLayouts.find( hostid );
     if ( it == mNodeLayouts.end() )
         return;
@@ -496,7 +498,6 @@ void GanttStatusView::removeSlot( unsigned int hostid, GanttProgress* slot )
 
 void GanttStatusView::unregisterNode( unsigned int hostid )
 {
-    kdDebug() << "GanttStatusView::unregisterNode(): " << hostid << endl;
     NodeLayoutMap::ConstIterator it = mNodeLayouts.find( hostid );
     if ( it == mNodeLayouts.end() )
         return;
@@ -542,7 +543,7 @@ void GanttStatusView::checkNodes()
 
 void GanttStatusView::checkAge()
 {
-    QValueList<unsigned int> to_unregister;
+    Q3ValueList<unsigned int> to_unregister;
     for( AgeMap::Iterator it = mAgeMap.begin();
          it != mAgeMap.end();
          ++it ) {
@@ -553,7 +554,7 @@ void GanttStatusView::checkAge()
         else
             ++(*it);
     }
-    for( QValueList<unsigned int>::ConstIterator it = to_unregister.begin();
+    for( Q3ValueList<unsigned int>::ConstIterator it = to_unregister.begin();
          it != to_unregister.end();
          ++it )
         unregisterNode( *it );
@@ -573,7 +574,7 @@ void GanttStatusView::viewportResizeEvent( QResizeEvent *e )
     mTopWidget->setMinimumHeight( mTopWidget->sizeHint().height() );
   }
 
-  QScrollView::viewportResizeEvent( e );
+  Q3ScrollView::viewportResizeEvent( e );
 }
 
 void GanttStatusView::configureView()
@@ -587,5 +588,3 @@ void GanttStatusView::slotConfigChanged()
   if ( mConfigDialog->isTimeScaleVisible() ) mTimeScale->show();
   else mTimeScale->hide();
 }
-
-#include "ganttstatusview.moc"

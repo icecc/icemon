@@ -24,8 +24,11 @@
 #include "job.h"
 #include "statusview.h"
 
-#include <qcanvas.h>
+#include <q3canvas.h>
 #include <qdialog.h>
+//Added by qt3to4:
+#include <QResizeEvent>
+#include <QLabel>
 
 class HostInfo;
 
@@ -62,13 +65,13 @@ class StarViewConfigDialog : public QDialog
 };
 
 
-class HostItem : public QCanvasText
+class HostItem : public Q3CanvasText
 {
   public:
     enum { RttiHostItem = 1000 };
 
-    HostItem( const QString &text, QCanvas *canvas, HostInfoManager * );
-    HostItem( HostInfo *hostInfo, QCanvas *canvas, HostInfoManager * );
+    HostItem( const QString &text, Q3Canvas *canvas, HostInfoManager * );
+    HostItem( HostInfo *hostInfo, Q3Canvas *canvas, HostInfoManager * );
     ~HostItem();
 
     void init();
@@ -87,8 +90,8 @@ class HostItem : public QCanvasText
     void setIsCompiling( bool compiling ) { mIsCompiling = compiling; }
     bool isCompiling() const { return mIsCompiling; }
 
-    void setStateItem( QCanvasItem *item ) { m_stateItem = item; }
-    QCanvasItem *stateItem() { return m_stateItem; }
+    void setStateItem( Q3CanvasItem *item ) { m_stateItem = item; }
+    Q3CanvasItem *stateItem() { return m_stateItem; }
 
     void setClient( unsigned int client ) { m_client = client; }
     unsigned int client() const { return m_client; }
@@ -117,15 +120,15 @@ class HostItem : public QCanvasText
     bool mIsActiveClient;
     bool mIsCompiling;
 
-    QCanvasItem *m_stateItem;
+    Q3CanvasItem *m_stateItem;
     unsigned int m_client;
 
     int mBaseWidth;
     int mBaseHeight;
 
-    QCanvasEllipse *m_boxItem;
+    Q3CanvasEllipse *m_boxItem;
 
-    QMap<Job, QCanvasEllipse *> m_jobHalos;
+    QMap<Job, Q3CanvasEllipse *> m_jobHalos;
 
     JobList m_jobs;
 };
@@ -154,6 +157,7 @@ class StarView : public QWidget, public StatusView
 
   protected:
     virtual void resizeEvent( QResizeEvent *e );
+    virtual bool event(QEvent *event);
 
     /**
       Return true if node should be shown and false if not.
@@ -180,8 +184,8 @@ class StarView : public QWidget, public StatusView
 
     StarViewConfigDialog *mConfigDialog;
 
-    QCanvas *m_canvas;
-    QCanvasView *m_canvasView;
+    Q3Canvas *m_canvas;
+    Q3CanvasView *m_canvasView;
     HostItem *m_schedulerItem;
     QMap<unsigned int,HostItem *> m_hostItems;
     QMap<unsigned int,HostItem *> mJobMap;

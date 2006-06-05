@@ -20,12 +20,11 @@
 
 #include "hostlistview.h"
 
-#include <kglobal.h>
-#include <klocale.h>
 
 #include <qfontmetrics.h>
 #include <qpainter.h>
 
+#define i18n
 
 enum Columns
 {
@@ -40,8 +39,8 @@ enum Columns
 };
 
 
-HostListViewItem::HostListViewItem( KListView* parent, const HostInfo& info )
-    :  KListViewItem( parent ),
+HostListViewItem::HostListViewItem( Q3ListView* parent, const HostInfo& info )
+    :  Q3ListViewItem( parent ),
        mHostInfo( info ),
        mActive( false )
 {
@@ -72,7 +71,7 @@ void HostListViewItem::updateText( const HostInfo& info )
     setText( ColumnIP, info.ip() );
     setText( ColumnPlatform, info.platform() );
     setText( ColumnMaxJobs, QString::number( info.maxJobs() ) );
-    setText( ColumnSpeed, KGlobal::locale()->formatNumber( info.serverSpeed(), 1 ) );
+    //setText( ColumnSpeed, KGlobal::locale()->formatNumber( info.serverSpeed(), 1 ) );
     setText( ColumnLoad, QString::number( info.serverLoad() ) );
 }
 
@@ -90,7 +89,7 @@ int compare( Type i1,
 }
 
 
-int HostListViewItem::compare( QListViewItem *i, int col,
+int HostListViewItem::compare( Q3ListViewItem *i, int col,
                                bool ) const
 {
     const HostListViewItem* first = this;
@@ -127,14 +126,14 @@ void HostListViewItem::paintCell( QPainter* painter,
         painter->setFont( font );
     }
 
-    KListViewItem::paintCell( painter, cg, column, width, align );
+    Q3ListViewItem::paintCell( painter, cg, column, width, align );
 
     painter->setFont( oldFont );
 }
 
 
 int HostListViewItem::width( const QFontMetrics& fm,
-                             const QListView* lv,
+                             const Q3ListView* lv,
                              int column ) const
 {
     int width(0);
@@ -147,7 +146,7 @@ int HostListViewItem::width( const QFontMetrics& fm,
     }
     else
     {
-        width = KListViewItem::width( fm, lv, column );
+        width = Q3ListViewItem::width( fm, lv, column );
     }
 
     return width;
@@ -157,7 +156,7 @@ int HostListViewItem::width( const QFontMetrics& fm,
 HostListView::HostListView( HostInfoManager* manager,
                             QWidget* parent,
                             const char* name )
-    : KListView( parent, name ),
+    : Q3ListView( parent, name ),
       mHostInfoManager( manager ),
       mActiveNode( 0 )
 {
@@ -177,12 +176,12 @@ HostListView::HostListView( HostInfoManager* manager,
 
     setAllColumnsShowFocus(true);
 
-    connect(this, SIGNAL( doubleClicked( QListViewItem*, const QPoint&, int ) ),
-            this, SLOT( slotNodeActivated( QListViewItem* ) ) );
-    connect(this, SIGNAL( returnPressed( QListViewItem* ) ),
-            this, SLOT( slotNodeActivated( QListViewItem* ) ) );
-    connect(this, SIGNAL( spacePressed( QListViewItem* ) ),
-            this, SLOT( slotNodeActivated( QListViewItem* ) ) );
+    connect(this, SIGNAL( doubleClicked( Q3ListViewItem*, const QPoint&, int ) ),
+            this, SLOT( slotNodeActivated( Q3ListViewItem* ) ) );
+    connect(this, SIGNAL( returnPressed( Q3ListViewItem* ) ),
+            this, SLOT( slotNodeActivated( Q3ListViewItem* ) ) );
+    connect(this, SIGNAL( spacePressed( Q3ListViewItem* ) ),
+            this, SLOT( slotNodeActivated( Q3ListViewItem* ) ) );
     connect( &mUpdateSortTimer, SIGNAL( timeout()), SLOT( updateSort()));
 }
 
@@ -238,13 +237,13 @@ void HostListView::clear()
 {
     mItems.clear();
 
-    KListView::clear();
+    Q3ListView::clear();
 
     setActiveNode( 0 );
 }
 
 
-void HostListView::slotNodeActivated( QListViewItem* item )
+void HostListView::slotNodeActivated( Q3ListViewItem* item )
 {
     HostListViewItem* hostItem = dynamic_cast<HostListViewItem*>( item );
     if ( hostItem )
@@ -265,5 +264,3 @@ void HostListView::updateSort()
     if( sortColumn() != 0 )
         sort();
 }
-
-#include "hostlistview.moc"

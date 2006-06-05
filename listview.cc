@@ -25,6 +25,8 @@
 #include "joblistview.h"
 
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3VBoxLayout>
 
 ListStatusView::ListStatusView( HostInfoManager* manager,
                                 QWidget* parent,
@@ -33,7 +35,7 @@ ListStatusView::ListStatusView( HostInfoManager* manager,
       StatusView( manager ),
       mJobsListView( new JobListView( manager, this, "Jobs" ) )
 {
-    QVBoxLayout* topLayout = new QVBoxLayout( this );
+    Q3VBoxLayout* topLayout = new Q3VBoxLayout( this );
     topLayout->addWidget( mJobsListView );
 }
 
@@ -41,5 +43,3 @@ void ListStatusView::update( const Job &job )
 {
     mJobsListView->update( job );
 }
-
-#include "listview.moc"

@@ -20,11 +20,11 @@
 
 #include "hostinfo.h"
 
-#include <kdebug.h>
-#include <klocale.h>
 #include <assert.h>
 
-QValueVector<QColor> HostInfo::mColorTable;
+#define i18n
+
+Q3ValueVector<QColor> HostInfo::mColorTable;
 QMap<int,QString> HostInfo::mColorNameMap;
 
 void HostInfo::initColorTable()
@@ -232,12 +232,8 @@ HostInfo *HostInfoManager::checkNode( unsigned int hostid,
 
 QString HostInfoManager::nameForHost( unsigned int id ) const
 {
-  if ( !id ) {
-    kdError() << "Unknown host" << endl;
-  } else {
-    HostInfo *hostInfo = find( id );
-    if ( hostInfo ) return hostInfo->name();
-  }
+  HostInfo *hostInfo = find( id );
+  if ( hostInfo ) return hostInfo->name();
 
   return i18n("<unknown>");
 }
@@ -253,7 +249,7 @@ QColor HostInfoManager::hostColor( unsigned int id ) const
     }
   }
 
-  kdDebug() << "id " << id << " got no color\n";
+  //qDebug() << "id " << id << " got no color\n";
   assert( false );
 
   return QColor( 0, 0, 0 );

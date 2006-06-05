@@ -24,15 +24,15 @@
 
 #include "hostinfo.h"
 
-#include <klistview.h>
+#include <q3listview.h>
 #include <qtimer.h>
 
 
-class HostListViewItem : public KListViewItem
+class HostListViewItem : public Q3ListViewItem
 {
 public:
 
-    HostListViewItem( KListView* parent, const HostInfo& info );
+    HostListViewItem( Q3ListView* parent, const HostInfo& info );
 
     const HostInfo& hostInfo() const;
 
@@ -40,11 +40,11 @@ public:
 
     void updateText( const HostInfo& info);
 
-    virtual int compare( QListViewItem* i, int col, bool ascending ) const;
+    virtual int compare( Q3ListViewItem* i, int col, bool ascending ) const;
 
     virtual void paintCell( QPainter* painter, const QColorGroup& cg, int column, int width, int align );
 
-    virtual int width( const QFontMetrics& fm, const QListView* lv, int column ) const;
+    virtual int width( const QFontMetrics& fm, const Q3ListView* lv, int column ) const;
 
 private:
 
@@ -54,7 +54,7 @@ private:
 };
 
 
-class HostListView :public KListView
+class HostListView :public Q3ListView
 {
     Q_OBJECT
 
@@ -78,7 +78,7 @@ signals:
 
 private slots:
 
-    void slotNodeActivated( QListViewItem* item );
+    void slotNodeActivated( Q3ListViewItem* item );
 
     void updateSort();
 
