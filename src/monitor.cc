@@ -25,11 +25,11 @@
 #include "hostinfo.h"
 #include "statusview.h"
 
-#include <services/logging.h>
-#include <services/comm.h>
+#include <icecream/comm.h>
 
 #include <klocale.h>
 #include <kdebug.h>
+#include <iostream>
 
 #include <qsocketnotifier.h>
 #include <qtimer.h>

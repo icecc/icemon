@@ -22,8 +22,6 @@
 #include "monitor.h"
 #include "hostview.h"
 
-#include <services/logging.h>
-
 #include <qlabel.h>
 #include <qfont.h>
 #include <qstringlist.h>
@@ -56,8 +54,6 @@ IcemonApplet::IcemonApplet( const QString &configFile, Type type, int actions,
                             QWidget *parent, const char *name )
   : KPanelApplet( configFile, type, actions, parent, name )
 {
-  setup_debug(Debug|Info|Warning|Error,"");
-
   setBackgroundOrigin( AncestorOrigin );
 
   mHostInfoManager = new HostInfoManager;

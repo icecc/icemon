@@ -1,3 +1,13 @@
-KDE_SET_PREFIX
-AC_PATH_KDE
 
+pkg-config --silence-errors --exists icecream
+if test "$?" = 0; then
+  ICECREAM_LDADD=`pkg-config --libs-only-l icecream`
+  ICECREAM_LDFLAGS=`pkg-config --libs-only-L icecream`
+  ICECREAM_CFLAGS=`pkg-config --cflags icecream`
+else
+  DO_NOT_COMPILE="$DO_NOT_COMPILE icemon-kde3"
+fi
+
+AC_SUBST(ICECREAM_LDADD)
+AC_SUBST(ICECREAM_LDFLAGS)
+AC_SUBST(ICECREAM_CFLAGS)
