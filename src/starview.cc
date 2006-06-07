@@ -402,10 +402,8 @@ void StarView::update( const Job &job )
   }
 
   unsigned int hostid = processor( job );
-  if ( !hostid ) {
-    kdDebug() << "Empty host" << endl;
+  if ( !hostid ) 
     return;
-  }
 
   HostItem *hostItem = findHostItem( hostid );
   if ( !hostItem ) return;
