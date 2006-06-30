@@ -215,7 +215,9 @@ void HostListView::checkNode( unsigned int hostid )
         mItems[hostid] = new HostListViewItem( this, *info );
     else
         ( *it )->updateText( *info );
-    mUpdateSortTimer.start( 0, true );
+
+    mUpdateSortTimer.setSingleShot( true );
+    mUpdateSortTimer.start( 0 );
 }
 
 

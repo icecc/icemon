@@ -39,9 +39,11 @@
 using namespace std;
 
 Monitor::Monitor( HostInfoManager *m, QObject *parent, const char *name )
-  : QObject( parent, name ), m_hostInfoManager( m ), m_view( 0 ),
+  : QObject( parent ), m_hostInfoManager( m ), m_view( 0 ),
     m_scheduler( 0 ), m_scheduler_read( 0 ), mSchedulerOnline( false )
 {
+  setObjectName( name );
+
   checkScheduler();
 }
 
@@ -67,7 +69,7 @@ void Monitor::slotCheckScheduler()
   list<string> names;
 
   if ( !m_current_netname.isEmpty() ) {
-    names.push_front( m_current_netname.latin1() );
+    names.push_front( m_current_netname.toLatin1().data() );
   } else {
     names = get_netnames( 60 );
   }
@@ -84,7 +86,7 @@ void Monitor::slotCheckScheduler()
   for ( list<string>::const_iterator it = names.begin(); it != names.end();
         ++it ) {
     m_current_netname = it->c_str();
-    m_scheduler = connect_scheduler ( m_current_netname.latin1() );
+    m_scheduler = connect_scheduler ( m_current_netname.toLatin1().data() );
     if ( m_scheduler ) {
       if ( !m_scheduler->send_msg ( MonLoginMsg() ) ) {
         delete m_scheduler;
@@ -107,7 +109,7 @@ void Monitor::msgReceived()
 {
   Msg *m = m_scheduler->get_msg ();
   if ( !m ) {
-    kdDebug() << "lost connection to scheduler\n";
+    kDebug() << "lost connection to scheduler\n";
     checkScheduler( true );
     setSchedulerState( false );
     return;
@@ -193,14 +195,14 @@ void Monitor::handle_stats( Msg *_m )
   MonStatsMsg *m = dynamic_cast<MonStatsMsg*>( _m );
   if ( !m ) return;
 
-  QStringList statmsg = QStringList::split( '\n', m->statmsg.c_str() );
+  QStringList statmsg = QString( m->statmsg.c_str() ).split( '\n' );
   HostInfo::StatsMap stats;
   for ( QStringList::ConstIterator it = statmsg.begin(); it != statmsg.end();
         ++it ) {
       QString key = *it;
-      key = key.left( key.find( ':' ) );
+      key = key.left( key.indexOf( ':' ) );
       QString value = *it;
-      value = value.mid( value.find( ':' ) + 1 );
+      value = value.mid( value.indexOf( ':' ) + 1 );
       stats[key] = value;
   }
 
@@ -229,7 +231,7 @@ void Monitor::handle_job_begin( Msg *_m )
   ( *it ).setState( Job::Compiling );
 
 #if 0
-  kdDebug() << "BEGIN: " << (*it).fileName() << " (" << (*it).jobId()
+  kDebug() << "BEGIN: " << (*it).fileName() << " (" << (*it).jobId()
             << ")" << endl;
 #endif
 
@@ -264,7 +266,7 @@ void Monitor::handle_job_done( Msg *_m )
   }
 
 #if 0
-  kdDebug() << "DONE: " << (*it).fileName() << " (" << (*it).jobId()
+  kDebug() << "DONE: " << (*it).fileName() << " (" << (*it).jobId()
             << ")" << endl;
 #endif
 

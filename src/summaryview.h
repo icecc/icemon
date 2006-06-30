@@ -17,25 +17,25 @@
 #include <q3valuevector.h>
 //Added by qt3to4:
 #include <QResizeEvent>
-#include <Q3Frame>
-#include <Q3GridLayout>
-#include <Q3ValueList>
+#include <QFrame>
+#include <QGridLayout>
+#include <QList>
 #include <QLabel>
 
 class QLabel;
-class Q3GridLayout;
+class QGridLayout;
 
 class SummaryView;
 
 class SummaryViewItem
 {
 public:
-    SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryView *view, Q3GridLayout *layout);
+    SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryView *view, QGridLayout *layout);
     ~SummaryViewItem();
     void update(const Job &job);
 
 private:
-    QLabel *addLine(const QString &caption, QWidget *parent, Q3GridLayout *grid,
+    QLabel *addLine(const QString &caption, QWidget *parent, QGridLayout *grid,
                                 int flags = Qt::AlignTop,
                                 const QString &status = QString::null);
 
@@ -43,13 +43,13 @@ private:
     {
         JobHandler() : stateWidget(0), sourceLabel(0), stateLabel(0) {}
 
-        Q3Frame *stateWidget;
+        QFrame *stateWidget;
         QLabel *sourceLabel;
         QLabel *stateLabel;
         QString currentFile;
     };
 
-    Q3Frame *m_stateWidget;
+    QFrame *m_stateWidget;
     QLabel *m_jobsLabel;
     QLabel *m_sourceLabel;
 
@@ -57,7 +57,7 @@ private:
     SummaryView *m_view;
 
     Q3ValueVector<JobHandler> m_jobHandlers;
-    Q3ValueList<QWidget *> m_widgets;
+    QList<QWidget *> m_widgets;
 };
 
 class SummaryView : public Q3ScrollView, public StatusView
@@ -78,7 +78,7 @@ protected:
 
 private:
     QMap<unsigned int, SummaryViewItem *> m_items;
-    Q3GridLayout *m_layout;
+    QGridLayout *m_layout;
     QWidget *m_base;
 };
 

@@ -46,57 +46,55 @@
 #include <kactioncollection.h>
 
 MainWindow::MainWindow( QWidget *parent, const char *name )
-  : KMainWindow( parent, name ), m_view( 0 )
+  : KMainWindow( parent ), m_view( 0 )
 {
+    setObjectName( name );
+
     m_hostInfoManager = new HostInfoManager;
 
     m_monitor = new Monitor( m_hostInfoManager, this );
 
-    QActionGroup* viewGroup = new QActionGroup(this);
+//    QActionGroup* viewGroup = new QActionGroup(this);
 
-    KToggleAction *a = new KToggleAction( i18n( "&List View" ), 0,
-                                        this, SLOT( setupListView() ),
-                                        actionCollection(), "view_list_view" );
+    KAction *action = new KToggleAction( i18n( "&List View" ), actionCollection(), "view_list_view" );
+    connect( action, SIGNAL( triggered() ), this, SLOT( setupListView() ) );
 
-    a = new KToggleAction( i18n( "&Star View" ), 0,
-                          this, SLOT( setupStarView() ),
-                          actionCollection(), "view_star_view" );
+    action = new KToggleAction( i18n( "&Star View" ), actionCollection(), "view_star_view" );
+    connect( action, SIGNAL( triggered() ), this, SLOT( setupStarView() ) );
+                          
 
-    a = new KToggleAction( i18n( "&Gantt View" ), 0,
-                          this, SLOT( setupGanttView() ),
-                          actionCollection(), "view_gantt_view" );
+    action = new KToggleAction( i18n( "&Gantt View" ), actionCollection(), "view_gantt_view" );
+    connect( action, SIGNAL( triggered() ), this, SLOT( setupGanttView() ) );
+                          
 
-    a = new KToggleAction( i18n( "Summary &View" ), 0,
-                          this, SLOT( setupSummaryView() ),
-                          actionCollection(), "view_foo_view" );
+    action = new KToggleAction( i18n( "Summary &View" ), actionCollection(), "view_foo_view" );
+    connect( action, SIGNAL( triggered() ), this, SLOT( setupSummaryView() ) );
+                          
 
-    a = new KToggleAction( i18n( "&Host View" ), 0,
-                          this, SLOT( setupHostView() ),
-                          actionCollection(), "view_host_view" );
+    action = new KToggleAction( i18n( "&Host View" ), actionCollection(), "view_host_view" );
+    connect( action, SIGNAL( triggered() ), this, SLOT( setupHostView() ) );
+                          
 
-    a = new KToggleAction( i18n( "&Detailed Host View" ), 0,
-                          this, SLOT( setupDetailedHostView() ),
-                          actionCollection(), "view_detailed_host_view" );
+    action = new KToggleAction( i18n( "&Detailed Host View" ), actionCollection(), "view_detailed_host_view" );
+    connect( action, SIGNAL( triggered() ), this, SLOT( setupDetailedHostView() ) );
+                          
 
     KStdAction::quit( this, SLOT( close() ), actionCollection() );
 
-    new KAction( i18n("Stop"), 0, this, SLOT( stopView() ), actionCollection(),
-                 "view_stop" );
+    action = new KAction( i18n("Stop"), actionCollection(), "view_stop" );
+    connect( action, SIGNAL( triggered() ), this, SLOT( stopView() ) );
 
-    new KAction( i18n("Start"), 0, this, SLOT( startView() ),
-                 actionCollection(), "view_start" );
+    action = new KAction( i18n("Start"), actionCollection(), "view_start" );
+    connect( action, SIGNAL( triggered() ), this, SLOT( startView() ) );
 
-    new KAction( i18n("Check Nodes"), 0, this, SLOT( checkNodes() ),
-                 actionCollection(), "check_nodes" );
+    action = new KAction( i18n("Check Nodes"), actionCollection(), "check_nodes" );
+    connect( action, SIGNAL( triggered() ), this, SLOT( checkNodes() ) );
 
-    new KAction( i18n("Configure View..."), 0, this, SLOT( configureView() ),
-                 actionCollection(), "configure_view" );
+    action = new KAction( i18n("Configure View..."), actionCollection(), "configure_view" );
+    connect( action, SIGNAL( triggered() ), this, SLOT( configureView() ) );
 
     createGUI();
     readSettings();
-//    checkScheduler();
-
-    //setAutoSaveSettings();
 }
 
 MainWindow::~MainWindow()
@@ -238,7 +236,6 @@ int main( int argc, char **argv )
     mainWidget->setCurrentNet( netName );
   }
 
-  app.setMainWidget( mainWidget );
   mainWidget->show();
 
   return app.exec();

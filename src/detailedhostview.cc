@@ -18,17 +18,17 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+#include <qlabel.h>
+#include <qboxlayout.h>
+#include <qsplitter.h>
+
 #include "detailedhostview.h"
 
 #include "hostinfo.h"
 #include "hostlistview.h"
 #include "joblistview.h"
 
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qsplitter.h>
-#include <q3vbox.h>
-#include <Q3VBoxLayout>
+#include <kvbox.h>
 
 #include <sys/utsname.h>
 
@@ -47,22 +47,24 @@ static QString myHostName()
 DetailedHostView::DetailedHostView( HostInfoManager* manager,
                                     QWidget* parent,
                                     const char* name )
-    : QWidget( parent, name ),
+    : QWidget( parent ),
       StatusView( manager )
 {
-  Q3BoxLayout* topLayout = new Q3VBoxLayout( this );
+  setObjectName( name );
+
+  QBoxLayout* topLayout = new QVBoxLayout( this );
   topLayout->setMargin( 10 );
 
   QSplitter* viewSplitter = new QSplitter( Qt::Vertical, this );
   topLayout->addWidget( viewSplitter );
 
-  Q3VBox* hosts = new Q3VBox( viewSplitter );
+  KVBox* hosts = new KVBox( viewSplitter );
   hosts->setSpacing( 10 );
 
   new QLabel( i18n( "Hosts" ), hosts );
   mHostListView = new HostListView( manager, hosts, "HostListView" );
 
-  Q3VBox* locals = new Q3VBox( viewSplitter );
+  KVBox* locals = new KVBox( viewSplitter );
   locals->setSpacing( 10 );
 
   new QLabel( i18n( "Outgoing jobs" ), locals );
@@ -70,7 +72,7 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
   mLocalJobsView->setClientColumnVisible( false );
   mLocalJobsView->setExpireDuration( 5 );
 
-  Q3VBox* remotes = new Q3VBox( viewSplitter );
+  KVBox* remotes = new KVBox( viewSplitter );
   remotes->setSpacing( 10 );
 
   new QLabel( i18n( "Incoming jobs" ), remotes );

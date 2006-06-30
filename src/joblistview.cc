@@ -127,7 +127,7 @@ void JobListViewItem::updateFileName()
         int index = 0;
         do
         {
-            index = fileName.findRev( separator, index - 1);
+            index = fileName.lastIndexOf( separator, index - 1);
         }
         while ( counter-- && ( index > 0 ) );
 
@@ -136,7 +136,7 @@ void JobListViewItem::updateFileName()
     }
     else if ( numberOfFilePathParts == 0)
     {
-        fileName = fileName.mid( fileName.findRev( separator ) + 1);
+        fileName = fileName.mid( fileName.lastIndexOf( separator ) + 1);
     }
 
     setText( JobColumnFilename, fileName );
@@ -247,7 +247,7 @@ void JobListView::setNumberOfFilePathParts( int number )
     for ( ItemMap::const_iterator it( mItems.begin() ),
                                   itEnd( mItems.end() );
           it != itEnd; ++it )
-        it.data()->updateFileName();
+        it.value()->updateFileName();
 }
 
 
@@ -331,7 +331,7 @@ void JobListView::slotExpireFinishedJobs()
     FinishedJobs::iterator it = mFinishedJobs.begin();
     for ( const FinishedJobs::iterator itEnd = mFinishedJobs.end(); it != itEnd; ++it )
     {
-        if ( currentTime - ( *it ).first < mExpireDuration )
+        if ( currentTime - ( *it ).first < (uint)mExpireDuration )
             break;
 
         removeItem( ( *it ).second );

@@ -24,16 +24,16 @@
 #include <qpainter.h>
 //Added by qt3to4:
 #include <QResizeEvent>
-#include <Q3GridLayout>
-#include <Q3Frame>
-#include <Q3ValueList>
-#include <Q3VBoxLayout>
+#include <QGridLayout>
+#include <QFrame>
+#include <QList>
+#include <QVBoxLayout>
 
-class NodeInfoFrame : public Q3Frame
+class NodeInfoFrame : public QFrame
 {
 public:
     NodeInfoFrame(QWidget *parent, const QColor &frameColor) :
-        Q3Frame(parent), m_frameColor(frameColor) {}
+        QFrame(parent), m_frameColor(frameColor) {}
 protected:
     virtual void drawFrame(QPainter *p)
     {
@@ -63,22 +63,21 @@ private:
 // SummaryViewItem implementation
 ////////////////////////////////////////////////////////////////////////////////
 
-SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryView *view, Q3GridLayout *layout) :
+SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryView *view, QGridLayout *layout) :
     m_jobCount(0),
     m_view(view)
 {
-    const int row = layout->numRows();
+    const int row = layout->rowCount();
     const QColor nodeColor = view->hostInfoManager()->hostColor(hostid);
 
     NodeInfoFrame *labelBox = new NodeInfoFrame(parent, nodeColor);
-    labelBox->setMargin(5);
+    labelBox->layout()->setMargin(5);
     layout->addWidget(labelBox, row, 0);
     labelBox->show();
     labelBox->setMinimumWidth(75);
     m_widgets.append(labelBox);
 
-    Q3VBoxLayout *labelLayout = new Q3VBoxLayout(labelBox);
-    labelLayout->setAutoAdd(true);
+    QVBoxLayout *labelLayout = new QVBoxLayout(labelBox);
     labelLayout->setMargin(10);
     labelLayout->setSpacing(5);
 
@@ -88,31 +87,36 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
     l->setPixmap(UserIcon("icemonnode"));
     l->setAlignment(Qt::AlignCenter);
     l->show();
+    labelLayout->addWidget( l );
 
     l = new QLabel(view->nameForHost(hostid), labelBox);
     l->setAlignment(Qt::AlignCenter);
     l->show();
+    labelLayout->addWidget( l );
 
     const int maxJobs = view->hostInfoManager()->maxJobs(hostid);
 
     m_jobHandlers.resize(maxJobs);
 
     for(int i = 0; i < maxJobs; i++) {
-        m_jobHandlers[i].stateWidget = new Q3Frame(labelBox);
-        m_jobHandlers[i].stateWidget->setFrameStyle(Q3Frame::Box | Q3Frame::Plain);
+        m_jobHandlers[i].stateWidget = new QFrame(labelBox);
+        m_jobHandlers[i].stateWidget->setFrameStyle(QFrame::Box | QFrame::Plain);
         m_jobHandlers[i].stateWidget->setLineWidth(2);
         m_jobHandlers[i].stateWidget->setFixedHeight(15);
-        m_jobHandlers[i].stateWidget->setPaletteBackgroundColor(QColor("black"));
+        QPalette palette = m_jobHandlers[i].stateWidget->palette();
+        palette.setColor( m_jobHandlers[i].stateWidget->backgroundRole(), Qt::black );
+        m_jobHandlers[i].stateWidget->setPalette( palette );
         m_jobHandlers[i].stateWidget->show();
+        labelLayout->addWidget( m_jobHandlers[i].stateWidget );
     }
 
     NodeInfoFrame *detailsBox = new NodeInfoFrame(parent, nodeColor);
-    detailsBox->setMargin(5);
+    detailsBox->layout()->setMargin(5);
     layout->addWidget(detailsBox, row, 1);
     detailsBox->show();
     m_widgets.append(detailsBox);
 
-    Q3GridLayout *grid = new Q3GridLayout(detailsBox);
+    QGridLayout *grid = new QGridLayout(detailsBox);
     grid->setMargin(10);
     grid->setSpacing(5);
 
@@ -121,26 +125,22 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
     for(int i = 0; i < maxJobs; i++) {
         if(maxJobs > 1) {
             QSpacerItem *spacer  = new QSpacerItem(1, 8, QSizePolicy::Expanding);
-            const int row = grid->numRows();
-            grid->addMultiCell(spacer, row, row, 0, grid->numCols() - 1);
+            const int row = grid->rowCount();
+            grid->addItem(spacer, row, 0, 1, grid->columnCount() - 1);
         }
         m_jobHandlers[i].sourceLabel = addLine(i18n("Source:"), detailsBox, grid);
         m_jobHandlers[i].stateLabel = addLine(i18n("State:"), detailsBox, grid);
     }
 
-    grid->setColStretch(grid->numCols() - 1, 1);
+    grid->setColumnStretch(grid->columnCount() - 1, 1);
     grid->setRowStretch(0, 1);
-    grid->setRowStretch(grid->numRows(), 1);
+    grid->setRowStretch(grid->rowCount(), 1);
 }
 
 SummaryViewItem::~SummaryViewItem()
 {
-    for(Q3ValueList<QWidget *>::ConstIterator it = m_widgets.begin();
-        it != m_widgets.end();
-        ++it)
-    {
-        delete *it;
-    }
+  qDeleteAll( m_widgets );
+  m_widgets.clear();
 }
 
 void SummaryViewItem::update(const Job &job)
@@ -157,7 +157,9 @@ void SummaryViewItem::update(const Job &job)
 
         if(it != m_jobHandlers.end()) {
             const QColor nodeColor = m_view->hostInfoManager()->hostColor(job.client());
-            (*it).stateWidget->setPaletteBackgroundColor(nodeColor);
+            QPalette palette = (*it).stateWidget->palette();
+            palette.setColor( (*it).stateWidget->backgroundRole(), nodeColor );
+            (*it).stateWidget->setPalette( palette );
             const QString fileName = job.fileName().section('/', -1);
             const QString hostName = m_view->nameForHost(job.client());
             (*it).sourceLabel->setText(QString("%1 (%2)").arg(fileName).arg(hostName));
@@ -174,7 +176,9 @@ void SummaryViewItem::update(const Job &job)
             ++it;
 
         if(it != m_jobHandlers.end()) {
-            (*it).stateWidget->setPaletteBackgroundColor(QColor("black"));
+            QPalette palette = (*it).stateWidget->palette();
+            palette.setColor( (*it).stateWidget->backgroundRole(), Qt::black );
+            (*it).stateWidget->setPalette( palette );
             (*it).sourceLabel->clear();
             (*it).stateLabel->setText(job.stateAsString());
             (*it).currentFile = QString::null;
@@ -187,12 +191,12 @@ void SummaryViewItem::update(const Job &job)
 }
 
 QLabel *SummaryViewItem::addLine(const QString &caption, QWidget *parent,
-                                             Q3GridLayout *grid, int flags,
+                                             QGridLayout *grid, int flags,
                                              const QString &status)
 {
     QLabel *label = new QLabel(caption, parent);
     label->setAlignment(Qt::AlignRight | flags);
-    const int row = grid->numRows();
+    const int row = grid->rowCount();
     grid->addWidget(label, row, 0);
     KSqueezedTextLabel *statusLabel = new KSqueezedTextLabel(status, parent);
     //statusLabel->setAlignment(Qt::AlignLeft | flags);
@@ -214,8 +218,8 @@ SummaryView::SummaryView(HostInfoManager *h, QWidget *parent, const char *name) 
     m_base = new QWidget(viewport());
     addChild(m_base);
 
-    m_layout = new Q3GridLayout(m_base);
-    m_layout->setColStretch(1, 1);
+    m_layout = new QGridLayout(m_base);
+    m_layout->setColumnStretch(1, 1);
     m_layout->setSpacing(5);
     m_layout->setMargin(5);
 

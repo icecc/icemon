@@ -129,10 +129,10 @@ unsigned int HostInfo::serverLoad() const
 void HostInfo::updateFromStatsMap( const StatsMap &stats )
 {
 #if 0
-  kdDebug() << "HostInfo::updateFromStatsMap():" << endl;
+  kDebug() << "HostInfo::updateFromStatsMap():" << endl;
   StatsMap::ConstIterator it;
   for( it = stats.begin(); it != stats.end(); it++ ) {
-    kdDebug() << "  STAT: " << it.key() << ": " << it.data() << endl;
+    kDebug() << "  STAT: " << it.key() << ": " << it.data() << endl;
   }
 #endif
 
@@ -159,7 +159,7 @@ QColor HostInfo::createColor( const QString &name )
     unsigned long g;
     int ch;
 
-    for( uint i = 0; i < name.length(); ++i ) {
+    for( uint i = 0; i < (uint)name.length(); ++i ) {
         ch = name[i].unicode();
         h = (h << 4) + ch;
         if ((g = (h & 0xf0000000)) != 0)
@@ -172,7 +172,7 @@ QColor HostInfo::createColor( const QString &name )
     h += name.length() + ( name.length() << 17 );
     h ^= h >> 2;
 
-    // kdDebug() << "HostInfo::createColor: " << h % mColorTable.count() << ": " << name << endl;
+    // kDebug() << "HostInfo::createColor: " << h % mColorTable.count() << ": " << name << endl;
 
     return mColorTable[ h % mColorTable.count() ];
 }

@@ -23,27 +23,18 @@
 #include "hostinfo.h"
 #include "job.h"
 
-#if 0
-#include <klocale.h>
-#include <kdebug.h>
-#include <kiconloader.h>
-#include <kdialog.h>
 #include <kled.h>
-#endif
 
 #define i18n
 
 #include <QDebug>
 #include <qlayout.h>
-#include <q3valuelist.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
 //Added by qt3to4:
-#include <Q3HBoxLayout>
 #include <QResizeEvent>
-#include <Q3GridLayout>
-#include <Q3VBoxLayout>
+#include <QBoxLayout>
 
 #include <sys/utsname.h>
 
@@ -52,7 +43,7 @@ using namespace std;
 HostViewConfigDialog::HostViewConfigDialog( QWidget *parent )
   : QDialog( parent )
 {
-  Q3BoxLayout *topLayout = new Q3VBoxLayout( this );
+  QBoxLayout *topLayout = new QVBoxLayout( this );
 
   QLabel *label = new QLabel( i18n("Host name:"), this );
   topLayout->addWidget( label );
@@ -62,7 +53,8 @@ HostViewConfigDialog::HostViewConfigDialog( QWidget *parent )
 
   mHostNameEdit->setText( myHostName() );
 
-  Q3BoxLayout *buttonLayout = new Q3HBoxLayout( topLayout );
+  QBoxLayout *buttonLayout = new QHBoxLayout();
+  topLayout->addLayout( buttonLayout );
 
   buttonLayout->addStretch( 1 );
 
@@ -95,34 +87,36 @@ QString HostViewConfigDialog::hostName() const
 
 HostView::HostView( bool detailed, HostInfoManager *m, QWidget *parent,
                     const char *name )
-  : QWidget( parent, name, Qt::WNoAutoErase | Qt::WResizeNoErase ), StatusView( m ),
+  : QWidget( parent, Qt::WNoAutoErase | Qt::WResizeNoErase ), StatusView( m ),
     mHostId( 0 )
 {
+  setObjectName( name );
+
   mConfigDialog = new HostViewConfigDialog( this );
   connect( mConfigDialog, SIGNAL( configChanged() ),
            SLOT( slotConfigChanged() ) );
 
-  Q3BoxLayout *topLayout = new Q3VBoxLayout( this );
+  QBoxLayout *topLayout = new QVBoxLayout( this );
 
-  Q3BoxLayout *statusLayout = new Q3VBoxLayout( topLayout );
+  QBoxLayout *statusLayout = new QVBoxLayout();
+  topLayout->addLayout( statusLayout );
 
-  Q3BoxLayout *marginLayout = new Q3VBoxLayout( statusLayout );
+  QBoxLayout *marginLayout = new QVBoxLayout();
+  statusLayout->addLayout( marginLayout );
   marginLayout->addStretch( 1 );
 
-  Q3BoxLayout *ledLayout = new Q3HBoxLayout( marginLayout );
+  QBoxLayout *ledLayout = new QHBoxLayout();
+  marginLayout->addLayout( ledLayout );
   ledLayout->setMargin( 4 );
   ledLayout->setSpacing( 4 );
 
   ledLayout->addStretch( 1 );
 
-#warning FIXME
-#if 0
-  mOwnLed = new KLed( "red", this );
+  mOwnLed = new KLed( QColor( Qt::red ), this );
   ledLayout->addWidget( mOwnLed );
 
-  mOthersLed = new KLed( "green", this );
+  mOthersLed = new KLed( QColor( Qt::green ), this );
   ledLayout->addWidget( mOthersLed );
-#endif
 
   ledLayout->addStretch( 1 );
 
@@ -135,7 +129,7 @@ HostView::HostView( bool detailed, HostInfoManager *m, QWidget *parent,
   QWidget *jobWidget = new QWidget( this );
   topLayout->addWidget( jobWidget );
 
-  Q3GridLayout *jobLayout = new Q3GridLayout( jobWidget );
+  QGridLayout *jobLayout = new QGridLayout( jobWidget );
 
   QLabel *label = new QLabel( i18n("Local jobs:"), jobWidget );
   jobLayout->addWidget( label, 0, 0 );
@@ -162,7 +156,7 @@ HostView::HostView( bool detailed, HostInfoManager *m, QWidget *parent,
 void HostView::update( const Job &job )
 {
 #if 0
-  kdDebug() << "HostView::update() " << job.jobId()
+  kDebug() << "HostView::update() " << job.jobId()
             << " server: " << job.server() << " client: " << job.client()
             << " state: " << job.stateAsString() << endl;
 #endif
@@ -172,16 +166,14 @@ void HostView::update( const Job &job )
   bool finished = job.state() == Job::Finished || job.state() == Job::Failed;
 
   if ( finished ) {
-    Q3ValueList<unsigned int>::Iterator it;
+    if ( mLocalJobs.contains( job.jobId() ) )
+      mLocalJobs.removeAll( job.jobId() );
 
-    it = mLocalJobs.find( job.jobId() );
-    if ( it != mLocalJobs.end() ) mLocalJobs.remove( it );
+    if ( mRemoteJobs.contains( job.jobId() ) )
+      mRemoteJobs.removeAll( job.jobId() );
 
-    it = mRemoteJobs.find( job.jobId() );
-    if ( it != mRemoteJobs.end() ) mRemoteJobs.remove( it );
-
-    it = mCompileJobs.find( job.jobId() );
-    if ( it != mCompileJobs.end() ) mCompileJobs.remove( it );
+    if ( mCompileJobs.contains( job.jobId() ) )
+      mCompileJobs.removeAll( job.jobId() );
 
     updateJobLabels();
     return;
@@ -210,13 +202,11 @@ void HostView::updateJobLabels()
   mRemoteJobsLabel->setText( QString::number( mRemoteJobs.count() ) );
   mCompileJobsLabel->setText( QString::number( mCompileJobs.count() ) );
 
-#warning FIXME
-#if 0
   if ( mLocalJobs.count() > 0 ) {
-    mOwnLed->setColor( "orange" );
+    mOwnLed->setColor( QColor( "organge" ) );
     mOwnLed->on();
   } else if ( mRemoteJobs.count() > 0 ) {
-    mOwnLed->setColor( "red" );
+    mOwnLed->setColor( QColor( Qt::green ) );
     mOwnLed->on();
   } else {
     mOwnLed->off();
@@ -227,27 +217,38 @@ void HostView::updateJobLabels()
   } else {
     mOthersLed->off();
   }
-#endif
 }
 
 void HostView::checkNode( unsigned int hostid )
 {
   if ( !hostid ) return;
 
-//  kdDebug() << "HostView::checkNode(): " << hostid << endl;
+//  kDebug() << "HostView::checkNode(): " << hostid << endl;
 
   if ( mHostId == 0 ) {
     HostInfo *info = hostInfoManager()->find( hostid );
     if ( info->name() == mConfigDialog->hostName() ) {
       mHostId = hostid;
       mHostNameLabel->setText( mConfigDialog->hostName() );
-      setBackgroundColor( info->color() );
-      mHostNameLabel->setBackgroundColor( info->color() );
-#if 0
-      mOwnLed->setBackgroundColor( info->color() );
-      mOthersLed->setBackgroundColor( info->color() );
-#endif
-      mHostNameLabel->setPaletteForegroundColor( textColor( info->color() ) );
+      QPalette pal = palette();
+      pal.setColor( backgroundRole(), info->color() );
+      setPalette( pal );
+      
+      pal = mHostNameLabel->palette();
+      pal.setColor( mHostNameLabel->backgroundRole(), info->color() );
+      mHostNameLabel->setPalette( pal );
+
+      pal = mOwnLed->palette();
+      pal.setColor( mOwnLed->backgroundRole(), info->color() );
+      mOwnLed->setPalette( pal );
+
+      pal = mOthersLed->palette();
+      pal.setColor( mOthersLed->backgroundRole(), info->color() );
+      mOthersLed->setPalette( pal );
+
+      pal = mHostNameLabel->palette();
+      pal.setColor( mHostNameLabel->foregroundRole(), textColor( info->color() ) );
+      mHostNameLabel->setPalette( pal );
       repaint();
     }
   }
@@ -262,7 +263,6 @@ void HostView::removeNode( unsigned int hostid )
 
 void HostView::updateSchedulerState( bool online )
 {
-#if 0
   if ( online ) {
     mOwnLed->show();
     mOthersLed->show();
@@ -270,7 +270,6 @@ void HostView::updateSchedulerState( bool online )
     mOwnLed->hide();
     mOthersLed->hide();
   }
-#endif
 }
 
 QWidget *HostView::widget()

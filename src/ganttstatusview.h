@@ -28,17 +28,17 @@
 #include <qmap.h>
 #include <qpixmap.h>
 #include <q3scrollview.h>
-#include <q3valuelist.h>
+#include <qlist.h>
 //Added by qt3to4:
 #include <QResizeEvent>
-#include <Q3GridLayout>
-#include <Q3VBoxLayout>
+#include <QGridLayout>
+#include <QVBoxLayout>
 #include <QPaintEvent>
 
 class QCheckBox;
-class Q3GridLayout;
+class QGridLayout;
 class QTimer;
-class Q3VBoxLayout;
+class QVBoxLayout;
 
 class GanttConfigDialog : public QDialog
 {
@@ -112,7 +112,7 @@ class GanttProgress : public QWidget
 
     StatusView *mStatusView;
 
-    Q3ValueList< JobData > m_jobs;
+    QList< JobData > m_jobs;
 
     int mClock;
 
@@ -156,18 +156,18 @@ class GanttStatusView : public Q3ScrollView, public StatusView
     GanttConfigDialog *mConfigDialog;
 
     QWidget *mTopWidget;
-    Q3GridLayout *m_topLayout;
+    QGridLayout *m_topLayout;
 
     GanttTimeScaleWidget *mTimeScale;
 
-    typedef Q3ValueList<GanttProgress *> SlotList;
+    typedef QList<GanttProgress *> SlotList;
     typedef QMap<unsigned int,SlotList> NodeMap;
     NodeMap mNodeMap;
     typedef QMap<unsigned int,int> AgeMap;
     AgeMap mAgeMap;
     typedef QMap<unsigned int, GanttProgress *> JobMap;
     JobMap mJobMap;
-    typedef QMap<unsigned int,Q3VBoxLayout *> NodeLayoutMap;
+    typedef QMap<unsigned int,QVBoxLayout *> NodeLayoutMap;
     NodeLayoutMap mNodeLayouts;
     typedef QMap<unsigned int,int> NodeRowMap;
     NodeRowMap mNodeRows;

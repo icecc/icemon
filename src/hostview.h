@@ -23,9 +23,8 @@
 #include "statusview.h"
 
 #include <qdialog.h>
-//Added by qt3to4:
 #include <QResizeEvent>
-#include <Q3ValueList>
+#include <QList>
 #include <QLabel>
 
 class KLed;
@@ -97,9 +96,9 @@ class HostView : public QWidget, public StatusView
     
     unsigned int mHostId;
 
-    Q3ValueList<unsigned int> mLocalJobs;
-    Q3ValueList<unsigned int> mRemoteJobs;
-    Q3ValueList<unsigned int> mCompileJobs;
+    QList<unsigned int> mLocalJobs;
+    QList<unsigned int> mRemoteJobs;
+    QList<unsigned int> mCompileJobs;
 };
 
 #endif

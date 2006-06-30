@@ -38,10 +38,7 @@
 #include <qregexp.h>
 #include <qcheckbox.h>
 //Added by qt3to4:
-#include <Q3HBoxLayout>
-#include <Q3Frame>
 #include <QResizeEvent>
-#include <Q3VBoxLayout>
 
 #include <math.h>
 
@@ -50,18 +47,23 @@ static bool suppressDomain = false;
 StarViewConfigDialog::StarViewConfigDialog( QWidget *parent )
   : QDialog( parent )
 {
-  Q3BoxLayout *topLayout = new Q3VBoxLayout( this );
+  QBoxLayout *topLayout = new QVBoxLayout( this );
   topLayout->setMargin( KDialog::marginHint() );
   topLayout->setSpacing( KDialog::spacingHint() );
 
   QLabel *label = new QLabel( i18n("Number of nodes per ring:"), this );
   topLayout->addWidget( label );
 
-  Q3BoxLayout *nodesLayout = new Q3HBoxLayout( topLayout );
+  QBoxLayout *nodesLayout = new QHBoxLayout();
+  topLayout->addLayout( nodesLayout );
 
   int nodesPerRing = 25;
 
-  mNodesPerRingSlider = new QSlider( 1, 50, 1, nodesPerRing, Qt::Horizontal, this );
+  mNodesPerRingSlider = new QSlider( Qt::Horizontal, this );
+  mNodesPerRingSlider->setMinimum( 1 );
+  mNodesPerRingSlider->setMaximum( 50 );
+  mNodesPerRingSlider->setSingleStep( 1 );
+  mNodesPerRingSlider->setValue( nodesPerRing );
   nodesLayout->addWidget( mNodesPerRingSlider );
   connect( mNodesPerRingSlider, SIGNAL( valueChanged( int ) ),
            SIGNAL( configChanged() ) );
@@ -83,11 +85,12 @@ StarViewConfigDialog::StarViewConfigDialog( QWidget *parent )
   connect( mSuppressDomainName, SIGNAL( toggled ( bool ) ),
            SLOT( slotSuppressDomainName ( bool ) ) );
 
-  Q3Frame *hline = new Q3Frame( this );
-  hline->setFrameShape( Q3Frame::HLine );
+  QFrame *hline = new QFrame( this );
+  hline->setFrameShape( QFrame::HLine );
   topLayout->addWidget( hline );
 
-  Q3BoxLayout *buttonLayout = new Q3HBoxLayout( topLayout );
+  QBoxLayout *buttonLayout = new QHBoxLayout();
+  topLayout->addLayout( buttonLayout );
 
   buttonLayout->addStretch( 1 );
 
@@ -103,7 +106,7 @@ void StarViewConfigDialog::slotNodesPerRingChanged( int nodes )
 
 void StarViewConfigDialog::setMaxNodes( int maxNodes )
 {
-  mNodesPerRingSlider->setMaxValue( maxNodes + 1 );
+  mNodesPerRingSlider->setMaximum( maxNodes + 1 );
 }
 
 int StarViewConfigDialog::nodesPerRing()
@@ -168,7 +171,7 @@ void HostItem::deleteSubItems()
 
   QMap<Job,Q3CanvasEllipse *>::ConstIterator it;
   for( it = m_jobHalos.begin(); it != m_jobHalos.end(); ++it ) {
-    delete it.data();
+    delete it.value();
   }
   m_jobHalos.clear();
 
@@ -192,7 +195,7 @@ void HostItem::updateName()
   if (mHostInfo) {
       QString s = mHostInfo->name();
       if (suppressDomain) {
-          int l = s.find('.');
+          int l = s.indexOf('.');
           if (l>0)
               s.truncate(l);
       }
@@ -220,7 +223,7 @@ void HostItem::moveBy( double dx, double dy )
 
   QMap<Job,Q3CanvasEllipse*>::ConstIterator it;
   for( it = m_jobHalos.begin(); it != m_jobHalos.end(); ++it ) {
-    it.data()->moveBy( dx, dy );
+    it.value()->moveBy( dx, dy );
   }
 }
 
@@ -251,7 +254,7 @@ void HostItem::update( const Job &job )
     createJobHalo( job );
   } else if ( finished ) {
     deleteJobHalo( job );
-    m_jobs.remove( it );
+    m_jobs.erase( it );
   }
 }
 
@@ -275,7 +278,7 @@ void HostItem::deleteJobHalo( const Job &job )
 
   Q3CanvasEllipse *halo = *it;
   delete halo;
-  m_jobHalos.remove( it );
+  m_jobHalos.erase( it );
 
   updateHalos();
 }
@@ -286,7 +289,7 @@ void HostItem::updateHalos()
 
   QMap<Job,Q3CanvasEllipse*>::Iterator it;
   for( it = m_jobHalos.begin(); it != m_jobHalos.end(); ++it ) {
-    Q3CanvasEllipse *halo = it.data();
+    Q3CanvasEllipse *halo = it.value();
     halo->setSize( mBaseWidth + count * 6, mBaseHeight + count * 6 );
     halo->setBrush( mHostInfoManager->hostColor( it.key().client() ) );
     ++count;
@@ -294,8 +297,9 @@ void HostItem::updateHalos()
 }
 
 StarView::StarView( HostInfoManager *m, QWidget *parent, const char *name )
-  : QWidget( parent, name, Qt::WNoAutoErase | Qt::WResizeNoErase ), StatusView( m )
+  : QWidget( parent, Qt::WNoAutoErase | Qt::WResizeNoErase ), StatusView( m )
 {
+    setObjectName( name );
     mConfigDialog = new StarViewConfigDialog( this );
     connect( mConfigDialog, SIGNAL( configChanged() ),
              SLOT( slotConfigChanged() ) );
@@ -303,7 +307,7 @@ StarView::StarView( HostInfoManager *m, QWidget *parent, const char *name )
     m_canvas = new Q3Canvas( this );
     m_canvas->resize( width(), height() );
 
-    Q3HBoxLayout *layout = new Q3HBoxLayout( this );
+    QHBoxLayout *layout = new QHBoxLayout( this );
     layout->setMargin( 0 );
 
     m_canvasView = new Q3CanvasView( m_canvas, this );
@@ -321,7 +325,7 @@ StarView::StarView( HostInfoManager *m, QWidget *parent, const char *name )
 void StarView::update( const Job &job )
 {
 #if 0
-  kdDebug() << "StarView::update() " << job.jobId()
+  kDebug() << "StarView::update() " << job.jobId()
             << " server: " << job.server() << " client: " << job.client()
             << " state: " << job.stateAsString() << endl;
 #endif
@@ -339,7 +343,7 @@ void StarView::update( const Job &job )
   if ( it != mJobMap.end() ) {
     (*it)->update( job );
     if ( finished ) {
-      mJobMap.remove( it );
+      mJobMap.erase( it );
       unsigned int clientid = job.client();
       HostItem *clientItem = findHostItem( clientid );
       if ( clientItem ) clientItem->setIsActiveClient( false );
@@ -351,7 +355,7 @@ void StarView::update( const Job &job )
 
   unsigned int hostid = processor( job );
   if ( !hostid ) {
-    kdDebug() << "Empty host" << endl;
+    kDebug() << "Empty host" << endl;
     return;
   }
 
@@ -379,13 +383,13 @@ HostItem *StarView::findHostItem( unsigned int hostid )
 {
   HostItem *hostItem = 0;
   QMap<unsigned int, HostItem*>::iterator it = m_hostItems.find( hostid );
-  if ( it != m_hostItems.end() ) hostItem = it.data();
+  if ( it != m_hostItems.end() ) hostItem = it.value();
   return hostItem;
 }
 
 void StarView::checkNode( unsigned int hostid )
 {
-//  kdDebug() << "StarView::checkNode() " << hostid << endl;
+//  kDebug() << "StarView::checkNode() " << hostid << endl;
 
   if ( !hostid ) return;
 
@@ -401,7 +405,7 @@ void StarView::checkNode( unsigned int hostid )
 
 void StarView::removeNode( unsigned int hostid )
 {
-//  kdDebug() << "StarView::removeNode() " << hostid << endl;
+//  kDebug() << "StarView::removeNode() " << hostid << endl;
 
   HostItem *hostItem = findHostItem( hostid );
 
@@ -422,7 +426,7 @@ void StarView::forceRemoveNode( unsigned int hostid )
 void StarView::removeItem( HostItem *hostItem )
 {
 #if 0
-  kdDebug() << "StarView::removeItem() " << hostid << " ("
+  kDebug() << "StarView::removeItem() " << hostid << " ("
             << int( hostItem ) << ")" << endl;
 #endif
 
@@ -433,12 +437,12 @@ void StarView::removeItem( HostItem *hostItem )
   QMap<unsigned int,HostItem *>::Iterator it;
   for( it = mJobMap.begin(); it != mJobMap.end(); ++it ) {
 #if 0
-    kdDebug() << " JOB: " << it.key() << " (" << int( it.data() )
+    kDebug() << " JOB: " << it.key() << " (" << int( it.value() )
               << ")" << endl;
 #endif
-    if ( it.data() == hostItem ) {
+    if ( it.value() == hostItem ) {
 #if 0
-      kdDebug() << " Delete Job " << it.key() << endl;
+      kDebug() << " Delete Job " << it.key() << endl;
 #endif
       obsoleteJobs.append( it.key() );
     }
@@ -549,7 +553,7 @@ void StarView::centerSchedulerItem()
 
 void StarView::slotConfigChanged()
 {
-//  kdDebug() << "StarView::slotConfigChanged()" << endl;
+//  kDebug() << "StarView::slotConfigChanged()" << endl;
 
   HostInfoManager::HostMap hostMap = hostInfoManager()->hostMap();
   HostInfoManager::HostMap::ConstIterator it;
@@ -565,17 +569,17 @@ void StarView::slotConfigChanged()
 
 void StarView::arrangeHostItems()
 {
-//  kdDebug() << "StarView::arrangeHostItems()" << endl;
+//  kDebug() << "StarView::arrangeHostItems()" << endl;
 
   int count = m_hostItems.count();
 
-//  kdDebug() << "  Count: " << count << endl;
+//  kDebug() << "  Count: " << count << endl;
 
   int nodesPerRing = mConfigDialog->nodesPerRing();
 
   int ringCount = int( count / nodesPerRing ) + 1;
 
-//  kdDebug() << "  Rings: " << ringCount << endl;
+//  kDebug() << "  Rings: " << ringCount << endl;
   double radiusFactor = 2.5;
   if (suppressDomain) radiusFactor = 4;
   const int xRadius = qRound( m_canvas->width() / radiusFactor );
@@ -592,7 +596,7 @@ void StarView::arrangeHostItems()
     double xr = xRadius * factor;
     double yr = yRadius * factor;
 
-    HostItem *item = it.data();
+    HostItem *item = it.value();
 
     item->updateName();
 
@@ -613,7 +617,7 @@ HostItem *StarView::createHostItem( unsigned int hostid )
   if ( !i || i->isOffline() || i->name().isEmpty() )
     return 0;
 
-//  kdDebug() << "New node for " << hostid << " (" << i->name() << ")" << endl;
+//  kDebug() << "New node for " << hostid << " (" << i->name() << ")" << endl;
 
   //assert( !i->name().isEmpty() );
 
@@ -691,7 +695,7 @@ bool StarView::filterArch( unsigned int hostid )
 {
   HostInfo *i = hostInfoManager()->find( hostid );
   if ( !i ) {
-    kdError() << "No HostInfo for id " << hostid << endl;
+    kError() << "No HostInfo for id " << hostid << endl;
     return false;
   }
 
@@ -704,7 +708,7 @@ bool StarView::filterArch( HostInfo *i )
 
   QRegExp regExp( mConfigDialog->archFilter() );
 
-  if ( regExp.search( i->platform() ) >= 0 ) {
+  if ( regExp.indexIn( i->platform() ) >= 0 ) {
     return true;
   }
 
