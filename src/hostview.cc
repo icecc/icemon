@@ -293,3 +293,5 @@ void HostView::configureView()
   mConfigDialog->show();
   mConfigDialog->raise();
 }
+
+#include "hostview.moc"

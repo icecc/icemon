@@ -710,3 +710,5 @@ bool StarView::filterArch( HostInfo *i )
 
   return false;
 }
+
+#include "starview.moc"

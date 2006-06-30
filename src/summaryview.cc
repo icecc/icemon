@@ -274,3 +274,5 @@ void SummaryView::viewportResizeEvent(QResizeEvent *e)
         
     Q3ScrollView::viewportResizeEvent(e);
 }
+
+#include "summaryview.moc"

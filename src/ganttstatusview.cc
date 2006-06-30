@@ -588,3 +588,5 @@ void GanttStatusView::slotConfigChanged()
   if ( mConfigDialog->isTimeScaleVisible() ) mTimeScale->show();
   else mTimeScale->hide();
 }
+
+#include "ganttstatusview.moc"

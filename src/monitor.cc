@@ -25,8 +25,7 @@
 #include "hostinfo.h"
 #include "statusview.h"
 
-#include <services/logging.h>
-#include <services/comm.h>
+#include <icecream/comm.h>
 
 #include <klocale.h>
 #include <kdebug.h>
@@ -35,6 +34,7 @@
 #include <qtimer.h>
 
 #include <list>
+#include <iostream>
 
 using namespace std;
 
@@ -124,7 +124,7 @@ void Monitor::msgReceived()
       handle_job_done( m );
       break;
     case M_END:
-      cout << "END" << endl;
+      std::cout << "END" << endl;
       checkScheduler( true );
       break;
     case M_MON_STATS:
@@ -294,3 +294,5 @@ void Monitor::setSchedulerState( bool online )
   mSchedulerOnline = online;
   m_view->updateSchedulerState( online );
 }
+
+#include "monitor.moc"
