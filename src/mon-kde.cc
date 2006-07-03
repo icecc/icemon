@@ -31,8 +31,6 @@
 #include "starview.h"
 #include "summaryview.h"
 
-#include "logging.h"
-
 #include <kaboutdata.h>
 #include <kaction.h>
 #include <kapplication.h>
@@ -218,7 +216,6 @@ static const KCmdLineOptions options[] =
 
 int main( int argc, char **argv )
 {
-  setup_debug(Debug|Info|Warning|Error,"");
   KAboutData aboutData( rs_program_name, appName, version, description,
 	                KAboutData::License_BSD, copyright );
   aboutData.addAuthor( "Frerich Raabe", 0, "raabe@kde.org" );

@@ -1,5 +1,8 @@
 project(icemon)
 
+#ignore DONTPORT restriction
+set(KDE4_IGNORE_DONTPORT TRUE)
+
 set( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules )
 
 # search packages used by KDE
