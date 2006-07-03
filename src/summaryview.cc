@@ -28,6 +28,7 @@
 #include <QFrame>
 #include <QList>
 #include <QVBoxLayout>
+#include <QScrollBar>
 
 class NodeInfoFrame : public QFrame
 {
@@ -53,7 +54,7 @@ protected:
         p->setPen(newPen);
         p->drawRect(border, border, width() - border * 2, height() - border * 2);
 
-        p->setPen(oldPen);       
+        p->setPen(oldPen);
     }
 private:
     QColor m_frameColor;
@@ -71,7 +72,7 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
     const QColor nodeColor = view->hostInfoManager()->hostColor(hostid);
 
     NodeInfoFrame *labelBox = new NodeInfoFrame(parent, nodeColor);
-    labelBox->layout()->setMargin(5);
+    layout->setMargin(5);
     layout->addWidget(labelBox, row, 0);
     labelBox->show();
     labelBox->setMinimumWidth(75);
@@ -111,7 +112,7 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
     }
 
     NodeInfoFrame *detailsBox = new NodeInfoFrame(parent, nodeColor);
-    detailsBox->layout()->setMargin(5);
+    layout->setMargin(5);
     layout->addWidget(detailsBox, row, 1);
     detailsBox->show();
     m_widgets.append(detailsBox);
@@ -211,19 +212,18 @@ QLabel *SummaryViewItem::addLine(const QString &caption, QWidget *parent,
 // SummaryView implementation
 ////////////////////////////////////////////////////////////////////////////////
 
-SummaryView::SummaryView(HostInfoManager *h, QWidget *parent, const char *name) :
-    Q3ScrollView(parent, name), StatusView(h)
+SummaryView::SummaryView(HostInfoManager *h, QWidget *parent, const char *) :
+    QScrollArea(parent), StatusView(h)
 {
-    enableClipper(true);
     m_base = new QWidget(viewport());
-    addChild(m_base);
+    setWidget(m_base);
 
     m_layout = new QGridLayout(m_base);
     m_layout->setColumnStretch(1, 1);
     m_layout->setSpacing(5);
     m_layout->setMargin(5);
 
-    setHScrollBarMode(AlwaysOff);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setMinimumHeight(150);
 }
 
@@ -264,7 +264,7 @@ void SummaryView::checkNode(unsigned int hostid)
     }
 }
 
-void SummaryView::viewportResizeEvent(QResizeEvent *e)
+void SummaryView::resizeEvent(QResizeEvent *e)
 {
     QSize s = e->size();
 
@@ -275,8 +275,8 @@ void SummaryView::viewportResizeEvent(QResizeEvent *e)
         m_base->setMinimumHeight(s.height());
     else
         m_base->setMinimumHeight(m_base->sizeHint().height());
-        
-    Q3ScrollView::viewportResizeEvent(e);
+
+    QScrollArea::resizeEvent(e);
 }
 
 #include "summaryview.moc"

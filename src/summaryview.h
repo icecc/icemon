@@ -13,7 +13,7 @@
 
 #include "statusview.h"
 
-#include <q3scrollview.h>
+#include <QScrollArea>
 #include <q3valuevector.h>
 //Added by qt3to4:
 #include <QResizeEvent>
@@ -60,7 +60,7 @@ private:
     QList<QWidget *> m_widgets;
 };
 
-class SummaryView : public Q3ScrollView, public StatusView
+class SummaryView : public QScrollArea, public StatusView
 {
     Q_OBJECT
 
@@ -74,7 +74,7 @@ public:
     virtual QString id() const { return "summary"; }
 
 protected:
-    virtual void viewportResizeEvent(QResizeEvent *e);
+    virtual void resizeEvent(QResizeEvent *e);
 
 private:
     QMap<unsigned int, SummaryViewItem *> m_items;

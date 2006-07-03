@@ -27,7 +27,7 @@
 #include <qdialog.h>
 #include <qmap.h>
 #include <qpixmap.h>
-#include <q3scrollview.h>
+#include <QScrollArea>
 #include <qlist.h>
 //Added by qt3to4:
 #include <QResizeEvent>
@@ -119,7 +119,7 @@ class GanttProgress : public QWidget
     bool mIsFree;
 };
 
-class GanttStatusView : public Q3ScrollView, public StatusView
+class GanttStatusView : public QScrollArea, public StatusView
 {
     Q_OBJECT
   public:
@@ -141,7 +141,7 @@ class GanttStatusView : public Q3ScrollView, public StatusView
     virtual QWidget *widget();
 
   protected:
-    void viewportResizeEvent( QResizeEvent *e );
+    void resizeEvent( QResizeEvent *e );
 
   private slots:
     void slotConfigChanged();

@@ -38,6 +38,7 @@
 #include <QFrame>
 #include <QResizeEvent>
 #include <QPaintEvent>
+#include <QScrollBar>
 
 #define i18n
 
@@ -73,7 +74,7 @@ bool GanttConfigDialog::isTimeScaleVisible()
 }
 
 GanttTimeScaleWidget::GanttTimeScaleWidget( QWidget *parent, const char *name )
-	: QWidget( parent, Qt::WResizeNoErase | Qt::WNoAutoErase ),
+	: QWidget( parent ),
           mPixelsPerSecond( 40 )
 {
   setObjectName( name );
@@ -126,7 +127,7 @@ void GanttTimeScaleWidget::paintEvent( QPaintEvent *pe )
 
 GanttProgress::GanttProgress( StatusView *statusView, QWidget *parent,
                               const char *name )
-	: QWidget( parent, Qt::WResizeNoErase | Qt::WNoAutoErase ),
+	: QWidget( parent ),
           mStatusView( statusView ), mClock( 0 ), mIsFree( true )
 {
   setObjectName( name );
@@ -270,6 +271,8 @@ QColor GanttProgress::colorForStatus( const Job &job ) const
 void GanttProgress::paintEvent( QPaintEvent * )
 {
     QPainter p( this );
+    p.setBackgroundMode(Qt::OpaqueMode);
+    p.setBackground(palette().background());
     drawGraph( p );
 }
 
@@ -279,18 +282,17 @@ void GanttProgress::resizeEvent( QResizeEvent * )
 }
 
 GanttStatusView::GanttStatusView( HostInfoManager *m, QWidget *parent,
-                                  const char *name )
-  : Q3ScrollView( parent, name, Qt::WNoAutoErase | Qt::WResizeNoErase ),
-    StatusView( m )
+                                  const char *)
+  : QScrollArea( parent ),
+    StatusView( m ),
+    mTopWidget(new QWidget( viewport() ))
 {
     mConfigDialog = new GanttConfigDialog( this );
     connect( mConfigDialog, SIGNAL( configChanged() ),
              SLOT( slotConfigChanged() ) );
 
-    enableClipper( true );
-    setHScrollBarMode( AlwaysOff );
-    mTopWidget = new QWidget( viewport() );
-    addChild( mTopWidget );
+    setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
+    setWidget( mTopWidget );
 
     QPalette palette = mTopWidget->palette();
     palette.setColor( mTopWidget->backgroundRole(), Qt::white );
@@ -564,7 +566,7 @@ void GanttStatusView::checkAge()
         unregisterNode( *it );
 }
 
-void GanttStatusView::viewportResizeEvent( QResizeEvent *e )
+void GanttStatusView::resizeEvent( QResizeEvent *e )
 {
   QSize s = e->size();
 
@@ -578,7 +580,7 @@ void GanttStatusView::viewportResizeEvent( QResizeEvent *e )
     mTopWidget->setMinimumHeight( mTopWidget->sizeHint().height() );
   }
 
-  Q3ScrollView::viewportResizeEvent( e );
+  QScrollArea::resizeEvent( e );
 }
 
 void GanttStatusView::configureView()
