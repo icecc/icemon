@@ -19,6 +19,7 @@ else (LIBICECREAM_INCLUDE_DIR AND LIBICECREAM_LIBRARIES)
   PKGCONFIG(icecream _icecreamIncDir _icecreamLinkDir _icecreamLinkFlags _icecreamCflags)
 
   FIND_PATH(LIBICECREAM_INCLUDE_DIR icecream/comm.h
+    ${_icecreamIncDir}
     /usr/include
     /usr/local/include
     /opt/icecream/include
@@ -49,7 +50,7 @@ else (LIBICECREAM_INCLUDE_DIR AND LIBICECREAM_LIBRARIES)
   endif (LIBICECREAM_FOUND)
 
   MARK_AS_ADVANCED(
-     LIBICECREAM_INCLUDE_DIR LIBICECREAM_LIBRARIES 
+     LIBICECREAM_INCLUDE_DIR LIBICECREAM_LIBRARIES
   )
 
 endif (LIBICECREAM_INCLUDE_DIR AND LIBICECREAM_LIBRARIES)
