@@ -26,9 +26,9 @@
 
 #include <q3canvas.h>
 #include <qdialog.h>
-//Added by qt3to4:
 #include <QResizeEvent>
 #include <QLabel>
+#include <QGraphicsEllipseItem>
 
 class HostInfo;
 
@@ -36,6 +36,7 @@ class QSlider;
 class QLabel;
 class QLineEdit;
 class QCheckBox;
+class QGraphicsView;
 
 class StarViewConfigDialog : public QDialog
 {
@@ -65,20 +66,16 @@ class StarViewConfigDialog : public QDialog
 };
 
 
-class HostItem : public Q3CanvasText
+class HostItem : public QGraphicsSimpleTextItem
 {
   public:
     enum { RttiHostItem = 1000 };
 
-    HostItem( const QString &text, Q3Canvas *canvas, HostInfoManager * );
-    HostItem( HostInfo *hostInfo, Q3Canvas *canvas, HostInfoManager * );
+    HostItem( const QString &text, QGraphicsScene *canvas, HostInfoManager * );
+    HostItem( HostInfo *hostInfo, QGraphicsScene *canvas, HostInfoManager * );
     ~HostItem();
 
     void init();
-
-    void deleteSubItems();
-
-    int rtti() const { return RttiHostItem; }
 
     HostInfo *hostInfo() const { return mHostInfo; }
 
@@ -90,16 +87,14 @@ class HostItem : public Q3CanvasText
     void setIsCompiling( bool compiling ) { mIsCompiling = compiling; }
     bool isCompiling() const { return mIsCompiling; }
 
-    void setStateItem( Q3CanvasItem *item ) { m_stateItem = item; }
-    Q3CanvasItem *stateItem() { return m_stateItem; }
+    void setStateItem( QGraphicsItem *item ) { m_stateItem = item; }
+    QGraphicsItem *stateItem() { return m_stateItem; }
 
     void setClient( unsigned int client ) { m_client = client; }
     unsigned int client() const { return m_client; }
 
     QString hostName() const;
     void updateName();
-
-    void moveBy( double dx, double dy );
 
     double centerPosX() const { return m_boxItem->x(); }
     double centerPosY() const { return m_boxItem->y(); }
@@ -120,15 +115,15 @@ class HostItem : public Q3CanvasText
     bool mIsActiveClient;
     bool mIsCompiling;
 
-    Q3CanvasItem *m_stateItem;
+    QGraphicsItem *m_stateItem;
     unsigned int m_client;
 
     int mBaseWidth;
     int mBaseHeight;
 
-    Q3CanvasEllipse *m_boxItem;
+    QGraphicsEllipseItem *m_boxItem;
 
-    QMap<Job, Q3CanvasEllipse *> m_jobHalos;
+    QMap<Job, QGraphicsEllipseItem *> m_jobHalos;
 
     JobList m_jobs;
 };
@@ -184,8 +179,8 @@ class StarView : public QWidget, public StatusView
 
     StarViewConfigDialog *mConfigDialog;
 
-    Q3Canvas *m_canvas;
-    Q3CanvasView *m_canvasView;
+    QGraphicsScene *m_canvas;
+    QGraphicsView *m_canvasView;
     HostItem *m_schedulerItem;
     QMap<unsigned int,HostItem *> m_hostItems;
     QMap<unsigned int,HostItem *> mJobMap;
