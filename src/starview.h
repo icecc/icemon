@@ -99,6 +99,9 @@ class HostItem : public QGraphicsItemGroup
     double centerPosX() const { return pos().x()+m_textItem->boundingRect().width()/2; }
     double centerPosY() const { return pos().y()+m_textItem->boundingRect().height()/2; }
 
+    double relativeCenterPosX() const { return m_textItem->boundingRect().width()/2; }
+    double relativeCenterPosY() const { return m_textItem->boundingRect().height()/2; }
+
     void setCenterPos( double x, double y );
 
     void update( const Job &job );

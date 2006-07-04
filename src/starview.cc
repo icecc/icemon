@@ -235,7 +235,7 @@ void HostItem::update( const Job &job )
 
 void HostItem::createJobHalo( const Job &job )
 {
-  QGraphicsEllipseItem *halo = new QGraphicsEllipseItem( 
+  QGraphicsEllipseItem *halo = new QGraphicsEllipseItem(
       centerPosX(), centerPosY(), mBaseWidth, mBaseHeight,
                                              this, scene() );
   halo->setZValue( 70 - m_jobHalos.size() );
@@ -628,16 +628,16 @@ void StarView::drawState( HostItem *node )
     else color = hostColor( client );
 
     if ( node->isCompiling() ) {
-      newItem = new QGraphicsLineItem( 0, m_canvas );
+      newItem = new QGraphicsLineItem( node, m_canvas );
       newItem->setPen( color );
     } else if ( node->isActiveClient() ) {
-      newItem = new QGraphicsLineItem( 0, m_canvas );
+      newItem = new QGraphicsLineItem( node, m_canvas );
       newItem->setPen( QPen( color, 2, Qt::DashLine ) );
     }
 
     if ( newItem ) {
-      newItem->setLine( node->centerPosX(), node->centerPosY(), m_schedulerItem->centerPosX(),
-                        m_schedulerItem->centerPosY() );
+      newItem->setLine( node->relativeCenterPosX(), node->relativeCenterPosY(), m_schedulerItem->centerPosX() - node->pos().x(),
+                        m_schedulerItem->centerPosY() - node->pos().y() );
       newItem->setZValue(0);
       newItem->show();
     }
