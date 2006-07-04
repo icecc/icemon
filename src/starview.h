@@ -66,7 +66,7 @@ class StarViewConfigDialog : public QDialog
 };
 
 
-class HostItem : public QGraphicsSimpleTextItem
+class HostItem : public QGraphicsItemGroup
 {
   public:
     enum { RttiHostItem = 1000 };
@@ -96,8 +96,8 @@ class HostItem : public QGraphicsSimpleTextItem
     QString hostName() const;
     void updateName();
 
-    double centerPosX() const { return m_boxItem->x(); }
-    double centerPosY() const { return m_boxItem->y(); }
+    double centerPosX() const { return pos().x()+m_textItem->boundingRect().width()/2; }
+    double centerPosY() const { return pos().y()+m_textItem->boundingRect().height()/2; }
 
     void setCenterPos( double x, double y );
 
@@ -116,6 +116,7 @@ class HostItem : public QGraphicsSimpleTextItem
     bool mIsCompiling;
 
     QGraphicsItem *m_stateItem;
+    QGraphicsSimpleTextItem* m_textItem;
     unsigned int m_client;
 
     int mBaseWidth;

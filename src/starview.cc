@@ -128,16 +128,18 @@ void StarViewConfigDialog::slotSuppressDomainName( bool b )
 
 
 HostItem::HostItem( const QString &text, QGraphicsScene *canvas, HostInfoManager *m )
-  : QGraphicsSimpleTextItem( text, 0, canvas ), mHostInfo( 0 ), mHostInfoManager( m ),
+  : QGraphicsItemGroup( 0, canvas ), mHostInfo( 0 ), mHostInfoManager( m ),
     m_stateItem( 0 )
 {
   init();
+
+  m_textItem->setText(text);
 
   updateName();
 }
 
 HostItem::HostItem( HostInfo *hostInfo, QGraphicsScene *canvas, HostInfoManager *m )
-  : QGraphicsSimpleTextItem( 0, canvas ), mHostInfo( hostInfo ),
+  : QGraphicsItemGroup( 0, canvas ), mHostInfo( hostInfo ),
     mHostInfoManager( m ), m_stateItem( 0 )
 {
   init();
@@ -149,14 +151,14 @@ HostItem::~HostItem()
 
 void HostItem::init()
 {
-  setZValue( 100 );
-
   mBaseWidth = 0;
   mBaseHeight = 0;
 
   m_boxItem = new QGraphicsEllipseItem( this, scene() );
   m_boxItem->setZValue( 80 );
-  m_boxItem->setPen(QPen(Qt::NoPen));
+
+  m_textItem = new QGraphicsSimpleTextItem( this, scene() );
+  m_textItem->setZValue( 100 );
 
   setHostColor( QColor( 200, 200, 200 ) );
 
@@ -170,7 +172,7 @@ void HostItem::setHostColor( const QColor &color )
 {
   m_boxItem->setBrush( color );
 
-  setPen( StatusView::textColor( color ) );
+  m_textItem->setPen( StatusView::textColor( color ) );
 }
 
 QString HostItem::hostName() const
@@ -187,14 +189,14 @@ void HostItem::updateName()
           if (l>0)
               s.truncate(l);
       }
-      setText(s);
+      m_textItem->setText(s);
   }
 
-  QRectF r = boundingRect();
+  QRectF r = m_textItem->boundingRect();
   mBaseWidth = r.width() + 10 ;
   mBaseHeight = r.height() + 10 ;
 
-  m_boxItem->setRect(0, 0, mBaseWidth-10, mBaseHeight-8);
+  m_boxItem->setRect(-5, -5, mBaseWidth, mBaseHeight);
 
   updateHalos();
 }
@@ -202,7 +204,8 @@ void HostItem::updateName()
 void HostItem::setCenterPos( double x, double y )
 {
     // move all items (also the sub items)
-    setPos( x - boundingRect().width()/2, y - boundingRect().height()/2 );
+    setPos( x - m_textItem->boundingRect().width()/2, y - m_textItem->boundingRect().height()/2 );
+  //  setPos( x, y );
 }
 
 void HostItem::update( const Job &job )
@@ -263,7 +266,7 @@ void HostItem::updateHalos()
   QMap<Job,QGraphicsEllipseItem*>::Iterator it;
   for( it = m_jobHalos.begin(); it != m_jobHalos.end(); ++it ) {
     QGraphicsEllipseItem *halo = it.value();
-    halo->setRect( halo->x(), halo->y(), mBaseWidth + count * 6, mBaseHeight + count * 6 );
+    halo->setRect( halo->x() - 5 - count * 3, halo->y() - 5 - count * 3, mBaseWidth + count * 6, mBaseHeight + count * 6 );
     halo->setBrush( mHostInfoManager->hostColor( it.key().client() ) );
     ++count;
   }
@@ -286,6 +289,7 @@ StarView::StarView( HostInfoManager *m, QWidget *parent, const char *name )
     m_canvasView = new QGraphicsView( m_canvas, this );
     m_canvasView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_canvasView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_canvasView->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     layout->addWidget( m_canvasView );
 
     m_schedulerItem = new HostItem( "", m_canvas, hostInfoManager() );
@@ -628,12 +632,13 @@ void StarView::drawState( HostItem *node )
       newItem->setPen( color );
     } else if ( node->isActiveClient() ) {
       newItem = new QGraphicsLineItem( 0, m_canvas );
-      newItem->setPen( QPen( color, 0, Qt::DashLine ) );
+      newItem->setPen( QPen( color, 2, Qt::DashLine ) );
     }
 
     if ( newItem ) {
       newItem->setLine( node->centerPosX(), node->centerPosY(), m_schedulerItem->centerPosX(),
                         m_schedulerItem->centerPosY() );
+      newItem->setZValue(0);
       newItem->show();
     }
 
