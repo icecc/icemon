@@ -273,7 +273,7 @@ void HostItem::updateHalos()
 }
 
 StarView::StarView( HostInfoManager *m, QWidget *parent, const char *name )
-  : QWidget( parent, Qt::WNoAutoErase | Qt::WResizeNoErase ), StatusView( m )
+  : QWidget( parent ), StatusView( m )
 {
     setObjectName( name );
     mConfigDialog = new StarViewConfigDialog( this );

@@ -42,6 +42,9 @@
 #include <kstdaction.h>
 #include <ktoggleaction.h>
 #include <kactioncollection.h>
+#include <kselectaction.h>
+
+#include <QMenu>
 
 MainWindow::MainWindow( QWidget *parent, const char *name )
   : KMainWindow( parent ), m_view( 0 )
@@ -52,30 +55,26 @@ MainWindow::MainWindow( QWidget *parent, const char *name )
 
     m_monitor = new Monitor( m_hostInfoManager, this );
 
-//    QActionGroup* viewGroup = new QActionGroup(this);
+    m_viewMode = new KSelectAction(i18n("&Mode"), actionCollection(), "view_mode");
 
-    KAction *action = new KToggleAction( i18n( "&List View" ), actionCollection(), "view_list_view" );
+    QAction* action = m_viewMode->addAction(i18n( "&List View" ));
     connect( action, SIGNAL( triggered() ), this, SLOT( setupListView() ) );
 
-    action = new KToggleAction( i18n( "&Star View" ), actionCollection(), "view_star_view" );
+    action = m_viewMode->addAction(i18n( "&Star View" ));
     connect( action, SIGNAL( triggered() ), this, SLOT( setupStarView() ) );
-                          
 
-    action = new KToggleAction( i18n( "&Gantt View" ), actionCollection(), "view_gantt_view" );
+    action = m_viewMode->addAction(i18n( "&Gantt View" ));
     connect( action, SIGNAL( triggered() ), this, SLOT( setupGanttView() ) );
-                          
 
-    action = new KToggleAction( i18n( "Summary &View" ), actionCollection(), "view_foo_view" );
+    action = m_viewMode->addAction(i18n( "Summary &View" ));
     connect( action, SIGNAL( triggered() ), this, SLOT( setupSummaryView() ) );
-                          
 
-    action = new KToggleAction( i18n( "&Host View" ), actionCollection(), "view_host_view" );
+    action = m_viewMode->addAction(i18n( "&Host View" ));
     connect( action, SIGNAL( triggered() ), this, SLOT( setupHostView() ) );
-                          
 
-    action = new KToggleAction( i18n( "&Detailed Host View" ), actionCollection(), "view_detailed_host_view" );
+    action = m_viewMode->addAction(i18n( "&Detailed Host View" ));
     connect( action, SIGNAL( triggered() ), this, SLOT( setupDetailedHostView() ) );
-                          
+
 
     KStdAction::quit( this, SLOT( close() ), actionCollection() );
 
@@ -107,12 +106,33 @@ void MainWindow::readSettings()
   KConfig *cfg = KGlobal::config();
   cfg->setGroup( "View" );
   QString viewId = cfg->readEntry( "CurrentView", "star" );
-  if ( viewId == "gantt" ) setupGanttView();
-  else if ( viewId == "list" ) setupListView();
-  else if ( viewId == "star" ) setupStarView();
-  else if ( viewId == "host" ) setupHostView();
-  else if ( viewId == "detailedhost" ) setupDetailedHostView();
-  else setupSummaryView();
+
+  m_viewMode->blockSignals(true);
+  if ( viewId == "gantt" ) {
+    setupGanttView();
+    m_viewMode->setCurrentAction(m_viewMode->actions()[GanttViewType]);
+
+  } else if ( viewId == "list" ) {
+    setupListView();
+    m_viewMode->setCurrentAction(m_viewMode->actions()[ListViewType]);
+
+  } else if ( viewId == "star" ) {
+    setupStarView();
+    m_viewMode->setCurrentAction(m_viewMode->actions()[StarViewType]);
+
+  } else if ( viewId == "host" ) {
+    setupHostView();
+    m_viewMode->setCurrentAction(m_viewMode->actions()[HostViewType]);
+
+  } else if ( viewId == "detailedhost" ) {
+    setupDetailedHostView();
+    m_viewMode->setCurrentAction(m_viewMode->actions()[DetailedHostViewType]);
+
+  } else {
+    setupSummaryView();
+    m_viewMode->setCurrentAction(m_viewMode->actions()[SummaryViewType]);
+  }
+  m_viewMode->blockSignals(false);
 }
 
 void MainWindow::writeSettings()

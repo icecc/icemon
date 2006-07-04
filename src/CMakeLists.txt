@@ -47,8 +47,8 @@ target_link_libraries(icemon  ${KDE4_KDEUI_LIBS} ${LIBICECREAM_LIBRARIES} )
 
 install(TARGETS icemon DESTINATION bin)
 
-install_files( ${XDG_APPS_DIR} FILES icemon.desktop )
-install_files( ${DATA_INSTALL_DIR}/icemon FILES icemonui.rc )
+install( FILES icemon.desktop DESTINATION ${XDG_APPS_DIR} )
+install( FILES icemonui.rc DESTINATION ${DATA_INSTALL_DIR}/icemon )
 
 kde4_install_icons( ${ICON_INSTALL_DIR}  hicolor )
 

@@ -27,6 +27,7 @@
 class HostInfoManager;
 class Monitor;
 class StatusView;
+class KSelectAction;
 
 class MainWindow : public KMainWindow
 {
@@ -53,12 +54,23 @@ class MainWindow : public KMainWindow
   private:
     void readSettings();
     void writeSettings();
-  
+
     void setupView( StatusView *view, bool rememberJobs );
 
     HostInfoManager *m_hostInfoManager;
     Monitor *m_monitor;
     StatusView *m_view;
+
+    enum views {
+      ListViewType,
+      StarViewType,
+      GanttViewType,
+      SummaryViewType,
+      HostViewType,
+      DetailedHostViewType
+    };
+
+    KSelectAction* m_viewMode;
 };
 
 #endif // MON_KDE_H
