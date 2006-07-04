@@ -1,0 +1,67 @@
+Index: icemon-kde3/configure.in.bot
+===================================================================
+--- icemon-kde3/configure.in.bot	(revision 558222)
++++ icemon-kde3/configure.in.bot	(working copy)
+@@ -1,4 +1,4 @@
+ 
+-if test -z "$ICECREAM_LDADD"; then
+-  pkg-config --print-errors --exists icecream
++if test -z "$ICECC_LDADD"; then
++  pkg-config --print-errors --exists icecc
+ fi
+Index: icemon-kde3/configure.in.in
+===================================================================
+--- icemon-kde3/configure.in.in	(revision 558222)
++++ icemon-kde3/configure.in.in	(working copy)
+@@ -1,13 +1,13 @@
+ 
+-pkg-config --silence-errors --exists icecream
++pkg-config --silence-errors --exists icecc
+ if test "$?" = 0; then
+-  ICECREAM_LDADD=`pkg-config --libs-only-l icecream`
+-  ICECREAM_LDFLAGS=`pkg-config --libs-only-L icecream`
+-  ICECREAM_CFLAGS=`pkg-config --cflags icecream`
++  ICECC_LDADD=`pkg-config --libs-only-l icecc`
++  ICECC_LDFLAGS=`pkg-config --libs-only-L icecc`
++  ICECC_CFLAGS=`pkg-config --cflags icecc`
+ else
+   DO_NOT_COMPILE="$DO_NOT_COMPILE icemon-kde3"
+ fi
+ 
+-AC_SUBST(ICECREAM_LDADD)
+-AC_SUBST(ICECREAM_LDFLAGS)
+-AC_SUBST(ICECREAM_CFLAGS)
++AC_SUBST(ICECC_LDADD)
++AC_SUBST(ICECC_LDFLAGS)
++AC_SUBST(ICECC_CFLAGS)
+Index: icemon-kde3/src/Makefile.am
+===================================================================
+--- icemon-kde3/src/Makefile.am	(revision 558222)
++++ icemon-kde3/src/Makefile.am	(working copy)
+@@ -1,12 +1,12 @@
+ SUBDIRS = doc
+ 
+-INCLUDES = $(ICECREAM_CFLAGS) $(all_includes)
++INCLUDES = $(ICECC_CFLAGS) $(all_includes)
+ 
+ bin_PROGRAMS = icemon
+ icemon_SOURCES = mon-kde.cc listview.cc ganttstatusview.cc \
+                  summaryview.cc starview.cc
+-icemon_LDADD = libicemon_common.la -licecream $(LIB_KDEUI)
+-icemon_LDFLAGS = $(all_libraries) $(ICECREAM_LDFLAGS)
++icemon_LDADD = libicemon_common.la -licecc $(LIB_KDEUI)
++icemon_LDFLAGS = $(all_libraries) $(ICECC_LDFLAGS)
+ 
+ noinst_LTLIBRARIES = libicemon_common.la
+ libicemon_common_la_SOURCES = job.cc monitor.cc hostinfo.cc statusview.cc \
+@@ -23,8 +23,8 @@
+ 
+ kde_module_LTLIBRARIES = icemon_panelapplet.la
+ 
+-icemon_panelapplet_la_LDFLAGS = -avoid-version -module $(all_libraries) $(ICECREAM_LDFLAGS)
+-icemon_panelapplet_la_LIBADD = libicemon_common.la $(ICECREAM_LDADD) $(LIB_KDEUI)
++icemon_panelapplet_la_LDFLAGS = -avoid-version -module $(all_libraries) $(ICECC_LDFLAGS)
++icemon_panelapplet_la_LIBADD = libicemon_common.la $(ICECC_LDADD) $(LIB_KDEUI)
+ icemon_panelapplet_la_SOURCES = icemonapplet.cpp  
+ 
+ lnkdir = $(kde_datadir)/kicker/applets

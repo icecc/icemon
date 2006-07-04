@@ -1,0 +1,5 @@
+icecc (0.7.3-1) unstable; urgency=low
+
+  * Initial Release after the split of icecc-monitor from icecc.
+
+ -- Andre Woebbeking <Woebbeking@web.de>  Tue, 04 Jul 2006 23:36:15 +0200
