@@ -29,7 +29,6 @@
 #include <kdialog.h>
 
 #include <qlayout.h>
-#include <q3valuelist.h>
 #include <qtooltip.h>
 #include <qslider.h>
 #include <qlabel.h>
@@ -293,6 +292,7 @@ StarView::StarView( HostInfoManager *m, QWidget *parent, const char *name )
     layout->addWidget( m_canvasView );
 
     m_schedulerItem = new HostItem( "", m_canvas, hostInfoManager() );
+    m_schedulerItem->setZValue(150);
     centerSchedulerItem();
     m_schedulerItem->show();
 
@@ -409,7 +409,7 @@ void StarView::removeItem( HostItem *hostItem )
 
   m_hostItems.remove( hostItem->hostInfo()->id() );
 
-  Q3ValueList<unsigned int> obsoleteJobs;
+  QList<unsigned int> obsoleteJobs;
 
   QMap<unsigned int,HostItem *>::Iterator it;
   for( it = mJobMap.begin(); it != mJobMap.end(); ++it ) {
@@ -425,7 +425,7 @@ void StarView::removeItem( HostItem *hostItem )
     }
   }
 
-  Q3ValueList<unsigned int>::ConstIterator it2;
+  QList<unsigned int>::ConstIterator it2;
   for( it2 = obsoleteJobs.begin(); it2 != obsoleteJobs.end(); ++it2 ) {
     mJobMap.remove( *it2 );
   }
@@ -458,6 +458,7 @@ void StarView::updateSchedulerState( bool online )
   }
 
   m_schedulerItem = new HostItem( txt, m_canvas, hostInfoManager() );
+  m_schedulerItem->setZValue(100);
   m_schedulerItem->show();
   centerSchedulerItem();
   m_canvas->update();
