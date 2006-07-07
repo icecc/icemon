@@ -65,3 +65,16 @@ Index: icemon-kde3/src/Makefile.am
  icemon_panelapplet_la_SOURCES = icemonapplet.cpp  
  
  lnkdir = $(kde_datadir)/kicker/applets
+Index: icemon-kde3/src/monitor.cc
+===================================================================
+--- icemon-kde3/src/monitor.cc	(revision 559460)
++++ icemon-kde3/src/monitor.cc	(working copy)
+@@ -25,7 +25,7 @@
+ #include "hostinfo.h"
+ #include "statusview.h"
+ 
+-#include <icecream/comm.h>
++#include <icecc/comm.h>
+ 
+ #include <klocale.h>
+ #include <kdebug.h>
