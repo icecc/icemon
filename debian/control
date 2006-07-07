@@ -1,10 +1,10 @@
-Source: icecc-monitor
+Source: icemon-kde3
 Section: kde
 Priority: optional
 Maintainer: Andre Woebbeking <Woebbeking@web.de>
 Uploaders:
 Build-Depends: automake1.9, debhelper (>> 5.0.0), kdelibs4-dev (>= 4:3.5.0)
-Standards-Version: 3.6.1.0
+Standards-Version: 3.7.2
 
 Package: icecc-monitor
 Architecture: any
@@ -19,4 +19,7 @@ Description: KDE monitor for icecc a distributed client and server
  machines to share a filesystem, have synchronized clocks, or to have
  the same libraries or header files installed.
  .
- This package is part of the KDE Software Development Kit.
+ This package provides a GUI montior so you can see what is happening on
+ your icecream compile cluster.
+ .
+ Homepage: http://wiki.kde.org/icecream

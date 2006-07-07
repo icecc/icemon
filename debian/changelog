@@ -1,4 +1,10 @@
-icecc (0.7.3-1) unstable; urgency=low
+icemon-kde3 (0.0release20060626-1ubuntu1) edgy; urgency=low
+
+  * Initial Kubuntu release
+
+ -- Jonathan Riddell <jriddell@ubuntu.com>  Fri,  7 Jul 2006 12:03:37 +0000
+
+icemon-kde3 (0.0release20060626-1) unstable; urgency=low
 
   * Initial Release after the split of icecc-monitor from icecc.
 

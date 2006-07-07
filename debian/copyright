@@ -1,7 +1,8 @@
 This package was debianized by Andre Woebbeking <Woebbeking@web.de> on
 Sat, 27 Nov 2004 15:36:15 +0200.
 
-It was downloaded via cvs from cvs.kde.org
+It was downloaded via Subversion from 
+svn://anonsvn.kde.org/home/kde/trunk/playground/devtools/icemon-kde3/debian/
 
 Upstream Authors: Stephan Kulow <coolo@kde.org>
 			many others...

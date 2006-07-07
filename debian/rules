@@ -43,15 +43,13 @@ configure-stamp:
 		for patch in $$patches ;\
 		do \
 			echo APPLYING PATCH\: "$${patch##*/}" ;\
-			patch -p1 < "$$patch" ;\
+			patch -p0 < "$$patch" ;\
 		done ;\
 		touch patch-stamp ;\
 	fi
 
 	# KDE CVS does not have aclocal.m4 or configure
-	if test ! -f configure; then \
-		$(MAKE) -f admin/Makefile.common cvs ;\
-	fi
+	$(MAKE) -f admin/Makefile.common cvs ;\
 
 	# ensure configure is executable
 	chmod +x configure
@@ -76,9 +74,9 @@ build-arch-stamp: configure-stamp
 	$(MAKE)
 
 	# generate manpages
-	#for i in debian/man/*.sgml; do \
-	#	docbook-to-man $$i > `dirname $$i`/`basename $$i .sgml`.1 ;\
-	#done
+	for i in debian/man/*.docbook; do \
+		docbook2x-man $$i; \
+	done
 
 	touch build-arch-stamp
 
@@ -115,7 +113,7 @@ clean:
 		for patch in $$patches ;\
 		do \
 			echo REMOVING PATCH\: "$${patch##*/}" ;\
-			patch -p1 -R < "$$patch" ;\
+			patch -p0 -R < "$$patch" ;\
 		done ;\
 		for i in $(CURDIR)/debian/patches/*.diff.uu ;\
 		do \
@@ -149,7 +147,10 @@ install-arch:
 	cd $(objdir) && \
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
 
-	dh_install --sourcedir=debian/tmp
+	mkdir -p debian/tmp/usr/share/doc/kde
+	mv debian/tmp/usr/share/doc/HTML debian/tmp/usr/share/doc/kde
+
+	dh_install
 
 install-indep:
 	dh_testdir
