@@ -1,4 +1,4 @@
 
-if test -z "$ICECREAM_LDADD"; then
-  pkg-config --print-errors --exists icecream
+if test -z "$ICECC_LDADD"; then
+  pkg-config --print-errors --exists icecc
 fi

@@ -25,7 +25,7 @@
 #include "hostinfo.h"
 #include "statusview.h"
 
-#include <icecream/comm.h>
+#include <icecc/comm.h>
 
 #include <klocale.h>
 #include <kdebug.h>

@@ -1,13 +1,13 @@
 
-pkg-config --silence-errors --exists icecream
+pkg-config --silence-errors --exists icecc
 if test "$?" = 0; then
-  ICECREAM_LDADD=`pkg-config --libs-only-l icecream`
-  ICECREAM_LDFLAGS=`pkg-config --libs-only-L icecream`
-  ICECREAM_CFLAGS=`pkg-config --cflags icecream`
+  ICECC_LDADD=`pkg-config --libs-only-l icecc`
+  ICECC_LDFLAGS=`pkg-config --libs-only-L icecc`
+  ICECC_CFLAGS=`pkg-config --cflags icecc`
 else
   DO_NOT_COMPILE="$DO_NOT_COMPILE icemon-kde3"
 fi
 
-AC_SUBST(ICECREAM_LDADD)
-AC_SUBST(ICECREAM_LDFLAGS)
-AC_SUBST(ICECREAM_CFLAGS)
+AC_SUBST(ICECC_LDADD)
+AC_SUBST(ICECC_LDFLAGS)
+AC_SUBST(ICECC_CFLAGS)

@@ -1,12 +1,12 @@
 SUBDIRS = doc
 
-INCLUDES = $(ICECREAM_CFLAGS) $(all_includes)
+INCLUDES = $(ICECC_CFLAGS) $(all_includes)
 
 bin_PROGRAMS = icemon
 icemon_SOURCES = mon-kde.cc listview.cc ganttstatusview.cc \
                  summaryview.cc starview.cc
-icemon_LDADD = libicemon_common.la -licecream $(LIB_KDEUI)
-icemon_LDFLAGS = $(all_libraries) $(ICECREAM_LDFLAGS)
+icemon_LDADD = libicemon_common.la -licecc $(LIB_KDEUI)
+icemon_LDFLAGS = $(all_libraries) $(ICECC_LDFLAGS)
 
 noinst_LTLIBRARIES = libicemon_common.la
 libicemon_common_la_SOURCES = job.cc monitor.cc hostinfo.cc statusview.cc \
@@ -23,8 +23,8 @@ pics_DATA = icemonnode.png
 
 kde_module_LTLIBRARIES = icemon_panelapplet.la
 
-icemon_panelapplet_la_LDFLAGS = -avoid-version -module $(all_libraries) $(ICECREAM_LDFLAGS)
-icemon_panelapplet_la_LIBADD = libicemon_common.la $(ICECREAM_LDADD) $(LIB_KDEUI)
+icemon_panelapplet_la_LDFLAGS = -avoid-version -module $(all_libraries) $(ICECC_LDFLAGS)
+icemon_panelapplet_la_LIBADD = libicemon_common.la $(ICECC_LDADD) $(LIB_KDEUI)
 icemon_panelapplet_la_SOURCES = icemonapplet.cpp  
 
 lnkdir = $(kde_datadir)/kicker/applets
