@@ -329,7 +329,7 @@ void JobListView::slotExpireFinishedJobs()
     FinishedJobs::iterator it = mFinishedJobs.begin();
     for ( const FinishedJobs::iterator itEnd = mFinishedJobs.end(); it != itEnd; ++it )
     {
-        if ( currentTime - ( *it ).first < mExpireDuration )
+        if ( currentTime - ( *it ).first < (uint)mExpireDuration )
             break;
 
         removeItem( ( *it ).second );
