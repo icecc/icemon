@@ -104,6 +104,8 @@ void Monitor::slotCheckScheduler()
                                                    this );
             QObject::connect( m_discover_read, SIGNAL( activated( int ) ),
                               SLOT( slotCheckScheduler() ) );
+            checkScheduler( false );
+            return;
         }
 
         m_scheduler = m_discover->try_get_scheduler ();
