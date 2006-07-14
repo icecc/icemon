@@ -56,6 +56,7 @@ Monitor::~Monitor()
 
 void Monitor::checkScheduler(bool deleteit)
 {
+    kDebug() << "checkScheduler " << deleteit << endl;
     if ( deleteit ) {
         m_rememberedJobs.clear();
         delete m_scheduler;
@@ -76,7 +77,6 @@ void Monitor::slotCheckScheduler()
     if ( m_scheduler )
         return;
 
-    kDebug() << "slotCheckScheduler\n";
     list<string> names;
 
     if ( !m_current_netname.isEmpty() ) {
@@ -94,8 +94,10 @@ void Monitor::slotCheckScheduler()
         return;
     }
 
+
     for ( list<string>::const_iterator it = names.begin(); it != names.end();
           ++it ) {
+
         m_current_netname = it->c_str();
         if (!m_discover
             || m_discover->timed_out()) {
@@ -106,6 +108,8 @@ void Monitor::slotCheckScheduler()
                                                    this );
             QObject::connect( m_discover_read, SIGNAL( activated( int ) ),
                               SLOT( slotCheckScheduler() ) );
+            checkScheduler( false );
+            return;
         }
 
         m_scheduler = m_discover->try_get_scheduler ();
