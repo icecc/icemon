@@ -30,7 +30,7 @@ class HostInfoManager;
 class Msg;
 class MsgChannel;
 class StatusView;
-
+class DiscoverSched;
 class QSocketNotifier;
 
 class Monitor : public QObject
@@ -65,8 +65,11 @@ class Monitor : public QObject
     MsgChannel *m_scheduler;
     QSocketNotifier *m_scheduler_read;
     QString m_current_netname;
-
     bool mSchedulerOnline;
+
+    DiscoverSched *m_discover;
+    QSocketNotifier *m_discover_read;
+
 };
 
 #endif // MON_KDE_H

@@ -1,7 +1,7 @@
 project(icemon)
 
 #ignore DONTPORT restriction
-set(KDE4_IGNORE_DONTPORT TRUE)
+set(KDE4_IGNORE_DONTPORT ON)
 
 set( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules )
 
@@ -17,18 +17,17 @@ include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES} ${
 
 
 set(libicemon_SRCS
-  ${CMAKE_CURRENT_SOURCE_DIR}/job.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/monitor.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/hostinfo.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/statusview.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/detailedhostview.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/hostlistview.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/hostview.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/joblistview.cc
+  job.cc
+  monitor.cc
+  hostinfo.cc
+  statusview.cc
+  detailedhostview.cc
+  hostlistview.cc
+  hostview.cc
+  joblistview.cc
 )
 
 kde4_automoc(${libicemon_SRCS})
-
 
 set(icemon_SRCS ${libicemon_SRCS}
     mon-kde.cc
@@ -40,6 +39,7 @@ set(icemon_SRCS ${libicemon_SRCS}
 kde4_automoc(${icemon_SRCS})
 
 kde4_add_executable(icemon ${icemon_SRCS})
+
 
 target_link_libraries(icemon  ${KDE4_KDEUI_LIBS} ${LIBICECREAM_LIBRARIES} )
 

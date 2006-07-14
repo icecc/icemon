@@ -16,16 +16,16 @@ else (LIBICECREAM_INCLUDE_DIR AND LIBICECREAM_LIBRARIES)
   # in the FIND_PATH() and FIND_LIBRARY() calls
   INCLUDE(UsePkgConfig)
 
-  PKGCONFIG(icecream _icecreamIncDir _icecreamLinkDir _icecreamLinkFlags _icecreamCflags)
+  PKGCONFIG(icecc _icecreamIncDir _icecreamLinkDir _icecreamLinkFlags _icecreamCflags)
 
-  FIND_PATH(LIBICECREAM_INCLUDE_DIR icecream/comm.h
+  FIND_PATH(LIBICECREAM_INCLUDE_DIR icecc/comm.h
     ${_icecreamIncDir}
     /usr/include
     /usr/local/include
     /opt/icecream/include
   )
 
-  FIND_LIBRARY(LIBICECREAM_LIBRARY NAMES icecream
+  FIND_LIBRARY(LIBICECREAM_LIBRARY NAMES icecc
     PATHS
     ${_icecreamLinkDir}
     /usr/lib

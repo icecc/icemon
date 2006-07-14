@@ -25,7 +25,7 @@
 #include "hostinfo.h"
 #include "statusview.h"
 
-#include <icecream/comm.h>
+#include <icecc/comm.h>
 
 #include <klocale.h>
 #include <kdebug.h>
@@ -39,262 +39,290 @@
 using namespace std;
 
 Monitor::Monitor( HostInfoManager *m, QObject *parent, const char *name )
-  : QObject( parent ), m_hostInfoManager( m ), m_view( 0 ),
-    m_scheduler( 0 ), m_scheduler_read( 0 ), mSchedulerOnline( false )
+    : QObject( parent ), m_hostInfoManager( m ), m_view( 0 ),
+      m_scheduler( 0 ), m_scheduler_read( 0 ), mSchedulerOnline( false ),
+      m_discover( 0 ), m_discover_read( 0 )
 {
-  setObjectName( name );
+    setObjectName( name );
 
-  checkScheduler();
+    checkScheduler();
 }
 
 Monitor::~Monitor()
 {
+    delete m_scheduler;
+    delete m_discover;
 }
 
 void Monitor::checkScheduler(bool deleteit)
 {
-  if ( deleteit ) {
-    m_rememberedJobs.clear();
-    delete m_scheduler;
-    m_scheduler = 0;
-    delete m_scheduler_read;
-    m_scheduler_read = 0;
-  } else if ( m_scheduler )
-    return;
-  QTimer::singleShot( 1800, this, SLOT( slotCheckScheduler() ) );
+    if ( deleteit ) {
+        m_rememberedJobs.clear();
+        delete m_scheduler;
+        m_scheduler = 0;
+        delete m_scheduler_read;
+        m_scheduler_read = 0;
+        delete m_discover;
+        m_discover = 0;
+        delete m_discover_read;
+        m_discover_read = 0;
+    } else if ( m_scheduler )
+        return;
+    QTimer::singleShot( 1800, this, SLOT( slotCheckScheduler() ) );
 }
 
 void Monitor::slotCheckScheduler()
 {
-  list<string> names;
+    if ( m_scheduler )
+        return;
 
-  if ( !m_current_netname.isEmpty() ) {
-    names.push_front( m_current_netname.toLatin1().data() );
-  } else {
-    names = get_netnames( 60 );
-  }
+    kDebug() << "slotCheckScheduler\n";
+    list<string> names;
 
-  if (getenv("USE_SCHEDULER"))
-     names.push_front(""); // try $USE_SCHEDULER
+    if ( !m_current_netname.isEmpty() ) {
+        names.push_front( m_current_netname.toLatin1().data() );
+    } else {
+        names = get_netnames( 60 );
+    }
 
-  if ( names.empty() ) {
+    if (getenv("USE_SCHEDULER"))
+        names.push_front(""); // try $USE_SCHEDULER
+
+    if ( names.empty() ) {
+        checkScheduler( true );
+        setSchedulerState( false );
+        return;
+    }
+
+    for ( list<string>::const_iterator it = names.begin(); it != names.end();
+          ++it ) {
+        m_current_netname = it->c_str();
+        if (!m_discover
+            || m_discover->timed_out()) {
+            delete m_discover;
+            m_discover = new DiscoverSched ( qPrintable(m_current_netname) );
+            m_discover_read = new QSocketNotifier( m_discover->get_fd(),
+                                                   QSocketNotifier::Read,
+                                                   this );
+            QObject::connect( m_discover_read, SIGNAL( activated( int ) ),
+                              SLOT( slotCheckScheduler() ) );
+        }
+
+        m_scheduler = m_discover->try_get_scheduler ();
+
+        if ( m_scheduler ) {
+            delete m_discover;
+            m_discover = 0;
+            delete m_discover_read;
+            m_discover_read = 0;
+
+            if ( !m_scheduler->send_msg ( MonLoginMsg() ) ) {
+                delete m_scheduler;
+            } else {
+                m_scheduler_read = new QSocketNotifier( m_scheduler->fd,
+                                                        QSocketNotifier::Read,
+                                                        this );
+                QObject::connect( m_scheduler_read, SIGNAL( activated( int ) ),
+                                  SLOT( msgReceived() ) );
+                setSchedulerState( true );
+                return;
+            }
+        }
+    }
     checkScheduler( true );
     setSchedulerState( false );
-    return;
-  }
-
-  for ( list<string>::const_iterator it = names.begin(); it != names.end();
-        ++it ) {
-    m_current_netname = it->c_str();
-    m_scheduler = connect_scheduler ( m_current_netname.toLatin1().data() );
-    if ( m_scheduler ) {
-      if ( !m_scheduler->send_msg ( MonLoginMsg() ) ) {
-        delete m_scheduler;
-      } else {
-        m_scheduler_read = new QSocketNotifier( m_scheduler->fd,
-                                                QSocketNotifier::Read,
-                                                this );
-        QObject::connect( m_scheduler_read, SIGNAL( activated( int ) ),
-                          SLOT( msgReceived() ) );
-        setSchedulerState( true );
-        return;
-      }
-    }
-  }
-  checkScheduler( true );
-  setSchedulerState( false );
 }
 
 void Monitor::msgReceived()
 {
-  Msg *m = m_scheduler->get_msg ();
-  if ( !m ) {
-    kDebug() << "lost connection to scheduler\n";
-    checkScheduler( true );
-    setSchedulerState( false );
-    return;
-  }
+    Msg *m = m_scheduler->get_msg ();
+    if ( !m ) {
+        kDebug() << "lost connection to scheduler\n";
+        checkScheduler( true );
+        setSchedulerState( false );
+        return;
+    }
 
-  switch ( m->type ) {
+    switch ( m->type ) {
     case M_MON_GET_CS:
-      handle_getcs( m );
-      break;
+        handle_getcs( m );
+        break;
     case M_MON_JOB_BEGIN:
-      handle_job_begin( m );
-      break;
+        handle_job_begin( m );
+        break;
     case M_MON_JOB_DONE:
-      handle_job_done( m );
-      break;
+        handle_job_done( m );
+        break;
     case M_END:
-      std::cout << "END" << endl;
-      checkScheduler( true );
-      break;
+        std::cout << "END" << endl;
+        checkScheduler( true );
+        break;
     case M_MON_STATS:
-      handle_stats( m );
-      break;
+        handle_stats( m );
+        break;
     case M_MON_LOCAL_JOB_BEGIN:
-      handle_local_begin( m );
-      break;
+        handle_local_begin( m );
+        break;
     case M_JOB_LOCAL_DONE:
-      handle_local_done( m );
-      break;
+        handle_local_done( m );
+        break;
     default:
-      cout << "UNKNOWN" << endl;
-      break;
-  }
-  delete m;
+        cout << "UNKNOWN" << endl;
+        break;
+    }
+    delete m;
 }
 
 void Monitor::handle_getcs( Msg *_m )
 {
-  MonGetCSMsg *m = dynamic_cast<MonGetCSMsg*>( _m );
-  if ( !m ) return;
-  m_rememberedJobs[m->job_id] = Job( m->job_id, m->clientid,
-                                     m->filename.c_str(),
-                                     m->lang == CompileJob::Lang_C ? "C" :
-                                                                     "C++" );
-  m_view->update( m_rememberedJobs[m->job_id] );
+    MonGetCSMsg *m = dynamic_cast<MonGetCSMsg*>( _m );
+    if ( !m ) return;
+    m_rememberedJobs[m->job_id] = Job( m->job_id, m->clientid,
+                                       m->filename.c_str(),
+                                       m->lang == CompileJob::Lang_C ? "C" :
+                                       "C++" );
+    m_view->update( m_rememberedJobs[m->job_id] );
 }
 
 void Monitor::handle_local_begin( Msg *_m )
 {
-  MonLocalJobBeginMsg *m = dynamic_cast<MonLocalJobBeginMsg*>( _m );
-  if ( !m ) return;
+    MonLocalJobBeginMsg *m = dynamic_cast<MonLocalJobBeginMsg*>( _m );
+    if ( !m ) return;
 
-  m_rememberedJobs[m->job_id] = Job( m->job_id, m->hostid,
-                                     m->file.c_str(),
-                                     "C++" );
-  m_rememberedJobs[m->job_id].setState( Job::LocalOnly );
-  m_view->update( m_rememberedJobs[m->job_id] );
+    m_rememberedJobs[m->job_id] = Job( m->job_id, m->hostid,
+                                       m->file.c_str(),
+                                       "C++" );
+    m_rememberedJobs[m->job_id].setState( Job::LocalOnly );
+    m_view->update( m_rememberedJobs[m->job_id] );
 }
 
 void Monitor::handle_local_done( Msg *_m )
 {
-  JobLocalDoneMsg *m = dynamic_cast<JobLocalDoneMsg*>( _m );
-  if ( !m ) return;
+    JobLocalDoneMsg *m = dynamic_cast<JobLocalDoneMsg*>( _m );
+    if ( !m ) return;
 
-  JobList::iterator it = m_rememberedJobs.find( m->job_id );
-  if ( it == m_rememberedJobs.end() ) {
-    // we started in between
-    return;
-  }
+    JobList::iterator it = m_rememberedJobs.find( m->job_id );
+    if ( it == m_rememberedJobs.end() ) {
+        // we started in between
+        return;
+    }
 
-  ( *it ).setState( Job::Finished );
-  m_view->update( *it );
+    ( *it ).setState( Job::Finished );
+    m_view->update( *it );
 
-  if ( m_rememberedJobs.size() > 3000 ) { // now remove 1000
-      uint count = 1000;
+    if ( m_rememberedJobs.size() > 3000 ) { // now remove 1000
+        uint count = 1000;
 
-      while ( --count )
-          m_rememberedJobs.erase( m_rememberedJobs.begin() );
-  }
+        while ( --count )
+            m_rememberedJobs.erase( m_rememberedJobs.begin() );
+    }
 }
 
 void Monitor::handle_stats( Msg *_m )
 {
-  MonStatsMsg *m = dynamic_cast<MonStatsMsg*>( _m );
-  if ( !m ) return;
+    MonStatsMsg *m = dynamic_cast<MonStatsMsg*>( _m );
+    if ( !m ) return;
 
-  QStringList statmsg = QString( m->statmsg.c_str() ).split( '\n' );
-  HostInfo::StatsMap stats;
-  for ( QStringList::ConstIterator it = statmsg.begin(); it != statmsg.end();
-        ++it ) {
-      QString key = *it;
-      key = key.left( key.indexOf( ':' ) );
-      QString value = *it;
-      value = value.mid( value.indexOf( ':' ) + 1 );
-      stats[key] = value;
-  }
+    QStringList statmsg = QString( m->statmsg.c_str() ).split( '\n' );
+    HostInfo::StatsMap stats;
+    for ( QStringList::ConstIterator it = statmsg.begin(); it != statmsg.end();
+          ++it ) {
+        QString key = *it;
+        key = key.left( key.indexOf( ':' ) );
+        QString value = *it;
+        value = value.mid( value.indexOf( ':' ) + 1 );
+        stats[key] = value;
+    }
 
-  HostInfo *hostInfo = m_hostInfoManager->checkNode( m->hostid, stats );
+    HostInfo *hostInfo = m_hostInfoManager->checkNode( m->hostid, stats );
 
-  if ( hostInfo->isOffline() ) {
-    m_view->removeNode( m->hostid );
-  } else {
-    m_view->checkNode( m->hostid );
-  }
+    if ( hostInfo->isOffline() ) {
+        m_view->removeNode( m->hostid );
+    } else {
+        m_view->checkNode( m->hostid );
+    }
 }
 
 void Monitor::handle_job_begin( Msg *_m )
 {
-  MonJobBeginMsg *m = dynamic_cast<MonJobBeginMsg*>( _m );
-  if ( !m ) return;
+    MonJobBeginMsg *m = dynamic_cast<MonJobBeginMsg*>( _m );
+    if ( !m ) return;
 
-  JobList::iterator it = m_rememberedJobs.find( m->job_id );
-  if ( it == m_rememberedJobs.end() ) {
-    // we started in between
-    return;
-  }
+    JobList::iterator it = m_rememberedJobs.find( m->job_id );
+    if ( it == m_rememberedJobs.end() ) {
+        // we started in between
+        return;
+    }
 
-  ( *it ).setServer( m->hostid );
-  ( *it ).setStartTime( m->stime );
-  ( *it ).setState( Job::Compiling );
+    ( *it ).setServer( m->hostid );
+    ( *it ).setStartTime( m->stime );
+    ( *it ).setState( Job::Compiling );
 
 #if 0
-  kDebug() << "BEGIN: " << (*it).fileName() << " (" << (*it).jobId()
-            << ")" << endl;
+    kDebug() << "BEGIN: " << (*it).fileName() << " (" << (*it).jobId()
+             << ")" << endl;
 #endif
 
-  m_view->update( *it );
+    m_view->update( *it );
 }
 
 void Monitor::handle_job_done( Msg *_m )
 {
-  MonJobDoneMsg *m = dynamic_cast<MonJobDoneMsg*>( _m );
-  if ( !m ) return;
+    MonJobDoneMsg *m = dynamic_cast<MonJobDoneMsg*>( _m );
+    if ( !m ) return;
 
-  JobList::iterator it = m_rememberedJobs.find( m->job_id );
-  if ( it == m_rememberedJobs.end() ) {
-    // we started in between
-    return;
-  }
+    JobList::iterator it = m_rememberedJobs.find( m->job_id );
+    if ( it == m_rememberedJobs.end() ) {
+        // we started in between
+        return;
+    }
 
-  ( *it ).exitcode = m->exitcode;
-  if ( m->exitcode ) {
-    ( *it ).setState( Job::Failed );
-  } else {
-    ( *it ).setState( Job::Finished );
-    ( *it ).real_msec = m->real_msec;
-    ( *it ).user_msec = m->user_msec;
-    ( *it ).sys_msec = m->sys_msec;   /* system time used */
-    ( *it ).pfaults = m->pfaults;     /* page faults */
+    ( *it ).exitcode = m->exitcode;
+    if ( m->exitcode ) {
+        ( *it ).setState( Job::Failed );
+    } else {
+        ( *it ).setState( Job::Finished );
+        ( *it ).real_msec = m->real_msec;
+        ( *it ).user_msec = m->user_msec;
+        ( *it ).sys_msec = m->sys_msec;   /* system time used */
+        ( *it ).pfaults = m->pfaults;     /* page faults */
 
-    ( *it ).in_compressed = m->in_compressed;
-    ( *it ).in_uncompressed = m->in_uncompressed;
-    ( *it ).out_compressed = m->out_compressed;
-    ( *it ).out_uncompressed = m->out_uncompressed;
-  }
+        ( *it ).in_compressed = m->in_compressed;
+        ( *it ).in_uncompressed = m->in_uncompressed;
+        ( *it ).out_compressed = m->out_compressed;
+        ( *it ).out_uncompressed = m->out_uncompressed;
+    }
 
 #if 0
-  kDebug() << "DONE: " << (*it).fileName() << " (" << (*it).jobId()
-            << ")" << endl;
+    kDebug() << "DONE: " << (*it).fileName() << " (" << (*it).jobId()
+             << ")" << endl;
 #endif
 
-  m_view->update( *it );
+    m_view->update( *it );
 }
 
 void Monitor::setCurrentView( StatusView *view, bool rememberJobs )
 {
-  m_view = view;
+    m_view = view;
 
-  m_view->updateSchedulerState( mSchedulerOnline );
+    m_view->updateSchedulerState( mSchedulerOnline );
 
-  if ( rememberJobs ) {
-    JobList::ConstIterator it = m_rememberedJobs.begin();
-    for ( ; it != m_rememberedJobs.end(); ++it )
-      m_view->update( *it );
-  }
+    if ( rememberJobs ) {
+        JobList::ConstIterator it = m_rememberedJobs.begin();
+        for ( ; it != m_rememberedJobs.end(); ++it )
+            m_view->update( *it );
+    }
 }
 
 void Monitor::setCurrentNet( const QString &netName )
 {
-  m_current_netname = netName;
+    m_current_netname = netName;
 }
 
 void Monitor::setSchedulerState( bool online )
 {
-  mSchedulerOnline = online;
-  m_view->updateSchedulerState( online );
+    mSchedulerOnline = online;
+    m_view->updateSchedulerState( online );
 }
 
 #include "monitor.moc"
