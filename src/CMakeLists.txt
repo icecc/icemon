@@ -50,7 +50,7 @@ install(TARGETS icemon DESTINATION bin)
 install( FILES icemon.desktop DESTINATION ${XDG_APPS_DIR} )
 install( FILES icemonui.rc DESTINATION ${DATA_INSTALL_DIR}/icemon )
 
-kde4_install_icons( ${ICON_INSTALL_DIR}  hicolor )
+kde4_install_icons( ${ICON_INSTALL_DIR}   )
 
 ########### next target #################
 
