@@ -237,7 +237,7 @@ static const KCmdLineOptions options[] =
 int main( int argc, char **argv )
 {
   KAboutData aboutData( rs_program_name, appName, version, description,
-	                KAboutData::License_BSD, copyright );
+                        KAboutData::License_GPL_V2, copyright );
   aboutData.addAuthor( "Frerich Raabe", 0, "raabe@kde.org" );
   aboutData.addAuthor( "Stephan Kulow", 0, "coolo@kde.org" );
   aboutData.addAuthor( "Cornelius Schumacher", 0, "schumacher@kde.org" );

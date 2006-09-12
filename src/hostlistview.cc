@@ -1,7 +1,7 @@
 /*
     This file is part of Icecream.
 
-    Copyright (c) 2004 Andre Wöbbeking <Woebbeking@web.de>
+    Copyright (c) 2004-2006 Andre Wöbbeking <Woebbeking@web.de>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -209,12 +209,19 @@ void HostListView::setActiveNode( unsigned int hostid )
 void HostListView::checkNode( unsigned int hostid )
 {
     const HostInfo* info = mHostInfoManager->find( hostid );
+    if ( !info )
+        return;
 
     ItemMap::iterator it = mItems.find( hostid );
     if ( it == mItems.end() )
-        mItems[hostid] = new HostListViewItem( this, *info );
+    {
+        if ( !info->name().isEmpty() )
+            mItems[hostid] = new HostListViewItem( this, *info );
+    }
     else
+    {
         ( *it )->updateText( *info );
+    }
 
     mUpdateSortTimer.setSingleShot( true );
     mUpdateSortTimer.start( 0 );

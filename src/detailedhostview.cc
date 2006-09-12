@@ -1,7 +1,7 @@
 /*
     This file is part of Icecream.
 
-    Copyright (c) 2004 Andre Wöbbeking <Woebbeking@web.de>
+    Copyright (c) 2004-2006 Andre Wöbbeking <Woebbeking@web.de>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -82,6 +82,8 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
 
   connect(mHostListView, SIGNAL( nodeActivated( unsigned int ) ),
           this, SLOT( slotNodeActivated() ) );
+
+  createKnownHosts();
 }
 
 
@@ -141,6 +143,21 @@ void DetailedHostView::slotNodeActivated()
 {
     mLocalJobsView->clear();
     mRemoteJobsView->clear();
+}
+
+
+void DetailedHostView::createKnownHosts()
+{
+    const HostInfoManager::HostMap& hosts(hostInfoManager()->hostMap());
+
+    for (HostInfoManager::HostMap::ConstIterator it( hosts.begin() ),
+                                                 itEnd( hosts.end() );
+         it != itEnd; ++it )
+    {
+        const unsigned int hostid( (*it)->id() );
+
+        checkNode( hostid );
+    }
 }
 
 
