@@ -1,7 +1,7 @@
 /*
     This file is part of Icecream.
 
-    Copyright (c) 2004 Andre Wöbbeking <Woebbeking@web.de>
+    Copyright (c) 2004-2006 Andre Wöbbeking <Woebbeking@web.de>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -55,6 +55,8 @@ private slots:
     void slotNodeActivated();
 
 private:
+
+    void createKnownHosts();
 
     HostListView* mHostListView;
     JobListView* mLocalJobsView;
