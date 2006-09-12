@@ -11,7 +11,7 @@ find_package(Icecream REQUIRED)
 include (KDE4Defaults)
 include (MacroLibrary)
 
-add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
+add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DQT3_SUPPORT_WARNINGS -DQT3_SUPPORT)
 link_directories (${KDE4_LIB_DIR})
 include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES} ${LIBICECREAM_INCLUDE_DIR})
 
