@@ -1,4 +1,4 @@
 # install the cmake files
 
 set(cmakeFiles FindIcecream.cmake)
-install_files(/share/apps/cmake/modules FILES ${cmakeFiles})
+install(FILES ${cmakeFiles} DESTINATION ${DATA_INSTALL_DIR}/apps/cmake/modules )
