@@ -23,9 +23,9 @@ pics_DATA = icemonnode.png
 
 kde_module_LTLIBRARIES = icemon_panelapplet.la
 
-icemon_panelapplet_la_LDFLAGS = -avoid-version -module $(all_libraries) $(ICECC_LDFLAGS)
-icemon_panelapplet_la_LIBADD = libicemon_common.la $(ICECC_LDADD) $(LIB_KDEUI)
-icemon_panelapplet_la_SOURCES = icemonapplet.cpp  
+icemon_panelapplet_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries) $(ICECC_LDFLAGS)
+icemon_panelapplet_la_LIBADD = libicemon_common.la -licecc $(ICECC_LDADD) $(LIB_KDEUI)
+icemon_panelapplet_la_SOURCES = icemonapplet.cpp
 
 lnkdir = $(kde_datadir)/kicker/applets
 lnk_DATA = icemonapplet.desktop
