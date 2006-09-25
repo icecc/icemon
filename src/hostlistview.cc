@@ -20,11 +20,12 @@
 
 #include "hostlistview.h"
 
+#include <kglobal.h>
+#include <klocale.h>
 
 #include <qfontmetrics.h>
 #include <qpainter.h>
 
-#define i18n
 
 enum Columns
 {
@@ -71,7 +72,7 @@ void HostListViewItem::updateText( const HostInfo& info )
     setText( ColumnIP, info.ip() );
     setText( ColumnPlatform, info.platform() );
     setText( ColumnMaxJobs, QString::number( info.maxJobs() ) );
-    //setText( ColumnSpeed, KGlobal::locale()->formatNumber( info.serverSpeed(), 1 ) );
+    setText( ColumnSpeed, KGlobal::locale()->formatNumber( info.serverSpeed(), 1 ) );
     setText( ColumnLoad, QString::number( info.serverLoad() ) );
 }
 
