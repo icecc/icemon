@@ -132,6 +132,11 @@ int JobListViewItem::compare( Q3ListViewItem* item,
     const JobListViewItem* first = this;
     const JobListViewItem* other = dynamic_cast<JobListViewItem*>( item );
 
+    // Workaround a Qt4 regression: before the item creation is complete
+    // compare() is called (insertItem() -> firstChild() -> enforceSortOrder())
+    if ( !other )
+        return 0;
+
     switch ( column )
     {
     case JobColumnID:
