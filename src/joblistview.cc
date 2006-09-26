@@ -32,33 +32,6 @@
 #include <qtimer.h>
 
 
-static QString convertSize( unsigned int size )
-{
-    int divisor;
-    QString str;
-
-    if ( size >= (1 << 20) )
-    {
-        divisor = 1 << 20;
-        str = i18n( "%1 MB" );
-    }
-
-    else if ( size >= (1 << 10) )
-    {
-        divisor = 1 << 10;
-        str = i18n( "%1 KB" );
-    }
-
-    else
-    {
-        divisor = 1;
-        str = i18n( "%1 B" );
-    }
-
-    return str.arg( KGlobal::locale()->formatNumber( static_cast<double>(size) / divisor, 1 ) );
-}
-
-
 enum JobJobColumns
 {
     JobColumnID,
@@ -100,8 +73,8 @@ void JobListViewItem::updateText( const Job& job)
     setText( JobColumnReal, QString::number( job.real_msec ) );
     setText( JobColumnUser, QString::number( job.user_msec ) );
     setText( JobColumnFaults, QString::number( job.pfaults ) );
-    setText( JobColumnSizeIn, convertSize( job.in_uncompressed ) );
-    setText( JobColumnSizeOut, convertSize( job.out_uncompressed ) );
+    setText( JobColumnSizeIn, KGlobal::locale()->formatByteSize( job.in_uncompressed ) );
+    setText( JobColumnSizeOut, KGlobal::locale()->formatByteSize( job.out_uncompressed ) );
 
     if ( fileNameChanged )
         updateFileName();
