@@ -20,9 +20,9 @@
 
 #include "hostinfo.h"
 
-#include <assert.h>
+#include <klocale.h>
 
-#define i18n
+#include <assert.h>
 
 Q3ValueVector<QColor> HostInfo::mColorTable;
 QMap<int,QString> HostInfo::mColorNameMap;

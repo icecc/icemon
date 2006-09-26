@@ -23,9 +23,7 @@
 #include "statusview.h"
 
 #include <qdialog.h>
-#include <QResizeEvent>
 #include <QList>
-#include <QLabel>
 
 class KLed;
 
@@ -75,8 +73,6 @@ class HostView : public QWidget, public StatusView
     void configureView();
 
   protected:
-    virtual void resizeEvent( QResizeEvent *e );
-
     void updateJobLabels();
 
   protected slots:

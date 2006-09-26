@@ -24,17 +24,13 @@
 #include "job.h"
 
 #include <kled.h>
-
-#define i18n
+#include <klocale.h>
 
 #include <QDebug>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
-//Added by qt3to4:
-#include <QResizeEvent>
-#include <QBoxLayout>
 
 #include <sys/utsname.h>
 
@@ -275,11 +271,6 @@ void HostView::updateSchedulerState( bool online )
 QWidget *HostView::widget()
 {
   return this;
-}
-
-void HostView::resizeEvent( QResizeEvent *e )
-{
-  QWidget::resizeEvent( e );
 }
 
 void HostView::slotConfigChanged()

@@ -22,8 +22,7 @@
 
 #include "job.h"
 
-#include <QDebug>
-#define i18n
+#include <klocale.h>
 
 QString Job::stateAsString() const
 {

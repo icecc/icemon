@@ -40,7 +40,8 @@
 #include <QPaintEvent>
 #include <QScrollBar>
 
-#define i18n
+#include <klocale.h>
+
 
 GanttConfigDialog::GanttConfigDialog( QWidget *parent )
   : QDialog( parent )

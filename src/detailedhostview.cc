@@ -28,6 +28,7 @@
 #include "hostlistview.h"
 #include "joblistview.h"
 
+#include <klocale.h>
 #include <kvbox.h>
 
 #include <sys/utsname.h>
@@ -41,8 +42,6 @@ static QString myHostName()
     else
         return QString::null;
 }
-
-#define i18n
 
 DetailedHostView::DetailedHostView( HostInfoManager* manager,
                                     QWidget* parent,

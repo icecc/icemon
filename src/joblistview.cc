@@ -24,11 +24,9 @@
 
 #include "hostinfo.h"
 
-//#include <kglobal.h>
+#include <kglobal.h>
+#include <klocale.h>
 
-#define i18n
-
-#include <QLocale>
 #include <qdatetime.h>
 #include <qdir.h>
 #include <qtimer.h>
@@ -57,7 +55,7 @@ static QString convertSize( unsigned int size )
         str = i18n( "%1 B" );
     }
 
-    return str.arg( QLocale::system().toString( static_cast<double>(size) / divisor, 1 ) );
+    return str.arg( KGlobal::locale()->formatNumber( static_cast<double>(size) / divisor, 1 ) );
 }
 
 
