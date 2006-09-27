@@ -485,14 +485,8 @@ bool StarView::event ( QEvent* e )
     QPoint p ( static_cast<QHelpEvent*>(e)->pos());
 
     HostItem *item = 0;
-    QList<QGraphicsItem*> items = m_canvas->items( p );
-    QList<QGraphicsItem*>::ConstIterator it;
-    for( it = items.begin(); it != items.end(); ++it ) {
-        if ( dynamic_cast<HostItem*>(*it) ) {
-            item = static_cast<HostItem *>( *it );
-            break;
-        }
-    }
+    if ( QGraphicsItem* graphicsItem = m_canvasView->itemAt( p ) )
+        item = dynamic_cast<HostItem*>( graphicsItem->parentItem() );
     if ( item ) {
         HostInfo *hostInfo = item->hostInfo();
         if ( !hostInfo ) return QWidget::event(e);
