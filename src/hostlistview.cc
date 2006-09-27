@@ -96,6 +96,11 @@ int HostListViewItem::compare( Q3ListViewItem *i, int col,
     const HostListViewItem* first = this;
     const HostListViewItem* other = dynamic_cast<HostListViewItem*>( i );
 
+    // Workaround a Qt4 regression: before the item creation is complete
+    // compare() is called (insertItem() -> firstChild() -> enforceSortOrder())
+    if ( !other )
+        return 0;
+
     switch ( col )
     {
     case ColumnID:
