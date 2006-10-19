@@ -27,7 +27,7 @@ set(libicemon_SRCS
   joblistview.cc
 )
 
-kde4_automoc(libicemon ${libicemon_SRCS})
+kde4_automoc(${libicemon_SRCS})
 
 set(icemon_SRCS ${libicemon_SRCS}
     mon-kde.cc
@@ -36,7 +36,7 @@ set(icemon_SRCS ${libicemon_SRCS}
     summaryview.cc
     starview.cc)
 
-kde4_automoc(icemon ${icemon_SRCS})
+kde4_automoc(${icemon_SRCS})
 
 kde4_add_executable(icemon ${icemon_SRCS})
 
@@ -45,7 +45,7 @@ target_link_libraries(icemon  ${KDE4_KDEUI_LIBS} ${LIBICECREAM_LIBRARIES} )
 
 ########### install files ###############
 
-install(TARGETS icemon DESTINATION bin)
+install(TARGETS icemon DESTINATION ${BIN_INSTALL_DIR})
 
 install( FILES icemon.desktop DESTINATION ${XDG_APPS_DIR} )
 install( FILES icemonui.rc DESTINATION ${DATA_INSTALL_DIR}/icemon )
@@ -57,7 +57,7 @@ kde4_install_icons( ${ICON_INSTALL_DIR}   )
 #set( icemonapplet_PART_SRCS ${icemon_SRCS}
 #     icemonapplet.cpp )
 
-#kde4_automoc(icemonapplet ${icemonapplet_PART_SRCS})
+#kde4_automoc(${icemonapplet_PART_SRCS})
 
 #kde4_add_plugin(icemonapplet ${icemonapplet_PART_SRCS})
 
