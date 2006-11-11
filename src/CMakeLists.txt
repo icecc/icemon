@@ -61,7 +61,7 @@ kde4_install_icons( ${ICON_INSTALL_DIR}   )
 
 #kde4_add_plugin(icemonapplet ${icemonapplet_PART_SRCS})
 
-#kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} icemonapplet )
+#
 
 #target_link_libraries(icemonapplet  ${KDE4_KDEUI_LIBS} ${LIBICECREAM_LIBRARIES} )
 
