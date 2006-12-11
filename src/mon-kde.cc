@@ -159,7 +159,7 @@ void MainWindow::setupListView()
 void MainWindow::setupSummaryView()
 {
     setupView( new SummaryView( m_hostInfoManager, this ), false );
-    KAction* radioAction = actionCollection()->action( "view_foo_view" );
+    QAction* radioAction = actionCollection()->action( "view_foo_view" );
     if ( radioAction )
         dynamic_cast<KToggleAction*>( radioAction )->setChecked( true );
 }
@@ -167,7 +167,7 @@ void MainWindow::setupSummaryView()
 void MainWindow::setupGanttView()
 {
     setupView( new GanttStatusView( m_hostInfoManager, this ), false );
-    KAction* radioAction = actionCollection()->action( "view_gantt_view" );
+    QAction* radioAction = actionCollection()->action( "view_gantt_view" );
     if ( radioAction )
         dynamic_cast<KToggleAction*>( radioAction )->setChecked( true );
 }
@@ -175,7 +175,7 @@ void MainWindow::setupGanttView()
 void MainWindow::setupStarView()
 {
     setupView( new StarView( m_hostInfoManager, this ), false );
-    KAction* radioAction = actionCollection()->action( "view_star_view" );
+    QAction* radioAction = actionCollection()->action( "view_star_view" );
     if ( radioAction )
         dynamic_cast<KToggleAction*>( radioAction )->setChecked( true );
 }
@@ -183,7 +183,7 @@ void MainWindow::setupStarView()
 void MainWindow::setupHostView()
 {
     setupView( new HostView( true, m_hostInfoManager, this ), false );
-    KAction* radioAction = actionCollection()->action( "view_host_view" );
+    QAction* radioAction = actionCollection()->action( "view_host_view" );
     if ( radioAction )
         dynamic_cast<KToggleAction*>( radioAction )->setChecked( true );
 }
@@ -191,7 +191,7 @@ void MainWindow::setupHostView()
 void MainWindow::setupDetailedHostView()
 {
     setupView( new DetailedHostView( m_hostInfoManager, this ), false );
-    KAction* radioAction = actionCollection()->action( "view_detailed_host_view" );
+    QAction* radioAction = actionCollection()->action( "view_detailed_host_view" );
     if ( radioAction )
         dynamic_cast<KToggleAction*>( radioAction )->setChecked( true );
 }
