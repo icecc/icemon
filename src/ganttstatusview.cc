@@ -40,8 +40,8 @@
 #include <QPaintEvent>
 #include <QScrollBar>
 
-#include <klocale.h>
-
+#include <KGlobal>
+#include <KLocale>
 
 GanttConfigDialog::GanttConfigDialog( QWidget *parent )
   : QDialog( parent )
@@ -242,7 +242,7 @@ void GanttProgress::drawGraph( QPainter &p )
                     }
                     // Finally draw the text.
                     if( text_width > 0 ) {
-                        (*it).text_cache.resize( text_width, height() - 4 );
+                        (*it).text_cache = QPixmap( text_width, height() - 4 );
                         (*it).text_cache.fill( color );
                         QPainter painter( &(*it).text_cache );
                         painter.setPen( StatusView::textColor( color ) );

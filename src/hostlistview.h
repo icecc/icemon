@@ -21,12 +21,11 @@
 #ifndef ICEMON_HOSTLISTVIEW_H
 #define ICEMON_HOSTLISTVIEW_H
 
-
 #include "hostinfo.h"
 
+#include <qpalette.h>
 #include <q3listview.h>
 #include <qtimer.h>
-
 
 class HostListViewItem : public Q3ListViewItem
 {

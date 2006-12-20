@@ -26,6 +26,8 @@
 
 #include <qlayout.h>
 
+#include <KGlobal>
+
 ListStatusView::ListStatusView( HostInfoManager* manager,
                                 QWidget* parent,
                                 const char* name )

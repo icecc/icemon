@@ -37,9 +37,10 @@
 #include <kcmdlineargs.h>
 #include <kconfig.h>
 #include <kdebug.h>
+#include <kglobal.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 #include <ktoggleaction.h>
 #include <kactioncollection.h>
 #include <kselectaction.h>
@@ -76,7 +77,7 @@ MainWindow::MainWindow( QWidget *parent, const char *name )
     connect( action, SIGNAL( triggered() ), this, SLOT( setupDetailedHostView() ) );
 
 
-    KStdAction::quit( this, SLOT( close() ), actionCollection() );
+    KStandardAction::quit( this, SLOT( close() ), actionCollection() );
 
     action = new KAction( i18n("Stop"), actionCollection(), "view_stop" );
     connect( action, SIGNAL( triggered() ), this, SLOT( stopView() ) );
