@@ -74,4 +74,4 @@ class MainWindow : public KMainWindow
 };
 
 #endif // MON_KDE_H
-// vim:ts=4:sw=4:noet
+// vim:ts=4:sw=4:et

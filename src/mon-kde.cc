@@ -44,6 +44,7 @@
 #include <ktoggleaction.h>
 #include <kactioncollection.h>
 #include <kselectaction.h>
+#include <kmenubar.h>
 
 #include <QMenu>
 
@@ -56,7 +57,9 @@ MainWindow::MainWindow( QWidget *parent, const char *name )
 
     m_monitor = new Monitor( m_hostInfoManager, this );
 
-    m_viewMode = new KSelectAction(i18n("&Mode"), actionCollection(), "view_mode");
+    m_viewMode = new KSelectAction(this);
+    m_viewMode->setText(i18n("&Mode"));
+    actionCollection()->addAction("view_mode", m_viewMode);
 
     QAction* action = m_viewMode->addAction(i18n( "&List View" ));
     connect( action, SIGNAL( triggered() ), this, SLOT( setupListView() ) );
@@ -76,19 +79,22 @@ MainWindow::MainWindow( QWidget *parent, const char *name )
     action = m_viewMode->addAction(i18n( "&Detailed Host View" ));
     connect( action, SIGNAL( triggered() ), this, SLOT( setupDetailedHostView() ) );
 
-
     KStandardAction::quit( this, SLOT( close() ), actionCollection() );
 
-    action = new KAction( i18n("Stop"), actionCollection(), "view_stop" );
+    action = actionCollection()->addAction("view_stop");
+    action->setText(i18n("Stop"));
     connect( action, SIGNAL( triggered() ), this, SLOT( stopView() ) );
 
-    action = new KAction( i18n("Start"), actionCollection(), "view_start" );
+    action = actionCollection()->addAction("view_start");
+    action->setText(i18n("Start"));
     connect( action, SIGNAL( triggered() ), this, SLOT( startView() ) );
 
-    action = new KAction( i18n("Check Nodes"), actionCollection(), "check_nodes" );
+    action = actionCollection()->addAction("check_nodes");
+    action->setText(i18n("Check Nodes"));
     connect( action, SIGNAL( triggered() ), this, SLOT( checkNodes() ) );
 
-    action = new KAction( i18n("Configure View..."), actionCollection(), "configure_view" );
+    action = actionCollection()->addAction("configure_view");
+    action->setText(i18n("Configure View..."));
     connect( action, SIGNAL( triggered() ), this, SLOT( configureView() ) );
 
     createGUI();
@@ -104,7 +110,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::readSettings()
 {
-  KConfig *cfg = KGlobal::config();
+  KSharedConfig::Ptr cfg = KGlobal::config();
   cfg->setGroup( "View" );
   QString viewId = cfg->readEntry( "CurrentView", "star" );
 
@@ -138,7 +144,7 @@ void MainWindow::readSettings()
 
 void MainWindow::writeSettings()
 {
-  KConfig *cfg = KGlobal::config();
+  KSharedConfig::Ptr cfg = KGlobal::config();
   cfg->setGroup( "View" );
   cfg->writeEntry( "CurrentView", m_view->id() );
 }
