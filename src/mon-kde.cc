@@ -97,7 +97,7 @@ MainWindow::MainWindow( QWidget *parent, const char *name )
     action->setText(i18n("Configure View..."));
     connect( action, SIGNAL( triggered() ), this, SLOT( configureView() ) );
 
-    createGUI();
+    setupGUI();
     readSettings();
 }
 
