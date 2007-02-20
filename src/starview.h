@@ -41,7 +41,8 @@ class QGraphicsView;
 class StarViewConfigDialog : public QDialog
 {
     Q_OBJECT
-  public:
+
+public:
     StarViewConfigDialog( QWidget *parent );
 
     int nodesPerRing();
@@ -51,14 +52,14 @@ class StarViewConfigDialog : public QDialog
 
     QString archFilter();
 
-  protected slots:
+protected slots:
     void slotNodesPerRingChanged( int nodes );
     void slotSuppressDomainName( bool );
 
-  signals:
+signals:
     void configChanged();
 
-  private:
+private:
     QSlider *mNodesPerRingSlider;
     QLabel *mNodesPerRingLabel;
     QLineEdit *mArchFilterEdit;
@@ -68,7 +69,7 @@ class StarViewConfigDialog : public QDialog
 
 class HostItem : public QGraphicsItemGroup
 {
-  public:
+public:
     enum { RttiHostItem = 1000 };
 
     HostItem( const QString &text, QGraphicsScene *canvas, HostInfoManager * );
@@ -106,12 +107,12 @@ class HostItem : public QGraphicsItemGroup
 
     void update( const Job &job );
 
-  protected:
+protected:
     void createJobHalo( const Job & );
     void deleteJobHalo( const Job &job );
     void updateHalos();
 
-  private:
+private:
     HostInfo *mHostInfo;
     HostInfoManager *mHostInfoManager;
 
@@ -136,7 +137,8 @@ class HostItem : public QGraphicsItemGroup
 class StarView : public QWidget, public StatusView
 {
     Q_OBJECT
-  public:
+
+public:
     StarView( HostInfoManager *, QWidget *parent );
 
     void update( const Job &job );
@@ -154,26 +156,26 @@ class StarView : public QWidget, public StatusView
 
     void configureView();
 
-  protected:
+protected:
     virtual void resizeEvent( QResizeEvent *e );
     virtual bool event(QEvent *event);
 
     /**
-      Return true if node should be shown and false if not.
+       Return true if node should be shown and false if not.
     */
     bool filterArch( unsigned int hostid );
     /**
-      Return true if node should be shown and false if not.
+       Return true if node should be shown and false if not.
     */
     bool filterArch( HostInfo * );
 
     void removeItem( HostItem * );
     void forceRemoveNode( unsigned int hostid );
 
-  protected slots:
+    protected slots:
     void slotConfigChanged();
 
-  private:
+private:
     void createKnownHosts();
     void centerSchedulerItem();
     HostItem *createHostItem( unsigned int hostid );

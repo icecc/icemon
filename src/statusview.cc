@@ -25,6 +25,7 @@
 #include "hostinfo.h"
 #include "job.h"
 
+#include <assert.h>
 #include <klocale.h>
 #include <kdebug.h>
 
@@ -74,9 +75,16 @@ QColor StatusView::textColor( const QColor &color )
 
 unsigned int StatusView::processor( const Job &job )
 {
-  if ( job.state() == Job::LocalOnly || job.state() == Job::WaitingForCS ) {
-    return job.client();
-  } else {
-    return job.server();
-  }
+    unsigned int ret = 0;
+    if ( job.state() == Job::LocalOnly || job.state() == Job::WaitingForCS ) {
+        ret = job.client();
+    } else {
+        ret = job.server();
+        if ( !ret ) {
+            Q_ASSERT( job.state() == Job::Finished );
+            ret = job.client();
+        }
+    }
+    assert( ret );
+    return ret;
 }
