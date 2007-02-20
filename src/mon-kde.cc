@@ -110,9 +110,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::readSettings()
 {
-  KSharedConfig::Ptr cfg = KGlobal::config();
-  cfg->setGroup( "View" );
-  QString viewId = cfg->readEntry( "CurrentView", "star" );
+  KConfigGroup cfg(KGlobal::config(), "View" );
+  QString viewId = cfg.readEntry( "CurrentView", "star" );
 
   m_viewMode->blockSignals(true);
   if ( viewId == "gantt" ) {
@@ -144,9 +143,8 @@ void MainWindow::readSettings()
 
 void MainWindow::writeSettings()
 {
-  KSharedConfig::Ptr cfg = KGlobal::config();
-  cfg->setGroup( "View" );
-  cfg->writeEntry( "CurrentView", m_view->id() );
+  KConfigGroup cfg(KGlobal::config(), "View" );
+  cfg.writeEntry( "CurrentView", m_view->id() );
 }
 
 void MainWindow::setupView( StatusView *view, bool rememberJobs )
