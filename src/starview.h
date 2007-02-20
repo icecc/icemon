@@ -122,8 +122,8 @@ class HostItem : public QGraphicsItemGroup
     QGraphicsSimpleTextItem* m_textItem;
     unsigned int m_client;
 
-    int mBaseWidth;
-    int mBaseHeight;
+    qreal mBaseWidth;
+    qreal mBaseHeight;
 
     QGraphicsEllipseItem *m_boxItem;
 
@@ -137,7 +137,7 @@ class StarView : public QWidget, public StatusView
 {
     Q_OBJECT
   public:
-    StarView( HostInfoManager *, QWidget *parent, const char *name = 0 );
+    StarView( HostInfoManager *, QWidget *parent );
 
     void update( const Job &job );
     QWidget *widget();

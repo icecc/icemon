@@ -155,6 +155,7 @@ void HostItem::init()
 
   m_boxItem = new QGraphicsEllipseItem( this, scene() );
   m_boxItem->setZValue( 80 );
+  m_boxItem->setPen( QPen( Qt::NoPen ) );
 
   m_textItem = new QGraphicsSimpleTextItem( this, scene() );
   m_textItem->setZValue( 100 );
@@ -170,7 +171,6 @@ void HostItem::init()
 void HostItem::setHostColor( const QColor &color )
 {
   m_boxItem->setBrush( color );
-
   m_textItem->setBrush( StatusView::textColor( color ) );
 }
 
@@ -234,16 +234,17 @@ void HostItem::update( const Job &job )
 
 void HostItem::createJobHalo( const Job &job )
 {
-  QGraphicsEllipseItem *halo = new QGraphicsEllipseItem(
-      centerPosX(), centerPosY(), mBaseWidth, mBaseHeight,
-                                             this, scene() );
-  halo->setZValue( 70 - m_jobHalos.size() );
-  halo->setPen(QPen(Qt::NoPen));
-  halo->show();
+    QGraphicsEllipseItem *halo = new QGraphicsEllipseItem(
+        centerPosX(), centerPosY(), mBaseWidth, mBaseHeight,
+        this, scene() );
 
-  m_jobHalos.insert( job, halo );
+    halo->setZValue( 70 - m_jobHalos.size() );
+    halo->setPen(QPen(Qt::NoPen));
+    halo->show();
 
-  updateHalos();
+    m_jobHalos.insert( job, halo );
+
+    updateHalos();
 }
 
 void HostItem::deleteJobHalo( const Job &job )
@@ -267,14 +268,14 @@ void HostItem::updateHalos()
     QGraphicsEllipseItem *halo = it.value();
     halo->setRect( halo->x() - 5 - count * 3, halo->y() - 5 - count * 3, mBaseWidth + count * 6, mBaseHeight + count * 6 );
     halo->setBrush( mHostInfoManager->hostColor( it.key().client() ) );
+    halo->setPen( Qt::NoPen );
     ++count;
   }
 }
 
-StarView::StarView( HostInfoManager *m, QWidget *parent, const char *name )
+StarView::StarView( HostInfoManager *m, QWidget *parent )
   : QWidget( parent ), StatusView( m )
 {
-    setObjectName( name );
     mConfigDialog = new StarViewConfigDialog( this );
     connect( mConfigDialog, SIGNAL( configChanged() ),
              SLOT( slotConfigChanged() ) );
@@ -288,7 +289,7 @@ StarView::StarView( HostInfoManager *m, QWidget *parent, const char *name )
     m_canvasView = new QGraphicsView( m_canvas, this );
     m_canvasView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_canvasView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_canvasView->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+    // m_canvasView->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     layout->addWidget( m_canvasView );
 
     m_schedulerItem = new HostItem( "", m_canvas, hostInfoManager() );
@@ -309,7 +310,6 @@ void StarView::update( const Job &job )
 
   if ( job.state() == Job::WaitingForCS ) {
     drawNodeStatus();
-    m_canvas->update();
     return;
   }
 
@@ -326,7 +326,6 @@ void StarView::update( const Job &job )
       if ( clientItem ) clientItem->setIsActiveClient( false );
     }
     drawNodeStatus();
-    m_canvas->update();
     return;
   }
 
@@ -353,7 +352,6 @@ void StarView::update( const Job &job )
   }
 
   drawNodeStatus();
-  m_canvas->update();
 }
 
 HostItem *StarView::findHostItem( unsigned int hostid )
@@ -434,8 +432,6 @@ void StarView::removeItem( HostItem *hostItem )
 
   arrangeHostItems();
   drawNodeStatus();
-
-  m_canvas->update();
 }
 
 void StarView::updateSchedulerState( bool online )
@@ -461,7 +457,6 @@ void StarView::updateSchedulerState( bool online )
   m_schedulerItem->setZValue(100);
   m_schedulerItem->show();
   centerSchedulerItem();
-  m_canvas->update();
 }
 
 QWidget *StarView::widget()
@@ -475,7 +470,6 @@ void StarView::resizeEvent( QResizeEvent * )
     centerSchedulerItem();
     arrangeHostItems();
     drawNodeStatus();
-    m_canvas->update();
 }
 
 bool StarView::event ( QEvent* e )
@@ -533,7 +527,6 @@ void StarView::slotConfigChanged()
 
   arrangeHostItems();
   drawNodeStatus();
-  m_canvas->update();
 }
 
 void StarView::arrangeHostItems()
@@ -575,8 +568,6 @@ void StarView::arrangeHostItems()
     angle += step;
     ++i;
   }
-
-  m_canvas->update();
 }
 
 HostItem *StarView::createHostItem( unsigned int hostid )
@@ -606,6 +597,8 @@ HostItem *StarView::createHostItem( unsigned int hostid )
 
 void StarView::drawNodeStatus()
 {
+    return;
+
   QMap<unsigned int, HostItem*>::ConstIterator it;
   for ( it = m_hostItems.begin(); it != m_hostItems.end(); ++it ) {
     drawState( *it );
@@ -649,8 +642,6 @@ void StarView::createKnownHosts()
     unsigned int id = (*it)->id();
     if ( !findHostItem( id ) ) createHostItem( id );
   }
-
-  m_canvas->update();
 }
 
 void StarView::configureView()
