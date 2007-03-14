@@ -40,13 +40,13 @@ else (LIBICECREAM_INCLUDE_DIR AND LIBICECREAM_LIBRARIES)
   endif (LIBICECREAM_INCLUDE_DIR AND LIBICECREAM_LIBRARIES)
 
   if (LIBICECREAM_FOUND)
-    if (NOT icecream_FIND_QUIETLY)
+    if (NOT Icecream_FIND_QUIETLY)
       message(STATUS "Found LIBICECREAM: ${LIBICECREAM_LIBRARIES}")
-    endif (NOT icecream_FIND_QUIETLY)
+    endif (NOT Icecream_FIND_QUIETLY)
   else (LIBICECREAM_FOUND)
-    if (icecream_FIND_REQUIRED)
+    if (Icecream_FIND_REQUIRED)
       message(FATAL_ERROR "Could NOT find LIBICECREAM")
-    endif (icecream_FIND_REQUIRED)
+    endif (Icecream_FIND_REQUIRED)
   endif (LIBICECREAM_FOUND)
 
   MARK_AS_ADVANCED(
