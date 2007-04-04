@@ -1,8 +1,5 @@
 project(icemon)
 
-#ignore DONTPORT restriction
-set(KDE4_IGNORE_DONTPORT ON)
-
 set( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules )
 
 # search packages used by KDE
@@ -41,7 +38,7 @@ kde4_automoc(${icemon_SRCS})
 kde4_add_executable(icemon ${icemon_SRCS})
 
 
-target_link_libraries(icemon  ${KDE4_KDEUI_LIBS} ${LIBICECREAM_LIBRARIES} )
+target_link_libraries(icemon ${KDE4_KDEUI_LIBS} ${LIBICECREAM_LIBRARIES} ${QT_QT3SUPPORT_LIBRARY})
 
 ########### install files ###############
 
