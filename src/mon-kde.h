@@ -22,14 +22,14 @@
 #ifndef MON_KDE_H
 #define MON_KDE_H
 
-#include <kmainwindow.h>
+#include <kxmlguiwindow.h>
 
 class HostInfoManager;
 class Monitor;
 class StatusView;
 class KSelectAction;
 
-class MainWindow : public KMainWindow
+class MainWindow : public KXmlGuiWindow
 {
     Q_OBJECT
   public:

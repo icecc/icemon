@@ -49,7 +49,7 @@
 #include <QMenu>
 
 MainWindow::MainWindow( QWidget *parent, const char *name )
-  : KMainWindow( parent ), m_view( 0 )
+  : KXmlGuiWindow( parent ), m_view( 0 )
 {
     setObjectName( name );
 
