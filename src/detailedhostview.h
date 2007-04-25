@@ -23,7 +23,7 @@
 
 #include "statusview.h"
 
-#include <qwidget.h>
+#include <Qt/qwidget.h>
 
 
 class HostListView;

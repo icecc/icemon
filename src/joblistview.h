@@ -26,9 +26,9 @@
 
 #include "job.h"
 
-#include <q3listview.h>
-#include <qpair.h>
-#include <Q3ValueList>
+#include <Qt/q3listview.h>
+#include <Qt/qpair.h>
+#include <Qt/q3valuelist.h>
 
 
 class HostInfoManager;

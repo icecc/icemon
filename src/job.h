@@ -22,9 +22,9 @@
 #ifndef ICEMON_JOB_H
 #define ICEMON_JOB_H
 
-#include <qstring.h>
+#include <Qt/qstring.h>
 #include <time.h>
-#include <qmap.h>
+#include <Qt/qmap.h>
 
 class Job
 {

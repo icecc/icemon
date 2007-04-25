@@ -23,9 +23,9 @@
 
 #include "hostinfo.h"
 
-#include <qpalette.h>
-#include <q3listview.h>
-#include <qtimer.h>
+#include <Qt/qpalette.h>
+#include <Qt/q3listview.h>
+#include <Qt/qtimer.h>
 
 class HostListViewItem : public Q3ListViewItem
 {

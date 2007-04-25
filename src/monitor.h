@@ -24,7 +24,7 @@
 
 #include "job.h"
 
-#include <qobject.h>
+#include <Qt/qobject.h>
 
 class HostInfoManager;
 class Msg;

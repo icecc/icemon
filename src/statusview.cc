@@ -26,8 +26,7 @@
 #include "job.h"
 
 #include <assert.h>
-#include <klocale.h>
-#include <kdebug.h>
+#include <Qt/qdebug.h>
 
 StatusView::StatusView( HostInfoManager *m )
   : mHostInfoManager( m )
@@ -48,7 +47,7 @@ void StatusView::removeNode( unsigned int )
 
 void StatusView::updateSchedulerState( bool online )
 {
-  kDebug() << "Scheduler is " << ( online ? "online" : "offline" ) << endl;
+  qDebug() << "Scheduler is" << ( online ? "online" : "offline" );
 }
 
 QString StatusView::nameForHost( unsigned int id )

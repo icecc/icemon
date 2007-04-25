@@ -21,29 +21,28 @@
 */
 
 #include "job.h"
-
-#include <klocale.h>
+#include <Qt/qobject.h>
 
 QString Job::stateAsString() const
 {
     switch ( m_state ) {
     case WaitingForCS:
-        return i18n( "Waiting" );
+        return QObject::tr( "Waiting" );
         break;
     case Compiling:
-        return i18n( "Compiling" );
+        return QObject::tr( "Compiling" );
         break;
     case Finished:
-        return i18n( "Finished" );
+        return QObject::tr( "Finished" );
         break;
     case Failed:
-        return i18n( "Failed" );
+        return QObject::tr( "Failed" );
         break;
     case Idle:
-        return i18n( "Idle" );
+        return QObject::tr( "Idle" );
         break;
     case LocalOnly:
-        return i18n( "LocalOnly" );
+        return QObject::tr( "LocalOnly" );
         break;
     }
     return QString::null;

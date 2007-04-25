@@ -25,7 +25,6 @@
 #include "detailedhostview.h"
 #include "ganttstatusview.h"
 #include "hostinfo.h"
-#include "hostview.h"
 #include "listview.h"
 #include "monitor.h"
 #include "starview.h"
@@ -72,9 +71,6 @@ MainWindow::MainWindow( QWidget *parent, const char *name )
 
     action = m_viewMode->addAction(i18n( "Summary &View" ));
     connect( action, SIGNAL( triggered() ), this, SLOT( setupSummaryView() ) );
-
-    action = m_viewMode->addAction(i18n( "&Host View" ));
-    connect( action, SIGNAL( triggered() ), this, SLOT( setupHostView() ) );
 
     action = m_viewMode->addAction(i18n( "&Detailed Host View" ));
     connect( action, SIGNAL( triggered() ), this, SLOT( setupDetailedHostView() ) );
@@ -125,10 +121,6 @@ void MainWindow::readSettings()
   } else if ( viewId == "star" ) {
     setupStarView();
     m_viewMode->setCurrentAction(m_viewMode->actions()[StarViewType]);
-
-  } else if ( viewId == "host" ) {
-    setupHostView();
-    m_viewMode->setCurrentAction(m_viewMode->actions()[HostViewType]);
 
   } else if ( viewId == "detailedhost" ) {
     setupDetailedHostView();
@@ -181,14 +173,6 @@ void MainWindow::setupStarView()
 {
     setupView( new StarView( m_hostInfoManager, this ), false );
     QAction* radioAction = actionCollection()->action( "view_star_view" );
-    if ( radioAction )
-        dynamic_cast<KToggleAction*>( radioAction )->setChecked( true );
-}
-
-void MainWindow::setupHostView()
-{
-    setupView( new HostView( true, m_hostInfoManager, this ), false );
-    QAction* radioAction = actionCollection()->action( "view_host_view" );
     if ( radioAction )
         dynamic_cast<KToggleAction*>( radioAction )->setChecked( true );
 }

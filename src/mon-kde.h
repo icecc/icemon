@@ -43,7 +43,6 @@ class MainWindow : public KXmlGuiWindow
     void setupStarView();
     void setupSummaryView();
     void setupGanttView();
-    void setupHostView();
     void setupDetailedHostView();
 
     void stopView();

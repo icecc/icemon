@@ -18,18 +18,15 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include <qlabel.h>
-#include <qboxlayout.h>
-#include <qsplitter.h>
+#include <Qt/qlabel.h>
+#include <Qt/qboxlayout.h>
+#include <Qt/qsplitter.h>
 
 #include "detailedhostview.h"
 
 #include "hostinfo.h"
 #include "hostlistview.h"
 #include "joblistview.h"
-
-#include <klocale.h>
-#include <kvbox.h>
 
 #include <sys/utsname.h>
 
@@ -57,24 +54,27 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
   QSplitter* viewSplitter = new QSplitter( Qt::Vertical, this );
   topLayout->addWidget( viewSplitter );
 
-  KVBox* hosts = new KVBox( viewSplitter );
-  hosts->setSpacing( 10 );
+  QWidget *hosts = new QWidget( viewSplitter );
+  QVBoxLayout *dummy = new QVBoxLayout( hosts );
+  dummy->setSpacing( 10 );
 
-  new QLabel( i18n( "Hosts" ), hosts );
+  new QLabel( tr( "Hosts" ), hosts );
   mHostListView = new HostListView( manager, hosts, "HostListView" );
 
-  KVBox* locals = new KVBox( viewSplitter );
-  locals->setSpacing( 10 );
+  QWidget *locals = new QWidget( viewSplitter );
+  dummy = new QVBoxLayout( locals );
+  dummy->setSpacing( 10 );
 
-  new QLabel( i18n( "Outgoing jobs" ), locals );
+  new QLabel( tr( "Outgoing jobs" ), locals );
   mLocalJobsView = new JobListView( manager, locals, "LocalJobs" );
   mLocalJobsView->setClientColumnVisible( false );
   mLocalJobsView->setExpireDuration( 5 );
 
-  KVBox* remotes = new KVBox( viewSplitter );
-  remotes->setSpacing( 10 );
+  QWidget* remotes = new QWidget( viewSplitter );
+  dummy = new QVBoxLayout( remotes );
+  dummy->setSpacing( 10 );
 
-  new QLabel( i18n( "Incoming jobs" ), remotes );
+  new QLabel( tr( "Incoming jobs" ), remotes );
   mRemoteJobsView = new JobListView( manager, remotes, "RemoteJobs" );
   mRemoteJobsView->setServerColumnVisible( false );
   mRemoteJobsView->setExpireDuration( 5 );

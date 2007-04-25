@@ -20,11 +20,9 @@
 
 #include "hostlistview.h"
 
-#include <kglobal.h>
-#include <klocale.h>
-
-#include <qfontmetrics.h>
-#include <qpainter.h>
+#include <Qt/qlocale.h>
+#include <Qt/qfontmetrics.h>
+#include <Qt/qpainter.h>
 
 
 enum Columns
@@ -72,7 +70,7 @@ void HostListViewItem::updateText( const HostInfo& info )
     setText( ColumnIP, info.ip() );
     setText( ColumnPlatform, info.platform() );
     setText( ColumnMaxJobs, QString::number( info.maxJobs() ) );
-    setText( ColumnSpeed, KGlobal::locale()->formatNumber( info.serverSpeed(), 1 ) );
+    setText( ColumnSpeed, QLocale::c().toString( info.serverSpeed() ) );
     setText( ColumnLoad, QString::number( info.serverLoad() ) );
 }
 
@@ -166,14 +164,14 @@ HostListView::HostListView( HostInfoManager* manager,
       mHostInfoManager( manager ),
       mActiveNode( 0 )
 {
-    addColumn( i18n( "ID" ) );
-    addColumn( i18n( "Name" ) );
-    addColumn( i18n( "Color" ) );
-    addColumn( i18n( "IP" ) );
-    addColumn( i18n( "Platform" ) );
-    addColumn( i18n( "Max Jobs" ) );
-    addColumn( i18n( "Speed" ) );
-    addColumn( i18n( "Load" ) );
+    addColumn( tr( "ID" ) );
+    addColumn( tr( "Name" ) );
+    addColumn( tr( "Color" ) );
+    addColumn( tr( "IP" ) );
+    addColumn( tr( "Platform" ) );
+    addColumn( tr( "Max Jobs" ) );
+    addColumn( tr( "Speed" ) );
+    addColumn( tr( "Load" ) );
 
     setColumnAlignment( ColumnID, Qt::AlignRight );
     setColumnAlignment( ColumnMaxJobs, Qt::AlignRight );
