@@ -1,16 +1,8 @@
 project(icemon)
 
-set( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules )
-
-# search packages used by KDE
-find_package(KDE4 REQUIRED)
 find_package(Icecream REQUIRED)
-include (KDE4Defaults)
-include (MacroLibrary)
 
-add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DQT3_SUPPORT_WARNINGS -DQT3_SUPPORT)
-link_directories (${KDE4_LIB_DIR})
-include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES} ${LIBICECREAM_INCLUDE_DIR})
+include_directories (${LIBICECREAM_INCLUDE_DIR})
 
 
 set(libicemon_SRCS
