@@ -216,28 +216,25 @@ const char * const version = "0.1";
 const char * const description = I18N_NOOP( "Icecream monitor for KDE" );
 const char * const copyright = I18N_NOOP( "(c) 2003,2004, The icecream developers" );
 
-static const KCmdLineOptions options[] =
-{
-  { "n", 0, 0 },
-  { "netname <name>", "Icecream network name", 0 },
-  KCmdLineLastOption
-};
-
 int main( int argc, char **argv )
 {
-  KAboutData aboutData( rs_program_name, appName, version, description,
-                        KAboutData::License_GPL_V2, copyright );
-  aboutData.addAuthor( "Frerich Raabe", 0, "raabe@kde.org" );
-  aboutData.addAuthor( "Stephan Kulow", 0, "coolo@kde.org" );
-  aboutData.addAuthor( "Cornelius Schumacher", 0, "schumacher@kde.org" );
+  KAboutData aboutData( rs_program_name, 0, ki18n(appName), version, ki18n(description),
+                        KAboutData::License_GPL_V2, ki18n(copyright) );
+  aboutData.addAuthor( ki18n("Frerich Raabe"), KLocalizedString(), "raabe@kde.org" );
+  aboutData.addAuthor( ki18n("Stephan Kulow"), KLocalizedString(), "coolo@kde.org" );
+  aboutData.addAuthor( ki18n("Cornelius Schumacher"), KLocalizedString(), "schumacher@kde.org" );
 
   KCmdLineArgs::init( argc, argv, &aboutData );
+
+  KCmdLineOptions options;
+  options.add("n");
+  options.add("netname <name>", ki18n("Icecream network name"));
   KCmdLineArgs::addCmdLineOptions( options );
   KApplication app;
   MainWindow *mainWidget = new MainWindow( 0 );
 
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-  QString netName = QString::fromLocal8Bit( args->getOption( "netname" ) );
+  QString netName = args->getOption( "netname" );
   if ( !netName.isEmpty() ) {
     mainWidget->setCurrentNet( netName );
   }
