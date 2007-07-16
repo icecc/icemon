@@ -23,7 +23,6 @@
 
 #include "job.h"
 #include "statusview.h"
-#include "hostitem.h"
 
 #include <q3canvas.h>
 #include <qdialog.h>
