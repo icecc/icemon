@@ -17,7 +17,8 @@ set(icemon_SRCS
     listview.cc
     ganttstatusview.cc
     summaryview.cc
-    starview.cc)
+    starview.cc
+    poolview.cc)
 
 qt4_automoc(${icemon_SRCS})
 

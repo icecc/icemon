@@ -28,6 +28,7 @@
 #include "listview.h"
 #include "monitor.h"
 #include "starview.h"
+#include "poolview.h"
 #include "summaryview.h"
 
 #include <kaboutdata.h>
@@ -65,6 +66,9 @@ MainWindow::MainWindow( QWidget *parent, const char *name )
 
     action = m_viewMode->addAction(i18n( "&Star View" ));
     connect( action, SIGNAL( triggered() ), this, SLOT( setupStarView() ) );
+
+    action = m_viewMode->addAction(i18n( "&Pool View" ));
+    connect( action, SIGNAL( triggered() ), this, SLOT( setupPoolView() ) );
 
     action = m_viewMode->addAction(i18n( "&Gantt View" ));
     connect( action, SIGNAL( triggered() ), this, SLOT( setupGanttView() ) );
@@ -107,7 +111,7 @@ MainWindow::~MainWindow()
 void MainWindow::readSettings()
 {
   KConfigGroup cfg(KGlobal::config(), "View" );
-  QString viewId = cfg.readEntry( "CurrentView", "star" );
+  QString viewId = cfg.readEntry( "CurrentView", "pool" );
 
   m_viewMode->blockSignals(true);
   if ( viewId == "gantt" ) {
@@ -121,6 +125,10 @@ void MainWindow::readSettings()
   } else if ( viewId == "star" ) {
     setupStarView();
     m_viewMode->setCurrentAction(m_viewMode->actions()[StarViewType]);
+
+  } else if ( viewId == "pool" ) {
+    setupPoolView();
+    m_viewMode->setCurrentAction(m_viewMode->actions()[PoolViewType]);
 
   } else if ( viewId == "detailedhost" ) {
     setupDetailedHostView();
@@ -165,6 +173,14 @@ void MainWindow::setupGanttView()
 {
     setupView( new GanttStatusView( m_hostInfoManager, this ), false );
     QAction* radioAction = actionCollection()->action( "view_gantt_view" );
+    if ( radioAction )
+        dynamic_cast<KToggleAction*>( radioAction )->setChecked( true );
+}
+
+void MainWindow::setupPoolView()
+{
+    setupView( new PoolView( m_hostInfoManager, this ), false );
+    QAction* radioAction = actionCollection()->action( "view_pool_view" );
     if ( radioAction )
         dynamic_cast<KToggleAction*>( radioAction )->setChecked( true );
 }

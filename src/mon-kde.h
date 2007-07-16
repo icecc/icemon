@@ -41,6 +41,7 @@ class MainWindow : public KXmlGuiWindow
   private slots:
     void setupListView();
     void setupStarView();
+    void setupPoolView();
     void setupSummaryView();
     void setupGanttView();
     void setupDetailedHostView();
@@ -63,6 +64,7 @@ class MainWindow : public KXmlGuiWindow
     enum views {
       ListViewType,
       StarViewType,
+      PoolViewType,
       GanttViewType,
       SummaryViewType,
       HostViewType,

@@ -27,7 +27,8 @@
 
 #include <assert.h>
 #include <Qt/qdebug.h>
-
+#include <QTime>
+#include <kdebug.h>
 StatusView::StatusView( HostInfoManager *m )
   : mHostInfoManager( m )
 {
@@ -80,7 +81,7 @@ unsigned int StatusView::processor( const Job &job )
     } else {
         ret = job.server();
         if ( !ret ) {
-            Q_ASSERT( job.state() == Job::Finished );
+	  //            Q_ASSERT( job.state() == Job::Finished );
             ret = job.client();
         }
     }
