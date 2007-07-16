@@ -41,6 +41,7 @@ class QCheckBox;
 class QGraphicsView;
 class QGraphicsLineItem;
 
+class PoolView;
 
 class PoolItem : public QGraphicsItemGroup
 {
