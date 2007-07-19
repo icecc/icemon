@@ -152,7 +152,7 @@ void SummaryViewItem::update(const Job &job)
         m_jobCount++;
         m_jobsLabel->setText(QString::number(m_jobCount));
 
-        Q3ValueVector<JobHandler>::Iterator it = m_jobHandlers.begin();
+        QVector<JobHandler>::Iterator it = m_jobHandlers.begin();
         while(it != m_jobHandlers.end() && !(*it).currentFile.isNull())
             ++it;
 
@@ -172,7 +172,7 @@ void SummaryViewItem::update(const Job &job)
     case Job::Finished:
     case Job::Failed:
     {
-        Q3ValueVector<JobHandler>::Iterator it = m_jobHandlers.begin();
+        QVector<JobHandler>::Iterator it = m_jobHandlers.begin();
         while(it != m_jobHandlers.end() && (*it).currentFile != job.fileName())
             ++it;
 

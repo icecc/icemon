@@ -56,7 +56,7 @@ private:
     int m_jobCount;
     SummaryView *m_view;
 
-    Q3ValueVector<JobHandler> m_jobHandlers;
+    QVector<JobHandler> m_jobHandlers;
     QList<QWidget *> m_widgets;
 };
 
