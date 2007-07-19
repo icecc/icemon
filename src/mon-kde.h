@@ -67,7 +67,6 @@ class MainWindow : public KXmlGuiWindow
       PoolViewType,
       GanttViewType,
       SummaryViewType,
-      HostViewType,
       DetailedHostViewType
     };
 
