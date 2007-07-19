@@ -58,26 +58,29 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
   QVBoxLayout *dummy = new QVBoxLayout( hosts );
   dummy->setSpacing( 10 );
 
-  new QLabel( tr( "Hosts" ), hosts );
+  dummy->addWidget(new QLabel( tr( "Hosts" ), hosts ));
   mHostListView = new HostListView( manager, hosts, "HostListView" );
+  dummy->addWidget(mHostListView);
 
   QWidget *locals = new QWidget( viewSplitter );
   dummy = new QVBoxLayout( locals );
   dummy->setSpacing( 10 );
 
-  new QLabel( tr( "Outgoing jobs" ), locals );
+  dummy->addWidget(new QLabel( tr( "Outgoing jobs" ), locals ));
   mLocalJobsView = new JobListView( manager, locals, "LocalJobs" );
   mLocalJobsView->setClientColumnVisible( false );
   mLocalJobsView->setExpireDuration( 5 );
+  dummy->addWidget(mLocalJobsView);
 
   QWidget* remotes = new QWidget( viewSplitter );
   dummy = new QVBoxLayout( remotes );
   dummy->setSpacing( 10 );
 
-  new QLabel( tr( "Incoming jobs" ), remotes );
+  dummy->addWidget(new QLabel( tr( "Incoming jobs" ), remotes ));
   mRemoteJobsView = new JobListView( manager, remotes, "RemoteJobs" );
   mRemoteJobsView->setServerColumnVisible( false );
   mRemoteJobsView->setExpireDuration( 5 );
+  dummy->addWidget(mRemoteJobsView);
 
   connect(mHostListView, SIGNAL( nodeActivated( unsigned int ) ),
           this, SLOT( slotNodeActivated() ) );
