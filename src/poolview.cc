@@ -52,6 +52,7 @@ static const qreal MIN_VELOCITY_FOR_BOUNCE = 0.1;
 
 static bool suppressDomain = false;
 static bool showJobLines = false;
+static bool clientsAttractHosts = false;
 
 PoolItem::PoolItem( const QString &text, PoolView *poolView, HostInfoManager *m )
   : QGraphicsItemGroup( 0, poolView->canvas() ), mHostInfo( 0 ), mHostInfoManager( m ),
@@ -340,10 +341,12 @@ void PoolItem::computeNewPosition()
       PoolItem* poolItem = m_poolView->findPoolItem( j.server() );
       if ( poolItem && poolItem != this )
 	poolItems << poolItem;
-      // Attraction between from servers to clients disabled ...
-      //      PoolItem* poolItem2 = m_poolView->findPoolItem( j.client() );
-      //      if ( poolItem2 && poolItem2 != this )
-      //	poolItems << poolItem2;
+
+      if ( ::clientsAttractHosts ) {
+	PoolItem* poolItem2 = m_poolView->findPoolItem( j.client() );
+	if ( poolItem2 && poolItem2 != this )
+	  poolItems << poolItem2;
+      }
     }
 
     if ( poolItems.count() ) {
@@ -388,6 +391,7 @@ void PoolItem::drawJobLines()
   }
 }
 
+
 PoolViewConfigDialog::PoolViewConfigDialog( QWidget *parent )
     : QDialog( parent )
 {
@@ -409,6 +413,11 @@ PoolViewConfigDialog::PoolViewConfigDialog( QWidget *parent )
     topLayout->addWidget( mShowJobLines );
     connect( mShowJobLines, SIGNAL( toggled( bool ) ),
 	     SLOT( slotShowJobLines( bool )) );
+
+    mClientsAttractHosts = new QCheckBox( i18n("Clients attract hosts"), this);
+    topLayout->addWidget( mClientsAttractHosts );
+    connect( mClientsAttractHosts, SIGNAL( toggled( bool ) ),
+	     SLOT( slotClientsAttractHosts( bool )) );
 
     QFrame *hline = new QFrame( this );
     hline->setFrameShape( QFrame::HLine );
@@ -441,6 +450,11 @@ void PoolViewConfigDialog::slotShowJobLines( bool b )
   configChanged();
 }
 
+void PoolViewConfigDialog::slotClientsAttractHosts( bool b )
+{
+  ::clientsAttractHosts = b;
+  configChanged();
+}
 
 PoolView::PoolView( HostInfoManager *m, QWidget *parent )
   : QWidget( parent ), StatusView( m ), m_poolItemWidth ( 30 ), m_poolItemHeight ( 30 )
@@ -450,45 +464,21 @@ PoolView::PoolView( HostInfoManager *m, QWidget *parent )
              SLOT( slotConfigChanged() ) );
 
     m_canvas = new QGraphicsScene ( this );
-    //m_canvas->setSceneRect( 0, 0, width(), height() );   
     m_canvas->setSceneRect( 0, 0, 1000, 1000 );
 
-    QHBoxLayout *layout = new QHBoxLayout( this );
+    QHBoxLayout *layout = new QHBoxLayout( this );    
     layout->setMargin( 0 );
 
     m_canvasView = new QGraphicsView( m_canvas, this );
     m_canvasView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_canvasView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_canvasView->setRenderHints( QPainter::Antialiasing | QPainter::SmoothPixmapTransform );
-    m_canvasView->setSceneRect( 0, 0, 1000, 1000 );
     m_canvasView->setViewportUpdateMode( QGraphicsView::FullViewportUpdate );
-
     layout->addWidget( m_canvasView );
 
-    m_scaleFactor = 1;
-
     createKnownHosts();
+
     QTimer::singleShot( 0, this, SLOT( arrangePoolItems() ) );
-
-}
-
-void PoolView::updatePoolItemsSize()
-{
-  // Check if the total surface is enough
-  qreal canvasSurf = m_canvasView->width() * m_canvasView->height();
-  qreal itemSurf = m_poolItemWidth * m_poolItemHeight;
-  int count = m_poolItems.count();
-  if ( count * itemSurf > 0.7 * canvasSurf ) { 
-    // If not, scale down each host item
-   
-    // Choose new scale factor so that there is place for 10 items
-    m_scaleFactor = canvasSurf / ( m_poolItemWidth * m_poolItemHeight * ( count + 10 ) );
-  }
-
-  // Scale them
-  foreach( PoolItem *it, m_poolItems ) {
-    it->setSize( m_poolItemWidth*m_scaleFactor, m_poolItemHeight*m_scaleFactor );
-  }
 }
 
 void PoolView::update( const Job &job )
@@ -606,7 +596,6 @@ QWidget *PoolView::widget()
 void PoolView::resizeEvent( QResizeEvent * )
 {
   m_canvasView->fitInView( m_canvas->sceneRect(), Qt::KeepAspectRatio );
-  updatePoolItemsSize();
 }
 
 bool PoolView::event ( QEvent* e )
@@ -671,6 +660,7 @@ void PoolView::arrangePoolItems()
     it->checkBorders(); // make it bounce on the scene boundaries
     it->checkCollision(); // make it bounce on other items
   }
+
 
   foreach( PoolItem *it, m_poolItems ) {
     it->drawJobLines();

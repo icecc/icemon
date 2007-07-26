@@ -33,6 +33,7 @@
 
 class HostInfo;
 class PoolItem;
+class PoolView;
 
 class QSlider;
 class QLabel;
@@ -41,7 +42,6 @@ class QCheckBox;
 class QGraphicsView;
 class QGraphicsLineItem;
 
-class PoolView;
 
 class PoolItem : public QGraphicsItemGroup
 {
@@ -136,6 +136,7 @@ public:
 protected slots:
     void slotSuppressDomainName( bool );
     void slotShowJobLines( bool );
+    void slotClientsAttractHosts( bool b );
 signals:
     void configChanged();
 
@@ -143,6 +144,7 @@ private:
     QLineEdit *mArchFilterEdit;
     QCheckBox *mSuppressDomainName;
     QCheckBox *mShowJobLines;
+    QCheckBox *mClientsAttractHosts;
 };
 
 
@@ -191,19 +193,17 @@ protected:
 
     void removeItem( PoolItem * );
     void forceRemoveNode( unsigned int hostid );
-
-    protected slots:
+protected slots:
     void slotConfigChanged();
-
 private slots:
     void arrangePoolItems();
+
 private:
     void createKnownHosts();
     PoolItem *createPoolItem( unsigned int hostid );
 
     void drawNodeStatus();
     // void drawState( PoolItem *node );
-    void updatePoolItemsSize();
 
     PoolViewConfigDialog *mConfigDialog;
 
