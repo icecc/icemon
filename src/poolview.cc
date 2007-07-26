@@ -160,19 +160,17 @@ void PoolItem::setCenterPos( double x, double y )
 }
 
 void PoolItem::setRandPos()
-{ 
-  int count;
+{
+  int count = 0;
   qreal w = scene()->width();
   qreal h = scene()->height();
   qreal x,y;
   do {
-    count ++; 
     x =  qrand()/(double)RAND_MAX * w;
     y =  qrand()/(double)RAND_MAX * h;
     setCenterPos( x, y );
-    
-  } while( collidingItems().count() && count < 40 );
-     
+  } while( collidingItems().count() && ++count < 40 );
+
   show();
 }
   
