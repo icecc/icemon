@@ -4,6 +4,7 @@
     Copyright (c) 2003 Frerich Raabe <raabe@kde.org>
     Copyright (c) 2003,2004 Stephan Kulow <coolo@kde.org>
     Copyright (c) 2003,2004 Cornelius Schumacher <schumacher@kde.org>
+    Copyright (c) 2007 Dirk Mueller <mueller@kde.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,13 +39,11 @@
 
 using namespace std;
 
-Monitor::Monitor( HostInfoManager *m, QObject *parent, const char *name )
+Monitor::Monitor( HostInfoManager *m, QObject *parent)
     : QObject( parent ), m_hostInfoManager( m ), m_view( 0 ),
-      m_scheduler( 0 ), m_scheduler_read( 0 ), mSchedulerOnline( false ),
-      m_discover( 0 ), m_discover_read( 0 )
+      m_scheduler( 0 ), mSchedulerOnline( false ),
+      m_discover( 0 ), m_fd_notify( 0 ), m_fd_type(QSocketNotifier::Exception)
 {
-    setObjectName( name );
-
     checkScheduler();
 }
 
@@ -61,15 +60,23 @@ void Monitor::checkScheduler(bool deleteit)
         m_rememberedJobs.clear();
         delete m_scheduler;
         m_scheduler = 0;
-        delete m_scheduler_read;
-        m_scheduler_read = 0;
+        delete m_fd_notify;
+        m_fd_notify = 0;
+        m_fd_type = QSocketNotifier::Exception;
         delete m_discover;
         m_discover = 0;
-        delete m_discover_read;
-        m_discover_read = 0;
+        setSchedulerState(false);
     } else if ( m_scheduler )
         return;
     QTimer::singleShot( 1800, this, SLOT( slotCheckScheduler() ) );
+}
+
+void Monitor::registerNotify(int fd, QSocketNotifier::Type type, const char* slot)
+{
+    delete m_fd_notify;
+    m_fd_notify = new QSocketNotifier(fd, type, this);
+    m_fd_type = type;
+    QObject::connect(m_fd_notify, SIGNAL(activated(int)), slot);
 }
 
 void Monitor::slotCheckScheduler()
@@ -79,21 +86,13 @@ void Monitor::slotCheckScheduler()
 
     list<string> names;
 
-    if ( !m_current_netname.isEmpty() ) {
-        names.push_front( m_current_netname.toLatin1().data() );
-    } else {
+    if ( !m_current_netname.isEmpty() )
+        names.push_front( m_current_netname.data() );
+    else
         names = get_netnames( 60 );
-    }
 
     if (getenv("USE_SCHEDULER"))
         names.push_front(""); // try $USE_SCHEDULER
-
-    if ( names.empty() ) {
-        checkScheduler( true );
-        setSchedulerState( false );
-        return;
-    }
-
 
     for ( list<string>::const_iterator it = names.begin(); it != names.end();
           ++it ) {
@@ -102,49 +101,60 @@ void Monitor::slotCheckScheduler()
         if (!m_discover
             || m_discover->timed_out()) {
             delete m_discover;
-            m_discover = new DiscoverSched ( qPrintable(m_current_netname) );
-            m_discover_read = new QSocketNotifier( m_discover->get_fd(),
-                                                   QSocketNotifier::Read,
-                                                   this );
-            QObject::connect( m_discover_read, SIGNAL( activated( int ) ),
-                              SLOT( slotCheckScheduler() ) );
-            checkScheduler( false );
-            return;
+            m_discover = new DiscoverSched ( m_current_netname.data() );
         }
 
         m_scheduler = m_discover->try_get_scheduler ();
 
         if ( m_scheduler ) {
+            m_scheduler->setBulkTransfer();
             delete m_discover;
             m_discover = 0;
-            delete m_discover_read;
-            m_discover_read = 0;
+            registerNotify(m_scheduler->fd,
+                    QSocketNotifier::Read, SLOT(msgReceived()));
 
             if ( !m_scheduler->send_msg ( MonLoginMsg() ) ) {
-                delete m_scheduler;
-            } else {
-                m_scheduler_read = new QSocketNotifier( m_scheduler->fd,
-                                                        QSocketNotifier::Read,
-                                                        this );
-                QObject::connect( m_scheduler_read, SIGNAL( activated( int ) ),
-                                  SLOT( msgReceived() ) );
-                setSchedulerState( true );
-                return;
+                checkScheduler(true);
+                QTimer::singleShot(0, this, SLOT(slotCheckScheduler()));
             }
+            else {
+                setSchedulerState( true );
+            }
+            return;
         }
+
+        if (m_fd_type != QSocketNotifier::Write
+            && m_discover->connect_fd() >= 0) {
+            registerNotify(m_discover->connect_fd(),
+                    QSocketNotifier::Write, SLOT(slotCheckScheduler()));
+            return;
+        }
+        else if (m_fd_type != QSocketNotifier::Read
+                && m_discover->listen_fd() >= 0) {
+                registerNotify(m_discover->listen_fd(),
+                        QSocketNotifier::Read, SLOT(slotCheckScheduler()));
+            QTimer::singleShot(1800, this, SLOT(slotCheckScheduler()));
+        }
+ 
     }
-    checkScheduler( true );
     setSchedulerState( false );
 }
 
 void Monitor::msgReceived()
+{
+    m_scheduler->read_a_bit();
+    while (m_scheduler->has_msg() && handle_activity())
+        ;
+}
+
+bool Monitor::handle_activity()
 {
     Msg *m = m_scheduler->get_msg ();
     if ( !m ) {
         kDebug() << "lost connection to scheduler\n";
         checkScheduler( true );
         setSchedulerState( false );
-        return;
+        return false;
     }
 
     switch ( m->type ) {
@@ -175,6 +185,7 @@ void Monitor::msgReceived()
         break;
     }
     delete m;
+    return true;
 }
 
 void Monitor::handle_getcs( Msg *_m )
@@ -318,13 +329,14 @@ void Monitor::setCurrentView( StatusView *view, bool rememberJobs )
     }
 }
 
-void Monitor::setCurrentNet( const QString &netName )
+void Monitor::setCurrentNet( const QByteArray &netName )
 {
     m_current_netname = netName;
 }
 
 void Monitor::setSchedulerState( bool online )
 {
+    if (mSchedulerOnline == online) return;
     mSchedulerOnline = online;
     m_view->updateSchedulerState( online );
 }

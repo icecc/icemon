@@ -25,6 +25,7 @@
 #include "job.h"
 
 #include <Qt/qobject.h>
+#include <QtCore/QSocketNotifier>
 
 class HostInfoManager;
 class Msg;
@@ -37,10 +38,10 @@ class Monitor : public QObject
 {
     Q_OBJECT
   public:
-    Monitor( HostInfoManager *, QObject *parent, const char *name = 0 );
+    Monitor( HostInfoManager *, QObject *parent);
     ~Monitor();
 
-    void setCurrentNet( const QString & );
+    void setCurrentNet( const QByteArray & );
     void setCurrentView( StatusView *, bool rememberJobs );
 
   protected:
@@ -52,6 +53,8 @@ class Monitor : public QObject
 
   private:
     void checkScheduler(bool deleteit = false);
+    void registerNotify(int fd, QSocketNotifier::Type type, const char* slot);
+    bool handle_activity();
     void handle_getcs( Msg *m );
     void handle_job_begin( Msg *m );
     void handle_job_done( Msg *m );
@@ -63,12 +66,12 @@ class Monitor : public QObject
     StatusView *m_view;
     JobList m_rememberedJobs;
     MsgChannel *m_scheduler;
-    QSocketNotifier *m_scheduler_read;
-    QString m_current_netname;
+    QByteArray m_current_netname;
     bool mSchedulerOnline;
 
     DiscoverSched *m_discover;
-    QSocketNotifier *m_discover_read;
+    QSocketNotifier *m_fd_notify;
+    QSocketNotifier::Type m_fd_type;
 
 };
 

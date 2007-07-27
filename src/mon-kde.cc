@@ -221,7 +221,7 @@ void MainWindow::configureView()
   m_view->configureView();
 }
 
-void MainWindow::setCurrentNet( const QString &netName )
+void MainWindow::setCurrentNet( const QByteArray &netName )
 {
   m_monitor->setCurrentNet( netName );
 }
@@ -250,7 +250,7 @@ int main( int argc, char **argv )
   MainWindow *mainWidget = new MainWindow( 0 );
 
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-  QString netName = args->getOption( "netname" );
+  QByteArray netName = args->getOption( "netname" ).toLatin1();
   if ( !netName.isEmpty() ) {
     mainWidget->setCurrentNet( netName );
   }

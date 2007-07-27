@@ -36,7 +36,7 @@ class MainWindow : public KXmlGuiWindow
     MainWindow( QWidget *parent, const char *name = 0 );
     ~MainWindow();
 
-    void setCurrentNet( const QString & );
+    void setCurrentNet( const QByteArray & );
 
   private slots:
     void setupListView();

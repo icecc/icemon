@@ -97,7 +97,7 @@ class GanttProgress : public QWidget
     {
       JobData( const Job& j, int c )
         : job( j ), clock( c ), next_text_width( 0 ) {}
-      JobData() {}; // stupid QValueList
+      JobData() {} // stupid QValueList
 
       bool operator==( const JobData& d )
       {
