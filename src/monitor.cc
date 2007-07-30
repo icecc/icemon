@@ -30,6 +30,7 @@
 
 #include <klocale.h>
 #include <kdebug.h>
+#include <krandom.h>
 
 #include <qsocketnotifier.h>
 #include <qtimer.h>
@@ -68,7 +69,7 @@ void Monitor::checkScheduler(bool deleteit)
         setSchedulerState(false);
     } else if ( m_scheduler )
         return;
-    QTimer::singleShot( 1800, this, SLOT( slotCheckScheduler() ) );
+    QTimer::singleShot( 1000+(KRandom::random()&1023), this, SLOT( slotCheckScheduler() ) );
 }
 
 void Monitor::registerNotify(int fd, QSocketNotifier::Type type, const char* slot)
@@ -89,7 +90,7 @@ void Monitor::slotCheckScheduler()
     if ( !m_current_netname.isEmpty() )
         names.push_front( m_current_netname.data() );
     else
-        names = get_netnames( 60 );
+        names.push_front("ICECREAM");
 
     if (getenv("USE_SCHEDULER"))
         names.push_front(""); // try $USE_SCHEDULER
@@ -133,8 +134,9 @@ void Monitor::slotCheckScheduler()
                 && m_discover->listen_fd() >= 0) {
                 registerNotify(m_discover->listen_fd(),
                         QSocketNotifier::Read, SLOT(slotCheckScheduler()));
-            QTimer::singleShot(1800, this, SLOT(slotCheckScheduler()));
         }
+        if (m_fd_type == QSocketNotifier::Read)
+            QTimer::singleShot(1000+(KRandom::random()&1023), this, SLOT(slotCheckScheduler()));
  
     }
     setSchedulerState( false );
@@ -142,9 +144,9 @@ void Monitor::slotCheckScheduler()
 
 void Monitor::msgReceived()
 {
-    m_scheduler->read_a_bit();
-    while (m_scheduler->has_msg() && handle_activity())
-        ;
+    while (!m_scheduler->read_a_bit() || m_scheduler->has_msg())
+        if (!handle_activity())
+            break;
 }
 
 bool Monitor::handle_activity()
