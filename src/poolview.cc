@@ -394,8 +394,6 @@ PoolViewConfigDialog::PoolViewConfigDialog( QWidget *parent )
     : QDialog( parent )
 {
     QBoxLayout *topLayout = new QVBoxLayout( this );
-    topLayout->setMargin( KDialog::marginHint() );
-    topLayout->setSpacing( KDialog::spacingHint() );
 
     mArchFilterEdit = new QLineEdit( this );
     topLayout->addWidget( mArchFilterEdit );
@@ -483,7 +481,7 @@ void PoolView::update( const Job &job )
 {
     unsigned int hostid = processor( job );
     if ( !hostid ) {
-        kDebug() << "Empty host" << endl;
+        qDebug() << "Empty host" << endl;
         return;
     }
 
@@ -567,12 +565,12 @@ void PoolView::removeItem( PoolItem *poolItem )
     QMap<unsigned int,PoolItem *>::Iterator it;
     for( it = mJobMap.begin(); it != mJobMap.end(); ++it ) {
 #if 0
-        kDebug() << " JOB: " << it.key() << " (" << int( it.value() )
+        qDebug() << " JOB: " << it.key() << " (" << int( it.value() )
                  << ")" << endl;
 #endif
         if ( it.value() == poolItem ) {
 #if 0
-            kDebug() << " Delete Job " << it.key() << endl;
+            qDebug() << " Delete Job " << it.key() << endl;
 #endif
             obsoleteJobs.append( it.key() );
         }

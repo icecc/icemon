@@ -157,32 +157,32 @@ void GanttProgress::adjustGraph()
 void GanttProgress::update( const Job &job )
 {
 #if 0
-    kDebug() << "GanttProgress::update( job ): " << job.fileName() << endl;
+    qDebug() << "GanttProgress::update( job ): " << job.fileName() << endl;
 
-    kDebug() << "  num jobs: " << m_jobs.count() << endl;
-    kDebug() << "  first id: " << m_jobs.first().job.jobId() << endl;
-    kDebug() << "  this id: " << job.jobId() << endl;
+    qDebug() << "  num jobs: " << m_jobs.count() << endl;
+    qDebug() << "  first id: " << m_jobs.first().job.jobId() << endl;
+    qDebug() << "  this id: " << job.jobId() << endl;
 #endif
 
     if ( !m_jobs.isEmpty() && m_jobs.first().job == job ) {
-//       kDebug() << "  Known Job. State: " << job.state() << endl;
+//       qDebug() << "  Known Job. State: " << job.state() << endl;
         if ( job.state() == Job::Finished || job.state() == Job::Failed ) {
           Job j = IdleJob();
           m_jobs.prepend( JobData( j, mClock ) );
           mIsFree = true;
         }
     } else {
-//        kDebug() << " New Job" << endl;
+//        qDebug() << " New Job" << endl;
         m_jobs.prepend( JobData( job, mClock ) );
         mIsFree = ( job.state() == Job::Idle );
     }
 
-//    kDebug() << "num jobs: " << m_jobs.count() << " jobs" << endl;
+//    qDebug() << "num jobs: " << m_jobs.count() << " jobs" << endl;
 }
 
 void GanttProgress::drawGraph( QPainter &p )
 {
-//    kDebug() << "drawGraph() " << m_jobs.count() << " jobs" << endl;
+//    qDebug() << "drawGraph() " << m_jobs.count() << " jobs" << endl;
     if( height() == 0 )
         return;
 
@@ -201,7 +201,7 @@ void GanttProgress::drawGraph( QPainter &p )
         if( xWidth == 0 )
             continue;
 
-//        kDebug() << "XStart: " << xStart << "  xWidth: " << xWidth << endl;
+//        qDebug() << "XStart: " << xStart << "  xWidth: " << xWidth << endl;
 
         // Draw the rectangle for the current job
         QColor color = colorForStatus( ( *it ).job );
@@ -330,7 +330,7 @@ void GanttStatusView::update( const Job &job )
     if ( job.state() == Job::WaitingForCS ) return;
 
 #if 0
-    kDebug() << "GanttStatusView::update(): ID: " << job.jobId() << "  "
+    qDebug() << "GanttStatusView::update(): ID: " << job.jobId() << "  "
               << job.fileName() << "  Status:" << int( job.state() )
               << "  Server: " << job.server() << endl;
 #endif
@@ -340,7 +340,7 @@ void GanttStatusView::update( const Job &job )
     it = mJobMap.find( job.jobId() );
 
     if ( it != mJobMap.end() ) {
-//        kDebug() << "  Job found" << endl;
+//        qDebug() << "  Job found" << endl;
         it.value()->update( job );
         if ( job.state() == Job::Finished || job.state() == Job::Failed ) {
             mJobMap.erase( it );
@@ -362,20 +362,20 @@ void GanttStatusView::update( const Job &job )
 
     NodeMap::ConstIterator it2 = mNodeMap.find( processor );
     if ( it2 == mNodeMap.end() ) {
-//        kDebug() << "  Server not known" << endl;
+//        qDebug() << "  Server not known" << endl;
         slot = registerNode( processor );
     } else {
         SlotList slotList = it2.value();
         SlotList::ConstIterator it3;
         for( it3 = slotList.begin(); it3 != slotList.end(); ++it3 ) {
             if ( (*it3)->isFree() ) {
-//                kDebug() << "  Found free slot" << endl;
+//                qDebug() << "  Found free slot" << endl;
                 slot = *it3;
                 break;
             }
         }
         if ( it3 == slotList.end() ) {
-//            kDebug() << "  Create new slot" << endl;
+//            qDebug() << "  Create new slot" << endl;
             slot = registerNode( processor );
         }
     }
@@ -424,7 +424,7 @@ void GanttStatusView::checkNode( unsigned int hostid )
 
 GanttProgress *GanttStatusView::registerNode( unsigned int hostid )
 {
-//    kDebug() << "GanttStatusView::registerNode(): " << ip << endl;
+//    qDebug() << "GanttStatusView::registerNode(): " << ip << endl;
 
     static int lastRow = 0;
 

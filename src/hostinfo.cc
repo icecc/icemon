@@ -22,7 +22,7 @@
 
 #include <assert.h>
 
-Q3ValueVector<QColor> HostInfo::mColorTable;
+QVector<QColor> HostInfo::mColorTable;
 QMap<int,QString> HostInfo::mColorNameMap;
 
 void HostInfo::initColorTable()
@@ -127,10 +127,10 @@ unsigned int HostInfo::serverLoad() const
 void HostInfo::updateFromStatsMap( const StatsMap &stats )
 {
 #if 0
-  kDebug() << "HostInfo::updateFromStatsMap():" << endl;
+  qDebug() << "HostInfo::updateFromStatsMap():" << endl;
   StatsMap::ConstIterator it;
   for( it = stats.begin(); it != stats.end(); it++ ) {
-    kDebug() << "  STAT: " << it.key() << ": " << it.data() << endl;
+    qDebug() << "  STAT: " << it.key() << ": " << it.data() << endl;
   }
 #endif
 
@@ -170,7 +170,7 @@ QColor HostInfo::createColor( const QString &name )
     h += name.length() + ( name.length() << 17 );
     h ^= h >> 2;
 
-    // kDebug() << "HostInfo::createColor: " << h % mColorTable.count() << ": " << name << endl;
+    // qDebug() << "HostInfo::createColor: " << h % mColorTable.count() << ": " << name << endl;
 
     return mColorTable[ h % mColorTable.count() ];
 }

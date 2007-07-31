@@ -84,12 +84,6 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
 
     QLabel *l;
 
-    l = new QLabel(labelBox);
-    l->setPixmap(UserIcon("icemonnode"));
-    l->setAlignment(Qt::AlignCenter);
-    l->show();
-    labelLayout->addWidget( l );
-
     l = new QLabel(view->nameForHost(hostid), labelBox);
     l->setAlignment(Qt::AlignCenter);
     l->show();
@@ -199,7 +193,7 @@ QLabel *SummaryViewItem::addLine(const QString &caption, QWidget *parent,
     label->setAlignment(Qt::AlignRight | flags);
     const int row = grid->rowCount();
     grid->addWidget(label, row, 0);
-    KSqueezedTextLabel *statusLabel = new KSqueezedTextLabel(status, parent);
+    QLabel *statusLabel = new QLabel(status, parent);
     //statusLabel->setAlignment(Qt::AlignLeft | flags);
     grid->addWidget(statusLabel, row, 1);
     label->show();

@@ -56,7 +56,7 @@ Monitor::~Monitor()
 
 void Monitor::checkScheduler(bool deleteit)
 {
-    kDebug() << "checkScheduler " << deleteit << endl;
+    qDebug() << "checkScheduler " << deleteit << endl;
     if ( deleteit ) {
         m_rememberedJobs.clear();
         delete m_scheduler;
@@ -153,7 +153,7 @@ bool Monitor::handle_activity()
 {
     Msg *m = m_scheduler->get_msg ();
     if ( !m ) {
-        kDebug() << "lost connection to scheduler\n";
+        qDebug() << "lost connection to scheduler\n";
         checkScheduler( true );
         setSchedulerState( false );
         return false;
@@ -276,7 +276,7 @@ void Monitor::handle_job_begin( Msg *_m )
     ( *it ).setState( Job::Compiling );
 
 #if 0
-    kDebug() << "BEGIN: " << (*it).fileName() << " (" << (*it).jobId()
+    qDebug() << "BEGIN: " << (*it).fileName() << " (" << (*it).jobId()
              << ")" << endl;
 #endif
 
@@ -311,7 +311,7 @@ void Monitor::handle_job_done( Msg *_m )
     }
 
 #if 0
-    kDebug() << "DONE: " << (*it).fileName() << " (" << (*it).jobId()
+    qDebug() << "DONE: " << (*it).fileName() << " (" << (*it).jobId()
              << ")" << endl;
 #endif
 

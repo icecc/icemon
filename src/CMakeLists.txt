@@ -7,25 +7,24 @@ include_directories (${LIBICECREAM_INCLUDE_DIR} ${KDE4_INCLUDES})
 set(icemon_SRCS
   job.cc
   monitor.cc
+  mon-kde.cc
   hostinfo.cc
   statusview.cc
   detailedhostview.cc
   hostlistview.cc
   joblistview.cc
-
-    mon-kde.cc
-    listview.cc
-    ganttstatusview.cc
-    summaryview.cc
-    starview.cc
-    poolview.cc)
+  listview.cc
+  ganttstatusview.cc
+  summaryview.cc
+  starview.cc
+  poolview.cc
+)
 
 qt4_automoc(${icemon_SRCS})
 
 kde4_add_executable(icemon ${icemon_SRCS})
 
-
-target_link_libraries(icemon ${KDE4_KDEUI_LIBS} ${LIBICECREAM_LIBRARIES} ${QT_QT3SUPPORT_LIBRARY})
+target_link_libraries(icemon ${KDE4_KDEUI_LIBRARY} ${LIBICECREAM_LIBRARIES} ${QT_QT3SUPPORT_LIBRARY})
 
 ########### install files ###############
 
