@@ -43,6 +43,7 @@
 #include <kstandardaction.h>
 #include <ktoggleaction.h>
 #include <kactioncollection.h>
+#include <kconfiggroup.h>
 #include <kselectaction.h>
 #include <kmenubar.h>
 
