@@ -20,8 +20,6 @@ set(icemon_SRCS
   poolview.cc
 )
 
-qt4_automoc(${icemon_SRCS})
-
 kde4_add_executable(icemon ${icemon_SRCS})
 
 target_link_libraries(icemon ${KDE4_KDEUI_LIBRARY} ${LIBICECREAM_LIBRARIES} ${QT_QT3SUPPORT_LIBRARY})
