@@ -108,7 +108,6 @@ void Monitor::slotCheckScheduler()
         m_scheduler = m_discover->try_get_scheduler ();
 
         if ( m_scheduler ) {
-            m_scheduler->setBulkTransfer();
             delete m_discover;
             m_discover = 0;
             registerNotify(m_scheduler->fd,
@@ -125,14 +124,14 @@ void Monitor::slotCheckScheduler()
         }
 
         if (m_fd_type != QSocketNotifier::Write
-            && m_discover->connect_fd() >= 0) {
-            registerNotify(m_discover->connect_fd(),
+            && m_discover->get_fd() >= 0) {
+            registerNotify(m_discover->get_fd(),
                     QSocketNotifier::Write, SLOT(slotCheckScheduler()));
             return;
         }
         else if (m_fd_type != QSocketNotifier::Read
-                && m_discover->listen_fd() >= 0) {
-                registerNotify(m_discover->listen_fd(),
+                && m_discover->get_fd() >= 0) {
+                registerNotify(m_discover->get_fd(),
                         QSocketNotifier::Read, SLOT(slotCheckScheduler()));
         }
         if (m_fd_type == QSocketNotifier::Read)
