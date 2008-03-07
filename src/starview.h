@@ -24,7 +24,6 @@
 #include "job.h"
 #include "statusview.h"
 
-#include <q3canvas.h>
 #include <qdialog.h>
 #include <QResizeEvent>
 #include <QLabel>

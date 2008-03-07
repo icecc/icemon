@@ -33,7 +33,7 @@ class MainWindow : public KXmlGuiWindow
 {
     Q_OBJECT
   public:
-    MainWindow( QWidget *parent, const char *name = 0 );
+    MainWindow( QWidget *parent );
     ~MainWindow();
 
     void setCurrentNet( const QByteArray & );

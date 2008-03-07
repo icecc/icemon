@@ -22,18 +22,20 @@
 #ifndef ICEMON_JOB_H
 #define ICEMON_JOB_H
 
-#include <Qt/qstring.h>
+#include <QString>
 #include <time.h>
-#include <Qt/qmap.h>
+#include <QMap>
+
+#include <KLocale>
 
 class Job
 {
   public:
     enum State { WaitingForCS, LocalOnly, Compiling, Finished, Failed, Idle };
-    Job(unsigned int id = 0,
+    explicit Job(unsigned int id = 0,
         unsigned int client = 0,
-        const QString &filename = QString::null,
-        const QString &lang = QString::null)
+        const QString &filename = QString(),
+        const QString &lang = QString())
     {
         m_id = id;
         m_fileName = filename;

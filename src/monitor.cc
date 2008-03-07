@@ -92,7 +92,7 @@ void Monitor::slotCheckScheduler()
     else
         names.push_front("ICECREAM");
 
-    if (getenv("USE_SCHEDULER"))
+    if (!qgetenv("USE_SCHEDULER").isEmpty())
         names.push_front(""); // try $USE_SCHEDULER
 
     for ( list<string>::const_iterator it = names.begin(); it != names.end();

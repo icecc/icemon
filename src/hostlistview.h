@@ -23,9 +23,9 @@
 
 #include "hostinfo.h"
 
-#include <Qt/qpalette.h>
-#include <Qt/q3listview.h>
-#include <Qt/qtimer.h>
+#include <QPalette>
+#include <Q3ListView>
+#include <QTimer>
 
 class HostListViewItem : public Q3ListViewItem
 {
@@ -59,7 +59,7 @@ class HostListView :public Q3ListView
 
 public:
 
-    HostListView( HostInfoManager* manager, QWidget* parent, const char* name = 0 );
+    HostListView( HostInfoManager* manager, QWidget* parent );
 
     unsigned int activeNode() const;
 

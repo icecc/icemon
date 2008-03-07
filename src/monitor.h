@@ -24,7 +24,6 @@
 
 #include "job.h"
 
-#include <Qt/qobject.h>
 #include <QtCore/QSocketNotifier>
 
 class HostInfoManager;

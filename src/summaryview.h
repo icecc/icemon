@@ -14,13 +14,7 @@
 #include "statusview.h"
 
 #include <QScrollArea>
-#include <q3valuevector.h>
-//Added by qt3to4:
 #include <QResizeEvent>
-#include <QFrame>
-#include <QGridLayout>
-#include <QList>
-#include <QLabel>
 
 class QLabel;
 class QGridLayout;
@@ -36,8 +30,8 @@ public:
 
 private:
     QLabel *addLine(const QString &caption, QWidget *parent, QGridLayout *grid,
-                                int flags = Qt::AlignTop,
-                                const QString &status = QString::null);
+                                Qt::Alignment flags = Qt::AlignTop,
+                                const QString &status = QString());
 
     struct JobHandler
     {
@@ -65,7 +59,7 @@ class SummaryView : public QScrollArea, public StatusView
     Q_OBJECT
 
 public:
-    SummaryView(HostInfoManager *h, QWidget *parent, const char *name = 0);
+    SummaryView(HostInfoManager *h, QWidget *parent);
     ~SummaryView();
 
     virtual QWidget *widget();

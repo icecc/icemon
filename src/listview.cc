@@ -29,14 +29,11 @@
 #include <KGlobal>
 
 ListStatusView::ListStatusView( HostInfoManager* manager,
-                                QWidget* parent,
-                                const char* name )
+                                QWidget* parent )
     : QWidget( parent ),
       StatusView( manager ),
       mJobsListView( new JobListView( manager, this, "Jobs" ) )
 {
-    setObjectName( name );
-
     QVBoxLayout* topLayout = new QVBoxLayout( this );
     topLayout->addWidget( mJobsListView );
 }

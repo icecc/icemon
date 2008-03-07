@@ -26,7 +26,7 @@
 #include "job.h"
 
 #include <assert.h>
-#include <Qt/qdebug.h>
+#include <QDebug>
 #include <QTime>
 #include <kdebug.h>
 StatusView::StatusView( HostInfoManager *m )

@@ -20,14 +20,7 @@
 
 #include <qlabel.h>
 #include <qlayout.h>
-#include <q3vbox.h>
 #include <qpainter.h>
-//Added by qt3to4:
-#include <QResizeEvent>
-#include <QGridLayout>
-#include <QFrame>
-#include <QList>
-#include <QVBoxLayout>
 #include <QScrollBar>
 
 class NodeInfoFrame : public QFrame
@@ -176,7 +169,7 @@ void SummaryViewItem::update(const Job &job)
             (*it).stateWidget->setPalette( palette );
             (*it).sourceLabel->clear();
             (*it).stateLabel->setText(job.stateAsString());
-            (*it).currentFile = QString::null;
+            (*it).currentFile = QString();
         }
         break;
     }
@@ -186,7 +179,7 @@ void SummaryViewItem::update(const Job &job)
 }
 
 QLabel *SummaryViewItem::addLine(const QString &caption, QWidget *parent,
-                                             QGridLayout *grid, int flags,
+                                             QGridLayout *grid, Qt::Alignment flags,
                                              const QString &status)
 {
     QLabel *label = new QLabel(caption, parent);
@@ -206,7 +199,7 @@ QLabel *SummaryViewItem::addLine(const QString &caption, QWidget *parent,
 // SummaryView implementation
 ////////////////////////////////////////////////////////////////////////////////
 
-SummaryView::SummaryView(HostInfoManager *h, QWidget *parent, const char *) :
+SummaryView::SummaryView(HostInfoManager *h, QWidget *parent) :
     QScrollArea(parent), StatusView(h)
 {
     m_base = new QWidget(viewport());

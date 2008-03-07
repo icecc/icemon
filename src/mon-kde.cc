@@ -49,11 +49,9 @@
 
 #include <QMenu>
 
-MainWindow::MainWindow( QWidget *parent, const char *name )
+MainWindow::MainWindow( QWidget *parent )
   : KXmlGuiWindow( parent ), m_view( 0 )
 {
-    setObjectName( name );
-
     m_hostInfoManager = new HostInfoManager;
 
     m_monitor = new Monitor( m_hostInfoManager, this );

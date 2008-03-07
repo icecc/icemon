@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 GenericName=Icecream Monitor
 GenericName[da]=Icecream overvåger
 GenericName[es]=Monitor de Icecream
@@ -22,7 +21,7 @@ Comment[pt_BR]=Um monitor para a rede de compilação Icecream
 Comment[sv]=Övervakning av ett Icecream-kompileringsnätverk
 Comment[xx]=xxA monitor for an Icecream compilation networkxx
 Exec=icemon
-DocPath=icemon/index.html
+X-DocPath=icemon/index.html
 Type=Application
 Terminal=false
 Categories=Qt;KDE;Development;

@@ -23,7 +23,7 @@
 
 #include "statusview.h"
 
-#include <Qt/qwidget.h>
+#include <QWidget>
 
 
 class HostListView;
@@ -36,7 +36,7 @@ class DetailedHostView : public QWidget, public StatusView
 
 public:
 
-    DetailedHostView( HostInfoManager* manager, QWidget *parent, const char *name = 0 );
+    DetailedHostView( HostInfoManager* manager, QWidget *parent );
 
     void update( const Job &job );
 

@@ -74,12 +74,10 @@ bool GanttConfigDialog::isTimeScaleVisible()
   return mTimeScaleVisibleCheck->isChecked();
 }
 
-GanttTimeScaleWidget::GanttTimeScaleWidget( QWidget *parent, const char *name )
+GanttTimeScaleWidget::GanttTimeScaleWidget( QWidget *parent )
 	: QWidget( parent ),
           mPixelsPerSecond( 40 )
 {
-  setObjectName( name );
-
   QPalette pal = palette();
   pal.setColor( backgroundRole(), Qt::white );
   setPalette( pal );
@@ -126,13 +124,10 @@ void GanttTimeScaleWidget::paintEvent( QPaintEvent *pe )
 	}
 }
 
-GanttProgress::GanttProgress( StatusView *statusView, QWidget *parent,
-                              const char *name )
+GanttProgress::GanttProgress( StatusView *statusView, QWidget *parent )
 	: QWidget( parent ),
           mStatusView( statusView ), mClock( 0 ), mIsFree( true )
 {
-  setObjectName( name );
-
   QPalette pal = palette();
   pal.setColor( backgroundRole(), Qt::white );
   setPalette( pal );
@@ -282,8 +277,7 @@ void GanttProgress::resizeEvent( QResizeEvent * )
     adjustGraph();
 }
 
-GanttStatusView::GanttStatusView( HostInfoManager *m, QWidget *parent,
-                                  const char *)
+GanttStatusView::GanttStatusView( HostInfoManager *m, QWidget *parent)
   : QScrollArea( parent ),
     StatusView( m ),
     mTopWidget(new QWidget( viewport() ))

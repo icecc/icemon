@@ -20,9 +20,9 @@
 #ifndef ICEMON_HOSTINFO_H
 #define ICEMON_HOSTINFO_H
 
-#include <Qt/qstring.h>
-#include <Qt/qcolor.h>
-#include <Qt/qmap.h>
+#include <QString>
+#include <QColor>
+#include <QMap>
 #include <QtCore/QVector>
 
 class HostInfo

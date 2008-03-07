@@ -18,9 +18,9 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include <Qt/qlabel.h>
-#include <Qt/qboxlayout.h>
-#include <Qt/qsplitter.h>
+#include <QLabel>
+#include <QBoxLayout>
+#include <QSplitter>
 
 #include "detailedhostview.h"
 
@@ -37,17 +37,14 @@ static QString myHostName()
     if ( ::uname( &uname_buf ) == 0 )
         return uname_buf.nodename;
     else
-        return QString::null;
+        return QString();
 }
 
 DetailedHostView::DetailedHostView( HostInfoManager* manager,
-                                    QWidget* parent,
-                                    const char* name )
+                                    QWidget* parent )
     : QWidget( parent ),
       StatusView( manager )
 {
-  setObjectName( name );
-
   QBoxLayout* topLayout = new QVBoxLayout( this );
   topLayout->setMargin( 10 );
 
@@ -58,16 +55,16 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
   QVBoxLayout *dummy = new QVBoxLayout( hosts );
   dummy->setSpacing( 10 );
 
-  dummy->addWidget(new QLabel( tr( "Hosts" ), hosts ));
-  mHostListView = new HostListView( manager, hosts, "HostListView" );
+  dummy->addWidget(new QLabel( i18n("Hosts" ), hosts ));
+  mHostListView = new HostListView( manager, hosts );
   dummy->addWidget(mHostListView);
 
   QWidget *locals = new QWidget( viewSplitter );
   dummy = new QVBoxLayout( locals );
   dummy->setSpacing( 10 );
 
-  dummy->addWidget(new QLabel( tr( "Outgoing jobs" ), locals ));
-  mLocalJobsView = new JobListView( manager, locals, "LocalJobs" );
+  dummy->addWidget(new QLabel( i18n("Outgoing jobs" ), locals ));
+  mLocalJobsView = new JobListView( manager, locals );
   mLocalJobsView->setClientColumnVisible( false );
   mLocalJobsView->setExpireDuration( 5 );
   dummy->addWidget(mLocalJobsView);
@@ -76,8 +73,8 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
   dummy = new QVBoxLayout( remotes );
   dummy->setSpacing( 10 );
 
-  dummy->addWidget(new QLabel( tr( "Incoming jobs" ), remotes ));
-  mRemoteJobsView = new JobListView( manager, remotes, "RemoteJobs" );
+  dummy->addWidget(new QLabel( i18n("Incoming jobs" ), remotes ));
+  mRemoteJobsView = new JobListView( manager, remotes );
   mRemoteJobsView->setServerColumnVisible( false );
   mRemoteJobsView->setExpireDuration( 5 );
   dummy->addWidget(mRemoteJobsView);

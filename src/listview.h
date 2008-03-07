@@ -32,7 +32,7 @@ class ListStatusView :public QWidget, public StatusView
 {
     Q_OBJECT
 public:
-    ListStatusView( HostInfoManager* manager, QWidget* parent, const char* name = 0 );
+    ListStatusView( HostInfoManager* manager, QWidget* parent );
 
     virtual QWidget* widget() { return this; }
 

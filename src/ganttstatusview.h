@@ -29,11 +29,6 @@
 #include <qpixmap.h>
 #include <QScrollArea>
 #include <qlist.h>
-//Added by qt3to4:
-#include <QResizeEvent>
-#include <QGridLayout>
-#include <QVBoxLayout>
-#include <QPaintEvent>
 
 class QCheckBox;
 class QGridLayout;
@@ -59,7 +54,7 @@ class GanttTimeScaleWidget : public QWidget
 {
     Q_OBJECT
   public:
-    GanttTimeScaleWidget( QWidget *parent, const char *name = 0 );
+    GanttTimeScaleWidget( QWidget *parent );
 
     void setPixelsPerSecond( int );
 
@@ -75,7 +70,7 @@ class GanttProgress : public QWidget
     Q_OBJECT
   public:
     GanttProgress( StatusView *statusView,
-                   QWidget *parent, const char *name = 0 );
+                   QWidget *parent );
 
     bool isFree() const { return mIsFree; }
     bool fullyIdle() const { return m_jobs.count() == 1 && isFree(); }
@@ -123,7 +118,7 @@ class GanttStatusView : public QScrollArea, public StatusView
 {
     Q_OBJECT
   public:
-    GanttStatusView( HostInfoManager *, QWidget *parent, const char *name = 0 );
+    GanttStatusView( HostInfoManager *, QWidget *parent );
     virtual ~GanttStatusView() {}
 
     QString id() const { return "gantt"; }

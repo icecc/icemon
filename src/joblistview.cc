@@ -67,7 +67,7 @@ void JobListViewItem::updateText( const Job& job)
         if ( job.server() )
             setText( JobColumnServer, view->hostInfoManager()->nameForHost( job.server() ) );
         else
-            setText( JobColumnServer, QString::null );
+            setText( JobColumnServer, QString() );
     }
     setText( JobColumnState, job.stateAsString() );
     setText( JobColumnReal, QString::number( job.real_msec ) );
