@@ -26,7 +26,7 @@ target_link_libraries(icemon ${KDE4_KDEUI_LIBRARY} ${LIBICECREAM_LIBRARIES} ${QT
 
 ########### install files ###############
 
-install(TARGETS icemon DESTINATION ${BIN_INSTALL_DIR})
+install(TARGETS icemon ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 install( FILES icemon.desktop DESTINATION ${XDG_APPS_INSTALL_DIR} )
 install( FILES icemonui.rc DESTINATION ${DATA_INSTALL_DIR}/icemon )
