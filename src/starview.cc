@@ -460,6 +460,7 @@ void StarView::resizeEvent( QResizeEvent * )
     m_canvas->setSceneRect( 0, 0, width(), height() );
     centerSchedulerItem();
     arrangeHostItems();
+    drawNodeStatus();
 }
 
 bool StarView::event ( QEvent* e )
@@ -606,10 +607,10 @@ void StarView::drawState( HostItem *node )
                                          qRound( m_schedulerItem->centerPosX() ),
                                          qRound( m_schedulerItem->centerPosY() ) );
         if ( node->isCompiling() ) {
-            newItem->setPen( color );
+            newItem->setPen( QPen( color, 0 ) );
             newItem->setZValue( -301 );
         } else if ( node->isActiveClient() ) {
-            newItem->setPen( QPen( color, 0, Qt::DashLine ) );
+            newItem->setPen( QPen( color, 1, Qt::DashLine ) );
             newItem->setZValue( -300 );
         }
         m_canvas->addItem( newItem );
