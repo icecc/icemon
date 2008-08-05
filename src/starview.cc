@@ -319,7 +319,7 @@ void StarView::update( const Job &job )
 
     bool finished = job.state() == Job::Finished || job.state() == Job::Failed;
 
-    QMap<unsigned int,HostItem *>::Iterator it;
+    QMap<unsigned int, HostItem *>::Iterator it;
     it = mJobMap.find( job.jobId() );
     if ( it != mJobMap.end() ) {
         (*it)->update( job );
@@ -329,6 +329,7 @@ void StarView::update( const Job &job )
             HostItem *clientItem = findHostItem( clientid );
             if ( clientItem ) clientItem->setIsActiveClient( false );
         }
+        drawNodeStatus();
         return;
     }
 
@@ -342,6 +343,8 @@ void StarView::update( const Job &job )
             clientItem->setIsActiveClient( true );
         }
     }
+    
+    drawNodeStatus();
 }
 
 HostItem *StarView::findHostItem( unsigned int hostid )
@@ -434,7 +437,7 @@ void StarView::updateSchedulerState( bool online )
 
     if ( !online ) {
         QMap<unsigned int,HostItem *>::ConstIterator it;
-        for( it = m_hostItems.begin(); it != m_hostItems.end(); ++it ) {
+        for( it = m_hostItems.constBegin(); it != m_hostItems.constEnd(); ++it ) {
             delete *it;
         }
         m_hostItems.clear();
@@ -538,7 +541,7 @@ void StarView::arrangeHostItems()
     double angle = 0.0;
     int i = 0;
     QMap<unsigned int, HostItem*>::ConstIterator it;
-    for ( it = m_hostItems.begin(); it != m_hostItems.end(); ++it ) {
+    for ( it = m_hostItems.constBegin(); it != m_hostItems.constEnd(); ++it ) {
         double factor = 1 - ( 1.0 / ( ringCount + 1 ) ) * ( i % ringCount );
 
         double xr = xRadius * factor;
@@ -579,6 +582,38 @@ HostItem *StarView::createHostItem( unsigned int hostid )
     }
 
     return hostItem;
+}
+
+void StarView::drawNodeStatus()
+{
+    QMap<unsigned int, HostItem*>::ConstIterator it;
+    for ( it = m_hostItems.constBegin(); it != m_hostItems.constEnd(); ++it ) {
+        drawState( *it );
+    }
+}
+
+void StarView::drawState( HostItem *node )
+{
+    delete node->stateItem();
+    QGraphicsLineItem *newItem = 0;
+
+    unsigned int client = node->client();
+    QColor color = client ? hostColor( client ) : Qt::green;
+
+    if ( node->isCompiling() || node->isActiveClient() ) {
+        newItem = new QGraphicsLineItem( qRound( node->centerPosX() ),
+                                         qRound( node->centerPosY() ),
+                                         qRound( m_schedulerItem->centerPosX() ),
+                                         qRound( m_schedulerItem->centerPosY() ) );
+        if ( node->isCompiling() ) {
+            newItem->setPen( color );
+        } else if ( node->isActiveClient() ) {
+            newItem->setPen( QPen( color, 0, Qt::DashLine ) );
+        }
+        m_canvas->addItem( newItem );
+    }
+
+    node->setStateItem( newItem );
 }
 
 void StarView::createKnownHosts()
