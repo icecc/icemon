@@ -470,13 +470,15 @@ bool StarView::event ( QEvent* e )
     QPoint p ( static_cast<QHelpEvent*>(e)->pos());
 
     HostItem *item = 0;
-    if ( QGraphicsItem* graphicsItem = m_canvasView->itemAt( p ) )
+    QGraphicsItem* graphicsItem = m_canvasView->itemAt( p );
+    if ( graphicsItem )
         item = dynamic_cast<HostItem*>( graphicsItem->parentItem() );
     if ( item ) {
         HostInfo *hostInfo = item->hostInfo();
         if ( !hostInfo ) return QWidget::event(e);
 
-        QPoint gp( static_cast<QHelpEvent*>(e)->globalPos());
+        const QPoint gp( static_cast<QHelpEvent*>(e)->globalPos());
+        const QRect itemRect = m_canvasView->mapFromScene(graphicsItem->sceneBoundingRect()).boundingRect();
         QToolTip::showText(gp+QPoint(10,10),
                            "<p><table><tr><td>"
                            "<img source=\"computer\"><br><b>" + item->hostName() +
@@ -495,7 +497,9 @@ bool StarView::event ( QEvent* e )
                            QString::number( hostInfo->serverSpeed() ) + "</td></tr>" +
                            "</table>"
 
-                           "</td></tr></table></p>", this );
+                           "</td></tr></table></p>", this, itemRect );
+    } else {
+         QToolTip::hideText();
     }
     return QWidget::event(e);
 }
