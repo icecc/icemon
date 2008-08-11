@@ -74,7 +74,10 @@ void Monitor::checkScheduler(bool deleteit)
 
 void Monitor::registerNotify(int fd, QSocketNotifier::Type type, const char* slot)
 {
-    delete m_fd_notify;
+    if (m_fd_notify) {
+        m_fd_notify->disconnect(this);
+        m_fd_notify->deleteLater();
+    }
     m_fd_notify = new QSocketNotifier(fd, type, this);
     m_fd_type = type;
     QObject::connect(m_fd_notify, SIGNAL(activated(int)), slot);
