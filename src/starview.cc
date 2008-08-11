@@ -305,6 +305,10 @@ void StarView::update( const Job &job )
              << " server: " << job.server() << " client: " << job.client()
              << " state: " << job.stateAsString() << endl;
 #endif
+    if (job.state() == Job::WaitingForCS) {
+        drawNodeStatus();
+        return;
+    }
 
     unsigned int hostid = processor( job );
     if ( !hostid ) {
