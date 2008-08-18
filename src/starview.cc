@@ -347,7 +347,7 @@ void StarView::update( const Job &job )
             clientItem->setIsActiveClient( true );
         }
     }
-    
+
     drawNodeStatus();
 }
 
@@ -479,11 +479,10 @@ bool StarView::event ( QEvent* e )
         item = dynamic_cast<HostItem*>( graphicsItem->parentItem() );
     if ( item ) {
         HostInfo *hostInfo = item->hostInfo();
-        if ( !hostInfo ) return QWidget::event(e);
-
         const QPoint gp( static_cast<QHelpEvent*>(e)->globalPos());
         const QRect itemRect = m_canvasView->mapFromScene(graphicsItem->sceneBoundingRect()).boundingRect();
-        QToolTip::showText(gp+QPoint(10,10),
+        if ( hostInfo ) {
+            QToolTip::showText(gp+QPoint(10,10),
                            "<p><table><tr><td>"
                            "<img source=\"computer\"><br><b>" + item->hostName() +
                            "</b><br>" +
@@ -502,6 +501,16 @@ bool StarView::event ( QEvent* e )
                            "</table>"
 
                            "</td></tr></table></p>", this, itemRect );
+        } else {
+            QToolTip::showText(gp+QPoint(10,10),
+                           "<p><table><tr><td>"
+                           "<img source=\"computer\"><br><b>" + i18n("Scheduler") + "</b><br/>"
+                           "<table>" +
+                           "<tr><td>" + i18n("Host: %1", hostInfoManager()->schedulerName()) + "</td></tr>" +
+                           "<tr><td>" + i18n("Network name: %1", hostInfoManager()->networkName()) + "</td></tr>" +
+                           "</table>"
+                           "</td></tr></table></p>", this, itemRect );
+        }
     } else {
          QToolTip::hideText();
     }

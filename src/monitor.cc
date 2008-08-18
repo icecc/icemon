@@ -111,6 +111,8 @@ void Monitor::slotCheckScheduler()
         m_scheduler = m_discover->try_get_scheduler ();
 
         if ( m_scheduler ) {
+            m_hostInfoManager->setSchedulerName( QString::fromLatin1(m_discover->schedulerName().data()) );
+            m_hostInfoManager->setNetworkName( QString::fromLatin1(m_discover->networkName().data()) );
             m_scheduler->setBulkTransfer();
             delete m_discover;
             m_discover = 0;
@@ -140,7 +142,7 @@ void Monitor::slotCheckScheduler()
         }
         if (m_fd_type == QSocketNotifier::Read)
             QTimer::singleShot(1000+(KRandom::random()&1023), this, SLOT(slotCheckScheduler()));
- 
+
     }
     setSchedulerState( false );
 }

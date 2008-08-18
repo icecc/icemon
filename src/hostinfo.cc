@@ -269,3 +269,14 @@ HostInfoManager::HostMap HostInfoManager::hostMap() const
 {
   return mHostMap;
 }
+
+void HostInfoManager::setSchedulerName( const QString& schedulerName )
+{
+    mSchedulerName = schedulerName;
+}
+
+void HostInfoManager::setNetworkName( const QString& networkName )
+{
+    mNetworkName = networkName;
+}
+
