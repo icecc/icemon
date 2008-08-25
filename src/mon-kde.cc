@@ -110,7 +110,7 @@ MainWindow::~MainWindow()
 void MainWindow::readSettings()
 {
   KConfigGroup cfg(KGlobal::config(), "View" );
-  QString viewId = cfg.readEntry( "CurrentView", "pool" );
+  QString viewId = cfg.readEntry( "CurrentView", "star" );
 
   m_viewMode->blockSignals(true);
   if ( viewId == "gantt" ) {
