@@ -424,6 +424,7 @@ void StarView::removeItem( HostItem *hostItem )
         mJobMap.remove( *it2 );
     }
 
+    delete hostItem->stateItem();
     delete hostItem;
 
     arrangeHostItems();
