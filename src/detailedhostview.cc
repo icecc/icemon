@@ -54,6 +54,7 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
   QWidget *hosts = new QWidget( viewSplitter );
   QVBoxLayout *dummy = new QVBoxLayout( hosts );
   dummy->setSpacing( 10 );
+  dummy->setMargin( 0 );
 
   dummy->addWidget(new QLabel( i18n("Hosts" ), hosts ));
   mHostListView = new HostListView( manager, hosts );
@@ -62,6 +63,7 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
   QWidget *locals = new QWidget( viewSplitter );
   dummy = new QVBoxLayout( locals );
   dummy->setSpacing( 10 );
+  dummy->setMargin( 0 );
 
   dummy->addWidget(new QLabel( i18n("Outgoing jobs" ), locals ));
   mLocalJobsView = new JobListView( manager, locals );
@@ -72,6 +74,7 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
   QWidget* remotes = new QWidget( viewSplitter );
   dummy = new QVBoxLayout( remotes );
   dummy->setSpacing( 10 );
+  dummy->setMargin( 0 );
 
   dummy->addWidget(new QLabel( i18n("Incoming jobs" ), remotes ));
   mRemoteJobsView = new JobListView( manager, remotes );
