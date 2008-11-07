@@ -36,6 +36,7 @@
 #include <qlineedit.h>
 #include <qregexp.h>
 #include <qcheckbox.h>
+#include <qdir.h>
 #include <QResizeEvent>
 #include <QGraphicsScene>
 #include <QGraphicsView>
@@ -295,6 +296,11 @@ StarView::StarView( HostInfoManager *m, QWidget *parent )
     centerSchedulerItem();
     m_schedulerItem->show();
 
+    m_iconPath = KIconLoader::global()->iconPath( "computer", -22, true );
+    if ( !m_iconPath.isEmpty() ) {
+        QDir::addSearchPath( "icons", QFileInfo( m_iconPath ).canonicalPath() );
+    }
+
     createKnownHosts();
 }
 
@@ -485,7 +491,7 @@ bool StarView::event ( QEvent* e )
         if ( hostInfo ) {
             QToolTip::showText(gp+QPoint(10,10),
                            "<p><table><tr><td>"
-                           "<img source=\"computer\"><br><b>" + item->hostName() +
+                           "<img align=\"right\" source=\"icons:computer.png\"><br><b>" + item->hostName() +
                            "</b><br>" +
 
                            "<table>" +
@@ -505,7 +511,7 @@ bool StarView::event ( QEvent* e )
         } else {
             QToolTip::showText(gp+QPoint(10,10),
                            "<p><table><tr><td>"
-                           "<img source=\"computer\"><br><b>" + i18n("Scheduler") + "</b><br/>"
+                           "<img align=\"right\" source=\"icons:computer.png\"><br><b>" + i18n("Scheduler") + "</b><br/>"
                            "<table>" +
                            "<tr><td>" + i18n("Host: %1", hostInfoManager()->schedulerName()) + "</td></tr>" +
                            "<tr><td>" + i18n("Network name: %1", hostInfoManager()->networkName()) + "</td></tr>" +

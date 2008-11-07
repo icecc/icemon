@@ -189,6 +189,7 @@ private:
     HostItem *m_schedulerItem;
     QMap<unsigned int,HostItem *> m_hostItems;
     QMap<unsigned int,HostItem *> mJobMap;
+    QString m_iconPath;
 };
 
 #endif
