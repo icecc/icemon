@@ -24,7 +24,7 @@
 #include "job.h"
 #include "statusview.h"
 
-#include <qdialog.h>
+#include <kdialog.h>
 #include <QResizeEvent>
 #include <QLabel>
 #include <QGraphicsEllipseItem>
@@ -37,7 +37,7 @@ class QLineEdit;
 class QCheckBox;
 class QGraphicsView;
 
-class StarViewConfigDialog : public QDialog
+class StarViewConfigDialog : public KDialog
 {
     Q_OBJECT
 

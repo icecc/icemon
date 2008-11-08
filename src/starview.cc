@@ -46,11 +46,16 @@
 static bool suppressDomain = false;
 
 StarViewConfigDialog::StarViewConfigDialog( QWidget *parent )
-    : QDialog( parent )
+    : KDialog( parent )
 {
-    QBoxLayout *topLayout = new QVBoxLayout( this );
+    setButtons( Close );
+    setEscapeButton( Close );
+    showButtonSeparator( true );
 
-    QLabel *label = new QLabel( i18n("Number of nodes per ring:"), this );
+    QBoxLayout *topLayout = new QVBoxLayout( mainWidget() );
+    topLayout->setMargin( 0 );
+
+    QLabel *label = new QLabel( i18n("Number of nodes per ring:"), mainWidget() );
     topLayout->addWidget( label );
 
     QBoxLayout *nodesLayout = new QHBoxLayout();
@@ -58,7 +63,7 @@ StarViewConfigDialog::StarViewConfigDialog( QWidget *parent )
 
     int nodesPerRing = 25;
 
-    mNodesPerRingSlider = new QSlider( Qt::Horizontal, this );
+    mNodesPerRingSlider = new QSlider( Qt::Horizontal, mainWidget() );
     mNodesPerRingSlider->setMinimum( 1 );
     mNodesPerRingSlider->setMaximum( 50 );
     mNodesPerRingSlider->setSingleStep( 1 );
@@ -69,33 +74,22 @@ StarViewConfigDialog::StarViewConfigDialog( QWidget *parent )
     connect( mNodesPerRingSlider, SIGNAL( valueChanged( int ) ),
              SLOT( slotNodesPerRingChanged( int ) ) );
 
-    mNodesPerRingLabel = new QLabel( QString::number( nodesPerRing ), this );
+    mNodesPerRingLabel = new QLabel( QString::number( nodesPerRing ), mainWidget() );
     nodesLayout->addWidget( mNodesPerRingLabel );
 
-    label = new QLabel( i18n("Architecture filter:"), this );
+    label = new QLabel( i18n("Architecture filter:"), mainWidget() );
     topLayout->addWidget( label );
-    mArchFilterEdit = new QLineEdit( this );
+    mArchFilterEdit = new QLineEdit( mainWidget() );
     topLayout->addWidget( mArchFilterEdit );
     connect( mArchFilterEdit, SIGNAL( textChanged( const QString & ) ),
              SIGNAL( configChanged() ) );
 
-    mSuppressDomainName = new QCheckBox( i18n("Suppress domain name"), this);
+    mSuppressDomainName = new QCheckBox( i18n("Suppress domain name"), mainWidget() );
     topLayout->addWidget( mSuppressDomainName );
     connect( mSuppressDomainName, SIGNAL( toggled ( bool ) ),
              SLOT( slotSuppressDomainName ( bool ) ) );
 
-    QFrame *hline = new QFrame( this );
-    hline->setFrameShape( QFrame::HLine );
-    topLayout->addWidget( hline );
-
-    QBoxLayout *buttonLayout = new QHBoxLayout();
-    topLayout->addLayout( buttonLayout );
-
-    buttonLayout->addStretch( 1 );
-
-    QPushButton *button = new QPushButton( i18n("&Close"), this );
-    buttonLayout->addWidget( button );
-    connect( button, SIGNAL( clicked() ), SLOT( hide() ) );
+    connect( this, SIGNAL( closeClicked() ), SLOT( hide() ) );
 }
 
 void StarViewConfigDialog::slotNodesPerRingChanged( int nodes )
