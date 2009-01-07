@@ -22,7 +22,7 @@ set(icemon_SRCS
 
 kde4_add_executable(icemon ${icemon_SRCS})
 
-target_link_libraries(icemon ${KDE4_KDEUI_LIBS} ${LIBICECREAM_LIBRARIES} ${QT_QT3SUPPORT_LIBRARY})
+target_link_libraries(icemon ${KDE4_KDEUI_LIBS} ${LIBICECREAM_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QT3SUPPORT_LIBRARY})
 
 # -ldl used by icecream
 find_library(DL_LIBRARY dl)
