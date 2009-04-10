@@ -329,7 +329,7 @@ void PoolItem::computeNewPosition()
   // Velocity values if there is no interactions/gravity for this item
   vX = mVelocity * cos( mVelocityAngle );
   vY = mVelocity * sin( mVelocityAngle );       
-  mVelocity = qMin( sqrt( pow(vX, 2) + pow(vY, 2) ), MAX_VELOCITY );
+  mVelocity = qMin( qreal( sqrt( pow(vX, 2) + pow(vY, 2) ) ), MAX_VELOCITY );
 
   if ( count )
   {
@@ -362,7 +362,7 @@ void PoolItem::computeNewPosition()
       mVelocityAngle = ::acos( l.dx() / l.length() );
       if ( l.dy() < 0 ) mVelocityAngle = 2 * M_PI - mVelocityAngle;
 
-      mVelocity = qMin(sqrt( pow(vX, 2) + pow(vY, 2) ), MAX_VELOCITY);
+      mVelocity = qMin( qreal( sqrt( pow(vX, 2) + pow(vY, 2) ) ), MAX_VELOCITY);
     }
   }
   
