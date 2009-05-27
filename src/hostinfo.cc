@@ -71,9 +71,7 @@ QString HostInfo::colorName( const QColor &c )
 {
   int key = c.red() + c.green() * 256 + c.blue() * 65536;
 
-  QMap<int,QString>::ConstIterator it = mColorNameMap.find( key );
-  if ( it == mColorNameMap.end() ) return i18n("<unknown>");
-  else return *it;
+  return mColorNameMap.value( key, i18n("<unknown>") );
 }
 
 HostInfo::HostInfo( unsigned int id )
@@ -200,25 +198,20 @@ HostInfoManager::HostInfoManager()
 
 HostInfoManager::~HostInfoManager()
 {
-  HostMap::ConstIterator it;
-  for( it = mHostMap.begin(); it != mHostMap.end(); ++it ) {
-    delete *it;
-  }
+  qDeleteAll(mHostMap);
 }
 
 HostInfo *HostInfoManager::find( unsigned int hostid ) const
 {
-  HostMap::ConstIterator it = mHostMap.find( hostid );
-  if ( it == mHostMap.end() ) return 0;
-  else return *it;
+  return mHostMap.value( hostid, 0 );
 }
 
 HostInfo *HostInfoManager::checkNode( unsigned int hostid,
                                       const HostInfo::StatsMap &stats )
 {
-  HostMap::ConstIterator it = mHostMap.find( hostid );
+  HostMap::ConstIterator it = mHostMap.constFind( hostid );
   HostInfo *hostInfo;
-  if ( it == mHostMap.end() ) {
+  if ( it == mHostMap.constEnd() ) {
     hostInfo = new HostInfo( hostid );
     mHostMap.insert( hostid, hostInfo );
   } else {

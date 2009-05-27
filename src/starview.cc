@@ -420,7 +420,7 @@ void StarView::removeItem( HostItem *hostItem )
     }
 
     QList<unsigned int>::ConstIterator it2;
-    for( it2 = obsoleteJobs.begin(); it2 != obsoleteJobs.end(); ++it2 ) {
+    for( it2 = obsoleteJobs.constBegin(); it2 != obsoleteJobs.constEnd(); ++it2 ) {
         mJobMap.remove( *it2 );
     }
 
@@ -529,7 +529,7 @@ void StarView::slotConfigChanged()
 
     HostInfoManager::HostMap hostMap = hostInfoManager()->hostMap();
     HostInfoManager::HostMap::ConstIterator it;
-    for( it = hostMap.begin(); it != hostMap.end(); ++it ) {
+    for( it = hostMap.constBegin(); it != hostMap.constEnd(); ++it ) {
         if ( filterArch( *it ) ) checkNode( it.key() );
         else forceRemoveNode( it.key() );
     }
@@ -642,7 +642,7 @@ void StarView::createKnownHosts()
     HostInfoManager::HostMap hosts = hostInfoManager()->hostMap();
 
     HostInfoManager::HostMap::ConstIterator it;
-    for( it = hosts.begin(); it != hosts.end(); ++it ) {
+    for( it = hosts.constBegin(); it != hosts.constEnd(); ++it ) {
         unsigned int id = (*it)->id();
         if ( !findHostItem( id ) ) createHostItem( id );
     }

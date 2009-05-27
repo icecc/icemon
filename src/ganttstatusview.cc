@@ -183,8 +183,8 @@ void GanttProgress::drawGraph( QPainter &p )
 
     bool lastBox = false;
     int xStart = 0;
-    QList< JobData >::ConstIterator it = m_jobs.begin();
-    for ( ; ( it != m_jobs.end() ) && !lastBox; ++it ) {
+    QList< JobData >::ConstIterator it = m_jobs.constBegin();
+    for ( ; ( it != m_jobs.constEnd() ) && !lastBox; ++it ) {
         int xEnd = mClock - (*it).clock;
 
         if ( xEnd > width() ) {
@@ -354,21 +354,21 @@ void GanttStatusView::update( const Job &job )
       return;
     }
 
-    NodeMap::ConstIterator it2 = mNodeMap.find( processor );
-    if ( it2 == mNodeMap.end() ) {
+    NodeMap::ConstIterator it2 = mNodeMap.constFind( processor );
+    if ( it2 == mNodeMap.constEnd() ) {
 //        qDebug() << "  Server not known" << endl;
         slot = registerNode( processor );
     } else {
         SlotList slotList = it2.value();
         SlotList::ConstIterator it3;
-        for( it3 = slotList.begin(); it3 != slotList.end(); ++it3 ) {
+        for( it3 = slotList.constBegin(); it3 != slotList.constEnd(); ++it3 ) {
             if ( (*it3)->isFree() ) {
 //                qDebug() << "  Found free slot" << endl;
                 slot = *it3;
                 break;
             }
         }
-        if ( it3 == slotList.end() ) {
+        if ( it3 == slotList.constEnd() ) {
 //            qDebug() << "  Create new slot" << endl;
             slot = registerNode( processor );
         }
@@ -426,8 +426,8 @@ GanttProgress *GanttStatusView::registerNode( unsigned int hostid )
 
     QVBoxLayout *nodeLayout;
 
-    NodeLayoutMap::ConstIterator it = mNodeLayouts.find( hostid );
-    if ( it == mNodeLayouts.end() ) {
+    NodeLayoutMap::ConstIterator it = mNodeLayouts.constFind( hostid );
+    if ( it == mNodeLayouts.constEnd() ) {
       ++lastRow;
 
       nodeLayout = new QVBoxLayout();
@@ -439,13 +439,13 @@ GanttProgress *GanttStatusView::registerNode( unsigned int hostid )
       nodeLayout = it.value();
     }
 
-    NodeRowMap::ConstIterator rowIt = mNodeRows.find( hostid );
-    if ( rowIt == mNodeRows.end() ) {
+    NodeRowMap::ConstIterator rowIt = mNodeRows.constFind( hostid );
+    if ( rowIt == mNodeRows.constEnd() ) {
       qDebug() << "Unknown node row.";
     } else {
       int row = *rowIt;
-      NodeLabelMap::ConstIterator labelIt = mNodeLabels.find( hostid );
-      if ( labelIt == mNodeLabels.end() ) {
+      NodeLabelMap::ConstIterator labelIt = mNodeLabels.constFind( hostid );
+      if ( labelIt == mNodeLabels.constEnd() ) {
         QString name = nameForHost( hostid );
         QLabel *l = new QLabel( name, mTopWidget );
         QPalette palette = l->palette();
@@ -479,8 +479,8 @@ GanttProgress *GanttStatusView::registerNode( unsigned int hostid )
 
 void GanttStatusView::removeSlot( unsigned int hostid, GanttProgress* slot )
 {
-    NodeLayoutMap::ConstIterator it = mNodeLayouts.find( hostid );
-    if ( it == mNodeLayouts.end() )
+    NodeLayoutMap::ConstIterator it = mNodeLayouts.constFind( hostid );
+    if ( it == mNodeLayouts.constEnd() )
         return;
 
     mNodeMap[ hostid ].removeAll( slot );
@@ -499,8 +499,8 @@ void GanttStatusView::removeSlot( unsigned int hostid, GanttProgress* slot )
 
 void GanttStatusView::unregisterNode( unsigned int hostid )
 {
-    NodeLayoutMap::ConstIterator it = mNodeLayouts.find( hostid );
-    if ( it == mNodeLayouts.end() )
+    NodeLayoutMap::ConstIterator it = mNodeLayouts.constFind( hostid );
+    if ( it == mNodeLayouts.constEnd() )
         return;
     while( !mNodeMap[ hostid ].isEmpty())
         removeSlot( hostid, mNodeMap[ hostid ].first());
@@ -515,9 +515,9 @@ void GanttStatusView::unregisterNode( unsigned int hostid )
 void GanttStatusView::updateGraphs()
 {
     NodeMap::ConstIterator it;
-    for ( it = mNodeMap.begin(); it != mNodeMap.end(); ++it ) {
+    for ( it = mNodeMap.constBegin(); it != mNodeMap.constEnd(); ++it ) {
         SlotList::ConstIterator it2;
-        for( it2 = (*it).begin(); it2 != (*it).end(); ++it2 ) {
+        for( it2 = (*it).constBegin(); it2 != (*it).constEnd(); ++it2 ) {
             (*it2)->progress();
         }
     }
@@ -555,8 +555,8 @@ void GanttStatusView::checkAge()
         else
             ++(*it);
     }
-    for( QList<unsigned int>::ConstIterator it = to_unregister.begin();
-         it != to_unregister.end();
+    for( QList<unsigned int>::ConstIterator it = to_unregister.constBegin();
+         it != to_unregister.constEnd();
          ++it )
         unregisterNode( *it );
 }

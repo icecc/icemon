@@ -56,7 +56,7 @@ static bool clientsAttractHosts = false;
 
 PoolItem::PoolItem( const QString &text, PoolView *poolView, HostInfoManager *m )
   : QGraphicsItemGroup( 0, poolView->canvas() ), mHostInfo( 0 ), mHostInfoManager( m ),
-    m_stateItem( 0 ), mX( 0 ), mY( 0 ), m_poolView( poolView ) 
+    m_stateItem( 0 ), mX( 0 ), mY( 0 ), m_poolView( poolView )
 {
     init();
 
@@ -85,19 +85,19 @@ void PoolItem::init()
   m_boxItem = new QGraphicsEllipseItem( this, scene() );
   m_boxItem->setZValue( 80 );
   m_boxItem->setPen( QPen( Qt::NoPen ) );
-  setSize( m_poolView->poolItemWidth(), m_poolView->poolItemHeight() );   
+  setSize( m_poolView->poolItemWidth(), m_poolView->poolItemHeight() );
   m_textItem = new QGraphicsSimpleTextItem( 0, scene() );
   m_textItem->setZValue( 100 );
-  
+
   addToGroup( m_boxItem );
   addToGroup( m_textItem );
   setHostColor( QColor( 200, 200, 200 ) );
-  
+
   mIsActiveClient = false;
   mIsCompiling = false;
-  
+
   m_client = 0;
-    
+
   mVelocity = 0;
   mVelocityAngle = qrand() / (double)RAND_MAX * 2 * M_PI;
 
@@ -135,20 +135,20 @@ void PoolItem::updateName()
                 s.truncate(l);
         }
 	m_textItem->setText(s);
-	m_textItem->setPos(  m_poolView->poolItemWidth() / 2. - m_textItem->boundingRect().width() / 2., 
+	m_textItem->setPos(  m_poolView->poolItemWidth() / 2. - m_textItem->boundingRect().width() / 2.,
 			     m_poolView->poolItemHeight() / 2. - m_textItem->boundingRect().height() / 2. );
     }
-    
+
 }
 
-double PoolItem::centerPosX() const 
-{ 
-  return pos().x() + m_poolView->poolItemWidth() / 2.; 
+double PoolItem::centerPosX() const
+{
+  return pos().x() + m_poolView->poolItemWidth() / 2.;
 }
 
-double PoolItem::centerPosY() const 
-{ 
-  return pos().y() + m_poolView->poolItemHeight() / 2.; 
+double PoolItem::centerPosY() const
+{
+  return pos().y() + m_poolView->poolItemHeight() / 2.;
 }
 
 void PoolItem::setCenterPos( double x, double y )
@@ -173,22 +173,22 @@ void PoolItem::setRandPos()
 
   show();
 }
-  
+
 void PoolItem::update( const Job &job )
 {
     setIsCompiling( job.state() == Job::Compiling );
     setClient( job.client() );
 
-    if ( isCompiling() || isActiveClient() || job.state() == Job::WaitingForCS  ) { 
+    if ( isCompiling() || isActiveClient() || job.state() == Job::WaitingForCS  ) {
       m_textItem->show();
       setHostColor( mHostInfoManager->hostColor( hostInfo()->id() ).darker(130) );
     }
     else {
-      if ( !mIsLocalHost ) 
+      if ( !mIsLocalHost )
 	m_textItem->hide();
       setHostColor( QColor( 200, 200, 200 ) );
     }
-      
+
 
     if ( job.state() == Job::WaitingForCS ) {
       return;
@@ -196,25 +196,25 @@ void PoolItem::update( const Job &job )
 
     bool finished = job.state() == Job::Finished ||
                     job.state() == Job::Failed;
-  
+
     JobList::Iterator it = m_jobs.find( job.jobId() );
     bool newJob = ( it == m_jobs.end() );
 
     if ( newJob && finished ) {
       delete m_jobLines[ job.jobId() ];
-      m_jobLines.remove( job.jobId() );      
+      m_jobLines.remove( job.jobId() );
       return;
     }
     if ( !newJob && !finished ) return;
 
-    if ( newJob ) 
-    {      
-      m_jobs.insert( job.jobId(), job );     
+    if ( newJob )
+    {
+      m_jobs.insert( job.jobId(), job );
       m_jobLines[ job.jobId() ] = new QGraphicsLineItem( 0, scene() );
       m_jobLines[ job.jobId() ]->setZValue( 5 );
       if ( ! ::showJobLines )
 	m_jobLines[ job.jobId()]->hide();
-    } else if ( finished ) {     
+    } else if ( finished ) {
       m_jobs.remove( job.jobId() );
       delete m_jobLines[ job.jobId() ];
       m_jobLines.remove( job.jobId() );
@@ -257,14 +257,14 @@ void PoolItem::checkCollision()
   // qt collision detection
   QList<PoolItem*> cItems;
   foreach( PoolItem *item, m_poolView->m_poolItems ) {
-    qreal length = QLineF( QPointF( centerPosX(), centerPosY() ), 
+    qreal length = QLineF( QPointF( centerPosX(), centerPosY() ),
 			   QPointF( item->centerPosX(), item->centerPosY() ) ).length();
     if ( length  < 2 * radius() && item != this )
       cItems << item;
   }
 
   // Compute bouncing
-  foreach( PoolItem *item, cItems ) {      
+  foreach( PoolItem *item, cItems ) {
 
     // Bounce direction
     QLineF lineBetween(QPointF(mX, mY), QPointF(item->mX, item->mY));
@@ -279,16 +279,16 @@ void PoolItem::checkCollision()
     setCenterPos( mX, mY );
     item->mX = centerX + item->radius()*1.01 * cos( angle );
     item->mY = centerY + item->radius()*1.01 * sin( angle );
-    item->setCenterPos( item->mX, item->mY );         
-  
-  
+    item->setCenterPos( item->mX, item->mY );
+
+
     if ( mVelocity > MIN_VELOCITY_FOR_BOUNCE ) {
       qreal vNormalThis = mVelocity * cos( mVelocityAngle - angle );
       qreal vTangentialThis = mVelocity * sin( mVelocityAngle - angle );
       qreal vNormalOther = item->mVelocity * cos( item->mVelocityAngle - angle );
       qreal vTangentialOther = item->mVelocity * sin( item->mVelocityAngle - angle );
-      
-     
+
+
       /* "Energy transfer" */
       qreal vNormal = sqrt( pow(vNormalThis, 2) + pow(vNormalOther, 2) ) / 2.;
       int sign = vNormalThis >= 0 ? 1 : -1;
@@ -328,7 +328,7 @@ void PoolItem::computeNewPosition()
 
   // Velocity values if there is no interactions/gravity for this item
   vX = mVelocity * cos( mVelocityAngle );
-  vY = mVelocity * sin( mVelocityAngle );       
+  vY = mVelocity * sin( mVelocityAngle );
   mVelocity = qMin( qreal( sqrt( pow(vX, 2) + pow(vY, 2) ) ), MAX_VELOCITY );
 
   if ( count )
@@ -365,7 +365,7 @@ void PoolItem::computeNewPosition()
       mVelocity = qMin( qreal( sqrt( pow(vX, 2) + pow(vY, 2) ) ), MAX_VELOCITY);
     }
   }
-  
+
 
   setCenterPos( centerPosX() + vX, centerPosY() + vY );
 
@@ -377,12 +377,12 @@ void PoolItem::drawJobLines()
   foreach( Job j, m_jobs ) {
     PoolItem* poolItem = m_poolView->findPoolItem( j.server() );
     if ( !poolItem || poolItem == this )
-      continue;    
+      continue;
     if ( ::showJobLines ) {
       m_jobLines[ j.jobId() ]->show();
       m_jobLines[ j.jobId() ]->setLine( centerPosX(), centerPosY(), poolItem->centerPosX(), poolItem->centerPosY() );
       m_jobLines[ j.jobId() ]->setPen( poolItem->hostInfo()->color() );
-    } 
+    }
     else {
       m_jobLines[ j.jobId() ]->hide();
     }
@@ -462,7 +462,7 @@ PoolView::PoolView( HostInfoManager *m, QWidget *parent )
     m_canvas = new QGraphicsScene ( this );
     m_canvas->setSceneRect( 0, 0, 1000, 1000 );
 
-    QHBoxLayout *layout = new QHBoxLayout( this );    
+    QHBoxLayout *layout = new QHBoxLayout( this );
     layout->setMargin( 0 );
 
     m_canvasView = new QGraphicsView( m_canvas, this );
@@ -577,7 +577,7 @@ void PoolView::removeItem( PoolItem *poolItem )
     }
 
     QList<unsigned int>::ConstIterator it2;
-    for( it2 = obsoleteJobs.begin(); it2 != obsoleteJobs.end(); ++it2 ) {
+    for( it2 = obsoleteJobs.constBegin(); it2 != obsoleteJobs.constEnd(); ++it2 ) {
         mJobMap.remove( *it2 );
     }
 
@@ -638,7 +638,7 @@ void PoolView::slotConfigChanged()
 {
     HostInfoManager::HostMap hostMap = hostInfoManager()->hostMap();
     HostInfoManager::HostMap::ConstIterator it;
-    for( it = hostMap.begin(); it != hostMap.end(); ++it ) {
+    for( it = hostMap.constBegin(); it != hostMap.constEnd(); ++it ) {
         if ( filterArch( *it ) ) checkNode( it.key() );
         else forceRemoveNode( it.key() );
     }
@@ -649,7 +649,7 @@ void PoolView::slotConfigChanged()
 
 // Main loop
 void PoolView::arrangePoolItems()
-{  
+{
   foreach( PoolItem *it, m_poolItems ) {
     it->computeNewPosition();
     it->updateName();
@@ -676,7 +676,7 @@ PoolItem *PoolView::createPoolItem( unsigned int hostid )
     m_poolItems.insert( hostid, poolItem );
 
     poolItem->setRandPos();
-    
+
     return poolItem;
 }
 
@@ -685,7 +685,7 @@ void PoolView::createKnownHosts()
     HostInfoManager::HostMap hosts = hostInfoManager()->hostMap();
 
     HostInfoManager::HostMap::ConstIterator it;
-    for( it = hosts.begin(); it != hosts.end(); ++it ) {
+    for( it = hosts.constBegin(); it != hosts.constEnd(); ++it ) {
         unsigned int id = (*it)->id();
         if ( !findPoolItem( id ) ) createPoolItem( id );
     }

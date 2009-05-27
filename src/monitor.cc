@@ -247,7 +247,7 @@ void Monitor::handle_stats( Msg *_m )
 
     QStringList statmsg = QString( m->statmsg.c_str() ).split( '\n' );
     HostInfo::StatsMap stats;
-    for ( QStringList::ConstIterator it = statmsg.begin(); it != statmsg.end();
+    for ( QStringList::ConstIterator it = statmsg.constBegin(); it != statmsg.constEnd();
           ++it ) {
         QString key = *it;
         key = key.left( key.indexOf( ':' ) );
@@ -330,8 +330,8 @@ void Monitor::setCurrentView( StatusView *view, bool rememberJobs )
     m_view->updateSchedulerState( mSchedulerOnline );
 
     if ( rememberJobs ) {
-        JobList::ConstIterator it = m_rememberedJobs.begin();
-        for ( ; it != m_rememberedJobs.end(); ++it )
+        JobList::ConstIterator it = m_rememberedJobs.constBegin();
+        for ( ; it != m_rememberedJobs.constEnd(); ++it )
             m_view->update( *it );
     }
 }
