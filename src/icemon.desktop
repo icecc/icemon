@@ -1,5 +1,6 @@
 [Desktop Entry]
 GenericName=Icecream Monitor
+GenericName[ca]=Monitor Icecream
 GenericName[el]=Επόπτης Icecream
 GenericName[es]=Monitor Icecream
 GenericName[et]=Icecreami jälgija
@@ -24,6 +25,7 @@ Name[hne]=आइसमान
 Name[pa]=ਆਈਸਮੋਨ
 Name[x-test]=xxIcemonxx
 Comment=A monitor for an Icecream compilation network
+Comment[ca]=Un monitor par una xarxa de compilació Icecream
 Comment[el]=Ένας επόπτης ενός μιας σύνθεσης δικτύου Icecream
 Comment[es]=Un monitor para una red de compilación Icecream
 Comment[et]=Icecreami kompileerimisvõrgu jälgija
