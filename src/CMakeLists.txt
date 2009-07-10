@@ -1,5 +1,7 @@
 project(icemon)
 
+add_definitions(-DQT3_SUPPORT)
+
 find_package(Icecream REQUIRED)
 
 include_directories (${LIBICECREAM_INCLUDE_DIR} ${KDE4_INCLUDES})
