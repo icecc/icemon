@@ -1,6 +1,7 @@
 [Desktop Entry]
 GenericName=Icecream Monitor
 GenericName[ca]=Monitor Icecream
+GenericName[ca@valencia]=Monitor Icecream
 GenericName[el]=Επόπτης Icecream
 GenericName[en_GB]=Icecream Monitor
 GenericName[es]=Monitor Icecream
@@ -24,6 +25,7 @@ GenericName[x-test]=xxIcecream Monitorxx
 GenericName[zh_TW]=Icecream 監視器
 Name=Icemon
 Name[ca]=Icemon
+Name[ca@valencia]=Icemon
 Name[cs]=Icemon
 Name[de]=Icemon
 Name[el]=Icemon
@@ -50,6 +52,7 @@ Name[x-test]=xxIcemonxx
 Name[zh_TW]=Icemon
 Comment=A monitor for an Icecream compilation network
 Comment[ca]=Un monitor par una xarxa de compilació Icecream
+Comment[ca@valencia]=Un monitor par una xarxa de compilació Icecream
 Comment[el]=Ένας επόπτης ενός μιας σύνθεσης δικτύου Icecream
 Comment[en_GB]=A monitor for an Icecream compilation network
 Comment[es]=Un monitor para una red de compilación Icecream
