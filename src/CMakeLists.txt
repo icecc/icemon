@@ -2,6 +2,8 @@ project(icemon)
 
 find_package(Icecream REQUIRED)
 
+add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DQT3_SUPPORT_WARNINGS -DQT3_SUPPORT)
+
 include_directories (${LIBICECREAM_INCLUDE_DIR} ${KDE4_INCLUDES})
 
 set(icemon_SRCS
