@@ -1,2 +1,3 @@
 #! /usr/bin/env bash
-$XGETTEXT *.cc -o $podir/icemon.pot
+$EXTRACTRC *.rc >> rc.cpp
+$XGETTEXT *.cpp *.cc -o $podir/icemon.pot
