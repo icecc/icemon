@@ -14,19 +14,21 @@ else (LIBICECREAM_INCLUDE_DIR AND LIBICECREAM_LIBRARIES)
   if(NOT WIN32)
     # use pkg-config to get the directories and then use these values
     # in the FIND_PATH() and FIND_LIBRARY() calls
-    INCLUDE(UsePkgConfig)
-
-    PKGCONFIG(icecc _icecreamIncDir _icecreamLinkDir _icecreamLinkFlags _icecreamCflags)
+    find_package(PkgConfig)
+    pkg_check_modules(PC_ICECC icecc)
   endif(NOT WIN32)
 
   FIND_PATH(LIBICECREAM_INCLUDE_DIR icecc/comm.h
-    ${_icecreamIncDir}
+    HINTS
+    ${PC_ICECC_INCLUDEDIR}
+    ${PC_ICECC_INCLUDE_DIRS}
     /opt/icecream/include
   )
 
   FIND_LIBRARY(LIBICECREAM_LIBRARY NAMES icecc
-    PATHS
-    ${_icecreamLinkDir}
+    HINTS
+    ${PC_ICECC_LIBDIR}
+    ${PC_ICECC_LIBRARY_DIRS}
     /opt/icecream/lib
   )
 
