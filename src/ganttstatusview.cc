@@ -40,8 +40,6 @@
 #include <QPaintEvent>
 #include <QScrollBar>
 
-#include <KGlobal>
-#include <KLocale>
 
 GanttConfigDialog::GanttConfigDialog( QWidget *parent )
   : QDialog( parent )

@@ -277,5 +277,3 @@ void MainWindow::setCurrentNet( const QByteArray &netName )
   m_monitor->setCurrentNet( netName );
   m_currNetWidget->setText(tr("Current Network: %1").arg(QString::fromLatin1(netName)));
 }
-
-#include "mainwindow.moc"
