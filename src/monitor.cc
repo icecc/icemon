@@ -40,7 +40,7 @@ using namespace std;
 
 Monitor::Monitor( HostInfoManager *m, QObject *parent)
     : QObject( parent ), m_hostInfoManager( m ), m_view( 0 ),
-      m_scheduler( 0 ), mSchedulerOnline( false ),
+      m_scheduler( 0 ), m_schedulerState( false ),
       m_discover( 0 ), m_fd_notify( 0 ), m_fd_type(QSocketNotifier::Exception)
 {
     checkScheduler();
@@ -325,7 +325,7 @@ void Monitor::setCurrentView( StatusView *view, bool rememberJobs )
 {
     m_view = view;
 
-    m_view->updateSchedulerState( mSchedulerOnline );
+    m_view->updateSchedulerState( m_schedulerState );
 
     if ( rememberJobs ) {
         JobList::ConstIterator it = m_rememberedJobs.constBegin();
@@ -341,8 +341,10 @@ void Monitor::setCurrentNet( const QByteArray &netName )
 
 void Monitor::setSchedulerState( bool online )
 {
-    if (mSchedulerOnline == online) return;
-    mSchedulerOnline = online;
+    if (m_schedulerState == online)
+        return;
+    m_schedulerState = online;
+    emit schedulerStateChanged( online );
     m_view->updateSchedulerState( online );
 }
 

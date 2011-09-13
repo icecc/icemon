@@ -20,9 +20,7 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "mon-qt.h"
-
-#include <stdio.h>
+#include "mainwindow.h"
 
 #include "starview.h"
 #include "summaryview.h"
@@ -33,23 +31,17 @@
 
 #include "hostinfo.h"
 #include "monitor.h"
+#include "version.h"
 
 #include <qdebug.h>
 
-#include <QtGui/QMenuBar>
-#include <QtGui/QMessageBox>
-#include <QtGui/QApplication>
+#include <QMenuBar>
+#include <QStatusBar>
+#include <QMessageBox>
+#include <QApplication>
 #include <QSettings>
 
 #include <QMenu>
-
-
-const char * const appName = QT_TRANSLATE_NOOP("appName", "Icecream Monitor" );
-const char * const appShortName = "icemon";
-const char * const version = "2.0";
-const char * const description = QT_TRANSLATE_NOOP( "description", "Icecream monitor for Qt" );
-const char * const copyright = QT_TRANSLATE_NOOP( "copyright", "(c) 2003,2004, 2011 The icecream developers" );
-
 
 MainWindow::MainWindow( QWidget *parent )
   : QMainWindow( parent ), m_view( 0 )
@@ -63,6 +55,12 @@ MainWindow::MainWindow( QWidget *parent )
     QMenu* fileMenu = menuBar()->addMenu(tr("&File"));
     QMenu* viewMenu = menuBar()->addMenu(tr("&View"));
     QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
+
+    m_currNetWidget = new QLabel;
+    statusBar()->addPermanentWidget(m_currNetWidget);
+
+    m_schedStatusWidget = new QLabel;
+    statusBar()->addPermanentWidget(m_schedStatusWidget);
 
     QAction* action = fileMenu->addAction(tr("&Quit"), this, SLOT(close()), tr("Ctrl+Q"));
     action->setMenuRole(QAction::QuitRole);
@@ -131,9 +129,6 @@ MainWindow::MainWindow( QWidget *parent )
     connect(action, SIGNAL(triggered()), this, SLOT(about()));
     action->setMenuRole(QAction::AboutRole);
 
-
-    setupStarView(); // TODO: Hack!
-
     readSettings();
 }
 
@@ -194,6 +189,7 @@ void MainWindow::setupView( StatusView *view, bool rememberJobs )
   delete m_view;
   m_view = view;
   m_monitor->setCurrentView( m_view, rememberJobs );
+  connect(m_monitor, SIGNAL(schedulerStateChanged(bool)), SLOT(setSchedulerState(bool)));
   setCentralWidget( m_view->widget() );
 }
 
@@ -268,57 +264,18 @@ void MainWindow::aboutQt()
 }
 
 
+void MainWindow::setSchedulerState(bool online)
+{
+    m_schedStatusWidget->setText(online ?
+                                     tr("Scheduler is online.") :
+                                     tr("Scheduler is offline.")
+                );
+}
+
 void MainWindow::setCurrentNet( const QByteArray &netName )
 {
   m_monitor->setCurrentNet( netName );
-}
-
-void printHelp() {
-    QString help;
-    help += QApplication::translate("Usage", "Usage: %1 [options]").arg(appShortName);
-    help += '\n';
-    help += '\n';
-    help += QApplication::translate("Description", description);
-    help += '\n';
-    help += '\n';
-    help += QApplication::translate("Options", "Options:");
-    help += '\n';
-    help += QApplication::translate("Netname Options",  "\t-n, netname <name>\tIcecream network name");
-    help += '\n';
-    help += '\n';
-    fputs(qPrintable(help), stdout);
-}
-
-int main( int argc, char **argv )
-{
-    QByteArray netName;
-
-    for (int i = 1; i < argc; ++i ) {
-        if (qstrcmp(argv[i], "-help") == 0 || qstrcmp(argv[i], "-h")  == 0) {
-            printHelp();
-            return 0;
-        }
-        if (qstrcmp(argv[i], "-netname") == 0 || qstrcmp(argv[i], "-n")  == 0) {
-            if (i+1 < argc)
-                netName = argv[++i];
-        }
-    }
-
-
-  QApplication app(argc, argv);
-  QApplication::setOrganizationDomain("kde.org");
-  QApplication::setApplicationName(appShortName);
-  QApplication::setApplicationVersion(version);
-
-  MainWindow *mainWidget = new MainWindow;
-
-  if ( !netName.isEmpty() ) {
-    mainWidget->setCurrentNet( netName );
-  }
-
-  mainWidget->show();
-
-  return app.exec();
+  m_currNetWidget->setText(tr("Current Network: %1").arg(QString::fromLatin1(netName)));
 }
 
 #include "mon-qt.moc"

@@ -28,6 +28,7 @@ class HostInfoManager;
 class Monitor;
 class StatusView;
 class QActionGroup;
+class QLabel;
 
 class MainWindow : public QMainWindow
 {
@@ -35,9 +36,9 @@ class MainWindow : public QMainWindow
   public:
     MainWindow( QWidget *parent = 0 );
 
-    void setCurrentNet( const QByteArray & );
+    void setCurrentNet(const QByteArray &netname);
 
-  protected:
+protected:
     void closeEvent(QCloseEvent *e);
 
   private slots:
@@ -56,6 +57,8 @@ class MainWindow : public QMainWindow
     void about();
     void aboutQt();
 
+    void setSchedulerState(bool online);
+
   private:
     void readSettings();
     void writeSettings();
@@ -63,6 +66,8 @@ class MainWindow : public QMainWindow
     void setupView( StatusView *view, bool rememberJobs );
 
     HostInfoManager *m_hostInfoManager;
+    QLabel *m_schedStatusWidget;
+    QLabel *m_currNetWidget;
     Monitor *m_monitor;
     StatusView *m_view;
 

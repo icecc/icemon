@@ -6,8 +6,8 @@ include_directories (${LIBICECREAM_INCLUDE_DIR} ${KDE4_INCLUDES})
 
 set(icemon_SRCS
   job.cc
+  mainwindow.cc
   monitor.cc
-  mon-qt.cc
   hostinfo.cc
   statusview.cc
   detailedhostview.cc
@@ -18,6 +18,8 @@ set(icemon_SRCS
   summaryview.cc
   starview.cc
   poolview.cc
+
+  main.cc
 )
 
 qt4_add_resources(resources_SRCS icemon.qrc)
