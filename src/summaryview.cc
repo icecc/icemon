@@ -13,15 +13,13 @@
 #include "hostinfo.h"
 #include "job.h"
 
-#include <kiconloader.h>
-#include <ksqueezedtextlabel.h>
-#include <klocale.h>
-#include <kdebug.h>
+#include <qdebug.h>
 
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpainter.h>
-#include <QScrollBar>
+#include <QtGui/QScrollBar>
+#include <QtGui/QApplication>
 
 class NodeInfoFrame : public QFrame
 {
@@ -108,7 +106,7 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
     grid->setMargin(10);
     grid->setSpacing(5);
 
-    m_jobsLabel = addLine(i18n("Jobs:"), detailsBox, grid, Qt::AlignBottom, "0");
+    m_jobsLabel = addLine(QApplication::tr("Jobs:"), detailsBox, grid, Qt::AlignBottom, "0");
 
     for(int i = 0; i < maxJobs; i++) {
         if(maxJobs > 1) {
@@ -116,8 +114,8 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
             const int row = grid->rowCount();
             grid->addItem(spacer, row, 0, 1, grid->columnCount() - 1);
         }
-        m_jobHandlers[i].sourceLabel = addLine(i18n("Source:"), detailsBox, grid);
-        m_jobHandlers[i].stateLabel = addLine(i18n("State:"), detailsBox, grid);
+        m_jobHandlers[i].sourceLabel = addLine(QApplication::tr("Source:"), detailsBox, grid);
+        m_jobHandlers[i].stateLabel = addLine(QApplication::tr("State:"), detailsBox, grid);
     }
 
     grid->setColumnStretch(grid->columnCount() - 1, 1);
@@ -253,17 +251,17 @@ void SummaryView::checkNode(unsigned int hostid)
 
 void SummaryView::resizeEvent(QResizeEvent *e)
 {
-    QSize s = e->size();
-
-    setMinimumWidth(m_base->minimumSizeHint().width() + verticalScrollBar()->width());
-    m_base->setMinimumWidth(s.width());
-
-    if(m_base->height() <= s.height())
-        m_base->setMinimumHeight(s.height());
-    else
-        m_base->setMinimumHeight(m_base->sizeHint().height());
-
     QScrollArea::resizeEvent(e);
+//    QSize s = e->size();
+
+//    setMinimumWidth(m_base->minimumSizeHint().width() + verticalScrollBar()->width());
+//    m_base->setMinimumWidth(s.width());
+
+//    if(m_base->height() <= s.height())
+//        m_base->setMinimumHeight(s.height());
+//    else
+//        m_base->setMinimumHeight(m_base->sizeHint().height());
+
+//    QScrollArea::resizeEvent(e);
 }
 
-#include "summaryview.moc"

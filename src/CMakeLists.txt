@@ -29,7 +29,6 @@ target_link_libraries(icemon ${KDE4_KDEUI_LIBS} ${LIBICECREAM_LIBRARIES} ${QT_QT
 install(TARGETS icemon ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 install( FILES icemon.desktop DESTINATION ${XDG_APPS_INSTALL_DIR} )
-install( FILES icemonui.rc DESTINATION ${DATA_INSTALL_DIR}/icemon )
 
 kde4_install_icons( ${ICON_INSTALL_DIR}   )
 

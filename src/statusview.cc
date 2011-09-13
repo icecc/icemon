@@ -28,7 +28,7 @@
 #include <assert.h>
 #include <QDebug>
 #include <QTime>
-#include <kdebug.h>
+
 StatusView::StatusView( HostInfoManager *m )
   : mHostInfoManager( m )
 {

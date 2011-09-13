@@ -24,10 +24,10 @@
 #include "job.h"
 #include "statusview.h"
 
-#include <kdialog.h>
 #include <QResizeEvent>
 #include <QLabel>
 #include <QGraphicsEllipseItem>
+#include <QDialog>
 
 class HostInfo;
 
@@ -37,7 +37,7 @@ class QLineEdit;
 class QCheckBox;
 class QGraphicsView;
 
-class StarViewConfigDialog : public KDialog
+class StarViewConfigDialog : public QDialog
 {
     Q_OBJECT
 
@@ -189,7 +189,6 @@ private:
     HostItem *m_schedulerItem;
     QMap<unsigned int,HostItem *> m_hostItems;
     QMap<unsigned int,HostItem *> mJobMap;
-    QString m_iconPath;
 };
 
 #endif

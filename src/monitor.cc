@@ -28,9 +28,7 @@
 
 #include <icecc/comm.h>
 
-#include <klocale.h>
-#include <kdebug.h>
-#include <krandom.h>
+#include <qdebug.h>
 
 #include <qsocketnotifier.h>
 #include <qtimer.h>
@@ -69,7 +67,7 @@ void Monitor::checkScheduler(bool deleteit)
         setSchedulerState(false);
     } else if ( m_scheduler )
         return;
-    QTimer::singleShot( 1000+(KRandom::random()&1023), this, SLOT( slotCheckScheduler() ) );
+    QTimer::singleShot( 1000+(qrand()&1023), this, SLOT( slotCheckScheduler() ) ); // TODO: check if correct
 }
 
 void Monitor::registerNotify(int fd, QSocketNotifier::Type type, const char* slot)
@@ -141,7 +139,7 @@ void Monitor::slotCheckScheduler()
                         QSocketNotifier::Read, SLOT(slotCheckScheduler()));
         }
         if (m_fd_type == QSocketNotifier::Read)
-            QTimer::singleShot(1000+(KRandom::random()&1023), this, SLOT(slotCheckScheduler()));
+            QTimer::singleShot(1000+(qrand()&1023), this, SLOT(slotCheckScheduler()));
 
     }
     setSchedulerState( false );
@@ -347,5 +345,3 @@ void Monitor::setSchedulerState( bool online )
     mSchedulerOnline = online;
     m_view->updateSchedulerState( online );
 }
-
-#include "monitor.moc"

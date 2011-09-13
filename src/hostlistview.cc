@@ -164,14 +164,14 @@ HostListView::HostListView( HostInfoManager* manager,
       mHostInfoManager( manager ),
       mActiveNode( 0 )
 {
-    addColumn( i18n( "ID" ) );
-    addColumn( i18n( "Name" ) );
-    addColumn( i18n( "Color" ) );
-    addColumn( i18n( "IP" ) );
-    addColumn( i18n( "Platform" ) );
-    addColumn( i18n( "Max Jobs" ) );
-    addColumn( i18n( "Speed" ) );
-    addColumn( i18n( "Load" ) );
+    addColumn( tr( "ID" ) );
+    addColumn( tr( "Name" ) );
+    addColumn( tr( "Color" ) );
+    addColumn( tr( "IP" ) );
+    addColumn( tr( "Platform" ) );
+    addColumn( tr( "Max Jobs" ) );
+    addColumn( tr( "Speed" ) );
+    addColumn( tr( "Load" ) );
 
     setColumnAlignment( ColumnID, Qt::AlignRight );
     setColumnAlignment( ColumnMaxJobs, Qt::AlignRight );
@@ -277,5 +277,3 @@ void HostListView::updateSort()
     if( sortColumn() != 0 )
         sort();
 }
-
-#include "hostlistview.moc"

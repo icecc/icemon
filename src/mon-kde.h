@@ -22,21 +22,23 @@
 #ifndef MON_KDE_H
 #define MON_KDE_H
 
-#include <kxmlguiwindow.h>
+#include <QtGui/QMainWindow>
 
 class HostInfoManager;
 class Monitor;
 class StatusView;
-class KSelectAction;
+class QActionGroup;
 
-class MainWindow : public KXmlGuiWindow
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
   public:
-    MainWindow( QWidget *parent );
-    ~MainWindow();
+    MainWindow( QWidget *parent = 0 );
 
     void setCurrentNet( const QByteArray & );
+
+  protected:
+    void closeEvent(QCloseEvent *e);
 
   private slots:
     void setupListView();
@@ -50,6 +52,9 @@ class MainWindow : public KXmlGuiWindow
     void startView();
     void checkNodes();
     void configureView();
+
+    void about();
+    void aboutQt();
 
   private:
     void readSettings();
@@ -70,7 +75,7 @@ class MainWindow : public KXmlGuiWindow
       DetailedHostViewType
     };
 
-    KSelectAction* m_viewMode;
+    QActionGroup* m_viewMode;
 };
 
 #endif // MON_KDE_H

@@ -24,7 +24,7 @@
 #include "hostinfo.h"
 
 #include <klocale.h>
-#include <kdebug.h>
+#include <qdebug.h>
 #include <kiconloader.h>
 #include <kdialog.h>
 
@@ -400,17 +400,17 @@ PoolViewConfigDialog::PoolViewConfigDialog( QWidget *parent )
     connect( mArchFilterEdit, SIGNAL( textChanged( const QString & ) ),
              SIGNAL( configChanged() ) );
 
-    mSuppressDomainName = new QCheckBox( i18n("Suppress domain name"), this);
+    mSuppressDomainName = new QCheckBox( tr("Suppress domain name"), this);
     topLayout->addWidget( mSuppressDomainName );
     connect( mSuppressDomainName, SIGNAL( toggled ( bool ) ),
              SLOT( slotSuppressDomainName ( bool ) ) );
 
-    mShowJobLines = new QCheckBox( i18n("Show job lines"), this );
+    mShowJobLines = new QCheckBox( tr("Show job lines"), this );
     topLayout->addWidget( mShowJobLines );
     connect( mShowJobLines, SIGNAL( toggled( bool ) ),
 	     SLOT( slotShowJobLines( bool )) );
 
-    mClientsAttractHosts = new QCheckBox( i18n("Clients attract hosts"), this);
+    mClientsAttractHosts = new QCheckBox( tr("Clients attract hosts"), this);
     topLayout->addWidget( mClientsAttractHosts );
     connect( mClientsAttractHosts, SIGNAL( toggled( bool ) ),
 	     SLOT( slotClientsAttractHosts( bool )) );
@@ -424,7 +424,7 @@ PoolViewConfigDialog::PoolViewConfigDialog( QWidget *parent )
 
     buttonLayout->addStretch( 1 );
 
-    QPushButton *button = new QPushButton( i18n("&Close"), this );
+    QPushButton *button = new QPushButton( tr("&Close"), this );
     buttonLayout->addWidget( button );
     connect( button, SIGNAL( clicked() ), SLOT( hide() ) );
 }
@@ -614,17 +614,17 @@ bool PoolView::event ( QEvent* e )
                            "</b><br>" +
 
                            "<table>" +
-                           "<tr><td>" + i18n("IP:") + "</td><td>" + hostInfo->ip()
+                           "<tr><td>" + tr("IP:") + "</td><td>" + hostInfo->ip()
                            + "</td></tr>" +
-                           "<tr><td>" + i18n("Platform:") + "</td><td>" +
+                           "<tr><td>" + tr("Platform:") + "</td><td>" +
                            hostInfo->platform() + "</td></tr>"
-                           "<tr><td>" + i18n("Flavor:") + "</td><td>" +
+                           "<tr><td>" + tr("Flavor:") + "</td><td>" +
                            HostInfo::colorName( hostInfo->color() ) + "</td></tr>" +
-                           "<tr><td>" + i18n("Id:") + "</td><td>" +
+                           "<tr><td>" + tr("Id:") + "</td><td>" +
                            QString::number( hostInfo->id() ) + "</td></tr>" +
-                           "<tr><td>" + i18n("Speed:") + "</td><td>" +
+                           "<tr><td>" + tr("Speed:") + "</td><td>" +
                            QString::number( hostInfo->serverSpeed() ) + "</td></tr>" +
-                           "<tr><td>" + i18n("Load:") + "</td><td>" +
+                           "<tr><td>" + tr("Load:") + "</td><td>" +
                            QString::number( hostInfo->serverLoad() ) + "</td></tr>" +
                            "</table>"
 
@@ -701,7 +701,7 @@ bool PoolView::filterArch( unsigned int hostid )
 {
     HostInfo *i = hostInfoManager()->find( hostid );
     if ( !i ) {
-        kError() << "No HostInfo for id " << hostid << endl;
+        qWarning() << "No HostInfo for id " << hostid << endl;
         return false;
     }
 
@@ -735,5 +735,3 @@ bool PoolView::showJobLines()
 {
   return ::showJobLines;
 }
-
-#include "poolview.moc"
