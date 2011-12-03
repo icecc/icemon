@@ -53,7 +53,7 @@ MainWindow::MainWindow( QWidget *parent )
     appIcon.addFile(":/images/hi22-app-icemon.png", QSize(22, 22));
     appIcon.addFile(":/images/hi16-app-icemon.png", QSize(16, 16));
     setWindowIcon(appIcon);
-    setWindowTitle(QApplication::translate("appName", appName));
+    setWindowTitle(QApplication::translate("appName", Icemon::Version::appName));
     m_hostInfoManager = new HostInfoManager;
 
     m_monitor = new Monitor( m_hostInfoManager, this );
@@ -250,16 +250,17 @@ void MainWindow::configureView()
 void MainWindow::about()
 {
     QString about;
-    about = tr("%1\n\n%2\n\nAuthor: %3\n\nBased on Icemon for KDE written by:\n\n%4\n%5\n%6\n\nLicensed under GPLv2.\n")
-            .arg(description)
-            .arg(copyright)
+    about = tr("%1 %2\n\n%3\n\nAuthor: %4\n\nBased on Icemon for KDE written by:\n\n%4\n%5\n%6\n\nLicensed under GPLv2.\n")
+            .arg(Icemon::Version::appName)
+            .arg(Icemon::Version::version)
+            .arg(Icemon::Version::description)
             .arg("Daniel Molkentin <molkentin@kde.org>")
             .arg("Frerich Raabe <raabe@kde.org>")
             .arg("Stephan Kulow <coolo@kde.org>")
             .arg("Cornelius Schumacher <schumacher@kde.org>")
             ;
 
-    QMessageBox::about(this, tr("About %1").arg(appShortName), about);
+    QMessageBox::about(this, tr("About %1").arg(Icemon::Version::appShortName), about);
 }
 
 void MainWindow::aboutQt()

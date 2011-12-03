@@ -30,10 +30,10 @@
 
 void printHelp() {
     QString help;
-    help += QApplication::translate("Usage", "Usage: %1 [options]").arg(appShortName);
+    help += QApplication::translate("Usage", "Usage: %1 [options]").arg(Icemon::Version::appShortName);
     help += '\n';
     help += '\n';
-    help += QApplication::translate("Description", description);
+    help += QApplication::translate("Description", Icemon::Version::description);
     help += '\n';
     help += '\n';
     help += QApplication::translate("Options", "Options:");
@@ -59,11 +59,10 @@ int main( int argc, char **argv )
         }
     }
 
-
     QApplication app(argc, argv);
     QApplication::setOrganizationDomain("kde.org");
-    QApplication::setApplicationName(appShortName);
-    QApplication::setApplicationVersion(version);
+    QApplication::setApplicationName(Icemon::Version::appShortName);
+    QApplication::setApplicationVersion(Icemon::Version::version);
 
     MainWindow *mainWidget = new MainWindow;
 
