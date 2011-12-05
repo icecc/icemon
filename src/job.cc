@@ -43,7 +43,7 @@ QString Job::stateAsString() const
         return QApplication::tr( "Idle" );
         break;
     case LocalOnly:
-        return QApplication::tr( "LocalOnly" );
+        return QApplication::tr( "Local Only" );
         break;
     }
     return QString();

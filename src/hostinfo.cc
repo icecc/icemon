@@ -124,6 +124,25 @@ unsigned int HostInfo::serverLoad() const
     return mServerLoad;
 }
 
+QString HostInfo::toolTip() const
+{
+    return QApplication::translate(("tooltip"),
+    "<p><table><tr><td>"
+    "<img align=\"right\" src=\":/images/icemonnode.png\"><br><b>%1"
+    "</b><br>"
+    "<table>"
+    "<tr><td>IP:</td><td>%2</td></tr>"
+    "<tr><td>Platform:</td><td>%3</td></tr>"
+    "<tr><td>Flavor:</td><td> %4</td></tr>"
+    "<tr><td>Id:</td><td>%5</td></tr>"
+    "<tr><td>Speed:</td><td>%6</td></tr>"
+    "</table></td></tr></table></p>")
+            .arg(name()).arg(ip())
+            .arg(platform()).arg(colorName(color()))
+            .arg(QString::number(id()))
+            .arg(QString::number(serverSpeed()));
+}
+
 void HostInfo::updateFromStatsMap( const StatsMap &stats )
 {
 #if 0

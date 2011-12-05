@@ -48,6 +48,7 @@ protected:
     void setupSummaryView();
     void setupGanttView();
     void setupDetailedHostView();
+    void setupFlowTableView();
 
     void pauseView();
     void checkNodes();
@@ -71,12 +72,13 @@ protected:
     StatusView *m_view;
 
     enum views {
-      ListViewType,
-      StarViewType,
-      PoolViewType,
-      GanttViewType,
-      SummaryViewType,
-      DetailedHostViewType
+        ListViewType,
+        StarViewType,
+        PoolViewType,
+        GanttViewType,
+        SummaryViewType,
+        FlowTableViewType,
+        DetailedHostViewType
     };
 
     QActionGroup* m_viewMode;

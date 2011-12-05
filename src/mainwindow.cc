@@ -28,6 +28,7 @@
 //#include "ganttstatusview.h"
 #include "listview.h"
 //#include "poolview.h"
+#include "flowtableview.h"
 
 #include "hostinfo.h"
 #include "monitor.h"
@@ -102,6 +103,11 @@ MainWindow::MainWindow( QWidget *parent )
     modeMenu->addAction(action);
     connect( action, SIGNAL( triggered() ), this, SLOT( setupSummaryView() ) );
 
+    action = m_viewMode->addAction(tr( "&Flow View" ));
+    action->setCheckable(true);
+    modeMenu->addAction(action);
+    connect( action, SIGNAL( triggered() ), this, SLOT( setupFlowTableView() ) );
+
     action = m_viewMode->addAction(tr( "&Detailed Host View" ));
     action->setDisabled(true); // FIXME
     action->setCheckable(true);
@@ -173,7 +179,9 @@ void MainWindow::readSettings()
   } else if ( viewId == "detailedhost" ) {
     setupDetailedHostView();
     (m_viewMode->actions()[DetailedHostViewType])->setChecked(true);
-
+  } else if ( viewId == "flow" ) {
+    setupFlowTableView();
+    (m_viewMode->actions()[FlowTableViewType])->setChecked(true);
   } else {
     setupSummaryView();
     (m_viewMode->actions()[SummaryViewType])->setChecked(true);
@@ -225,6 +233,11 @@ void MainWindow::setupPoolView()
 void MainWindow::setupStarView()
 {
     setupView( new StarView( m_hostInfoManager, this ), false );
+}
+
+void MainWindow::setupFlowTableView()
+{
+    setupView( new FlowTableView( m_hostInfoManager, this ), false );
 }
 
 void MainWindow::setupDetailedHostView()

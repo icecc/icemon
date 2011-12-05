@@ -480,25 +480,7 @@ bool StarView::event ( QEvent* e )
         const QPoint gp( static_cast<QHelpEvent*>(e)->globalPos());
         const QRect itemRect = m_canvasView->mapFromScene(graphicsItem->sceneBoundingRect()).boundingRect();
         if ( hostInfo ) {
-            QToolTip::showText(gp+QPoint(10,10),
-                           "<p><table><tr><td>"
-                           "<img align=\"right\" src=\":/images/icemonnode.png\"><br><b>" + item->hostName() +
-                           "</b><br>" +
-
-                           "<table>" +
-                           "<tr><td>" + tr("IP:") + "</td><td>" + hostInfo->ip()
-                           + "</td></tr>" +
-                           "<tr><td>" + tr("Platform:") + "</td><td>" +
-                           hostInfo->platform() + "</td></tr>"
-                           "<tr><td>" + tr("Flavor:") + "</td><td>" +
-                           HostInfo::colorName( hostInfo->color() ) + "</td></tr>" +
-                           "<tr><td>" + tr("Id:") + "</td><td>" +
-                           QString::number( hostInfo->id() ) + "</td></tr>" +
-                           "<tr><td>" + tr("Speed:") + "</td><td>" +
-                           QString::number( hostInfo->serverSpeed() ) + "</td></tr>" +
-                           "</table>"
-
-                           "</td></tr></table></p>", this, itemRect );
+            QToolTip::showText(gp+QPoint(10,10), hostInfo->toolTip(), this, itemRect );
         } else {
             QToolTip::showText(gp+QPoint(10,10),
                            "<p><table><tr><td>"

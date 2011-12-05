@@ -51,6 +51,8 @@ class HostInfo
 
     unsigned int serverLoad() const;
 
+    QString toolTip() const;
+
   protected:
     static void initColor( const QString &value, const QString &name );
 

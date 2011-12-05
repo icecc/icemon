@@ -17,6 +17,7 @@ set(icemon_SRCS
   hostinfo.cc
   statusview.cc
   detailedhostview.cc
+  flowtableview.cc
   hostlistview.cc
   joblistview.cc
   listview.cc
