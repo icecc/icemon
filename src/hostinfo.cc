@@ -62,6 +62,8 @@ void HostInfo::initColorTable()
 void HostInfo::initColor( const QString &value , const QString &name )
 {
     QColor c( value );
+    // modify colors so they become readable
+    c.setHsv( c.hsvHue(), c.hsvSaturation()/2, (c.value()/3)+150 );
     mColorTable.append( c );
 
     mColorNameMap.insert( c.red() + c.green() * 256 + c.blue() * 65536, name );
