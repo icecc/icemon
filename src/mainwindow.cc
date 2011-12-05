@@ -263,7 +263,7 @@ void MainWindow::configureView()
 void MainWindow::about()
 {
     QString about;
-    about = tr("%1 %2\n\n%3\n\nAuthor: %4\n\nBased on Icemon for KDE written by:\n\n%4\n%5\n%6\n\nLicensed under GPLv2.\n")
+    about = tr("%1 %2\n\n%3\n\nAuthor: %4\n\nBased on Icemon for KDE written by:\n\n%5\n%6\n%7\n\nLicensed under GPLv2.\n")
             .arg(Icemon::Version::appName)
             .arg(Icemon::Version::version)
             .arg(Icemon::Version::description)
