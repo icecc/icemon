@@ -90,6 +90,10 @@ void FlowTableView::update(const Job &job)
     if (serverId == 0)
         return;
 
+    // checkNode hasn't been run for this server yet.
+    if (!m_idToRowMap.contains(serverId))
+        return;
+
     int serverRow = m_idToRowMap.value(serverId);
     QTableWidgetItem *fileNameItem = item(serverRow, 1);
     QTableWidgetItem *jobStateItem = item(serverRow, 3);
