@@ -33,7 +33,7 @@ ProgressWidget::ProgressWidget(HostInfo *info, StatusView *statusView, QWidget *
     setAttribute(Qt::WA_OpaquePaintEvent);
     setAttribute(Qt::WA_NoSystemBackground);
     m_backingStore = QImage(size(), QImage::Format_RGB32);
-    m_backingStore.fill(palette().base().color().toRgb());
+    m_backingStore.fill(palette().base().color().rgb());
 }
 
 void ProgressWidget::paintEvent(QPaintEvent *)
