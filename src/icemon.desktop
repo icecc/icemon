@@ -75,6 +75,7 @@ Comment[pt]=Um monitor para uma rede de compilação Icecream
 Comment[pt_BR]=Um monitor para uma rede de compilação Icecream
 Comment[sv]=En övervakare av ett Icecream-kompileringsnätverk
 Comment[tr]=Icecream derleme ağı için bir izleyici
+Comment[ug]=Icecream تارقاق يۇغۇرۇش تورىنى كۆزەتكۈچ
 Comment[uk]=Монітор мережі компіляції Icecream
 Comment[x-test]=xxA monitor for an Icecream compilation networkxx
 Exec=icemon
