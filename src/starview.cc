@@ -121,8 +121,8 @@ void StarViewConfigDialog::slotSuppressDomainName( bool b )
 }
 
 
-HostItem::HostItem( const QString &text, QGraphicsScene *canvas, HostInfoManager *m )
-    : QGraphicsItemGroup( 0, canvas ), mHostInfo( 0 ), mHostInfoManager( m ),
+HostItem::HostItem( const QString &text, HostInfoManager *m )
+    : QGraphicsItemGroup( 0 ), mHostInfo( 0 ), mHostInfoManager( m ),
       m_stateItem( 0 )
 {
     init();
@@ -132,8 +132,8 @@ HostItem::HostItem( const QString &text, QGraphicsScene *canvas, HostInfoManager
     updateName();
 }
 
-HostItem::HostItem( HostInfo *hostInfo, QGraphicsScene *canvas, HostInfoManager *m )
-    : QGraphicsItemGroup( 0, canvas ), mHostInfo( hostInfo ),
+HostItem::HostItem( HostInfo *hostInfo, HostInfoManager *m )
+    : QGraphicsItemGroup( 0 ), mHostInfo( hostInfo ),
       mHostInfoManager( m ), m_stateItem( 0 )
 {
     init();
@@ -148,11 +148,11 @@ void HostItem::init()
     mBaseWidth = 0;
     mBaseHeight = 0;
 
-    m_boxItem = new QGraphicsEllipseItem( this, scene() );
+    m_boxItem = new QGraphicsEllipseItem( this );
     m_boxItem->setZValue( 80 );
     m_boxItem->setPen( QPen( Qt::NoPen ) );
 
-    m_textItem = new QGraphicsSimpleTextItem( this, scene() );
+    m_textItem = new QGraphicsSimpleTextItem( this );
     m_textItem->setZValue( 100 );
 
     setHostColor( QColor( 200, 200, 200 ) );
@@ -231,7 +231,7 @@ void HostItem::createJobHalo( const Job &job )
 {
     QGraphicsEllipseItem *halo = new QGraphicsEllipseItem(
         centerPosX(), centerPosY(), mBaseWidth, mBaseHeight,
-        this, scene() );
+        this );
 
     halo->setZValue( 70 - m_jobHalos.size() );
     halo->setPen(QPen(Qt::NoPen));
@@ -287,7 +287,8 @@ StarView::StarView( HostInfoManager *m, QWidget *parent )
     m_canvasView->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     layout->addWidget( m_canvasView );
 
-    m_schedulerItem = new HostItem( "", m_canvas, hostInfoManager() );
+    m_schedulerItem = new HostItem( "", hostInfoManager() );
+    m_canvas->addItem(m_schedulerItem);
     m_schedulerItem->setZValue(150);
     centerSchedulerItem();
     m_schedulerItem->show();
@@ -446,7 +447,8 @@ void StarView::updateSchedulerState( bool online )
         mJobMap.clear();
     }
 
-    m_schedulerItem = new HostItem( txt, m_canvas, hostInfoManager() );
+    m_schedulerItem = new HostItem( txt, hostInfoManager() );
+    m_canvas->addItem(m_schedulerItem);
     m_schedulerItem->setZValue(100);
     m_schedulerItem->show();
     centerSchedulerItem();
@@ -568,7 +570,8 @@ HostItem *StarView::createHostItem( unsigned int hostid )
 
     //assert( !i->name().isEmpty() );
 
-    HostItem *hostItem = new HostItem( i, m_canvas, hostInfoManager() );
+    HostItem *hostItem = new HostItem( i, hostInfoManager() );
+    m_canvas->addItem(hostItem);
     hostItem->setHostColor( hostColor( hostid ) );
     m_hostItems.insert( hostid, hostItem );
     hostItem->show();
