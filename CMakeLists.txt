@@ -6,3 +6,4 @@ find_package(KDE4)
 include(KDE4Defaults)
 
 add_subdirectory(src)
+add_subdirectory(doc)
