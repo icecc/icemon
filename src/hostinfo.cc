@@ -20,7 +20,7 @@
 
 #include "hostinfo.h"
 
-#include <QtGui/QApplication>
+#include <QApplication>
 
 #include <assert.h>
 

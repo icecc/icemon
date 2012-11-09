@@ -71,8 +71,8 @@ class HostItem : public QGraphicsItemGroup
 public:
     enum { RttiHostItem = 1000 };
 
-    HostItem( const QString &text, QGraphicsScene *canvas, HostInfoManager * );
-    HostItem( HostInfo *hostInfo, QGraphicsScene *canvas, HostInfoManager * );
+    HostItem( const QString &text, HostInfoManager * );
+    HostItem( HostInfo *hostInfo, HostInfoManager * );
     ~HostItem();
 
     void init();
