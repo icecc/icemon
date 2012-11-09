@@ -23,10 +23,7 @@
 
 #include "hostinfo.h"
 
-#include <klocale.h>
 #include <qdebug.h>
-#include <kiconloader.h>
-#include <kdialog.h>
 
 #include <qlayout.h>
 #include <qtooltip.h>
