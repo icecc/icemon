@@ -70,6 +70,7 @@ MainWindow::MainWindow( QWidget *parent )
     statusBar()->addPermanentWidget(m_schedStatusWidget);
 
     QAction* action = fileMenu->addAction(tr("&Quit"), this, SLOT(close()), tr("Ctrl+Q"));
+    action->setIcon(QIcon::fromTheme("application-exit"));
     action->setMenuRole(QAction::QuitRole);
 
     m_viewMode = new QActionGroup(this);
@@ -117,6 +118,7 @@ MainWindow::MainWindow( QWidget *parent )
     viewMenu->addSeparator();
 
     action = viewMenu->addAction(tr("Pause"));
+    action->setIcon(QIcon::fromTheme("media-playback-pause"));
     action->setCheckable(true);
     connect( action, SIGNAL( triggered() ), this, SLOT( pauseView() ) );
     m_pauseViewAction = action;
@@ -131,13 +133,16 @@ MainWindow::MainWindow( QWidget *parent )
     viewMenu->addSeparator();
 
     action = viewMenu->addAction(tr("Configure View..."));
+    action->setIcon(QIcon::fromTheme("configure"));
     connect( action, SIGNAL( triggered() ), this, SLOT( configureView() ) );
     m_configureViewAction = action;
 
     action = helpMenu->addAction(tr("About Qt..."));
     connect(action, SIGNAL(triggered()), this, SLOT(aboutQt()));
     action->setMenuRole(QAction::AboutQtRole);
+
     action = helpMenu->addAction(tr("About..."));
+    action->setIcon(appIcon);
     connect(action, SIGNAL(triggered()), this, SLOT(about()));
     action->setMenuRole(QAction::AboutRole);
 
