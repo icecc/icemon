@@ -23,10 +23,7 @@
 
 #include "hostinfo.h"
 
-#include <klocale.h>
-#include <kdebug.h>
-#include <kiconloader.h>
-#include <kdialog.h>
+#include <qdebug.h>
 
 #include <qlayout.h>
 #include <qtooltip.h>
@@ -46,16 +43,13 @@
 static bool suppressDomain = false;
 
 StarViewConfigDialog::StarViewConfigDialog( QWidget *parent )
-    : KDialog( parent )
+    : QDialog( parent )
 {
-    setButtons( Close );
-    setEscapeButton( Close );
-    showButtonSeparator( true );
+    setWindowTitle(tr("Star View Settings"));
 
-    QBoxLayout *topLayout = new QVBoxLayout( mainWidget() );
-    topLayout->setMargin( 0 );
+    QBoxLayout *topLayout = new QVBoxLayout( this );
 
-    QLabel *label = new QLabel( i18n("Number of nodes per ring:"), mainWidget() );
+    QLabel *label = new QLabel( tr("Number of nodes per ring:") );
     topLayout->addWidget( label );
 
     QBoxLayout *nodesLayout = new QHBoxLayout();
@@ -63,7 +57,7 @@ StarViewConfigDialog::StarViewConfigDialog( QWidget *parent )
 
     int nodesPerRing = 25;
 
-    mNodesPerRingSlider = new QSlider( Qt::Horizontal, mainWidget() );
+    mNodesPerRingSlider = new QSlider( Qt::Horizontal );
     mNodesPerRingSlider->setMinimum( 1 );
     mNodesPerRingSlider->setMaximum( 50 );
     mNodesPerRingSlider->setSingleStep( 1 );
@@ -74,22 +68,30 @@ StarViewConfigDialog::StarViewConfigDialog( QWidget *parent )
     connect( mNodesPerRingSlider, SIGNAL( valueChanged( int ) ),
              SLOT( slotNodesPerRingChanged( int ) ) );
 
-    mNodesPerRingLabel = new QLabel( QString::number( nodesPerRing ), mainWidget() );
+    mNodesPerRingLabel = new QLabel( QString::number( nodesPerRing ) );
     nodesLayout->addWidget( mNodesPerRingLabel );
 
-    label = new QLabel( i18n("Architecture filter:"), mainWidget() );
+    label = new QLabel( tr("Architecture filter:") );
     topLayout->addWidget( label );
-    mArchFilterEdit = new QLineEdit( mainWidget() );
+    mArchFilterEdit = new QLineEdit;
     topLayout->addWidget( mArchFilterEdit );
     connect( mArchFilterEdit, SIGNAL( textChanged( const QString & ) ),
              SIGNAL( configChanged() ) );
 
-    mSuppressDomainName = new QCheckBox( i18n("Suppress domain name"), mainWidget() );
+    mSuppressDomainName = new QCheckBox( tr("Suppress domain name") );
     topLayout->addWidget( mSuppressDomainName );
+    QFrame *hline = new QFrame;
+    hline->setFrameShape( QFrame::HLine );
+    hline->setFrameShadow( QFrame::Sunken );
+    topLayout->addWidget( hline );
+    QPushButton *closeButton = new QPushButton(tr("&Close"));
+    closeButton->setSizePolicy( QSizePolicy::Maximum, QSizePolicy::Preferred );
+    topLayout->addWidget( closeButton, 0, Qt::AlignRight );
+
     connect( mSuppressDomainName, SIGNAL( toggled ( bool ) ),
              SLOT( slotSuppressDomainName ( bool ) ) );
 
-    connect( this, SIGNAL( closeClicked() ), SLOT( hide() ) );
+    connect( closeButton, SIGNAL( clicked() ), SLOT( accept() ) );
 }
 
 void StarViewConfigDialog::slotNodesPerRingChanged( int nodes )
@@ -290,11 +292,6 @@ StarView::StarView( HostInfoManager *m, QWidget *parent )
     centerSchedulerItem();
     m_schedulerItem->show();
 
-    m_iconPath = KIconLoader::global()->iconPath( "computer", -22, true );
-    if ( !m_iconPath.isEmpty() ) {
-        QDir::addSearchPath( "icons", QFileInfo( m_iconPath ).canonicalPath() );
-    }
-
     createKnownHosts();
 }
 
@@ -434,7 +431,7 @@ void StarView::updateSchedulerState( bool online )
 {
     QString txt;
     if ( online ) {
-        txt = i18n("Scheduler");
+        txt = tr("Scheduler");
     } else {
         txt = "";
     }
@@ -483,32 +480,14 @@ bool StarView::event ( QEvent* e )
         const QPoint gp( static_cast<QHelpEvent*>(e)->globalPos());
         const QRect itemRect = m_canvasView->mapFromScene(graphicsItem->sceneBoundingRect()).boundingRect();
         if ( hostInfo ) {
-            QToolTip::showText(gp+QPoint(10,10),
-                           "<p><table><tr><td>"
-                           "<img align=\"right\" source=\"icons:computer.png\"><br><b>" + item->hostName() +
-                           "</b><br>" +
-
-                           "<table>" +
-                           "<tr><td>" + i18n("IP:") + "</td><td>" + hostInfo->ip()
-                           + "</td></tr>" +
-                           "<tr><td>" + i18n("Platform:") + "</td><td>" +
-                           hostInfo->platform() + "</td></tr>"
-                           "<tr><td>" + i18n("Flavor:") + "</td><td>" +
-                           HostInfo::colorName( hostInfo->color() ) + "</td></tr>" +
-                           "<tr><td>" + i18n("Id:") + "</td><td>" +
-                           QString::number( hostInfo->id() ) + "</td></tr>" +
-                           "<tr><td>" + i18n("Speed:") + "</td><td>" +
-                           QString::number( hostInfo->serverSpeed() ) + "</td></tr>" +
-                           "</table>"
-
-                           "</td></tr></table></p>", this, itemRect );
+            QToolTip::showText(gp+QPoint(10,10), hostInfo->toolTip(), this, itemRect );
         } else {
             QToolTip::showText(gp+QPoint(10,10),
                            "<p><table><tr><td>"
-                           "<img align=\"right\" source=\"icons:computer.png\"><br><b>" + i18n("Scheduler") + "</b><br/>"
+                           "<img align=\"right\" source=\"icons:computer.png\"><br><b>" + tr("Scheduler") + "</b><br/>"
                            "<table>" +
-                           "<tr><td>" + i18n("Host: %1", hostInfoManager()->schedulerName()) + "</td></tr>" +
-                           "<tr><td>" + i18n("Network name: %1", hostInfoManager()->networkName()) + "</td></tr>" +
+                           "<tr><td>" + tr("Host: %1").arg(hostInfoManager()->schedulerName()) + "</td></tr>" +
+                           "<tr><td>" + tr("Network name: %1").arg(hostInfoManager()->networkName()) + "</td></tr>" +
                            "</table>"
                            "</td></tr></table></p>", this, itemRect );
         }
@@ -658,7 +637,7 @@ bool StarView::filterArch( unsigned int hostid )
 {
     HostInfo *i = hostInfoManager()->find( hostid );
     if ( !i ) {
-        kError() << "No HostInfo for id " << hostid << endl;
+        qDebug() << "No HostInfo for id " << hostid;
         return false;
     }
 

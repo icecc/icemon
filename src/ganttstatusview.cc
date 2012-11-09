@@ -40,8 +40,6 @@
 #include <QPaintEvent>
 #include <QScrollBar>
 
-#include <KGlobal>
-#include <KLocale>
 
 GanttConfigDialog::GanttConfigDialog( QWidget *parent )
   : QDialog( parent )
@@ -50,7 +48,7 @@ GanttConfigDialog::GanttConfigDialog( QWidget *parent )
   topLayout->setMargin( 10 );
   topLayout->setSpacing( 10 );
 
-  mTimeScaleVisibleCheck = new QCheckBox( i18n("Show time scale"), this );
+  mTimeScaleVisibleCheck = new QCheckBox( tr("Show time scale"), this );
   topLayout->addWidget( mTimeScaleVisibleCheck );
   connect( mTimeScaleVisibleCheck, SIGNAL( clicked() ),
            SIGNAL( configChanged() ) );
@@ -64,7 +62,7 @@ GanttConfigDialog::GanttConfigDialog( QWidget *parent )
 
   buttonLayout->addStretch( 1 );
 
-  QPushButton *button = new QPushButton( i18n("&Close"), this );
+  QPushButton *button = new QPushButton( tr("&Close"), this );
   buttonLayout->addWidget( button );
   connect( button, SIGNAL( clicked() ), SLOT( hide() ) );
 }

@@ -26,9 +26,10 @@
 
 #include "job.h"
 
-#include <Q3ListView>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
 #include <QPair>
-#include <Q3ValueList>
+#include <QList>
 
 
 class HostInfoManager;
@@ -36,11 +37,11 @@ class HostInfoManager;
 class QTimer;
 
 
-class JobListViewItem : public Q3ListViewItem
+class JobListViewItem : public QTreeWidgetItem
 {
 public:
 
-    JobListViewItem( Q3ListView* parent, const Job& job );
+    JobListViewItem( QTreeWidget* parent, const Job& job );
 
     const Job& job() const { return mJob; }
 
@@ -48,7 +49,7 @@ public:
 
     void updateFileName();
 
-    virtual int compare( Q3ListViewItem* item, int column, bool ascending ) const;
+    virtual int compare( QTreeWidgetItem* item, int column, bool ascending ) const;
 
 private:
 
@@ -56,13 +57,13 @@ private:
 };
 
 
-class JobListView :public Q3ListView
+class JobTreeWidget : public QTreeWidget
 {
     Q_OBJECT
 
 public:
 
-    JobListView( const HostInfoManager* manager, QWidget* parent, const char* name = 0 );
+    JobTreeWidget( const HostInfoManager* manager, QWidget* parent = 0 );
 
     void update( const Job& job );
 
@@ -119,7 +120,7 @@ private:
     QTimer* mExpireTimer;
 
     typedef QPair<uint, JobListViewItem*> FinishedJob;
-    typedef Q3ValueList<FinishedJob> FinishedJobs;
+    typedef QList<FinishedJob> FinishedJobs;
     FinishedJobs mFinishedJobs;
 };
 

@@ -13,41 +13,22 @@
 #include "hostinfo.h"
 #include "job.h"
 
-#include <kiconloader.h>
-#include <ksqueezedtextlabel.h>
-#include <klocale.h>
-#include <kdebug.h>
+#include <qdebug.h>
 
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpainter.h>
-#include <QScrollBar>
+#include <QtGui/QScrollBar>
+#include <QtGui/QApplication>
 
 class NodeInfoFrame : public QFrame
 {
 public:
     NodeInfoFrame(QWidget *parent, const QColor &frameColor) :
-        QFrame(parent), m_frameColor(frameColor) {}
-protected:
-    virtual void drawFrame(QPainter *p)
+        QFrame(parent), m_frameColor(frameColor)
     {
-        static const int border = 2;
-
-        QPen oldPen = p->pen();
-        QPen newPen = oldPen;
-
-        newPen.setWidth(5);
-
-        p->setPen(newPen);
-        p->drawRect(border, border, width() - border * 2, height() - border * 2);
-
-        newPen.setWidth(1);
-        newPen.setColor(m_frameColor);
-
-        p->setPen(newPen);
-        p->drawRect(border, border, width() - border * 2, height() - border * 2);
-
-        p->setPen(oldPen);
+        setObjectName("nodeInfoFrame");
+        setStyleSheet(QString("QFrame#nodeInfoFrame { border: 2px solid %1 }").arg(frameColor.name()));
     }
 private:
     QColor m_frameColor;
@@ -108,7 +89,7 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
     grid->setMargin(10);
     grid->setSpacing(5);
 
-    m_jobsLabel = addLine(i18n("Jobs:"), detailsBox, grid, Qt::AlignBottom, "0");
+    m_jobsLabel = addLine(QApplication::tr("Jobs:"), detailsBox, grid, Qt::AlignBottom, "0");
 
     for(int i = 0; i < maxJobs; i++) {
         if(maxJobs > 1) {
@@ -116,8 +97,8 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
             const int row = grid->rowCount();
             grid->addItem(spacer, row, 0, 1, grid->columnCount() - 1);
         }
-        m_jobHandlers[i].sourceLabel = addLine(i18n("Source:"), detailsBox, grid);
-        m_jobHandlers[i].stateLabel = addLine(i18n("State:"), detailsBox, grid);
+        m_jobHandlers[i].sourceLabel = addLine(QApplication::tr("Source:"), detailsBox, grid);
+        m_jobHandlers[i].stateLabel = addLine(QApplication::tr("State:"), detailsBox, grid);
     }
 
     grid->setColumnStretch(grid->columnCount() - 1, 1);
@@ -202,7 +183,8 @@ QLabel *SummaryViewItem::addLine(const QString &caption, QWidget *parent,
 SummaryView::SummaryView(HostInfoManager *h, QWidget *parent) :
     QScrollArea(parent), StatusView(h)
 {
-    m_base = new QWidget(viewport());
+    m_base = new QWidget;
+    m_base->setStyleSheet("QWidget { background-color: 'white'; }");
     setWidget(m_base);
 
     m_layout = new QGridLayout(m_base);

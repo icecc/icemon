@@ -28,9 +28,7 @@
 
 #include <icecc/comm.h>
 
-#include <klocale.h>
-#include <kdebug.h>
-#include <krandom.h>
+#include <qdebug.h>
 
 #include <qsocketnotifier.h>
 #include <qtimer.h>
@@ -42,7 +40,7 @@ using namespace std;
 
 Monitor::Monitor( HostInfoManager *m, QObject *parent)
     : QObject( parent ), m_hostInfoManager( m ), m_view( 0 ),
-      m_scheduler( 0 ), mSchedulerOnline( false ),
+      m_scheduler( 0 ), m_schedulerState( false ),
       m_discover( 0 ), m_fd_notify( 0 ), m_fd_type(QSocketNotifier::Exception)
 {
     checkScheduler();
@@ -69,7 +67,7 @@ void Monitor::checkScheduler(bool deleteit)
         setSchedulerState(false);
     } else if ( m_scheduler )
         return;
-    QTimer::singleShot( 1000+(KRandom::random()&1023), this, SLOT( slotCheckScheduler() ) );
+    QTimer::singleShot( 1000+(qrand()&1023), this, SLOT( slotCheckScheduler() ) ); // TODO: check if correct
 }
 
 void Monitor::registerNotify(int fd, QSocketNotifier::Type type, const char* slot)
@@ -141,7 +139,7 @@ void Monitor::slotCheckScheduler()
                         QSocketNotifier::Read, SLOT(slotCheckScheduler()));
         }
         if (m_fd_type == QSocketNotifier::Read)
-            QTimer::singleShot(1000+(KRandom::random()&1023), this, SLOT(slotCheckScheduler()));
+            QTimer::singleShot(1000+(qrand()&1023), this, SLOT(slotCheckScheduler()));
 
     }
     setSchedulerState( false );
@@ -327,7 +325,7 @@ void Monitor::setCurrentView( StatusView *view, bool rememberJobs )
 {
     m_view = view;
 
-    m_view->updateSchedulerState( mSchedulerOnline );
+    m_view->updateSchedulerState( m_schedulerState );
 
     if ( rememberJobs ) {
         JobList::ConstIterator it = m_rememberedJobs.constBegin();
@@ -343,8 +341,10 @@ void Monitor::setCurrentNet( const QByteArray &netName )
 
 void Monitor::setSchedulerState( bool online )
 {
-    if (mSchedulerOnline == online) return;
-    mSchedulerOnline = online;
+    if (m_schedulerState == online)
+        return;
+    m_schedulerState = online;
+    emit schedulerStateChanged( online );
     m_view->updateSchedulerState( online );
 }
 

@@ -26,15 +26,14 @@
 
 #include <qlayout.h>
 
-#include <KGlobal>
-
 ListStatusView::ListStatusView( HostInfoManager* manager,
                                 QWidget* parent )
     : QWidget( parent ),
       StatusView( manager ),
-      mJobsListView( new JobListView( manager, this, "Jobs" ) )
+      mJobsListView( new JobTreeWidget( manager, this ) )
 {
     QVBoxLayout* topLayout = new QVBoxLayout( this );
+    topLayout->setMargin(0);
     topLayout->addWidget( mJobsListView );
 }
 

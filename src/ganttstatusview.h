@@ -130,6 +130,9 @@ class GanttStatusView : public QScrollArea, public StatusView
     void checkNodes();
 
     void configureView();
+    bool canCheckNodes() { return true; }
+    bool isPausable() { return true; }
+    bool isConfigurable() { return true; }
 
   public slots:
     virtual void update( const Job &job );

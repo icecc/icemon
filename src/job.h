@@ -26,8 +26,6 @@
 #include <time.h>
 #include <QMap>
 
-#include <KLocale>
-
 class Job
 {
   public:

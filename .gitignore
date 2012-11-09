@@ -1,0 +1,74 @@
+# This file is used to ignore files which are generated
+# ----------------------------------------------------------------------------
+
+*~
+*.a
+*.core
+*.moc
+*.o
+*.obj
+*.orig
+*.rej
+*.so
+*_pch.h.cpp
+*_resource.rc
+*.qm
+.#*
+*.*#
+core
+!core/
+tags
+.DS_Store
+*.debug
+Makefile*
+*.prl
+*.app
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+Thumbs.db
+*.pro.user*
+
+# xemacs temporary files
+# ---------------------
+*.flc
+
+# Vim temporary files
+# ---------------------
+.*.swp
+
+# Visual Studio generated files
+# ---------------------
+*.ib_pdb_index
+*.idb
+*.ilk
+*.pdb
+*.sln
+*.suo
+*.vcproj
+*vcproj.*.*.user
+*.ncb
+
+# MinGW generated files
+# ---------------------
+*.Debug
+*.Release
+
+# Directories to ignore
+# ---------------------
+debug
+lib/*
+lib64/*
+release
+doc/html/*
+doc/html-dev/*
+doc/api/html/*
+doc/pluginhowto/html/*
+.rcc
+.pch
+
+# Binaries
+# --------
+*.dll
+*.exe
+icemon
