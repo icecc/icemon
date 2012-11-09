@@ -345,3 +345,5 @@ void Monitor::setSchedulerState( bool online )
     mSchedulerOnline = online;
     m_view->updateSchedulerState( online );
 }
+
+#include "monitor.moc"

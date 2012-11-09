@@ -7,7 +7,7 @@ include_directories (${LIBICECREAM_INCLUDE_DIR} ${KDE4_INCLUDES})
 set(icemon_SRCS
   job.cc
   monitor.cc
-  mon-kde.cc
+  mon-qt.cc
   hostinfo.cc
   statusview.cc
   detailedhostview.cc
@@ -20,7 +20,10 @@ set(icemon_SRCS
   poolview.cc
 )
 
-kde4_add_executable(icemon ${icemon_SRCS})
+qt4_add_resources(resources_SRCS icemon.qrc)
+qt4_automoc(${icemon_SRCS})
+
+add_executable(icemon ${icemon_SRCS} ${resources_SRCS})
 
 target_link_libraries(icemon ${KDE4_KDEUI_LIBS} ${LIBICECREAM_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${CMAKE_DL_LIBS})
 

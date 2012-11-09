@@ -341,3 +341,5 @@ void JobListView::removeItem( JobListViewItem* item )
     mItems.remove( item->job().jobId() );
     delete item;
 }
+
+#include "joblistview.moc"

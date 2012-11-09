@@ -265,3 +265,4 @@ void SummaryView::resizeEvent(QResizeEvent *e)
 //    QScrollArea::resizeEvent(e);
 }
 
+#include "summaryview.moc"

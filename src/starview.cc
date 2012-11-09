@@ -477,7 +477,7 @@ bool StarView::event ( QEvent* e )
         if ( hostInfo ) {
             QToolTip::showText(gp+QPoint(10,10),
                            "<p><table><tr><td>"
-                           "<img align=\"right\" source=\"icons:computer.png\"><br><b>" + item->hostName() +
+                           "<img align=\"right\" src=\":/images/icemonnode.png\"><br><b>" + item->hostName() +
                            "</b><br>" +
 
                            "<table>" +
@@ -669,3 +669,5 @@ bool StarView::filterArch( HostInfo *i )
 
     return false;
 }
+
+#include "starview.moc"

@@ -20,31 +20,21 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "mon-kde.h"
+#include "mon-qt.h"
 
+#include <stdio.h>
+
+#include "starview.h"
+#include "summaryview.h"
 //#include "detailedhostview.h"
 //#include "ganttstatusview.h"
 //#include "listview.h"
-#include "starview.h"
 //#include "poolview.h"
-#include "summaryview.h"
 
 #include "hostinfo.h"
 #include "monitor.h"
 
-//#include <kaboutdata.h>
-//#include <kcmdlineargs.h>
-//#include <kconfig.h>
 #include <qdebug.h>
-//#include <kglobal.h>
-//#include <klocale.h>
-//#include <kmessagebox.h>
-//#include <kstandardaction.h>
-//#include <ktoggleaction.h>
-//#include <kactioncollection.h>
-//#include <kconfiggroup.h>
-//#include <kselectaction.h>
-//#include <kmenubar.h>
 
 #include <QtGui/QMenuBar>
 #include <QtGui/QMessageBox>
@@ -64,6 +54,7 @@ const char * const copyright = QT_TRANSLATE_NOOP( "copyright", "(c) 2003,2004, 2
 MainWindow::MainWindow( QWidget *parent )
   : QMainWindow( parent ), m_view( 0 )
 {
+    setWindowIcon(QIcon(":/images/hi128-app-icemon.png"));
     setWindowTitle(QApplication::translate("appName", appName));
     m_hostInfoManager = new HostInfoManager;
 
@@ -164,36 +155,34 @@ void MainWindow::readSettings()
   m_viewMode->blockSignals(true);
   if ( viewId == "gantt" ) {
     setupGanttView();
-    m_viewMode->setEnabled(m_viewMode->actions()[GanttViewType]);
+    (m_viewMode->actions()[GanttViewType])->setChecked(true);
 
   } else if ( viewId == "list" ) {
     setupListView();
-    m_viewMode->setEnabled(m_viewMode->actions()[ListViewType]);
+    (m_viewMode->actions()[ListViewType])->setChecked(true);
 
   } else if ( viewId == "star" ) {
     setupStarView();
-    m_viewMode->setEnabled(m_viewMode->actions()[StarViewType]);
+    (m_viewMode->actions()[StarViewType])->setChecked(true);
 
   } else if ( viewId == "pool" ) {
     setupPoolView();
-    m_viewMode->setEnabled(m_viewMode->actions()[PoolViewType]);
+    (m_viewMode->actions()[PoolViewType])->setChecked(true);
 
   } else if ( viewId == "detailedhost" ) {
     setupDetailedHostView();
-    m_viewMode->setEnabled(m_viewMode->actions()[DetailedHostViewType]);
+    (m_viewMode->actions()[DetailedHostViewType])->setChecked(true);
 
   } else {
     setupSummaryView();
-    m_viewMode->setEnabled(m_viewMode->actions()[SummaryViewType]);
+    (m_viewMode->actions()[SummaryViewType])->setChecked(true);
   }
   m_viewMode->blockSignals(false);
 }
 
 void MainWindow::writeSettings()
 {
-    qDebug() << Q_FUNC_INFO;
     QSettings settings;
-    qDebug() << geometry();
     settings.setValue("geometry", saveGeometry());
     settings.setValue("windowState", saveState());
     settings.setValue("currentView", m_view->id());
@@ -206,7 +195,6 @@ void MainWindow::setupView( StatusView *view, bool rememberJobs )
   m_view = view;
   m_monitor->setCurrentView( m_view, rememberJobs );
   setCentralWidget( m_view->widget() );
-  //m_view->widget()->show();
 }
 
 void MainWindow::setupListView()
@@ -261,7 +249,17 @@ void MainWindow::configureView()
 
 void MainWindow::about()
 {
-    QMessageBox::about(this, description, copyright);
+    QString about;
+    about = tr("%1\n\n%2\n\nAuthor: %3\n\nBased on Icemon for KDE written by:\n\n%4\n%5\n%6\n\nLicensed under GPLv2.\n")
+            .arg(description)
+            .arg(copyright)
+            .arg("Daniel Molkentin <molkentin@kde.org>")
+            .arg("Frerich Raabe <raabe@kde.org>")
+            .arg("Stephan Kulow <coolo@kde.org>")
+            .arg("Cornelius Schumacher <schumacher@kde.org>")
+            ;
+
+    QMessageBox::about(this, tr("About %1").arg(appShortName), about);
 }
 
 void MainWindow::aboutQt()
@@ -275,21 +273,38 @@ void MainWindow::setCurrentNet( const QByteArray &netName )
   m_monitor->setCurrentNet( netName );
 }
 
+void printHelp() {
+    QString help;
+    help += QApplication::translate("Usage", "Usage: %1 [options]").arg(appShortName);
+    help += '\n';
+    help += '\n';
+    help += QApplication::translate("Description", description);
+    help += '\n';
+    help += '\n';
+    help += QApplication::translate("Options", "Options:");
+    help += '\n';
+    help += QApplication::translate("Netname Options",  "\t-n, netname <name>\tIcecream network name");
+    help += '\n';
+    help += '\n';
+    fputs(qPrintable(help), stdout);
+}
+
 int main( int argc, char **argv )
 {
-//  KAboutData aboutData( rs_program_name, 0, ki18n(appName), version, ki18n(description),
-//                        KAboutData::License_GPL_V2, ki18n(copyright) );
-//  aboutData.addAuthor( ki18n("Frerich Raabe"), KLocalizedString(), "raabe@kde.org" );
-//  aboutData.addAuthor( ki18n("Stephan Kulow"), KLocalizedString(), "coolo@kde.org" );
-//  aboutData.addAuthor( ki18n("Cornelius Schumacher"), KLocalizedString(), "schumacher@kde.org" );
+    QByteArray netName;
 
-//  KCmdLineArgs::init( argc, argv, &aboutData );
+    for (int i = 1; i < argc; ++i ) {
+        if (qstrcmp(argv[i], "-help") == 0 || qstrcmp(argv[i], "-h")  == 0) {
+            printHelp();
+            return 0;
+        }
+        if (qstrcmp(argv[i], "-netname") == 0 || qstrcmp(argv[i], "-n")  == 0) {
+            if (i+1 < argc)
+                netName = argv[++i];
+        }
+    }
 
-//  KCmdLineOptions options;
-//  options.add("n");
-//  options.add("netname <name>", ki18n("Icecream network name"));
-//  KCmdLineArgs::addCmdLineOptions( options );
-//  KApplication app;
+
   QApplication app(argc, argv);
   QApplication::setOrganizationDomain("kde.org");
   QApplication::setApplicationName(appShortName);
@@ -297,14 +312,13 @@ int main( int argc, char **argv )
 
   MainWindow *mainWidget = new MainWindow;
 
-//  KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-//  QByteArray netName = args->getOption( "netname" ).toLatin1();
-//  if ( !netName.isEmpty() ) {
-//    mainWidget->setCurrentNet( netName );
-//  }
+  if ( !netName.isEmpty() ) {
+    mainWidget->setCurrentNet( netName );
+  }
 
   mainWidget->show();
 
   return app.exec();
 }
 
+#include "mon-qt.moc"

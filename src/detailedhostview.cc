@@ -167,3 +167,5 @@ QWidget* DetailedHostView::widget()
 {
   return this;
 }
+
+#include "detailedhostview.moc"

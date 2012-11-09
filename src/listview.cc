@@ -42,3 +42,5 @@ void ListStatusView::update( const Job &job )
 {
     mJobsListView->update( job );
 }
+
+#include "listview.moc"

@@ -277,3 +277,5 @@ void HostListView::updateSort()
     if( sortColumn() != 0 )
         sort();
 }
+
+#include "hostlistview.moc"
