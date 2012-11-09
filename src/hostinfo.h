@@ -30,16 +30,25 @@ class HostInfo
   public:
     HostInfo( unsigned int id );
 
-    unsigned int id() const;
+    unsigned int id() const { return mId; }
 
-    QString name() const;
-    QColor color() const;
+    void setName(const QString& name) { mName = name; }
+    QString name() const { return mName; }
 
-    QString ip() const;
-    QString platform() const;
+    void setColor(const QColor& color) { mColor = color; }
+    QColor color() const { return mColor; }
 
-    unsigned int maxJobs() const;
-    bool isOffline() const;
+    void setIp(const QString& ip) { mIp = ip; }
+    QString ip() const { return mIp; }
+
+    void setPlatform(const QString& platform) { mPlatform = platform; }
+    QString platform() const { return mPlatform; }
+
+    void setMaxJobs(unsigned int jobs) { mMaxJobs = jobs; }
+    unsigned int maxJobs() const { return mMaxJobs; }
+
+    void setOffline(bool offline) { mOffline = offline; }
+    bool isOffline() const { return mOffline; }
 
     typedef QMap<QString,QString> StatsMap;
     void updateFromStatsMap( const StatsMap &stats );
@@ -47,9 +56,11 @@ class HostInfo
     static void initColorTable();
     static QString colorName( const QColor & );
 
-    float serverSpeed() const;
+    void setServerSpeed(float serverSpeed) { mServerSpeed = serverSpeed; }
+    float serverSpeed() const { return mServerSpeed; }
 
-    unsigned int serverLoad() const;
+    void setServerLoad(unsigned int load) { mServerLoad = load; }
+    unsigned int serverLoad() const { return mServerLoad; }
 
     QString toolTip() const;
 

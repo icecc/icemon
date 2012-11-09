@@ -81,51 +81,6 @@ HostInfo::HostInfo( unsigned int id )
 {
 }
 
-unsigned int HostInfo::id() const
-{
-  return mId;
-}
-
-QColor HostInfo::color() const
-{
-  return mColor;
-}
-
-QString HostInfo::name() const
-{
-  return mName;
-}
-
-QString HostInfo::ip() const
-{
-  return mIp;
-}
-
-QString HostInfo::platform() const
-{
-    return mPlatform;
-}
-
-unsigned int HostInfo::maxJobs() const
-{
-  return mMaxJobs;
-}
-
-bool HostInfo::isOffline() const
-{
-  return mOffline;
-}
-
-float HostInfo::serverSpeed() const
-{
-    return mServerSpeed;
-}
-
-unsigned int HostInfo::serverLoad() const
-{
-    return mServerLoad;
-}
-
 QString HostInfo::toolTip() const
 {
     return QApplication::translate(("tooltip"),
