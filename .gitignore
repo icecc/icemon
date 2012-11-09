@@ -72,3 +72,10 @@ doc/pluginhowto/html/*
 *.dll
 *.exe
 icemon
+
+# From Git merge
+# --------------
+*.BACKUP.*
+*.BASE.*
+*.LOCAL.*
+*.REMOTE.*
