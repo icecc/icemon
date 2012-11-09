@@ -49,8 +49,7 @@ protected:
     void setupGanttView();
     void setupDetailedHostView();
 
-    void stopView();
-    void startView();
+    void pauseView();
     void checkNodes();
     void configureView();
 
@@ -81,6 +80,9 @@ protected:
     };
 
     QActionGroup* m_viewMode;
+    QAction *m_configureViewAction;
+    QAction *m_pauseViewAction;
+    QAction *m_checkNodesAction;
 };
 
 #endif // MON_KDE_H

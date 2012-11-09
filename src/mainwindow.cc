@@ -26,7 +26,7 @@
 #include "summaryview.h"
 //#include "detailedhostview.h"
 //#include "ganttstatusview.h"
-//#include "listview.h"
+#include "listview.h"
 //#include "poolview.h"
 
 #include "hostinfo.h"
@@ -46,7 +46,13 @@
 MainWindow::MainWindow( QWidget *parent )
   : QMainWindow( parent ), m_view( 0 )
 {
-    setWindowIcon(QIcon(":/images/hi128-app-icemon.png"));
+    QIcon appIcon = QIcon();
+    appIcon.addFile(":/images/hi128-app-icemon.png", QSize(128, 128));
+    appIcon.addFile(":/images/hi48-app-icemon.png", QSize(48, 48));
+    appIcon.addFile(":/images/hi32-app-icemon.png", QSize(32, 32));
+    appIcon.addFile(":/images/hi22-app-icemon.png", QSize(22, 22));
+    appIcon.addFile(":/images/hi16-app-icemon.png", QSize(16, 16));
+    setWindowIcon(appIcon);
     setWindowTitle(QApplication::translate("appName", appName));
     m_hostInfoManager = new HostInfoManager;
 
@@ -70,7 +76,6 @@ MainWindow::MainWindow( QWidget *parent )
     QMenu* modeMenu = viewMenu->addMenu(tr("Mode"));
 
     action = m_viewMode->addAction(tr( "&List View" ));
-    action->setDisabled(true); // FIXME
     action->setCheckable(true);
     modeMenu->addAction(action);
     connect( action, SIGNAL( triggered() ), this, SLOT( setupListView() ) );
@@ -105,22 +110,23 @@ MainWindow::MainWindow( QWidget *parent )
 
     viewMenu->addSeparator();
 
-    action = viewMenu->addAction(tr("Stop"));
-    connect( action, SIGNAL( triggered() ), this, SLOT( stopView() ) );
-
-    action = viewMenu->addAction(tr("Start"));
-    connect( action, SIGNAL( triggered() ), this, SLOT( startView() ) );
+    action = viewMenu->addAction(tr("Pause"));
+    action->setCheckable(true);
+    connect( action, SIGNAL( triggered() ), this, SLOT( pauseView() ) );
+    m_pauseViewAction = action;
 
     viewMenu->addSeparator();
 
     action =  viewMenu->addAction(tr("Check Nodes"));
     connect( action, SIGNAL( triggered() ), this, SLOT( checkNodes() ) );
     viewMenu->addAction(action);
+    m_checkNodesAction = action;
 
     viewMenu->addSeparator();
 
     action = viewMenu->addAction(tr("Configure View..."));
     connect( action, SIGNAL( triggered() ), this, SLOT( configureView() ) );
+    m_configureViewAction = action;
 
     action = helpMenu->addAction(tr("About Qt..."));
     connect(action, SIGNAL(triggered()), this, SLOT(aboutQt()));
@@ -188,14 +194,17 @@ void MainWindow::setupView( StatusView *view, bool rememberJobs )
 {
   delete m_view;
   m_view = view;
+  m_configureViewAction->setEnabled( view->isConfigurable() );
+  m_pauseViewAction->setEnabled( view->isPausable() );
+  m_checkNodesAction->setEnabled( view->canCheckNodes() );
   m_monitor->setCurrentView( m_view, rememberJobs );
-  connect(m_monitor, SIGNAL(schedulerStateChanged(bool)), SLOT(setSchedulerState(bool)));
+  connect( m_monitor, SIGNAL( schedulerStateChanged( bool ) ), SLOT( setSchedulerState( bool ) ) );
   setCentralWidget( m_view->widget() );
 }
 
 void MainWindow::setupListView()
 {
-//    setupView( new ListStatusView( m_hostInfoManager, this ), true );
+    setupView( new ListStatusView( m_hostInfoManager, this ), true );
 }
 
 void MainWindow::setupSummaryView()
@@ -223,14 +232,9 @@ void MainWindow::setupDetailedHostView()
 //    setupView( new DetailedHostView( m_hostInfoManager, this ), false );
 }
 
-void MainWindow::stopView()
+void MainWindow::pauseView()
 {
-  m_view->stop();
-}
-
-void MainWindow::startView()
-{
-  m_view->start();
+  m_view->togglePause();
 }
 
 void MainWindow::checkNodes()

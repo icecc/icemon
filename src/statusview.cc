@@ -30,7 +30,7 @@
 #include <QTime>
 
 StatusView::StatusView( HostInfoManager *m )
-  : mHostInfoManager( m )
+    : mHostInfoManager( m ), m_paused( false )
 {
 }
 

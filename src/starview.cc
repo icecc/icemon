@@ -45,12 +45,9 @@ static bool suppressDomain = false;
 StarViewConfigDialog::StarViewConfigDialog( QWidget *parent )
     : QDialog( parent )
 {
-//    setButtons( Close );
-//    setEscapeButton( Close );
-//    showButtonSeparator( true );
+    setWindowTitle(tr("Star View Settings"));
 
     QBoxLayout *topLayout = new QVBoxLayout( this );
-    topLayout->setMargin( 0 );
 
     QLabel *label = new QLabel( tr("Number of nodes per ring:") );
     topLayout->addWidget( label );
@@ -83,10 +80,18 @@ StarViewConfigDialog::StarViewConfigDialog( QWidget *parent )
 
     mSuppressDomainName = new QCheckBox( tr("Suppress domain name") );
     topLayout->addWidget( mSuppressDomainName );
+    QFrame *hline = new QFrame;
+    hline->setFrameShape( QFrame::HLine );
+    hline->setFrameShadow( QFrame::Sunken );
+    topLayout->addWidget( hline );
+    QPushButton *closeButton = new QPushButton(tr("&Close"));
+    closeButton->setSizePolicy( QSizePolicy::Maximum, QSizePolicy::Preferred );
+    topLayout->addWidget( closeButton, 0, Qt::AlignRight );
+
     connect( mSuppressDomainName, SIGNAL( toggled ( bool ) ),
              SLOT( slotSuppressDomainName ( bool ) ) );
 
-    connect( this, SIGNAL( closeClicked() ), SLOT( hide() ) );
+    connect( closeButton, SIGNAL( clicked() ), SLOT( accept() ) );
 }
 
 void StarViewConfigDialog::slotNodesPerRingChanged( int nodes )

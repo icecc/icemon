@@ -25,27 +25,10 @@ class NodeInfoFrame : public QFrame
 {
 public:
     NodeInfoFrame(QWidget *parent, const QColor &frameColor) :
-        QFrame(parent), m_frameColor(frameColor) {}
-protected:
-    virtual void drawFrame(QPainter *p)
+        QFrame(parent), m_frameColor(frameColor)
     {
-        static const int border = 2;
-
-        QPen oldPen = p->pen();
-        QPen newPen = oldPen;
-
-        newPen.setWidth(5);
-
-        p->setPen(newPen);
-        p->drawRect(border, border, width() - border * 2, height() - border * 2);
-
-        newPen.setWidth(1);
-        newPen.setColor(m_frameColor);
-
-        p->setPen(newPen);
-        p->drawRect(border, border, width() - border * 2, height() - border * 2);
-
-        p->setPen(oldPen);
+        setObjectName("nodeInfoFrame");
+        setStyleSheet(QString("QFrame#nodeInfoFrame { border: 2px solid %1 }").arg(frameColor.name()));
     }
 private:
     QColor m_frameColor;
@@ -200,7 +183,8 @@ QLabel *SummaryViewItem::addLine(const QString &caption, QWidget *parent,
 SummaryView::SummaryView(HostInfoManager *h, QWidget *parent) :
     QScrollArea(parent), StatusView(h)
 {
-    m_base = new QWidget(viewport());
+    m_base = new QWidget;
+    m_base->setStyleSheet("QWidget { background-color: 'white'; }");
     setWidget(m_base);
 
     m_layout = new QGridLayout(m_base);
@@ -251,18 +235,17 @@ void SummaryView::checkNode(unsigned int hostid)
 
 void SummaryView::resizeEvent(QResizeEvent *e)
 {
+    QSize s = e->size();
+
+    setMinimumWidth(m_base->minimumSizeHint().width() + verticalScrollBar()->width());
+    m_base->setMinimumWidth(s.width());
+
+    if(m_base->height() <= s.height())
+        m_base->setMinimumHeight(s.height());
+    else
+        m_base->setMinimumHeight(m_base->sizeHint().height());
+
     QScrollArea::resizeEvent(e);
-//    QSize s = e->size();
-
-//    setMinimumWidth(m_base->minimumSizeHint().width() + verticalScrollBar()->width());
-//    m_base->setMinimumWidth(s.width());
-
-//    if(m_base->height() <= s.height())
-//        m_base->setMinimumHeight(s.height());
-//    else
-//        m_base->setMinimumHeight(m_base->sizeHint().height());
-
-//    QScrollArea::resizeEvent(e);
 }
 
 #include "summaryview.moc"

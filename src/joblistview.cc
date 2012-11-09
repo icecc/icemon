@@ -24,13 +24,12 @@
 
 #include "hostinfo.h"
 
-#include <kglobal.h>
-#include <klocale.h>
-
 #include <qdatetime.h>
 #include <qdir.h>
 #include <qtimer.h>
 
+#include <QApplication>
+#include <QLocale>
 
 enum JobJobColumns
 {
@@ -47,8 +46,8 @@ enum JobJobColumns
 };
 
 
-JobListViewItem::JobListViewItem( Q3ListView* parent, const Job& job )
-    :  Q3ListViewItem( parent )
+JobListViewItem::JobListViewItem( QTreeWidget* parent, const Job& job )
+    :  QTreeWidgetItem( parent )
 {
     updateText( job );
 }
@@ -61,7 +60,7 @@ void JobListViewItem::updateText( const Job& job)
     mJob = job;
 
     setText( JobColumnID, QString::number( job.jobId() ) );
-    if ( JobListView* view = dynamic_cast<JobListView*>( listView() ) )
+    if ( JobTreeWidget* view = dynamic_cast<JobTreeWidget*>( treeWidget() ) )
     {
         setText( JobColumnClient, view->hostInfoManager()->nameForHost( job.client() ) );
         if ( job.server() )
@@ -73,8 +72,8 @@ void JobListViewItem::updateText( const Job& job)
     setText( JobColumnReal, QString::number( job.real_msec ) );
     setText( JobColumnUser, QString::number( job.user_msec ) );
     setText( JobColumnFaults, QString::number( job.pfaults ) );
-    setText( JobColumnSizeIn, KGlobal::locale()->formatByteSize( job.in_uncompressed ) );
-    setText( JobColumnSizeOut, KGlobal::locale()->formatByteSize( job.out_uncompressed ) );
+    setText( JobColumnSizeIn, QApplication::tr("%1 B").arg( QLocale::system().toString(job.in_uncompressed ) ) ); // TODO: formatByteSize
+    setText( JobColumnSizeOut, QApplication::tr("%1 B").arg( QLocale::system().toString(job.out_uncompressed ) ) ); // TODO: formatByteSize
 
     if ( fileNameChanged )
         updateFileName();
@@ -83,7 +82,7 @@ void JobListViewItem::updateText( const Job& job)
 
 void JobListViewItem::updateFileName()
 {
-    JobListView* view = dynamic_cast<JobListView*>( listView() );
+    JobTreeWidget* view = dynamic_cast<JobTreeWidget*>( treeWidget() );
     if ( !view )
         return;
 
@@ -125,7 +124,7 @@ inline int compare( unsigned int i1, unsigned int i2 )
 }
 
 
-int JobListViewItem::compare( Q3ListViewItem* item,
+int JobListViewItem::compare( QTreeWidgetItem* item,
                               int column,
                               bool ) const
 {
@@ -157,43 +156,46 @@ int JobListViewItem::compare( Q3ListViewItem* item,
 }
 
 
-JobListView::JobListView( const HostInfoManager* manager,
-                          QWidget* parent,
-                          const char* name )
-    : Q3ListView( parent, name ),
+JobTreeWidget::JobTreeWidget( const HostInfoManager* manager,
+                          QWidget* parent)
+    : QTreeWidget( parent ),
       mHostInfoManager( manager ),
       mNumberOfFilePathParts( 2 ),
       mExpireDuration( -1 ),
       mExpireTimer( new QTimer( this ) )
 {
-    addColumn( tr( "ID" ) );
-    addColumn( tr( "Filename" ) );
-    addColumn( tr( "Client" ) );
-    addColumn( tr( "Server" ) );
-    addColumn( tr( "State" ) );
-    addColumn( tr( "Real" ) );
-    addColumn( tr( "User" ) );
-    addColumn( tr( "Faults" ) );
-    addColumn( tr( "Size In" ) );
-    addColumn( tr( "Size Out" ) );
+    setColumnCount(10);
+    QTreeWidgetItem *headerItem = new QTreeWidgetItem;
 
-    setColumnAlignment( JobColumnID, Qt::AlignRight );
-    setColumnAlignment( JobColumnReal, Qt::AlignRight );
-    setColumnAlignment( JobColumnUser, Qt::AlignRight );
-    setColumnAlignment( JobColumnFaults, Qt::AlignRight );
-    setColumnAlignment( JobColumnSizeIn, Qt::AlignRight );
-    setColumnAlignment( JobColumnSizeOut, Qt::AlignRight );
+    headerItem->setText( 0, tr( "ID" ) );
+    headerItem->setText( 1, tr( "Filename" ) );
+    headerItem->setText( 2, tr( "Client" ) );
+    headerItem->setText( 3, tr( "Server" ) );
+    headerItem->setText( 4, tr( "State" ) );
+    headerItem->setText( 5, tr( "Real" ) );
+    headerItem->setText( 6, tr( "User" ) );
+    headerItem->setText( 7, tr( "Faults" ) );
+    headerItem->setText( 8, tr( "Size In" ) );
+    headerItem->setText( 9, tr( "Size Out" ) );
+    setHeaderItem(headerItem);
+
+//    setColumnAlignment( JobColumnID, Qt::AlignRight );
+//    setColumnAlignment( JobColumnReal, Qt::AlignRight );
+//    setColumnAlignment( JobColumnUser, Qt::AlignRight );
+//    setColumnAlignment( JobColumnFaults, Qt::AlignRight );
+//    setColumnAlignment( JobColumnSizeIn, Qt::AlignRight );
+//    setColumnAlignment( JobColumnSizeOut, Qt::AlignRight );
 
     setAllColumnsShowFocus(true);
-
-    setSorting( JobColumnID, false );
+    setSortingEnabled(true);
+    sortItems(JobColumnID, Qt::DescendingOrder);
 
     connect(mExpireTimer, SIGNAL( timeout() ),
             this, SLOT( slotExpireFinishedJobs() ) );
 }
 
 
-void JobListView::update( const Job& job )
+void JobTreeWidget::update( const Job& job )
 {
     ItemMap::iterator it = mItems.find( job.jobId() );
     if ( it == mItems.end() )
@@ -207,13 +209,13 @@ void JobListView::update( const Job& job )
 }
 
 
-int JobListView::numberOfFilePathParts() const
+int JobTreeWidget::numberOfFilePathParts() const
 {
     return mNumberOfFilePathParts;
 }
 
 
-void JobListView::setNumberOfFilePathParts( int number )
+void JobTreeWidget::setNumberOfFilePathParts( int number )
 {
     if ( number == mNumberOfFilePathParts )
         return;
@@ -227,78 +229,78 @@ void JobListView::setNumberOfFilePathParts( int number )
 }
 
 
-bool JobListView::isClientColumnVisible() const
+bool JobTreeWidget::isClientColumnVisible() const
 {
     return columnWidth( JobColumnClient );
 }
 
 
-void JobListView::setClientColumnVisible( bool visible )
+void JobTreeWidget::setClientColumnVisible( bool visible )
 {
     if ( visible == isClientColumnVisible() )
         return;
 
     if ( visible )
     {
-        setColumnWidthMode( JobColumnClient, Maximum );
+        //setColumnWidthMode( JobColumnClient, Maximum );
         setColumnWidth( JobColumnClient, 50 ); // at least the user can see it again
     }
     else
     {
-        setColumnWidthMode( JobColumnClient, Manual );
+        //setColumnWidthMode( JobColumnClient, Manual );
         setColumnWidth( JobColumnClient, 0 );
     }
 }
 
 
-bool JobListView::isServerColumnVisible() const
+bool JobTreeWidget::isServerColumnVisible() const
 {
     return columnWidth( JobColumnServer );
 }
 
 
-void JobListView::setServerColumnVisible( bool visible )
+void JobTreeWidget::setServerColumnVisible( bool visible )
 {
     if ( visible == isServerColumnVisible() )
         return;
 
     if ( visible )
     {
-        setColumnWidthMode( JobColumnServer, Maximum );
+        //setColumnWidthMode( JobColumnServer, Maximum );
         setColumnWidth( JobColumnServer, 50 ); // at least the user can see it again
     }
     else
     {
-        setColumnWidthMode( JobColumnServer, Manual );
+        //setColumnWidthMode( JobColumnServer, Manual );
         setColumnWidth( JobColumnServer, 0 );
     }
 }
 
 
-int JobListView::expireDuration() const
+int JobTreeWidget::expireDuration() const
 {
     return mExpireDuration;
 }
 
 
-void JobListView::setExpireDuration( int duration )
+void JobTreeWidget::setExpireDuration( int duration )
 {
     mExpireDuration = duration;
 }
 
 
-void JobListView::clear()
+void JobTreeWidget::clear()
 {
     mExpireTimer->stop();
 
     mItems.clear();
     mFinishedJobs.clear();
 
-    Q3ListView::clear();
+    QTreeWidget::clear();
 }
 
 
-void JobListView::slotExpireFinishedJobs()
+void JobTreeWidget::slotExpireFinishedJobs()
 {
     const uint currentTime = QDateTime::currentDateTime().toTime_t();
 
@@ -320,7 +322,7 @@ void JobListView::slotExpireFinishedJobs()
 }
 
 
-void JobListView::expireItem( JobListViewItem* item )
+void JobTreeWidget::expireItem( JobListViewItem* item )
 {
     if ( mExpireDuration == 0 )
     {
@@ -336,7 +338,7 @@ void JobListView::expireItem( JobListViewItem* item )
 }
 
 
-void JobListView::removeItem( JobListViewItem* item )
+void JobTreeWidget::removeItem( JobListViewItem* item )
 {
     mItems.remove( item->job().jobId() );
     delete item;

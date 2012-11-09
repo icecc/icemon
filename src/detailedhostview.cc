@@ -66,7 +66,7 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
   dummy->setMargin( 0 );
 
   dummy->addWidget(new QLabel( tr("Outgoing jobs" ), locals ));
-  mLocalJobsView = new JobListView( manager, locals );
+  mLocalJobsView = new JobTreeWidget( manager, locals );
   mLocalJobsView->setClientColumnVisible( false );
   mLocalJobsView->setExpireDuration( 5 );
   dummy->addWidget(mLocalJobsView);
@@ -77,7 +77,7 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
   dummy->setMargin( 0 );
 
   dummy->addWidget(new QLabel( tr("Incoming jobs" ), remotes ));
-  mRemoteJobsView = new JobListView( manager, remotes );
+  mRemoteJobsView = new JobTreeWidget( manager, remotes );
   mRemoteJobsView->setServerColumnVisible( false );
   mRemoteJobsView->setExpireDuration( 5 );
   dummy->addWidget(mRemoteJobsView);

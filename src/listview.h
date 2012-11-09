@@ -26,7 +26,7 @@
 
 #include <qwidget.h>
 
-class JobListView;
+class JobTreeWidget;
 
 class ListStatusView :public QWidget, public StatusView
 {
@@ -42,7 +42,7 @@ public:
 
 private:
 
-    JobListView* mJobsListView;
+    JobTreeWidget* mJobsListView;
 };
 
 #endif

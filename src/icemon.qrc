@@ -2,5 +2,9 @@
     <qresource prefix="/images">
         <file>hi128-app-icemon.png</file>
         <file>icemonnode.png</file>
+        <file>hi16-app-icemon.png</file>
+        <file>hi48-app-icemon.png</file>
+        <file>hi22-app-icemon.png</file>
+        <file>hi32-app-icemon.png</file>
     </qresource>
 </RCC>

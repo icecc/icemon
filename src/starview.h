@@ -155,6 +155,8 @@ public:
 
     void configureView();
 
+    bool isConfigurable() { return true; }
+
 protected:
     virtual void resizeEvent( QResizeEvent *e );
     virtual bool event(QEvent *event);

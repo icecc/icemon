@@ -25,9 +25,8 @@
 
 #include <QWidget>
 
-
+class JobTreeWidget;
 class HostListView;
-class JobListView;
 
 
 class DetailedHostView : public QWidget, public StatusView
@@ -59,8 +58,8 @@ private:
     void createKnownHosts();
 
     HostListView* mHostListView;
-    JobListView* mLocalJobsView;
-    JobListView* mRemoteJobsView;
+    JobTreeWidget* mLocalJobsView;
+    JobTreeWidget* mRemoteJobsView;
 };
 
 
