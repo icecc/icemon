@@ -20,8 +20,6 @@
 
 #include "hostlistview.h"
 
-#include <KLocale>
-
 #include <QLocale>
 #include <QFontMetrics>
 #include <QPainter>
