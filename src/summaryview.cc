@@ -18,8 +18,8 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpainter.h>
-#include <QtGui/QScrollBar>
-#include <QtGui/QApplication>
+#include <QScrollBar>
+#include <QApplication>
 
 class NodeInfoFrame : public QFrame
 {

@@ -22,7 +22,7 @@
 #ifndef MON_KDE_H
 #define MON_KDE_H
 
-#include <QtGui/QMainWindow>
+#include <QMainWindow>
 
 class HostInfoManager;
 class Monitor;
