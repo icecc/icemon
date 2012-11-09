@@ -36,15 +36,21 @@ class QSocketNotifier;
 class Monitor : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(bool schedulerState READ schedulerState WRITE setSchedulerState NOTIFY schedulerStateChanged)
+
   public:
     Monitor( HostInfoManager *, QObject *parent);
     ~Monitor();
 
-    void setCurrentNet( const QByteArray & );
     void setCurrentView( StatusView *, bool rememberJobs );
 
-  protected:
     void setSchedulerState( bool );
+    void setCurrentNet( const QByteArray & );
+
+    bool schedulerState() const { return m_schedulerState; }
+
+signals:
+    void schedulerStateChanged(bool arg);
 
   private slots:
     void slotCheckScheduler();
@@ -66,12 +72,11 @@ class Monitor : public QObject
     JobList m_rememberedJobs;
     MsgChannel *m_scheduler;
     QByteArray m_current_netname;
-    bool mSchedulerOnline;
+    bool m_schedulerState;
 
     DiscoverSched *m_discover;
     QSocketNotifier *m_fd_notify;
     QSocketNotifier::Type m_fd_type;
-
 };
 
 #endif // MON_KDE_H

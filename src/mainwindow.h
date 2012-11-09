@@ -22,21 +22,24 @@
 #ifndef MON_KDE_H
 #define MON_KDE_H
 
-#include <kxmlguiwindow.h>
+#include <QtGui/QMainWindow>
 
 class HostInfoManager;
 class Monitor;
 class StatusView;
-class KSelectAction;
+class QActionGroup;
+class QLabel;
 
-class MainWindow : public KXmlGuiWindow
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
   public:
-    MainWindow( QWidget *parent );
-    ~MainWindow();
+    MainWindow( QWidget *parent = 0 );
 
-    void setCurrentNet( const QByteArray & );
+    void setCurrentNet(const QByteArray &netname);
+
+protected:
+    void closeEvent(QCloseEvent *e);
 
   private slots:
     void setupListView();
@@ -45,11 +48,16 @@ class MainWindow : public KXmlGuiWindow
     void setupSummaryView();
     void setupGanttView();
     void setupDetailedHostView();
+    void setupFlowTableView();
 
-    void stopView();
-    void startView();
+    void pauseView();
     void checkNodes();
     void configureView();
+
+    void about();
+    void aboutQt();
+
+    void setSchedulerState(bool online);
 
   private:
     void readSettings();
@@ -58,19 +66,25 @@ class MainWindow : public KXmlGuiWindow
     void setupView( StatusView *view, bool rememberJobs );
 
     HostInfoManager *m_hostInfoManager;
+    QLabel *m_schedStatusWidget;
+    QLabel *m_currNetWidget;
     Monitor *m_monitor;
     StatusView *m_view;
 
     enum views {
-      ListViewType,
-      StarViewType,
-      PoolViewType,
-      GanttViewType,
-      SummaryViewType,
-      DetailedHostViewType
+        ListViewType,
+        StarViewType,
+        PoolViewType,
+        GanttViewType,
+        SummaryViewType,
+        FlowTableViewType,
+        DetailedHostViewType
     };
 
-    KSelectAction* m_viewMode;
+    QActionGroup* m_viewMode;
+    QAction *m_configureViewAction;
+    QAction *m_pauseViewAction;
+    QAction *m_checkNodesAction;
 };
 
 #endif // MON_KDE_H

@@ -1,16 +1,23 @@
 find_package(Icecream REQUIRED)
 
-add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DQT3_SUPPORT_WARNINGS -DQT3_SUPPORT)
+add_definitions(${QT_DEFINITIONS} -DQT3_SUPPORT_WARNINGS -DQT3_SUPPORT)
 
-include_directories (${LIBICECREAM_INCLUDE_DIR} ${KDE4_INCLUDES})
+include_directories(
+    ${LIBICECREAM_INCLUDE_DIR}
+    ${QT_INCLUDES}
+
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+)
 
 set(icemon_SRCS
   job.cc
+  mainwindow.cc
   monitor.cc
-  mon-kde.cc
   hostinfo.cc
   statusview.cc
   detailedhostview.cc
+  flowtableview.cc
   hostlistview.cc
   joblistview.cc
   listview.cc
@@ -18,18 +25,24 @@ set(icemon_SRCS
   summaryview.cc
   starview.cc
   poolview.cc
+
+  main.cc
 )
 
-kde4_add_executable(icemon ${icemon_SRCS})
+qt4_add_resources(resources_SRCS icemon.qrc)
+qt4_automoc(${icemon_SRCS})
 
-target_link_libraries(icemon ${KDE4_KDEUI_LIBS} ${LIBICECREAM_LIBRARIES} ${QT_QTNETWORK_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${CMAKE_DL_LIBS})
+add_executable(icemon ${icemon_SRCS} ${resources_SRCS})
+
+target_link_libraries(icemon
+    ${LIBICECREAM_LIBRARIES}
+    ${QT_QTNETWORK_LIBRARY}
+    ${QT_QT3SUPPORT_LIBRARY}
+    ${CMAKE_DL_LIBS}
+)
 
 ########### install files ###############
 
 install(TARGETS icemon ${INSTALL_TARGETS_DEFAULT_ARGS})
 
-install( FILES icemon.desktop DESTINATION ${XDG_APPS_INSTALL_DIR} )
-install( FILES icemonui.rc DESTINATION ${DATA_INSTALL_DIR}/icemon )
-
-kde4_install_icons( ${ICON_INSTALL_DIR}   )
-
+install(FILES icemon.desktop DESTINATION ${XDG_APPS_INSTALL_DIR})

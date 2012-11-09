@@ -31,7 +31,7 @@ class QWidget;
 
 class StatusView
 {
-  public:
+public:
     StatusView( HostInfoManager * );
     virtual ~StatusView();
 
@@ -45,7 +45,17 @@ class StatusView
 
     virtual void stop() {}
     virtual void start() {}
+    void togglePause() {
+        if (m_paused)
+            start();
+        else
+            stop();
+        m_paused = !m_paused;
+    }
     virtual void checkNodes() {}
+    virtual bool canCheckNodes() { return false; }
+    virtual bool isPausable() { return false; }
+    virtual bool isConfigurable() { return false; }
     virtual void configureView() {}
 
     virtual QString id() const = 0;
@@ -57,8 +67,9 @@ class StatusView
 
     static QColor textColor( const QColor &backGroundColor );
 
-  private:
+private:
     HostInfoManager *mHostInfoManager;
+    bool m_paused;
 };
 
 #endif
