@@ -101,6 +101,7 @@ class HostInfoManager
 
     HostMap hostMap() const;
 
+    void checkNode(const HostInfo &info);
     HostInfo *checkNode( unsigned int hostid,
                          const HostInfo::StatsMap &statmsg );
 

@@ -21,7 +21,7 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "monitor.h"
+#include "icecreammonitor.h"
 
 #include "hostinfo.h"
 #include "statusview.h"
@@ -38,21 +38,24 @@
 
 using namespace std;
 
-Monitor::Monitor( HostInfoManager *m, QObject *parent)
-    : QObject( parent ), m_hostInfoManager( m ), m_view( 0 ),
-      m_scheduler( 0 ), m_schedulerState( false ),
-      m_discover( 0 ), m_fd_notify( 0 ), m_fd_type(QSocketNotifier::Exception)
+IcecreamMonitor::IcecreamMonitor( HostInfoManager *manager, QObject *parent)
+    : Monitor(manager, parent)
+    , m_scheduler( 0 )
+    , m_schedulerState( false )
+    , m_discover( 0 )
+    , m_fd_notify( 0 )
+    , m_fd_type(QSocketNotifier::Exception)
 {
     checkScheduler();
 }
 
-Monitor::~Monitor()
+IcecreamMonitor::~IcecreamMonitor()
 {
     delete m_scheduler;
     delete m_discover;
 }
 
-void Monitor::checkScheduler(bool deleteit)
+void IcecreamMonitor::checkScheduler(bool deleteit)
 {
     qDebug() << "checkScheduler " << deleteit << endl;
     if ( deleteit ) {
@@ -70,7 +73,7 @@ void Monitor::checkScheduler(bool deleteit)
     QTimer::singleShot( 1000+(qrand()&1023), this, SLOT( slotCheckScheduler() ) ); // TODO: check if correct
 }
 
-void Monitor::registerNotify(int fd, QSocketNotifier::Type type, const char* slot)
+void IcecreamMonitor::registerNotify(int fd, QSocketNotifier::Type type, const char* slot)
 {
     if (m_fd_notify) {
         m_fd_notify->disconnect(this);
@@ -81,7 +84,7 @@ void Monitor::registerNotify(int fd, QSocketNotifier::Type type, const char* slo
     QObject::connect(m_fd_notify, SIGNAL(activated(int)), slot);
 }
 
-void Monitor::slotCheckScheduler()
+void IcecreamMonitor::slotCheckScheduler()
 {
     if ( m_scheduler )
         return;
@@ -109,8 +112,8 @@ void Monitor::slotCheckScheduler()
         m_scheduler = m_discover->try_get_scheduler ();
 
         if ( m_scheduler ) {
-            m_hostInfoManager->setSchedulerName( QString::fromLatin1(m_discover->schedulerName().data()) );
-            m_hostInfoManager->setNetworkName( QString::fromLatin1(m_discover->networkName().data()) );
+            hostInfoManager()->setSchedulerName( QString::fromLatin1(m_discover->schedulerName().data()) );
+            hostInfoManager()->setNetworkName( QString::fromLatin1(m_discover->networkName().data()) );
             m_scheduler->setBulkTransfer();
             delete m_discover;
             m_discover = 0;
@@ -145,14 +148,14 @@ void Monitor::slotCheckScheduler()
     setSchedulerState( false );
 }
 
-void Monitor::msgReceived()
+void IcecreamMonitor::msgReceived()
 {
     while (!m_scheduler->read_a_bit() || m_scheduler->has_msg())
         if (!handle_activity())
             break;
 }
 
-bool Monitor::handle_activity()
+bool IcecreamMonitor::handle_activity()
 {
     Msg *m = m_scheduler->get_msg ();
     if ( !m ) {
@@ -193,7 +196,7 @@ bool Monitor::handle_activity()
     return true;
 }
 
-void Monitor::handle_getcs( Msg *_m )
+void IcecreamMonitor::handle_getcs( Msg *_m )
 {
     MonGetCSMsg *m = dynamic_cast<MonGetCSMsg*>( _m );
     if ( !m ) return;
@@ -204,7 +207,7 @@ void Monitor::handle_getcs( Msg *_m )
     m_view->update( m_rememberedJobs[m->job_id] );
 }
 
-void Monitor::handle_local_begin( Msg *_m )
+void IcecreamMonitor::handle_local_begin( Msg *_m )
 {
     MonLocalJobBeginMsg *m = dynamic_cast<MonLocalJobBeginMsg*>( _m );
     if ( !m ) return;
@@ -216,7 +219,7 @@ void Monitor::handle_local_begin( Msg *_m )
     m_view->update( m_rememberedJobs[m->job_id] );
 }
 
-void Monitor::handle_local_done( Msg *_m )
+void IcecreamMonitor::handle_local_done( Msg *_m )
 {
     JobLocalDoneMsg *m = dynamic_cast<JobLocalDoneMsg*>( _m );
     if ( !m ) return;
@@ -238,7 +241,7 @@ void Monitor::handle_local_done( Msg *_m )
     }
 }
 
-void Monitor::handle_stats( Msg *_m )
+void IcecreamMonitor::handle_stats( Msg *_m )
 {
     MonStatsMsg *m = dynamic_cast<MonStatsMsg*>( _m );
     if ( !m ) return;
@@ -254,7 +257,7 @@ void Monitor::handle_stats( Msg *_m )
         stats[key] = value;
     }
 
-    HostInfo *hostInfo = m_hostInfoManager->checkNode( m->hostid, stats );
+    HostInfo *hostInfo = hostInfoManager()->checkNode( m->hostid, stats );
 
     if ( hostInfo->isOffline() ) {
         m_view->removeNode( m->hostid );
@@ -263,7 +266,7 @@ void Monitor::handle_stats( Msg *_m )
     }
 }
 
-void Monitor::handle_job_begin( Msg *_m )
+void IcecreamMonitor::handle_job_begin( Msg *_m )
 {
     MonJobBeginMsg *m = dynamic_cast<MonJobBeginMsg*>( _m );
     if ( !m ) return;
@@ -286,7 +289,7 @@ void Monitor::handle_job_begin( Msg *_m )
     m_view->update( *it );
 }
 
-void Monitor::handle_job_done( Msg *_m )
+void IcecreamMonitor::handle_job_done( Msg *_m )
 {
     MonJobDoneMsg *m = dynamic_cast<MonJobDoneMsg*>( _m );
     if ( !m ) return;
@@ -321,7 +324,7 @@ void Monitor::handle_job_done( Msg *_m )
     m_view->update( *it );
 }
 
-void Monitor::setCurrentView( StatusView *view, bool rememberJobs )
+void IcecreamMonitor::setCurrentView( StatusView *view, bool rememberJobs )
 {
     m_view = view;
 
@@ -334,12 +337,12 @@ void Monitor::setCurrentView( StatusView *view, bool rememberJobs )
     }
 }
 
-void Monitor::setCurrentNet( const QByteArray &netName )
+void IcecreamMonitor::setCurrentNet( const QByteArray &netName )
 {
     m_current_netname = netName;
 }
 
-void Monitor::setSchedulerState( bool online )
+void IcecreamMonitor::setSchedulerState( bool online )
 {
     if (m_schedulerState == online)
         return;
@@ -348,4 +351,4 @@ void Monitor::setSchedulerState( bool online )
     m_view->updateSchedulerState( online );
 }
 
-#include "monitor.moc"
+#include "icecreammonitor.moc"

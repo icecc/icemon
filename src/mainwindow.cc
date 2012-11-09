@@ -29,10 +29,11 @@
 #include "listview.h"
 //#include "poolview.h"
 #include "flowtableview.h"
-
 #include "hostinfo.h"
 #include "monitor.h"
 #include "version.h"
+#include "fakemonitor.h"
+#include "icecreammonitor.h"
 
 #include <qdebug.h>
 
@@ -57,7 +58,8 @@ MainWindow::MainWindow( QWidget *parent )
     setWindowTitle(QApplication::translate("appName", Icemon::Version::appName));
     m_hostInfoManager = new HostInfoManager;
 
-    m_monitor = new Monitor( m_hostInfoManager, this );
+    m_monitor = new IcecreamMonitor( m_hostInfoManager, this );
+    connect(m_monitor, SIGNAL( schedulerStateChanged( bool ) ), SLOT( setSchedulerState( bool ) ));
 
     QMenu* fileMenu = menuBar()->addMenu(tr("&File"));
     QMenu* viewMenu = menuBar()->addMenu(tr("&View"));
@@ -147,6 +149,8 @@ MainWindow::MainWindow( QWidget *parent )
     action->setMenuRole(QAction::AboutRole);
 
     readSettings();
+
+    setSchedulerState(m_monitor->schedulerState());
 }
 
 void MainWindow::closeEvent( QCloseEvent *e )
@@ -205,14 +209,17 @@ void MainWindow::writeSettings()
 
 void MainWindow::setupView( StatusView *view, bool rememberJobs )
 {
-  delete m_view;
-  m_view = view;
-  m_configureViewAction->setEnabled( view->isConfigurable() );
-  m_pauseViewAction->setEnabled( view->isPausable() );
-  m_checkNodesAction->setEnabled( view->canCheckNodes() );
-  m_monitor->setCurrentView( m_view, rememberJobs );
-  connect( m_monitor, SIGNAL( schedulerStateChanged( bool ) ), SLOT( setSchedulerState( bool ) ) );
-  setCentralWidget( m_view->widget() );
+    if (m_view != view) {
+        delete m_view;
+        m_view = view;
+    }
+
+    m_configureViewAction->setEnabled( view->isConfigurable() );
+    m_pauseViewAction->setEnabled( view->isPausable() );
+    m_checkNodesAction->setEnabled( view->canCheckNodes() );
+    m_monitor->setCurrentView( m_view, rememberJobs );
+
+    setCentralWidget( m_view->widget() );
 }
 
 void MainWindow::setupListView()
@@ -299,6 +306,23 @@ void MainWindow::setCurrentNet( const QByteArray &netName )
 {
   m_monitor->setCurrentNet( netName );
   m_currNetWidget->setText(tr("Current Network: %1").arg(QString::fromLatin1(netName)));
+}
+
+// It's nasty that we have to hard-code the implementations of Monitor
+// But we can't just add a setMonitor() method because we require the host info manager
+void MainWindow::setTestModeEnabled(bool testMode)
+{
+    if (testMode) {
+        delete m_monitor;
+        m_monitor = new FakeMonitor(m_hostInfoManager, this);
+    } else {
+        delete m_monitor;
+        m_monitor = new IcecreamMonitor(m_hostInfoManager, this);
+    }
+    setupView(m_view, false);
+
+    connect(m_monitor, SIGNAL( schedulerStateChanged( bool ) ), SLOT( setSchedulerState( bool ) ));
+    setSchedulerState(m_monitor->schedulerState());
 }
 
 #include "mainwindow.moc"

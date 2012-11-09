@@ -19,6 +19,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
 #ifndef MON_KDE_H
 #define MON_KDE_H
 
@@ -27,6 +28,7 @@
 class HostInfoManager;
 class Monitor;
 class StatusView;
+
 class QActionGroup;
 class QLabel;
 
@@ -37,6 +39,8 @@ class MainWindow : public QMainWindow
     MainWindow( QWidget *parent = 0 );
 
     void setCurrentNet(const QByteArray &netname);
+
+    void setTestModeEnabled(bool testMode);
 
 protected:
     void closeEvent(QCloseEvent *e);

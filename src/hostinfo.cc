@@ -182,6 +182,17 @@ HostInfo *HostInfoManager::find( unsigned int hostid ) const
   return mHostMap.value( hostid, 0 );
 }
 
+void HostInfoManager::checkNode(const HostInfo &info)
+{
+  HostMap::ConstIterator it = mHostMap.constFind(info.id());
+  if (it == mHostMap.constEnd()) {
+    HostInfo *hostInfo = new HostInfo(info);
+    mHostMap.insert(info.id(), hostInfo);
+  } else {
+    // no-op
+  }
+}
+
 HostInfo *HostInfoManager::checkNode( unsigned int hostid,
                                       const HostInfo::StatsMap &stats )
 {

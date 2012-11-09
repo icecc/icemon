@@ -19,9 +19,11 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-#ifndef ICEMON_MONITOR_H
-#define ICEMON_MONITOR_H
 
+#ifndef ICEMON_ICECREAMMONITOR_H
+#define ICEMON_ICECREAMMONITOR_H
+
+#include "monitor.h"
 #include "job.h"
 
 #include <QtCore/QSocketNotifier>
@@ -33,14 +35,14 @@ class StatusView;
 class DiscoverSched;
 class QSocketNotifier;
 
-class Monitor : public QObject
+class IcecreamMonitor : public Monitor
 {
     Q_OBJECT
     Q_PROPERTY(bool schedulerState READ schedulerState WRITE setSchedulerState NOTIFY schedulerStateChanged)
 
   public:
-    Monitor( HostInfoManager *, QObject *parent);
-    ~Monitor();
+    IcecreamMonitor(HostInfoManager *, QObject *parent);
+    ~IcecreamMonitor();
 
     void setCurrentView( StatusView *, bool rememberJobs );
 
@@ -59,6 +61,7 @@ signals:
   private:
     void checkScheduler(bool deleteit = false);
     void registerNotify(int fd, QSocketNotifier::Type type, const char* slot);
+
     bool handle_activity();
     void handle_getcs( Msg *m );
     void handle_job_begin( Msg *m );
@@ -67,7 +70,6 @@ signals:
     void handle_local_begin( Msg *m );
     void handle_local_done( Msg *m );
 
-    HostInfoManager *m_hostInfoManager;
     StatusView *m_view;
     JobList m_rememberedJobs;
     MsgChannel *m_scheduler;
@@ -79,5 +81,6 @@ signals:
     QSocketNotifier::Type m_fd_type;
 };
 
-#endif // MON_KDE_H
+#endif // ICEMON_ICECREAMMONITOR_H
+
 // vim:ts=4:sw=4:noet

@@ -11,9 +11,11 @@ include_directories(
 )
 
 set(icemon_SRCS
+  fakemonitor.cc
   job.cc
   mainwindow.cc
   monitor.cc
+  icecreammonitor.cc
   hostinfo.cc
   statusview.cc
   detailedhostview.cc
