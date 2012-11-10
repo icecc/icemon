@@ -25,6 +25,7 @@
 #include <QString>
 #include <time.h>
 #include <QMap>
+#include <qdebug.h>
 
 class Job
 {
@@ -67,8 +68,8 @@ class Job
     void setStartTime( time_t t ) {
         m_stime = t;
     }
-    void setState( State s ) {
-        m_state = s;
+    void setState( State ss ) {
+        m_state = ss;
     }
 
   private:
@@ -93,6 +94,8 @@ class Job
     unsigned int out_compressed;
     unsigned int out_uncompressed;
 };
+
+QDebug operator<<(QDebug dbg, const Job& job);
 
 class IdleJob : public Job
 {

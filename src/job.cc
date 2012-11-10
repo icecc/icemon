@@ -21,6 +21,7 @@
 */
 
 #include "job.h"
+
 #include <QObject>
 #include <QApplication>
 
@@ -47,4 +48,14 @@ QString Job::stateAsString() const
         break;
     }
     return QString();
+}
+
+QDebug operator<<(QDebug dbg, const Job& job)
+{
+    return dbg.nospace() << "Job[id=" << job.jobId()
+        << ", client=" << job.client()
+        << ", server=" << job.server()
+        << ", fileName=" << job.fileName()
+        << ", state=" << job.stateAsString()
+        << "]";
 }
