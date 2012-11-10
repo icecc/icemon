@@ -24,7 +24,7 @@
 
 #include "starview.h"
 #include "summaryview.h"
-//#include "detailedhostview.h"
+#include "detailedhostview.h"
 #include "ganttstatusview.h"
 #include "listview.h"
 //#include "poolview.h"
@@ -111,7 +111,6 @@ MainWindow::MainWindow( QWidget *parent )
     connect( action, SIGNAL( triggered() ), this, SLOT( setupFlowTableView() ) );
 
     action = m_viewMode->addAction(tr( "&Detailed Host View" ));
-    action->setDisabled(true); // FIXME
     action->setCheckable(true);
     modeMenu->addAction(action);
     connect( action, SIGNAL( triggered() ), this, SLOT( setupDetailedHostView() ) );
@@ -253,7 +252,7 @@ void MainWindow::setupFlowTableView()
 
 void MainWindow::setupDetailedHostView()
 {
-//    setupView( new DetailedHostView( m_hostInfoManager, this ), false );
+    setupView( new DetailedHostView( m_hostInfoManager, this ), false );
 }
 
 void MainWindow::pauseView()
