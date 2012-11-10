@@ -2,6 +2,7 @@
     This file is part of Icecream.
 
     Copyright (c) 2004 Andre Wöbbeking <Woebbeking@web.de>
+    Copyright (c) 2012 Kevin Funk <kevin@kfunk.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,77 +24,19 @@
 
 #include "hostinfo.h"
 
-#include <QPalette>
-#include <Q3ListView>
-#include <QTimer>
+#include <QTreeView>
 
-class HostListViewItem : public Q3ListViewItem
-{
-public:
-
-    HostListViewItem( Q3ListView* parent, const HostInfo& info );
-
-    const HostInfo& hostInfo() const;
-
-    void setActiveNode( bool active );
-
-    void updateText( const HostInfo& info);
-
-    virtual int compare( Q3ListViewItem* i, int col, bool ascending ) const;
-
-    virtual void paintCell( QPainter* painter, const QColorGroup& cg, int column, int width, int align );
-
-    virtual int width( const QFontMetrics& fm, const Q3ListView* lv, int column ) const;
-
-private:
-
-    HostInfo mHostInfo;
-
-    bool mActive;
-};
-
-
-class HostListView :public Q3ListView
+class HostListView :public QTreeView
 {
     Q_OBJECT
 
 public:
-
     HostListView( HostInfoManager* manager, QWidget* parent );
 
-    unsigned int activeNode() const;
-
-    void setActiveNode( unsigned int hostid );
-
-    void checkNode( unsigned int hostid );
-
-    void removeNode( unsigned int hostid );
-
-    virtual void clear();
-
-signals:
-
-    void nodeActivated( unsigned int hostid );
-
-private slots:
-
-    void slotNodeActivated( Q3ListViewItem* item );
-
-    void updateSort();
+    virtual void setModel(QAbstractItemModel* model);
 
 private:
-
-    void setActiveNode( unsigned int hostid, bool active );
-
     HostInfoManager* mHostInfoManager;
-
-    unsigned int mActiveNode;
-
-    typedef QMap<unsigned int, HostListViewItem*> ItemMap;
-    ItemMap mItems;
-
-    QTimer mUpdateSortTimer;
 };
-
 
 #endif

@@ -26,7 +26,9 @@
 
 #include "hostinfo.h"
 #include "hostlistview.h"
+#include "hostlistmodel.h"
 #include "joblistview.h"
+#include "joblistmodel.h"
 
 #include <sys/utsname.h>
 
@@ -56,19 +58,27 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
   dummy->setSpacing( 10 );
   dummy->setMargin( 0 );
 
+  mHostListModel = new HostListModel(manager, this);
+
   dummy->addWidget(new QLabel( tr("Hosts" ), hosts ));
   mHostListView = new HostListView( manager, hosts );
+  mHostListView->setModel(mHostListModel);
   dummy->addWidget(mHostListView);
+  connect(mHostListView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
+          SLOT(slotNodeActivated()));
 
   QWidget *locals = new QWidget( viewSplitter );
   dummy = new QVBoxLayout( locals );
   dummy->setSpacing( 10 );
   dummy->setMargin( 0 );
 
+  mLocalJobsModel = new JobListModel(manager, this);
+  mLocalJobsModel->setExpireDuration(5);
+
   dummy->addWidget(new QLabel( tr("Outgoing jobs" ), locals ));
-  mLocalJobsView = new JobTreeWidget( manager, locals );
+  mLocalJobsView = new JobListView(locals);
+  mLocalJobsView->setModel(mLocalJobsModel);
   mLocalJobsView->setClientColumnVisible( false );
-  mLocalJobsView->setExpireDuration( 5 );
   dummy->addWidget(mLocalJobsView);
 
   QWidget* remotes = new QWidget( viewSplitter );
@@ -76,14 +86,14 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
   dummy->setSpacing( 10 );
   dummy->setMargin( 0 );
 
-  dummy->addWidget(new QLabel( tr("Incoming jobs" ), remotes ));
-  mRemoteJobsView = new JobTreeWidget( manager, remotes );
-  mRemoteJobsView->setServerColumnVisible( false );
-  mRemoteJobsView->setExpireDuration( 5 );
-  dummy->addWidget(mRemoteJobsView);
+  mRemoteJobsModel = new JobListModel(manager, this);
+  mRemoteJobsModel->setExpireDuration(5);
 
-  connect(mHostListView, SIGNAL( nodeActivated( unsigned int ) ),
-          this, SLOT( slotNodeActivated() ) );
+  dummy->addWidget(new QLabel( tr("Incoming jobs" ), remotes ));
+  mRemoteJobsView = new JobListView(remotes);
+  mRemoteJobsView->setModel(mRemoteJobsModel);
+  mRemoteJobsView->setServerColumnVisible( false );
+  dummy->addWidget(mRemoteJobsView);
 
   createKnownHosts();
 }
@@ -91,8 +101,7 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
 
 void DetailedHostView::update( const Job &job )
 {
-    const unsigned int hostid = mHostListView->activeNode();
-
+    const unsigned int hostid = mHostListView->currentIndex().data(HostListModel::HostIdRole).value<unsigned int>();
     if ( !hostid )
         return;
 
@@ -111,8 +120,10 @@ void DetailedHostView::checkNode( unsigned int hostid )
     if ( !hostid )
         return;
 
-    mHostListView->checkNode( hostid );
+    mHostListModel->checkNode( hostid );
 
+    // TODO: Select the node if it's the current host
+#if 0
     const unsigned int activeNode = mHostListView->activeNode();
 
     if ( !activeNode )
@@ -121,12 +132,13 @@ void DetailedHostView::checkNode( unsigned int hostid )
         if ( info->name() == myHostName() )
             mHostListView->setActiveNode( hostid );
     }
+#endif
 }
 
 
 void DetailedHostView::removeNode( unsigned int hostid )
 {
-    mHostListView->removeNode( hostid );
+    mHostListModel->removeNodeById( hostid );
 }
 
 
@@ -134,17 +146,17 @@ void DetailedHostView::updateSchedulerState( bool online )
 {
     if ( !online )
     {
-        mHostListView->clear();
-        mLocalJobsView->clear();
-        mRemoteJobsView->clear();
+        mHostListModel->clear();
+        mLocalJobsModel->clear();
+        mRemoteJobsModel->clear();
     }
 }
 
 
 void DetailedHostView::slotNodeActivated()
 {
-    mLocalJobsView->clear();
-    mRemoteJobsView->clear();
+    mLocalJobsModel->clear();
+    mRemoteJobsModel->clear();
 }
 
 

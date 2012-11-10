@@ -4,9 +4,9 @@
 #include "job.h"
 #include "hostinfo.h"
 
-#include <qdebug.h>
-#include <qstringlist.h>
-#include <qtimer.h>
+#include <QDebug>
+#include <QStringList>
+#include <QTimer>
 
 // counter variable
 static int JOB_ID = 0;

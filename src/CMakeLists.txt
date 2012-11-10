@@ -1,6 +1,6 @@
 find_package(Icecream REQUIRED)
 
-add_definitions(${QT_DEFINITIONS} -DQT3_SUPPORT_WARNINGS -DQT3_SUPPORT)
+add_definitions(${QT_DEFINITIONS})
 
 include_directories(
     ${LIBICECREAM_INCLUDE_DIR}
@@ -16,11 +16,13 @@ set(icemon_SRCS
   mainwindow.cc
   monitor.cc
   icecreammonitor.cc
+  hostlistmodel.cc
   hostinfo.cc
   statusview.cc
   detailedhostview.cc
   flowtableview.cc
   hostlistview.cc
+  joblistmodel.cc
   joblistview.cc
   listview.cc
   ganttstatusview.cc
@@ -38,8 +40,9 @@ add_executable(icemon ${icemon_SRCS} ${resources_SRCS})
 
 target_link_libraries(icemon
     ${LIBICECREAM_LIBRARIES}
+    ${QT_QTCORE_LIBRARY}
+    ${QT_QTGUI_LIBRARY}
     ${QT_QTNETWORK_LIBRARY}
-    ${QT_QT3SUPPORT_LIBRARY}
     ${CMAKE_DL_LIBS}
 )
 
