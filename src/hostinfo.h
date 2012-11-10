@@ -28,7 +28,7 @@
 class HostInfo
 {
   public:
-    HostInfo( unsigned int id );
+    explicit HostInfo( unsigned int id = 0 );
 
     unsigned int id() const { return mId; }
 
@@ -63,6 +63,10 @@ class HostInfo
     unsigned int serverLoad() const { return mServerLoad; }
 
     QString toolTip() const;
+
+    bool operator==( const HostInfo &rhs ) const { return mId == rhs.mId; }
+    bool operator!=( const HostInfo &rhs ) const { return mId != rhs.mId; }
+    int operator<( const HostInfo &rhs ) const{ return mId < rhs.mId; }
 
   protected:
     static void initColor( const QString &value, const QString &name );

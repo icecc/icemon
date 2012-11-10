@@ -23,6 +23,7 @@
 #include "listview.h"
 
 #include "joblistview.h"
+#include "joblistmodel.h"
 
 #include <qlayout.h>
 
@@ -30,8 +31,11 @@ ListStatusView::ListStatusView( HostInfoManager* manager,
                                 QWidget* parent )
     : QWidget( parent ),
       StatusView( manager ),
-      mJobsListView( new JobTreeWidget( manager, this ) )
+      mJobsListView( new JobListView(this) )
 {
+    JobListModel* model = new JobListModel(manager, this);
+    mJobsListView->setModel(model);
+
     QVBoxLayout* topLayout = new QVBoxLayout( this );
     topLayout->setMargin(0);
     topLayout->addWidget( mJobsListView );

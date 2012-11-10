@@ -17,17 +17,18 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
 #ifndef ICEMON_DETAILEDHOSTVIEW_H
 #define ICEMON_DETAILEDHOSTVIEW_H
-
 
 #include "statusview.h"
 
 #include <QWidget>
 
-class JobTreeWidget;
+class HostListModel;
+class JobListView;
+class JobListModel;
 class HostListView;
-
 
 class DetailedHostView : public QWidget, public StatusView
 {
@@ -50,16 +51,20 @@ public:
     void updateSchedulerState( bool online );
 
 private slots:
-
     void slotNodeActivated();
 
 private:
 
     void createKnownHosts();
 
+    HostListModel* mHostListModel;
     HostListView* mHostListView;
-    JobTreeWidget* mLocalJobsView;
-    JobTreeWidget* mRemoteJobsView;
+
+    JobListModel* mLocalJobsModel;
+    JobListView* mLocalJobsView;
+
+    JobListModel* mRemoteJobsModel;
+    JobListView* mRemoteJobsView;
 };
 
 

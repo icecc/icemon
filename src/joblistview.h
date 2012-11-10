@@ -4,6 +4,7 @@
     Copyright (c) 2003 Frerich Raabe <raabe@kde.org>
     Copyright (c) 2003,2004 Stephan Kulow <coolo@kde.org>
     Copyright (c) 2004 Andre Wöbbeking <Woebbeking@web.de>
+    Copyright (c) 2012 Kevin Funk <kevin@kfunk.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,52 +24,23 @@
 #ifndef ICEMON_JOBLISTVIEW_H
 #define ICEMON_JOBLISTVIEW_H
 
+#include <qtreeview.h>
 
 #include "job.h"
 
-#include <QTreeWidget>
-#include <QTreeWidgetItem>
-#include <QPair>
-#include <QList>
-
-
+class JobListModel;
 class HostInfoManager;
 
-class QTimer;
-
-
-class JobListViewItem : public QTreeWidgetItem
-{
-public:
-
-    JobListViewItem( QTreeWidget* parent, const Job& job );
-
-    const Job& job() const { return mJob; }
-
-    void updateText( const Job& job);
-
-    void updateFileName();
-
-    virtual int compare( QTreeWidgetItem* item, int column, bool ascending ) const;
-
-private:
-
-    Job mJob;
-};
-
-
-class JobTreeWidget : public QTreeWidget
+class JobListView : public QTreeView
 {
     Q_OBJECT
 
 public:
-
-    JobTreeWidget( const HostInfoManager* manager, QWidget* parent = 0 );
+    JobListView(QWidget* parent = 0);
 
     void update( const Job& job );
 
-    int numberOfFilePathParts() const;
-    void setNumberOfFilePathParts( int number );
+    virtual void setModel(QAbstractItemModel* model);
 
     bool isClientColumnVisible() const;
     void setClientColumnVisible( bool visible );
@@ -76,52 +48,10 @@ public:
     bool isServerColumnVisible() const;
     void setServerColumnVisible( bool visible );
 
-    int expireDuration() const;
-    void setExpireDuration( int duration );
-
-    const HostInfoManager* hostInfoManager() const { return mHostInfoManager; }
-
-    virtual void clear();
-
-private slots:
-
-    void slotExpireFinishedJobs();
+    void clear();
 
 private:
-
-    void expireItem( JobListViewItem* item );
-
-    void removeItem( JobListViewItem* item );
-
-    const HostInfoManager* mHostInfoManager;
-
-    typedef QMap<unsigned int, JobListViewItem*> ItemMap;
-    ItemMap mItems;
-
-    /**
-     * Number of parts (directories) of the file path which should be displayed.
-     * -   < 0 for complete file path
-     * -  == 0 for the pure file name without path
-     * -   > 0 for only parts of the file path. If there are not enough parts
-     *    the complete file path is displayed else .../partN/.../part1/fileName.
-     * Default is 2.
-     */
-    int mNumberOfFilePathParts;
-
-    /**
-     * The number of seconds after which finished jobs should be expired.
-     * -  < 0 never
-     * - == 0 at once
-     * -  > 0 after some seconds.
-     * Default is -1.
-     */
-    int mExpireDuration;
-
-    QTimer* mExpireTimer;
-
-    typedef QPair<uint, JobListViewItem*> FinishedJob;
-    typedef QList<FinishedJob> FinishedJobs;
-    FinishedJobs mFinishedJobs;
+    JobListModel* jobListModel() const;
 };
 
 

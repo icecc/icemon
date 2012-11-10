@@ -22,6 +22,8 @@
 
 #include <QApplication>
 
+#include <qdebug.h>
+
 #include <assert.h>
 
 QVector<QColor> HostInfo::mColorTable;
