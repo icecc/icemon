@@ -20,8 +20,8 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef MON_KDE_H
-#define MON_KDE_H
+#ifndef ICEMON_MAINWINDOW_H
+#define ICEMON_MAINWINDOW_H
 
 #include <QtGui/QMainWindow>
 
@@ -91,5 +91,5 @@ protected:
     QAction *m_checkNodesAction;
 };
 
-#endif // MON_KDE_H
+#endif // ICEMON_MAINWINDOW_H
 // vim:ts=4:sw=4:et

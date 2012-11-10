@@ -1,5 +1,5 @@
-#ifndef VERSION_H
-#define VERSION_H
+#ifndef ICEMON_VERSION_H
+#define ICEMON_VERSION_H
 
 namespace Icemon {
 namespace Version {
@@ -12,4 +12,5 @@ const char * const copyright = QT_TRANSLATE_NOOP( "copyright", "(c) 2003, 2004, 
 
 } // Version
 } // Icemon
-#endif // VERSION_H
+
+#endif // ICEMON_VERSION_H
