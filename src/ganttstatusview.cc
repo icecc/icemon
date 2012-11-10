@@ -65,6 +65,10 @@ GanttConfigDialog::GanttConfigDialog( QWidget *parent )
   QPushButton *button = new QPushButton( tr("&Close"), this );
   buttonLayout->addWidget( button );
   connect( button, SIGNAL( clicked() ), SLOT( hide() ) );
+
+  setWindowTitle(tr("Configure Gantt View"));
+  // apply some minimum size
+  resize(300, 100);
 }
 
 bool GanttConfigDialog::isTimeScaleVisible()
