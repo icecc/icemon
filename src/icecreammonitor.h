@@ -38,7 +38,6 @@ class QSocketNotifier;
 class IcecreamMonitor : public Monitor
 {
     Q_OBJECT
-    Q_PROPERTY(bool schedulerState READ schedulerState WRITE setSchedulerState NOTIFY schedulerStateChanged)
 
   public:
     IcecreamMonitor(HostInfoManager *, QObject *parent);
@@ -50,9 +49,6 @@ class IcecreamMonitor : public Monitor
     void setCurrentNet( const QByteArray & );
 
     bool schedulerState() const { return m_schedulerState; }
-
-signals:
-    void schedulerStateChanged(bool arg);
 
   private slots:
     void slotCheckScheduler();

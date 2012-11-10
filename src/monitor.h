@@ -12,6 +12,7 @@ class HostInfoManager;
 class Monitor : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(bool schedulerState READ schedulerState WRITE setSchedulerState NOTIFY schedulerStateChanged)
 
 public:
     explicit Monitor(HostInfoManager *manager, QObject* parent = 0);
