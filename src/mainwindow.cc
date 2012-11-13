@@ -272,16 +272,22 @@ void MainWindow::configureView()
 
 void MainWindow::about()
 {
-    QString about;
-    about = tr("%1 %2\n\n%3\n\nAuthor: %4\n\nBased on Icemon for KDE written by:\n\n%5\n%6\n%7\n\nLicensed under GPLv2.\n")
+    QString about = tr("<strong>%1</strong><br/>"
+        "Version: %2<br/><br/>"
+        "<strong>%3</strong><br/><br/>"
+        "Maintainers:<br/>"
+        "Daniel Molkentin &lt;molkentin@kde.org&gt;<br/>"
+        "Kevin Funk &lt;kevin@kfunk.org&gt;<br/><br/>"
+        "Based on Icemon for KDE written by:<br/>"
+        "Frerich Raabe &lt;raabe@kde.org&gt;<br/>"
+        "Stephan Kulow &lt;coolo@kde.org&gt;<br/>"
+        "Cornelius Schumacher &lt;schumacher@kde.org&gt;<br/><br/>"
+        "Homepage: <a href=\"%4\">%4</a><br/><br/>"
+        "Licensed under the GPLv2.<br/>")
             .arg(Icemon::Version::appName)
             .arg(Icemon::Version::version)
             .arg(Icemon::Version::description)
-            .arg("Daniel Molkentin <molkentin@kde.org>")
-            .arg("Frerich Raabe <raabe@kde.org>")
-            .arg("Stephan Kulow <coolo@kde.org>")
-            .arg("Cornelius Schumacher <schumacher@kde.org>")
-            ;
+            .arg(Icemon::Version::homePage);
 
     QMessageBox::about(this, tr("About %1").arg(Icemon::Version::appShortName), about);
 }
