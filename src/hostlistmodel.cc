@@ -20,6 +20,7 @@
 
 #include "hostlistmodel.h"
 
+#include <algorithm>
 #include <QLocale>
 
 HostListModel::HostListModel(HostInfoManager* manager, QObject* parent)
