@@ -1,15 +1,7 @@
-find_package(Icecream REQUIRED)
-
-add_definitions(${QT_DEFINITIONS})
+add_subdirectory(images)
 
 include_directories(
-    ${LIBICECREAM_INCLUDE_DIR}
-    ${QT_INCLUDES}
-
-    ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
-
-    ${CMAKE_CURRENT_BINARY_DIR}/.. # config-icemon.h
 )
 
 set(icemon_SRCS
