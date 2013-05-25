@@ -27,6 +27,17 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
 endif()
 
 find_package(Qt4 REQUIRED)
+find_package(Icecream REQUIRED)
+
+add_definitions(
+  ${QT_DEFINITIONS}
+)
+
+include_directories(
+    ${LIBICECREAM_INCLUDE_DIR}
+    ${QT_INCLUDES}
+    ${CMAKE_CURRENT_BINARY_DIR} # config-icemon.h
+)
 
 set(
   INSTALL_TARGETS_DEFAULT_ARGS
