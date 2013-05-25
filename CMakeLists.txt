@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 2.8.5)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 
 include(GNUInstallDirs)
+include(KDE4Macros-Icecream)
 
 # version info
 set(ICEMON_VERSION_MAJOR "2")
@@ -47,6 +48,7 @@ set(
 )
 
 set(XDG_APPS_INSTALL_DIR ${CMAKE_INSTALL_DATADIR}/applications)
+set(ICON_INSTALL_DIR ${CMAKE_INSTALL_DATADIR}/icons)
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/config-icemon.h.cmake
