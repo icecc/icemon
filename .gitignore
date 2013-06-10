@@ -37,6 +37,11 @@ Thumbs.db
 # ---------------------
 .*.swp
 
+# KDevelop
+# ---------------------
+*.kdev4
+.kdev4/
+
 # Visual Studio generated files
 # ---------------------
 *.ib_pdb_index
