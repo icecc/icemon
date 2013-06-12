@@ -29,6 +29,9 @@ endif()
 
 find_package(Qt4 REQUIRED)
 find_package(Icecream REQUIRED)
+find_program(DOCBOOK2X
+  NAMES docbook2x-man docbook-to-man docbook2man.pl
+)
 
 add_definitions(
   ${QT_DEFINITIONS}
@@ -56,6 +59,4 @@ configure_file(
 )
 
 add_subdirectory(src)
-
-# It's not possible to install the docbook right now (Qt-only project)
-#add_subdirectory(doc)
+add_subdirectory(doc)
