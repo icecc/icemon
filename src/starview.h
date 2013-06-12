@@ -3,6 +3,16 @@
 
     Copyright (c) 2003 Frerich Raabe <raabe@kde.org>
     Copyright (c) 2004 Cornelius Schumacher <schumacher@kde.org>
+    Copyright (c) 2004-2007 Stephan Kulow <coolo@kde.org>
+    Copyright (c) 2004 Andre Wöbbeking <woebbeking@kde.org>
+    Copyright (c) 2004 Adriaan de Groot <groot@kde.org>
+    Copyright (c) 2006 Dirk Mueller <mueller@kde.org>
+    Copyright (c) 2006 Hamish Rodda <rodda@kde.org>
+    Copyright (c) 2008 Urs Wolfer <uwolfer@kde.org>
+    Copyright (c) 2008 Pino Toscano <pino@kde.org>
+    Copyright (c) 2011 Daniel Molkentin <daniel.molkentin@nokia.com>
+    Copyright (c) 2012 Kevin Funk <kevin@kfunk.org>
+    Copyright (c) 2012 J-P Nurmi <jpnurmi@digia.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

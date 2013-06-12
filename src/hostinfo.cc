@@ -2,6 +2,17 @@
     This file is part of Icecream.
 
     Copyright (c) 2004 Cornelius Schumacher <schumacher@kde.org>
+    Copyright (c) 2004 Scott Wheeler <wheeler@kde.org>
+    Copyright (c) 2004,2007 Stephan Kulow <coolo@kde.org>
+    Copyright (c) 2004 Will Stephenson <wstephenson@kde.org>
+    Copyright (c) 2004,2006 Andre Wöbbeking <woebbeking@web.de>
+    Copyright (c) 2006-2007 Dirk Mueller <mueller@kde.org>
+    Copyright (c) 2006 Tobias Koenig <tokoe@kde.org>
+    Copyright (c) 2008 Urs Wolfer <uwolfer@kde.org>
+    Copyright (c) 2008-2009 David Faure <faure@kde.org>
+    Copyright (c) 2011 Daniel Molkentin <daniel.molkentin@nokia.com> <daniel@molkentin.de>
+    Copyright (c) 2012 J-P Nurmi <jpnurmi@digia.com>
+    Copyright (c) 2012 Kevin Funk <kevin@kfunk.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

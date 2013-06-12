@@ -2,6 +2,9 @@
     This file is part of Icecream.
 
     Copyright (c) 2004-2006 Andre Wöbbeking <Woebbeking@web.de>
+    Copyright (c) 2007 Stephan Kulow <coolo@kde.org>
+    Copyright (c) 2008 Urs Wolfer <uwolfer@kde.org>
+    Copyright (c) 2012 Kevin Funk <kevin@kfunk.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
