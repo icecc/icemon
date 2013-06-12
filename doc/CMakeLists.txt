@@ -24,4 +24,5 @@ macro(install_docbook_man_page name section)
 endmacro()
 
 if(DOCBOOK2X)
+  install_docbook_man_page(icemon 1)
 endif()
