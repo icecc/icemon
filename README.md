@@ -27,4 +27,6 @@ Finally, compile and install the application:
     $ make
     $ make install
 
-Have a lot of fun ;)
+Run:
+
+    $ icemon
