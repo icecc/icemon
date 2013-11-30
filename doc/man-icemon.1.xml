@@ -48,12 +48,12 @@ network and monitor its traffic.</para>
 <variablelist>
 
 <varlistentry>
-<term><option>-h</option>, <option>-help</option></term>
+<term><option>-h</option>, <option>--help</option></term>
 <listitem><para>Print help message and exit.</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><option>-n</option>, <option>-netname</option>
+<term><option>-n</option>, <option>--netname</option>
 <parameter>net-name</parameter></term>
 <listitem><para>The name of the Icecream network &icemon; should connect to.
 </para></listitem>

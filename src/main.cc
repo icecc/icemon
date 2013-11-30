@@ -22,6 +22,7 @@
 */
 
 #include <QApplication>
+#include <QTextStream>
 
 #include "mainwindow.h"
 #include "version.h"
@@ -29,19 +30,14 @@
 #include <stdio.h>
 
 void printHelp() {
-    QString help;
-    help += QApplication::translate("Usage", "Usage: %1 [options]").arg(Icemon::Version::appShortName);
-    help += '\n';
-    help += '\n';
-    help += QApplication::translate("Description", Icemon::Version::description);
-    help += '\n';
-    help += '\n';
-    help += QApplication::translate("Options", "Options:");
-    help += '\n';
-    help += QApplication::translate("Netname Options",  "\t-n, netname <name>\tIcecream network name");
-    help += '\n';
-    help += '\n';
-    fputs(qPrintable(help), stdout);
+    QTextStream out(stdout);
+    out << "Usage: " << Icemon::Version::appShortName << " [options]" << endl;
+    out << endl;
+    out << Icemon::Version::description << endl;
+    out << endl;
+    out << "Options:" << endl;
+    out << "\t-h, --help          \tShow this help" << endl;
+    out << "\t-n, --netname <name>\tIcecream network name" << endl;
 }
 
 int main( int argc, char **argv )
@@ -49,15 +45,15 @@ int main( int argc, char **argv )
     QByteArray netName;
     bool enableTestMode = false;
     for (int i = 1; i < argc; ++i ) {
-        if (qstrcmp(argv[i], "-help") == 0 || qstrcmp(argv[i], "-h")  == 0) {
+        if (qstrcmp(argv[i], "--help") == 0 || qstrcmp(argv[i], "-h")  == 0) {
             printHelp();
             return 0;
         }
-        if (qstrcmp(argv[i], "-netname") == 0 || qstrcmp(argv[i], "-n")  == 0) {
+        if (qstrcmp(argv[i], "--netname") == 0 || qstrcmp(argv[i], "-n")  == 0) {
             if (i+1 < argc)
                 netName = argv[++i];
         }
-        if (qstrcmp(argv[i], "-testmode") == 0) {
+        if (qstrcmp(argv[i], "--testmode") == 0) {
             enableTestMode = true;
         }
     }
