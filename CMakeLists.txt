@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 2.8.5)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 
+include(CheckCXXCompilerFlag)
 include(GNUInstallDirs)
 include(KDE4Macros-Icecream)
 include(CheckIncludeFileCXX)
@@ -42,6 +43,26 @@ macro_log_feature(
   ""
   "Required for man-page generation"
 )
+
+if(CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  check_cxx_compiler_flag(-Wunused-but-set-variable HAVE_GCC_UNUSED_BUT_SET)
+  check_cxx_compiler_flag(-Wlogical-op HAVE_GCC_LOGICAL_OP)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wextra -Woverloaded-virtual -Winit-self -Wmissing-include-dirs -Wunused -Wno-div-by-zero -Wundef -Wpointer-arith -Wcast-qual -Wcast-align -Wmissing-noreturn -Werror=return-type")
+  if(HAVE_GCC_UNUSED_BUT_SET)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wunused-but-set-variable")
+  endif()
+  if(HAVE_GCC_LOGICAL_OP)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wlogical-op")
+  endif()
+  if(MINGW)
+    # mingw will error out on the crazy casts in probe.cpp without this
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
+  else()
+    # visibility attributes not supported on mingw, don't use -fvisibility option
+    # see: http://stackoverflow.com/questions/7994415/mingw-fvisibility-hidden-does-not-seem-to-work
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
+  endif()
+endif()
 
 add_definitions(
   ${QT_DEFINITIONS}
