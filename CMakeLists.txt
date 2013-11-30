@@ -7,6 +7,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/mod
 include(GNUInstallDirs)
 include(KDE4Macros-Icecream)
 include(CheckIncludeFileCXX)
+include(MacroLogFeature)
 
 # version info
 set(ICEMON_VERSION_MAJOR "2")
@@ -30,8 +31,16 @@ endif()
 
 find_package(Qt4 REQUIRED)
 find_package(Icecream REQUIRED)
-find_program(DOCBOOK2X
-  NAMES docbook2x-man docbook-to-man docbook2man.pl
+find_package(Docbook2X QUIET)
+
+macro_log_feature(
+  DOCBOOK_TO_MAN_EXECUTABLE
+  "docbook2X"
+  "docbook2X converts DocBook documents into the traditional Unix man page format"
+  "http://docbook2x.sourceforge.net/"
+  FALSE
+  ""
+  "Required for man-page generation"
 )
 
 add_definitions(
@@ -63,3 +72,5 @@ configure_file(
 
 add_subdirectory(src)
 add_subdirectory(doc)
+
+macro_display_feature_log()
