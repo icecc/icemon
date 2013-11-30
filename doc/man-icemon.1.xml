@@ -76,4 +76,10 @@ network and monitor its traffic.</para>
 <member>Kevin Funk &lt;kevin@kfunk.org&gt;</member>
 </simplelist>
 </refsect1>
+
+<refsect1>
+<title>Website</title>
+<para>Project home: https://github.com/icecc/icemon</para>
+</refsect1>
+
 </refentry>
