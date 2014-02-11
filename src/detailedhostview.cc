@@ -124,10 +124,8 @@ void DetailedHostView::checkNode( unsigned int hostid )
 
     if ( !mHostListView->selectionModel()->hasSelection() ) {
         HostInfo* info = hostInfoManager()->find( hostid );
-        if ( info->name() == myHostName() ) {
-            const QModelIndex index = mHostListModel->indexForHostInfo(*info);
-            mHostListView->selectionModel()->select( index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
-        }
+        if ( info->name() == myHostName() )
+            mHostListView->setCurrentIndex( mHostListModel->indexForHostInfo(*info) );
     }
 }
 
