@@ -122,17 +122,13 @@ void DetailedHostView::checkNode( unsigned int hostid )
 
     mHostListModel->checkNode( hostid );
 
-    // TODO: Select the node if it's the current host
-#if 0
-    const unsigned int activeNode = mHostListView->activeNode();
-
-    if ( !activeNode )
-    {
+    if ( !mHostListView->selectionModel()->hasSelection() ) {
         HostInfo* info = hostInfoManager()->find( hostid );
-        if ( info->name() == myHostName() )
-            mHostListView->setActiveNode( hostid );
+        if ( info->name() == myHostName() ) {
+            const QModelIndex index = mHostListModel->indexForHostInfo(*info);
+            mHostListView->selectionModel()->select( index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+        }
     }
-#endif
 }
 
 
