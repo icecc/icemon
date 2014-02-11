@@ -20,6 +20,7 @@
 
 #include <QLabel>
 #include <QBoxLayout>
+#include <QSortFilterProxyModel>
 #include <QSplitter>
 
 #include "detailedhostview.h"
@@ -60,9 +61,12 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
 
   mHostListModel = new HostListModel(manager, this);
 
+  QSortFilterProxyModel* sortedHostListModel = new QSortFilterProxyModel(this);
+  sortedHostListModel->setSourceModel(mHostListModel);
+
   dummy->addWidget(new QLabel( tr("Hosts" ), hosts ));
   mHostListView = new HostListView( manager, hosts );
-  mHostListView->setModel(mHostListModel);
+  mHostListView->setModel(sortedHostListModel);
   dummy->addWidget(mHostListView);
   connect(mHostListView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
           SLOT(slotNodeActivated()));

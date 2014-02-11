@@ -69,7 +69,7 @@ QVariant HostListModel::data(const QModelIndex& index, int role) const
     } else if (role == Qt::DisplayRole) {
         switch (column) {
         case ColumnID:
-            return QString::number(info.id());
+            return info.id();
         case ColumnName:
             return info.name();
         case ColumnColor:
