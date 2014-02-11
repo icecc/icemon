@@ -79,11 +79,11 @@ QVariant HostListModel::data(const QModelIndex& index, int role) const
         case ColumnPlatform:
             return info.platform();
         case ColumnMaxJobs:
-            return QString::number(info.maxJobs());
+            return info.maxJobs();
         case ColumnSpeed:
-            return QLocale::c().toString(info.serverSpeed());
+            return info.serverSpeed();
         case ColumnLoad:
-            return QString::number(info.serverLoad());
+            return info.serverLoad();
         default:
             break;
         }
