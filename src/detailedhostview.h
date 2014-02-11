@@ -29,6 +29,7 @@ class HostListModel;
 class JobListView;
 class JobListModel;
 class HostListView;
+class QSortFilterProxyModel;
 
 class DetailedHostView : public QWidget, public StatusView
 {
@@ -59,12 +60,15 @@ private:
 
     HostListModel* mHostListModel;
     HostListView* mHostListView;
+    QSortFilterProxyModel* mSortedHostListModel;
 
     JobListModel* mLocalJobsModel;
     JobListView* mLocalJobsView;
+    QSortFilterProxyModel* mSortedLocalJobsModel;
 
     JobListModel* mRemoteJobsModel;
     JobListView* mRemoteJobsView;
+    QSortFilterProxyModel* mSortedRemoteJobsModel;
 };
 
 

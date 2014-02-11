@@ -168,11 +168,11 @@ QVariant JobListModel::data(const QModelIndex& index, int role) const
         case JobColumnState:
             return job.stateAsString();
         case JobColumnReal:
-            return QString::number(job.real_msec);
+            return job.real_msec;
         case JobColumnUser:
-            return QString::number(job.user_msec);
+            return job.user_msec;
         case JobColumnFaults:
-            return QString::number(job.pfaults);
+            return job.pfaults;
         case JobColumnSizeIn:
             return formatByteSize(job.in_uncompressed);
         case JobColumnSizeOut:
