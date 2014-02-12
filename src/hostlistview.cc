@@ -36,8 +36,6 @@ HostListView::HostListView( HostInfoManager* manager,
 
 void HostListView::setModel(QAbstractItemModel* model)
 {
-    Q_ASSERT(qobject_cast<HostListModel*>(model));
-
     if (model) {
         sortByColumn(HostListModel::ColumnID);
     }

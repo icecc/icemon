@@ -20,6 +20,7 @@
 
 #include <QLabel>
 #include <QBoxLayout>
+#include <QSortFilterProxyModel>
 #include <QSplitter>
 
 #include "detailedhostview.h"
@@ -60,9 +61,12 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
 
   mHostListModel = new HostListModel(manager, this);
 
+  QSortFilterProxyModel* sortedHostListModel = new QSortFilterProxyModel(this);
+  sortedHostListModel->setSourceModel(mHostListModel);
+
   dummy->addWidget(new QLabel( tr("Hosts" ), hosts ));
   mHostListView = new HostListView( manager, hosts );
-  mHostListView->setModel(mHostListModel);
+  mHostListView->setModel(sortedHostListModel);
   dummy->addWidget(mHostListView);
   connect(mHostListView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
           SLOT(slotNodeActivated()));
@@ -124,10 +128,8 @@ void DetailedHostView::checkNode( unsigned int hostid )
 
     if ( !mHostListView->selectionModel()->hasSelection() ) {
         HostInfo* info = hostInfoManager()->find( hostid );
-        if ( info->name() == myHostName() ) {
-            const QModelIndex index = mHostListModel->indexForHostInfo(*info);
-            mHostListView->selectionModel()->select( index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
-        }
+        if ( info->name() == myHostName() )
+            mHostListView->setCurrentIndex( mHostListModel->indexForHostInfo(*info) );
     }
 }
 
