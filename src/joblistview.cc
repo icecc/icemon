@@ -44,8 +44,6 @@ JobListModel* JobListView::jobListModel() const
 
 void JobListView::setModel(QAbstractItemModel* model)
 {
-    Q_ASSERT(qobject_cast<JobListModel*>(model));
-
     if (model) {
         sortByColumn(JobListModel::JobColumnID);
     }

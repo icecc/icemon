@@ -2,6 +2,7 @@
     This file is part of Icecream.
 
     Copyright (c) 2004-2006 Andre Wöbbeking <Woebbeking@web.de>
+              (c) 2014 Allan Sandfeld Jensen <sandfeld@kde.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -61,12 +62,12 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
 
   mHostListModel = new HostListModel(manager, this);
 
-  QSortFilterProxyModel* sortedHostListModel = new QSortFilterProxyModel(this);
-  sortedHostListModel->setSourceModel(mHostListModel);
+  mSortedHostListModel = new QSortFilterProxyModel(this);
+  mSortedHostListModel->setSourceModel(mHostListModel);
 
   dummy->addWidget(new QLabel( tr("Hosts" ), hosts ));
   mHostListView = new HostListView( manager, hosts );
-  mHostListView->setModel(sortedHostListModel);
+  mHostListView->setModel(mSortedHostListModel);
   dummy->addWidget(mHostListView);
   connect(mHostListView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
           SLOT(slotNodeActivated()));
@@ -78,10 +79,12 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
 
   mLocalJobsModel = new JobListModel(manager, this);
   mLocalJobsModel->setExpireDuration(5);
+  mSortedLocalJobsModel = new QSortFilterProxyModel(this);
+  mSortedLocalJobsModel->setSourceModel(mLocalJobsModel);
 
   dummy->addWidget(new QLabel( tr("Outgoing jobs" ), locals ));
   mLocalJobsView = new JobListView(locals);
-  mLocalJobsView->setModel(mLocalJobsModel);
+  mLocalJobsView->setModel(mSortedLocalJobsModel);
   mLocalJobsView->setClientColumnVisible( false );
   dummy->addWidget(mLocalJobsView);
 
@@ -92,10 +95,12 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
 
   mRemoteJobsModel = new JobListModel(manager, this);
   mRemoteJobsModel->setExpireDuration(5);
+  mSortedRemoteJobsModel = new QSortFilterProxyModel(this);
+  mSortedRemoteJobsModel->setSourceModel(mRemoteJobsModel);
 
   dummy->addWidget(new QLabel( tr("Incoming jobs" ), remotes ));
   mRemoteJobsView = new JobListView(remotes);
-  mRemoteJobsView->setModel(mRemoteJobsModel);
+  mRemoteJobsView->setModel(mSortedRemoteJobsModel);
   mRemoteJobsView->setServerColumnVisible( false );
   dummy->addWidget(mRemoteJobsView);
 
@@ -105,17 +110,21 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
 
 void DetailedHostView::update( const Job &job )
 {
-    const unsigned int hostid = mHostListView->currentIndex().data(HostListModel::HostIdRole).value<unsigned int>();
+    const unsigned int hostid = mSortedHostListModel->mapToSource(mHostListView->currentIndex()).data(HostListModel::HostIdRole).value<unsigned int>();
     if ( !hostid )
         return;
 
     if ( job.client() != hostid && job.server() != hostid )
         return;
 
-    if ( job.client() == hostid )
-        mLocalJobsView->update( job );
-    if ( job.server() == hostid )
-        mRemoteJobsView->update( job );
+    if ( job.client() == hostid ) {
+        mLocalJobsModel->update( job );
+        mSortedLocalJobsModel->invalidate();
+    }
+    if ( job.server() == hostid ) {
+        mRemoteJobsModel->update( job );
+        mSortedRemoteJobsModel->invalidate();
+    }
 }
 
 
@@ -129,7 +138,7 @@ void DetailedHostView::checkNode( unsigned int hostid )
     if ( !mHostListView->selectionModel()->hasSelection() ) {
         HostInfo* info = hostInfoManager()->find( hostid );
         if ( info->name() == myHostName() )
-            mHostListView->setCurrentIndex( mHostListModel->indexForHostInfo(*info) );
+            mHostListView->setCurrentIndex( mSortedHostListModel->mapFromSource(mHostListModel->indexForHostInfo(*info) ));
     }
 }
 
