@@ -24,9 +24,11 @@
 
 #include "statusview.h"
 
-#include <qwidget.h>
+#include <QWidget>
 
+class JobListModel;
 class JobListView;
+class QSortFilterProxyModel;
 
 class ListStatusView :public QWidget, public StatusView
 {
@@ -41,8 +43,9 @@ public:
     virtual QString id() const { return "list"; }
 
 private:
-
     JobListView* mJobsListView;
+    JobListModel* mJobsListModel;
+    QSortFilterProxyModel* mSortedJobsListModel;
 };
 
 #endif
