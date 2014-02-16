@@ -24,13 +24,10 @@ else (LIBICECREAM_INCLUDE_DIR AND LIBICECREAM_LIBRARIES)
     # of pkg-config data.
     # Somewhat hackish, but I can't find a simpler way to do this with CMake.
     foreach(lib ${PC_ICECC_STATIC_LIBRARIES})
-        message(STATUS "A ${lib}")
       if(NOT ${lib} STREQUAL "icecc")
         list(APPEND LIBICECREAM_LIB_EXTRA "-l${lib}")
-        message(STATUS "B ${lib}")
       endif(NOT ${lib} STREQUAL "icecc")
     endforeach(lib ${PC_ICECC_STATIC_LIBRARIES})
-        message(STATUS "C ${LIBICECREAM_LIB_EXTRA}")
     set(LIBICECREAM_VERSION "${PC_ICECC_VERSION}")
   endif(NOT WIN32)
 
