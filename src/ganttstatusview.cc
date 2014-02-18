@@ -345,6 +345,9 @@ void GanttStatusView::update( const Job &job )
         return;
     }
 
+    if ( job.state() == Job::Finished || job.state() == Job::Failed )
+        return;
+
     GanttProgress *slot = 0;
 
     unsigned int processor;
