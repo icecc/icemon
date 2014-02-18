@@ -157,7 +157,8 @@ void GanttProgress::update( const Job &job )
     qDebug() << "GanttProgress::update( job ): " << job.fileName() << endl;
 
     qDebug() << "  num jobs: " << m_jobs.count() << endl;
-    qDebug() << "  first id: " << m_jobs.first().job.jobId() << endl;
+    if (!m_jobs.isEmpty())
+        qDebug() << "  first id: " << m_jobs.first().job.jobId() << endl;
     qDebug() << "  this id: " << job.jobId() << endl;
 #endif
 
