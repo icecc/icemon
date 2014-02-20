@@ -140,6 +140,8 @@ void DetailedHostView::checkNode( unsigned int hostid )
         if ( info->name() == myHostName() )
             mHostListView->setCurrentIndex( mSortedHostListModel->mapFromSource(mHostListModel->indexForHostInfo(*info, 0) ));
     }
+
+    mSortedHostListModel->invalidate();
 }
 
 
