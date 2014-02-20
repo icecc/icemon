@@ -478,7 +478,9 @@ void PoolView::update( const Job &job )
 {
     unsigned int hostid = processor( job );
     if ( !hostid ) {
+#if 0
         qDebug() << "Empty host" << endl;
+#endif
         return;
     }
 

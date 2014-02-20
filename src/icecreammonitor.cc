@@ -57,7 +57,9 @@ IcecreamMonitor::~IcecreamMonitor()
 
 void IcecreamMonitor::checkScheduler(bool deleteit)
 {
+#if 0
     qDebug() << "checkScheduler " << deleteit << endl;
+#endif
     if ( deleteit ) {
         m_rememberedJobs.clear();
         delete m_scheduler;
@@ -159,7 +161,9 @@ bool IcecreamMonitor::handle_activity()
 {
     Msg *m = m_scheduler->get_msg ();
     if ( !m ) {
+#if 0
         qDebug() << "lost connection to scheduler\n";
+#endif
         checkScheduler( true );
         setSchedulerState( false );
         return false;

@@ -310,7 +310,9 @@ void StarView::update( const Job &job )
 
     unsigned int hostid = processor( job );
     if ( !hostid ) {
+#if 0
         qDebug() << "Empty host" << endl;
+#endif
         return;
     }
 
@@ -640,7 +642,9 @@ bool StarView::filterArch( unsigned int hostid )
 {
     HostInfo *i = hostInfoManager()->find( hostid );
     if ( !i ) {
+#if 0
         qDebug() << "No HostInfo for id " << hostid;
+#endif
         return false;
     }
 

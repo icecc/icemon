@@ -356,8 +356,10 @@ void GanttStatusView::update( const Job &job )
     else processor = job.server();
 
     if ( !processor ) {
+#if 0
       qDebug() << "GanttStatusView::update(): processor for job "
                 << job.jobId() << " is empty.";
+#endif
       return;
     }
 
@@ -448,7 +450,9 @@ GanttProgress *GanttStatusView::registerNode( unsigned int hostid )
 
     NodeRowMap::ConstIterator rowIt = mNodeRows.constFind( hostid );
     if ( rowIt == mNodeRows.constEnd() ) {
+#if 0
       qDebug() << "Unknown node row.";
+#endif
     } else {
       int row = *rowIt;
       NodeLabelMap::ConstIterator labelIt = mNodeLabels.constFind( hostid );
