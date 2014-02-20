@@ -138,7 +138,7 @@ void DetailedHostView::checkNode( unsigned int hostid )
     if ( !mHostListView->selectionModel()->hasSelection() ) {
         HostInfo* info = hostInfoManager()->find( hostid );
         if ( info->name() == myHostName() )
-            mHostListView->setCurrentIndex( mSortedHostListModel->mapFromSource(mHostListModel->indexForHostInfo(*info) ));
+            mHostListView->setCurrentIndex( mSortedHostListModel->mapFromSource(mHostListModel->indexForHostInfo(*info, 0) ));
     }
 }
 

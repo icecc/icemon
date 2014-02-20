@@ -126,10 +126,10 @@ HostInfo HostListModel::hostInfoForIndex(const QModelIndex& index) const
     return m_hostInfos.value(index.row());
 }
 
-QModelIndex HostListModel::indexForHostInfo(const HostInfo& info) const
+QModelIndex HostListModel::indexForHostInfo(const HostInfo& info, int column) const
 {
     const int i = m_hostInfos.indexOf(info);
-    return index(i);
+    return index(i, column);
 }
 
 void HostListModel::checkNode(unsigned int hostid)
@@ -141,8 +141,7 @@ void HostListModel::checkNode(unsigned int hostid)
     const int index = m_hostInfos.indexOf(*info);
     if (index != -1) {
         m_hostInfos[index] = *info;
-        QModelIndex index = indexForHostInfo(*info);
-        emit dataChanged(index, index);
+        emit dataChanged(indexForHostInfo(*info, 0), indexForHostInfo(*info, _ColumnCount - 1));
     } else {
         beginInsertRows(QModelIndex(), m_hostInfos.size(), m_hostInfos.size());
         m_hostInfos << *info;

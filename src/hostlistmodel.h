@@ -61,7 +61,7 @@ public:
     void clear();
 
     HostInfo hostInfoForIndex(const QModelIndex& index) const;
-    QModelIndex indexForHostInfo(const HostInfo& info) const;
+    QModelIndex indexForHostInfo(const HostInfo& info, int column) const;
 
 private:
     const HostInfoManager* m_hostInfoManager;
