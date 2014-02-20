@@ -138,9 +138,6 @@ class GanttStatusView : public QScrollArea, public StatusView
     virtual void update( const Job &job );
     virtual QWidget *widget();
 
-  protected:
-    void resizeEvent( QResizeEvent *e );
-
   private slots:
     void slotConfigChanged();
     void updateGraphs();

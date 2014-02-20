@@ -291,6 +291,7 @@ GanttStatusView::GanttStatusView( HostInfoManager *m, QWidget *parent)
 
     setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
     setWidget( mTopWidget );
+    setWidgetResizable( true );
 
     QPalette palette = mTopWidget->palette();
     palette.setColor( mTopWidget->backgroundRole(), Qt::white );
@@ -565,23 +566,6 @@ void GanttStatusView::checkAge()
          it != to_unregister.constEnd();
          ++it )
         unregisterNode( *it );
-}
-
-void GanttStatusView::resizeEvent( QResizeEvent *e )
-{
-  QSize s = e->size();
-
-  setMinimumWidth( mTopWidget->sizeHint().width() +
-                   verticalScrollBar()->width() );
-  mTopWidget->setMinimumWidth( s.width() );
-
-  if ( mTopWidget->height() <= s.height() ) {
-    mTopWidget->setMinimumHeight( s.height() );
-  } else {
-    mTopWidget->setMinimumHeight( mTopWidget->sizeHint().height() );
-  }
-
-  QScrollArea::resizeEvent( e );
 }
 
 void GanttStatusView::configureView()
