@@ -32,10 +32,15 @@
 #include <algorithm>
 #include <functional>
 
-// TODO: Find a suitable replace method for KLocale's formatByteSize
-static QString formatByteSize(int bytes)
+static QString formatByteSize(unsigned int value)
 {
-    return QCoreApplication::tr("%1 B").arg( QLocale::system().toString(bytes) );
+    static const char* const units[] = { "B", "KiB", "MiB" };
+    unsigned int unit = 0;
+    while( unit < sizeof( units ) / sizeof( units[ 0 ] ) && value > 1024 ) {
+        ++unit;
+        value /= 1024;
+    }
+    return QCoreApplication::tr("%1 %2").arg( QLocale::system().toString(value), units[unit]);
 }
 
 /**
