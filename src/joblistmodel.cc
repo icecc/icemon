@@ -81,8 +81,7 @@ void JobListModel::update(const Job& job)
     const int index = m_jobs.indexOf(job);
     if (index != -1) {
         m_jobs[index] = job;
-        QModelIndex index = indexForJob(job);
-        emit dataChanged(index, index);
+        emit dataChanged(indexForJob(job, 0), indexForJob(job, _JobColumnCount - 1 ));
     } else {
         beginInsertRows(QModelIndex(), m_jobs.size(), m_jobs.size());
         m_jobs << job;
@@ -112,10 +111,10 @@ Job JobListModel::jobForIndex(const QModelIndex& index) const
     return m_jobs.value(index.row());
 }
 
-QModelIndex JobListModel::indexForJob(const Job& job)
+QModelIndex JobListModel::indexForJob(const Job& job, int column)
 {
     const int i = m_jobs.indexOf(job);
-    return index(i);
+    return index(i, column);
 }
 
 QVariant JobListModel::headerData(int section, Qt::Orientation orientation, int role) const

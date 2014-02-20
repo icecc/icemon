@@ -70,7 +70,7 @@ public:
     virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
 
     Job jobForIndex(const QModelIndex& index) const;
-    QModelIndex indexForJob(const Job& job);
+    QModelIndex indexForJob(const Job& job, int column);
 
     const HostInfoManager* hostInfoManager() const {
         return m_hostInfoManager;
