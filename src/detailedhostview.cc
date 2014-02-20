@@ -63,6 +63,7 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
   mHostListModel = new HostListModel(manager, this);
 
   mSortedHostListModel = new QSortFilterProxyModel(this);
+  mSortedHostListModel->setDynamicSortFilter(true);
   mSortedHostListModel->setSourceModel(mHostListModel);
 
   dummy->addWidget(new QLabel( tr("Hosts" ), hosts ));
@@ -80,6 +81,7 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
   mLocalJobsModel = new JobListModel(manager, this);
   mLocalJobsModel->setExpireDuration(5);
   mSortedLocalJobsModel = new QSortFilterProxyModel(this);
+  mSortedLocalJobsModel->setDynamicSortFilter(true);
   mSortedLocalJobsModel->setSourceModel(mLocalJobsModel);
 
   dummy->addWidget(new QLabel( tr("Outgoing jobs" ), locals ));
@@ -96,6 +98,7 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
   mRemoteJobsModel = new JobListModel(manager, this);
   mRemoteJobsModel->setExpireDuration(5);
   mSortedRemoteJobsModel = new QSortFilterProxyModel(this);
+  mSortedRemoteJobsModel->setDynamicSortFilter(true);
   mSortedRemoteJobsModel->setSourceModel(mRemoteJobsModel);
 
   dummy->addWidget(new QLabel( tr("Incoming jobs" ), remotes ));
@@ -117,14 +120,10 @@ void DetailedHostView::update( const Job &job )
     if ( job.client() != hostid && job.server() != hostid )
         return;
 
-    if ( job.client() == hostid ) {
+    if ( job.client() == hostid )
         mLocalJobsModel->update( job );
-        mSortedLocalJobsModel->invalidate();
-    }
-    if ( job.server() == hostid ) {
+    if ( job.server() == hostid )
         mRemoteJobsModel->update( job );
-        mSortedRemoteJobsModel->invalidate();
-    }
 }
 
 
@@ -140,8 +139,6 @@ void DetailedHostView::checkNode( unsigned int hostid )
         if ( info->name() == myHostName() )
             mHostListView->setCurrentIndex( mSortedHostListModel->mapFromSource(mHostListModel->indexForHostInfo(*info, 0) ));
     }
-
-    mSortedHostListModel->invalidate();
 }
 
 

@@ -37,6 +37,7 @@ ListStatusView::ListStatusView( HostInfoManager* manager,
 {
     mJobsListModel = new JobListModel(manager, this);
     mSortedJobsListModel = new QSortFilterProxyModel(this);
+    mSortedJobsListModel->setDynamicSortFilter(true);
     mSortedJobsListModel->setSourceModel(mJobsListModel);
 
     mJobsListView->setModel(mSortedJobsListModel);
@@ -49,7 +50,6 @@ ListStatusView::ListStatusView( HostInfoManager* manager,
 void ListStatusView::update( const Job &job )
 {
     mJobsListModel->update( job );
-    mSortedJobsListModel->invalidate();
 }
 
 #include "listview.moc"
