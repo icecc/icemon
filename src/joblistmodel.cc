@@ -276,4 +276,26 @@ void JobListModel::expireItem(const Job& job)
         m_expireTimer->start(1000);
 }
 
+
+JobListSortFilterProxyModel::JobListSortFilterProxyModel(QObject* parent)
+    : QSortFilterProxyModel( parent )
+{
+}
+
+bool JobListSortFilterProxyModel::lessThan( const QModelIndex& left, const QModelIndex& right ) const
+{
+    if ((left.column() != JobListModel::JobColumnSizeIn && left.column() != JobListModel::JobColumnSizeOut)
+        || (right.column() != JobListModel::JobColumnSizeIn && right.column() != JobListModel::JobColumnSizeOut)) {
+        return QSortFilterProxyModel::lessThan(left, right);
+    }
+    // Sort file sizes correctly, the view shows them already formatted in a way that wouldn't be correctly numerically
+    // compared.
+    const JobListModel* model = static_cast< JobListModel* >( sourceModel());
+    Job jobLeft = model->jobForIndex(left);
+    Job jobRight = model->jobForIndex(right);
+    unsigned int leftValue = left.column() == JobListModel::JobColumnSizeIn ? jobLeft.in_uncompressed : jobLeft.out_uncompressed;
+    unsigned int rightValue = right.column() == JobListModel::JobColumnSizeIn ? jobRight.in_uncompressed : jobRight.out_uncompressed;
+    return leftValue < rightValue;
+}
+
 #include "joblistmodel.moc"

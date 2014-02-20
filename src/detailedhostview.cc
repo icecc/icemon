@@ -80,7 +80,7 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
 
   mLocalJobsModel = new JobListModel(manager, this);
   mLocalJobsModel->setExpireDuration(5);
-  mSortedLocalJobsModel = new QSortFilterProxyModel(this);
+  mSortedLocalJobsModel = new JobListSortFilterProxyModel(this);
   mSortedLocalJobsModel->setDynamicSortFilter(true);
   mSortedLocalJobsModel->setSourceModel(mLocalJobsModel);
 
@@ -97,7 +97,7 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
 
   mRemoteJobsModel = new JobListModel(manager, this);
   mRemoteJobsModel->setExpireDuration(5);
-  mSortedRemoteJobsModel = new QSortFilterProxyModel(this);
+  mSortedRemoteJobsModel = new JobListSortFilterProxyModel(this);
   mSortedRemoteJobsModel->setDynamicSortFilter(true);
   mSortedRemoteJobsModel->setSourceModel(mRemoteJobsModel);
 

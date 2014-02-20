@@ -22,6 +22,7 @@
 #define JOBLISTMODEL_H
 
 #include <QAbstractItemModel>
+#include <QSortFilterProxyModel>
 
 #include "job.h"
 
@@ -119,6 +120,15 @@ private:
     FinishedJobs m_finishedJobs;
 
     QTimer* m_expireTimer;
+};
+
+class JobListSortFilterProxyModel : public QSortFilterProxyModel
+{
+    Q_OBJECT
+public:
+    JobListSortFilterProxyModel( QObject* parent = NULL );
+protected:
+    virtual bool lessThan( const QModelIndex& left, const QModelIndex& right ) const;
 };
 
 #endif
