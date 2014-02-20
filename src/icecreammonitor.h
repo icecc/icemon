@@ -57,6 +57,7 @@ class IcecreamMonitor : public Monitor
   private:
     void checkScheduler(bool deleteit = false);
     void registerNotify(int fd, QSocketNotifier::Type type, const char* slot);
+    void setupDebug();
 
     bool handle_activity();
     void handle_getcs( Msg *m );

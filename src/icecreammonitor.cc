@@ -27,6 +27,7 @@
 #include "statusview.h"
 
 #include <icecc/comm.h>
+#include <icecc/logging.h>
 
 #include <qdebug.h>
 
@@ -46,6 +47,7 @@ IcecreamMonitor::IcecreamMonitor( HostInfoManager *manager, QObject *parent)
     , m_fd_notify( 0 )
     , m_fd_type(QSocketNotifier::Exception)
 {
+    setupDebug();
     checkScheduler();
 }
 
@@ -353,6 +355,30 @@ void IcecreamMonitor::setSchedulerState( bool online )
     m_schedulerState = online;
     emit schedulerStateChanged( online );
     m_view->updateSchedulerState( online );
+}
+
+void IcecreamMonitor::setupDebug()
+{
+    char *env = getenv("ICECC_DEBUG");
+    int debug_level = Error;
+
+    if (env) {
+        if (!strcasecmp(env, "info"))  {
+            debug_level |= Info | Warning;
+        } else if (!strcasecmp(env, "warnings")) {
+            debug_level |= Warning; // taking out warning
+        } else { // any other value
+            debug_level |= Info | Debug | Warning;
+        }
+    }
+
+    std::string logfile;
+
+    if (const char *logfileEnv = getenv("ICECC_LOGFILE")) {
+        logfile = logfileEnv;
+    }
+
+    setup_debug(debug_level, logfile, "ICEMON");
 }
 
 #include "icecreammonitor.moc"
