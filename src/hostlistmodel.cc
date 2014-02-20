@@ -81,7 +81,7 @@ QVariant HostListModel::data(const QModelIndex& index, int role) const
         case ColumnMaxJobs:
             return info.maxJobs();
         case ColumnSpeed:
-            return info.serverSpeed();
+            return int(info.serverSpeed());
         case ColumnLoad:
             return info.serverLoad();
         default:
