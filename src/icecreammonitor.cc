@@ -26,8 +26,12 @@
 #include "hostinfo.h"
 #include "statusview.h"
 
+#include <config-icemon.h>
+
 #include <icecc/comm.h>
+#ifdef ICECC_HAVE_LOGGING_H
 #include <icecc/logging.h>
+#endif
 
 #include <qdebug.h>
 
@@ -359,6 +363,7 @@ void IcecreamMonitor::setSchedulerState( bool online )
 
 void IcecreamMonitor::setupDebug()
 {
+#ifdef ICECC_HAVE_LOGGING_H
     char *env = getenv("ICECC_DEBUG");
     int debug_level = Error;
 
@@ -379,6 +384,7 @@ void IcecreamMonitor::setupDebug()
     }
 
     setup_debug(debug_level, logfile, "ICEMON");
+#endif
 }
 
 #include "icecreammonitor.moc"

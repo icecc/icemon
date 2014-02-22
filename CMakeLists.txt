@@ -6,6 +6,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/mod
 
 include(GNUInstallDirs)
 include(KDE4Macros-Icecream)
+include(CheckIncludeFileCXX)
 
 # version info
 set(ICEMON_VERSION_MAJOR "2")
@@ -42,6 +43,8 @@ include_directories(
     ${QT_INCLUDES}
     ${CMAKE_CURRENT_BINARY_DIR} # config-icemon.h
 )
+
+check_include_file_cxx(icecc/logging.h ICECC_HAVE_LOGGING_H)
 
 set(
   INSTALL_TARGETS_DEFAULT_ARGS
