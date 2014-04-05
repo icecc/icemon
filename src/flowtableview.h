@@ -63,7 +63,6 @@ public:
     void checkNode( unsigned int hostid );
     void removeNode( unsigned int hostid );
 
-    void updateSchedulerState( bool online ) {}
     void checkNodes() {}
 
     QString id() const { return "flow"; }

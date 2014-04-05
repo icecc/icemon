@@ -106,6 +106,7 @@ QVariant HostListModel::data(const QModelIndex& index, int role) const
 
 int HostListModel::columnCount(const QModelIndex& parent) const
 {
+    Q_UNUSED(parent);
     return _ColumnCount;
 }
 

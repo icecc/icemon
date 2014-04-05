@@ -48,9 +48,7 @@ void StatusView::removeNode( unsigned int )
 
 void StatusView::updateSchedulerState( bool online )
 {
-#if 0
-  qDebug() << "Scheduler is" << ( online ? "online" : "offline" );
-#endif
+    Q_UNUSED(online);
 }
 
 QString StatusView::nameForHost( unsigned int id )

@@ -77,8 +77,9 @@ void FakeMonitor::init()
 
 void FakeMonitor::setCurrentView( StatusView *view, bool rememberJobs )
 {
-    m_view = view;
+    Q_UNUSED(rememberJobs);
 
+    m_view = view;
     m_view->updateSchedulerState(true);
 }
 
