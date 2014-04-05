@@ -22,21 +22,21 @@
 
 #include "mainwindow.h"
 
-#include "starview.h"
-#include "summaryview.h"
-#include "detailedhostview.h"
-#include "ganttstatusview.h"
-#include "listview.h"
-//#include "poolview.h"
-#include "flowtableview.h"
+#include "views/starview.h"
+#include "views/summaryview.h"
+#include "views/detailedhostview.h"
+#include "views/ganttstatusview.h"
+#include "views/listview.h"
+//#include "views/poolview.h"
+#include "views/flowtableview.h"
+
 #include "hostinfo.h"
 #include "monitor.h"
 #include "version.h"
 #include "fakemonitor.h"
 #include "icecreammonitor.h"
 
-#include <qdebug.h>
-
+#include <QDebug>
 #include <QMenuBar>
 #include <QStatusBar>
 #include <QMessageBox>
