@@ -32,7 +32,7 @@
 <refsynopsisdiv>
 <cmdsynopsis>
 <command>icemon</command>
-<arg>-n <replaceable>net-name</replaceable></arg>
+<arg><replaceable>OPTION</replaceable></arg>
 </cmdsynopsis>
 </refsynopsisdiv>
 
