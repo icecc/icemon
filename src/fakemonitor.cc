@@ -6,87 +6,75 @@
 
 #include <QDebug>
 #include <QStringList>
+#include <QTime>
 #include <QTimer>
 
+namespace {
+
 // counter variable
-static int JOB_ID = 0;
+int JOB_ID = 0;
 
-static const int MAX_JOB_COUNT = 10;
+const int MAX_JOB_COUNT = 10;
+const int MAX_HOST_COUNT = 40;
 
-static const QVector<int> HOST_IDS(QVector<int>() << 1 << 2 << 3);
-
-static const QStringList JOB_FILENAMES(QStringList()
+const QStringList JOB_FILENAMES(QStringList()
     << QLatin1String("/tmp/filename.cc")
     << QLatin1String("/some/very/long/path/containing/filename.cc")
     << QLatin1String("/some/very/long/path/containing/averyverylongfilename.cc")
 );
 
+QColor randomColor()
+{
+    const int r = qrand() % 255;
+    const int g = qrand() % 255;
+    const int b = qrand() % 255;
+    return QColor(r, g, b);
+};
+
+}
+
 FakeMonitor::FakeMonitor(HostInfoManager* manager, QObject* parent)
     : Monitor(manager, parent)
     , m_updateTimer(new QTimer(this))
 {
-    m_updateTimer->setInterval(1000);
+    m_updateTimer->setInterval(200);
     m_updateTimer->start();
     connect(m_updateTimer, SIGNAL(timeout()), SLOT(update()));
 
     setSchedulerState(true);
 
-    init();
+    for (HostId i = 0; i < MAX_HOST_COUNT; ++i) {
+        createHostInfo(i+1);
+    }
+
+    qsrand(QTime::currentTime().msec());
 }
 
-void FakeMonitor::init()
+void FakeMonitor::createHostInfo(HostId id)
 {
-    {
-    HostInfo info(1);
-    info.setIp("1.0.0.1");
-    info.setColor(Qt::red);
+    HostInfo info(id);
+    info.setIp(QString("1.0.0.%1").arg(id));
+    info.setColor(randomColor());
     info.setMaxJobs(5);
-    info.setName("Host1");
+    info.setName(QString("Host%1").arg(id));
     info.setOffline(false);
     info.setPlatform("Linux 3.6");
     info.setServerLoad(1.0);
     info.setServerSpeed(10);
     hostInfoManager()->checkNode(info);
-    }
-
-    {
-    HostInfo info(2);
-    info.setIp("1.0.0.2");
-    info.setColor(Qt::blue);
-    info.setMaxJobs(10);
-    info.setName("Host2");
-    info.setOffline(false);
-    info.setPlatform("Linux 3.4");
-    info.setServerLoad(1.0);
-    info.setServerSpeed(10);
-    hostInfoManager()->checkNode(info);
-    }
-
-    {
-    HostInfo info(3);
-    info.setIp("1.0.0.3");
-    info.setColor(Qt::green);
-    info.setMaxJobs(5);
-    info.setName("Host3");
-    info.setOffline(false);
-    info.setPlatform("Windows 3.1");
-    info.setServerLoad(1.0);
-    info.setServerSpeed(10);
-    hostInfoManager()->checkNode(info);
-    }
 }
 
 void FakeMonitor::update()
 {
     // create job
-    const int clientId = HOST_IDS[JOB_ID % HOST_IDS.size()];
+    const int clientId = (JOB_ID % MAX_HOST_COUNT)+1;
     const QString fileName = JOB_FILENAMES[JOB_ID % JOB_FILENAMES.length()];
     Job job(JOB_ID++, clientId, fileName);
     time_t rawtime;
     time(&rawtime);
     job.setStartTime(rawtime);
     job.setState(Job::Compiling);
-    const int serverId = HOST_IDS[(JOB_ID+1) % HOST_IDS.size()];
+    const int serverId = ((JOB_ID+1) % MAX_HOST_COUNT)+1;
     job.setServer(serverId);
     emit jobUpdated(job);
     m_activeJobs << job;

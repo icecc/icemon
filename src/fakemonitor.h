@@ -21,7 +21,7 @@ private Q_SLOTS:
     void update();
 
 private:
-    void init();
+    void createHostInfo(HostId id);
 
     QList<Job> m_activeJobs;
 
