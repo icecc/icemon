@@ -4,7 +4,7 @@
     Copyright (c) 2003 Frerich Raabe <raabe@kde.org>
     Copyright (c) 2003,2004 Stephan Kulow <coolo@kde.org>
     Copyright (c) 2004, 2005 Andre Wöbbeking <Woebbeking@web.de>
-    Copyright (c) 2012 Kevin Funk <kevin@kfunk.org>
+    Copyright (c) 2012 Kevin Funk <kfunk@kde.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

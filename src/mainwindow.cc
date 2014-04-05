@@ -277,7 +277,7 @@ void MainWindow::about()
         "<strong>%3</strong><br/><br/>"
         "Maintainers:<br/>"
         "Daniel Molkentin &lt;molkentin@kde.org&gt;<br/>"
-        "Kevin Funk &lt;kevin@kfunk.org&gt;<br/><br/>"
+        "Kevin Funk &lt;kfunk@kde.org&gt;<br/><br/>"
         "Based on Icemon for KDE written by:<br/>"
         "Frerich Raabe &lt;raabe@kde.org&gt;<br/>"
         "Stephan Kulow &lt;coolo@kde.org&gt;<br/>"
