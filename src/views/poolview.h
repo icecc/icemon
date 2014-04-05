@@ -147,7 +147,15 @@ private:
 };
 
 
-
+/**
+ * Basically like the star view
+ *
+ * - Scheduler appears as an isle in the middle,
+ * - Nodes appear as differently colored luftmatrazen around the scheduler.
+ * - Nodes slowly drift around the scheduler, in a circle
+ * - When a node gets a call from the scheduler,
+ *   that increases it's attraction to the scheduler for a time, away from the scheduler.
+ */
 class PoolView : public QWidget, public StatusView
 {
     Q_OBJECT
