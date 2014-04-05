@@ -63,15 +63,14 @@ int main( int argc, char **argv )
     QApplication::setApplicationName(Icemon::Version::appShortName);
     QApplication::setApplicationVersion(Icemon::Version::version);
 
-    MainWindow *mainWidget = new MainWindow;
+    MainWindow mainWindow;
     if (!netName.isEmpty()) {
-        mainWidget->setCurrentNet(netName);
+        mainWindow.setCurrentNet(netName);
     }
     if (enableTestMode) {
-        mainWidget->setTestModeEnabled(true);
+        mainWindow.setTestModeEnabled(true);
     }
-
-    mainWidget->show();
+    mainWindow.show();
 
     return app.exec();
 }

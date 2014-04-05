@@ -151,11 +151,16 @@ MainWindow::MainWindow( QWidget *parent )
     setSchedulerState(m_monitor->schedulerState());
 }
 
+MainWindow::~MainWindow()
+{
+    delete m_hostInfoManager;
+}
+
 void MainWindow::closeEvent( QCloseEvent *e )
 {
-  writeSettings();
-  delete m_hostInfoManager;
-  e->accept();
+    writeSettings();
+
+    QMainWindow::closeEvent(e);
 }
 
 void MainWindow::readSettings()
