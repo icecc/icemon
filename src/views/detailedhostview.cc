@@ -44,15 +44,14 @@ static QString myHostName()
         return QString();
 }
 
-DetailedHostView::DetailedHostView( HostInfoManager* manager,
-                                    QWidget* parent )
-    : QWidget( parent ),
-      StatusView( manager )
+DetailedHostView::DetailedHostView(QObject* parent)
+    :  StatusView(parent)
+    , m_widget(new QWidget)
 {
-  QBoxLayout* topLayout = new QVBoxLayout( this );
+  QBoxLayout* topLayout = new QVBoxLayout(m_widget.data());
   topLayout->setMargin( 10 );
 
-  QSplitter* viewSplitter = new QSplitter( Qt::Vertical, this );
+  QSplitter* viewSplitter = new QSplitter(Qt::Vertical);
   topLayout->addWidget( viewSplitter );
 
   QWidget *hosts = new QWidget( viewSplitter );
@@ -60,25 +59,25 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
   dummy->setSpacing( 10 );
   dummy->setMargin( 0 );
 
-  mHostListModel = new HostListModel(manager, this);
+  mHostListModel = new HostListModel(this);
 
   mSortedHostListModel = new QSortFilterProxyModel(this);
   mSortedHostListModel->setDynamicSortFilter(true);
   mSortedHostListModel->setSourceModel(mHostListModel);
 
   dummy->addWidget(new QLabel( tr("Hosts" ), hosts ));
-  mHostListView = new HostListView( manager, hosts );
+  mHostListView = new HostListView(hosts);
   mHostListView->setModel(mSortedHostListModel);
   dummy->addWidget(mHostListView);
-  connect(mHostListView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
-          SLOT(slotNodeActivated()));
+  //connect(mHostListView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
+  //        SLOT(slotNodeActivated()));
 
   QWidget *locals = new QWidget( viewSplitter );
   dummy = new QVBoxLayout( locals );
   dummy->setSpacing( 10 );
   dummy->setMargin( 0 );
 
-  mLocalJobsModel = new JobListModel(manager, this);
+  mLocalJobsModel = new JobListModel(this);
   mLocalJobsModel->setExpireDuration(5);
   mSortedLocalJobsModel = new JobListSortFilterProxyModel(this);
   mSortedLocalJobsModel->setDynamicSortFilter(true);
@@ -95,7 +94,7 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
   dummy->setSpacing( 10 );
   dummy->setMargin( 0 );
 
-  mRemoteJobsModel = new JobListModel(manager, this);
+  mRemoteJobsModel = new JobListModel(this);
   mRemoteJobsModel->setExpireDuration(5);
   mSortedRemoteJobsModel = new JobListSortFilterProxyModel(this);
   mSortedRemoteJobsModel->setDynamicSortFilter(true);
@@ -110,29 +109,21 @@ DetailedHostView::DetailedHostView( HostInfoManager* manager,
   createKnownHosts();
 }
 
-
-void DetailedHostView::update( const Job &job )
+void DetailedHostView::setMonitor(Monitor* monitor)
 {
-    const unsigned int hostid = mSortedHostListModel->mapToSource(mHostListView->currentIndex()).data(HostListModel::HostIdRole).value<unsigned int>();
-    if ( !hostid )
-        return;
+    StatusView::setMonitor(monitor);
 
-    if ( job.client() != hostid && job.server() != hostid )
-        return;
+    mHostListModel->setMonitor(monitor);
+    mLocalJobsModel->setMonitor(monitor);
+    mRemoteJobsModel->setMonitor(monitor);
 
-    if ( job.client() == hostid )
-        mLocalJobsModel->update( job );
-    if ( job.server() == hostid )
-        mRemoteJobsModel->update( job );
+    createKnownHosts();
 }
-
 
 void DetailedHostView::checkNode( unsigned int hostid )
 {
     if ( !hostid )
         return;
-
-    mHostListModel->checkNode( hostid );
 
     if ( !mHostListView->selectionModel()->hasSelection() ) {
         HostInfo* info = hostInfoManager()->find( hostid );
@@ -141,49 +132,20 @@ void DetailedHostView::checkNode( unsigned int hostid )
     }
 }
 
-
-void DetailedHostView::removeNode( unsigned int hostid )
-{
-    mHostListModel->removeNodeById( hostid );
-}
-
-
-void DetailedHostView::updateSchedulerState( bool online )
-{
-    if ( !online )
-    {
-        mHostListModel->clear();
-        mLocalJobsModel->clear();
-        mRemoteJobsModel->clear();
-    }
-}
-
-
-void DetailedHostView::slotNodeActivated()
-{
-    mLocalJobsModel->clear();
-    mRemoteJobsModel->clear();
-}
-
-
 void DetailedHostView::createKnownHosts()
 {
-    const HostInfoManager::HostMap& hosts(hostInfoManager()->hostMap());
+    if (!hostInfoManager())
+        return;
 
-    for (HostInfoManager::HostMap::ConstIterator it( hosts.begin() ),
-                                                 itEnd( hosts.end() );
-         it != itEnd; ++it )
-    {
-        const unsigned int hostid( (*it)->id() );
-
-        checkNode( hostid );
+    const HostInfoManager::HostMap hosts(hostInfoManager()->hostMap());
+    foreach (int hostid, hosts.keys()) {
+        checkNode(hostid);
     }
 }
 
-
-QWidget* DetailedHostView::widget()
+QWidget* DetailedHostView::widget() const
 {
-  return this;
+    return m_widget.data();
 }
 
 #include "detailedhostview.moc"

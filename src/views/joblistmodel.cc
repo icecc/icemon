@@ -21,6 +21,7 @@
 #include "joblistmodel.h"
 
 #include "hostinfo.h"
+#include "monitor.h"
 
 #include <QDateTime>
 #include <QDebug>
@@ -70,9 +71,8 @@ static QString trimFilePath(const QString& filePath, int numberOfFilePathParts)
     return filePath;
 }
 
-JobListModel::JobListModel(HostInfoManager* manager, QObject* parent)
+JobListModel::JobListModel(QObject* parent)
     : QAbstractListModel(parent)
-    , m_hostInfoManager(manager)
     , m_numberOfFilePathParts(2)
     , m_expireDuration(-1)
     , m_expireTimer(new QTimer(this))
@@ -81,7 +81,27 @@ JobListModel::JobListModel(HostInfoManager* manager, QObject* parent)
              this, SLOT(slotExpireFinishedJobs()));
 }
 
-void JobListModel::update(const Job& job)
+Monitor* JobListModel::monitor() const
+{
+    return m_monitor;
+}
+
+void JobListModel::setMonitor(Monitor* monitor)
+{
+    if (m_monitor == monitor)
+        return;
+
+    if (m_monitor) {
+        disconnect(m_monitor.data(), SIGNAL(jobUpdated(Job)), this, SLOT(updateJob(Job)));
+    }
+    m_monitor = monitor;
+    if (m_monitor) {
+        connect(m_monitor.data(), SIGNAL(jobUpdated(Job)), this, SLOT(updateJob(Job)));
+    }
+}
+
+
+void JobListModel::updateJob(const Job& job)
 {
     const int index = m_jobs.indexOf(job);
     if (index != -1) {
@@ -158,7 +178,8 @@ QVariant JobListModel::data(const QModelIndex& index, int role) const
 
     const Job job = jobForIndex(index);
     const int column = index.column();
-    const HostInfoManager* manager = m_hostInfoManager;
+    Q_ASSERT(m_monitor);
+    const HostInfoManager* manager = m_monitor->hostInfoManager();
     if (role == Qt::DisplayRole) {
         switch (column) {
         case JobColumnID:

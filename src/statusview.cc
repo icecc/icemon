@@ -23,6 +23,7 @@
 #include "statusview.h"
 
 #include "hostinfo.h"
+#include "monitor.h"
 #include "job.h"
 #include "utils.h"
 
@@ -30,8 +31,9 @@
 #include <QDebug>
 #include <QTime>
 
-StatusView::StatusView( HostInfoManager *m )
-    : mHostInfoManager( m ), m_paused( false )
+StatusView::StatusView(QObject* parent)
+    : QObject(parent)
+    , m_paused(false)
 {
 }
 
@@ -44,11 +46,51 @@ StatusView::Options StatusView::options() const
     return NoOptions;
 }
 
-void StatusView::checkNode( unsigned int )
+Monitor* StatusView::monitor() const
+{
+    return m_monitor;
+}
+
+void StatusView::setMonitor(Monitor* monitor)
+{
+    if (m_monitor == monitor)
+        return;
+
+    if (m_monitor) {
+        disconnect(m_monitor.data(), SIGNAL(jobUpdated(Job)), this, SLOT(update(Job)));
+        disconnect(m_monitor.data(), SIGNAL(nodeRemoved(HostId)), this, SLOT(removeNode(HostId)));
+        disconnect(m_monitor.data(), SIGNAL(nodeUpdated(HostId)), this, SLOT(checkNode(HostId)));
+    }
+
+    m_monitor = monitor;
+
+    if (m_monitor) {
+        connect(m_monitor.data(), SIGNAL(jobUpdated(Job)), this, SLOT(update(Job)));
+        connect(m_monitor.data(), SIGNAL(nodeRemoved(HostId)), this, SLOT(removeNode(HostId)));
+        connect(m_monitor.data(), SIGNAL(nodeUpdated(HostId)), this, SLOT(checkNode(HostId)));
+
+        if (options().testFlag(RememberJobsOption)) {
+            foreach (const Job& job, m_monitor->jobHistory()) {
+                update(job);
+            }
+        }
+    }
+}
+
+HostInfoManager* StatusView::hostInfoManager() const
+{
+    return (m_monitor ? m_monitor->hostInfoManager() : 0);
+}
+
+void StatusView::update(const Job&)
 {
 }
 
-void StatusView::removeNode( unsigned int )
+void StatusView::checkNode( HostId )
+{
+}
+
+void StatusView::removeNode( HostId )
 {
 }
 
@@ -57,14 +99,20 @@ void StatusView::updateSchedulerState( bool online )
     Q_UNUSED(online);
 }
 
-QString StatusView::nameForHost( unsigned int id )
+QString StatusView::nameForHost( HostId id )
 {
-  return mHostInfoManager->nameForHost( id );
+    if (!m_monitor)
+        return QString();
+
+    return m_monitor->hostInfoManager()->nameForHost(id);
 }
 
-QColor StatusView::hostColor( unsigned int id )
+QColor StatusView::hostColor( HostId id )
 {
-  return mHostInfoManager->hostColor( id );
+    if (!m_monitor)
+        return QColor();
+
+    return m_monitor->hostInfoManager()->hostColor(id);
 }
 
 QColor StatusView::textColor( const QColor &color )
@@ -87,3 +135,5 @@ unsigned int StatusView::processor( const Job &job )
     assert( ret );
     return ret;
 }
+
+#include "statusview.moc"

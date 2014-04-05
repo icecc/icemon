@@ -280,18 +280,18 @@ void GanttProgress::resizeEvent( QResizeEvent * )
     adjustGraph();
 }
 
-GanttStatusView::GanttStatusView( HostInfoManager *m, QWidget *parent)
-  : QScrollArea( parent ),
-    StatusView( m ),
-    mTopWidget(new QWidget( viewport() ))
+GanttStatusView::GanttStatusView(QObject* parent)
+    : StatusView(parent)
+    , m_widget(new QScrollArea)
+    , mTopWidget(new QWidget)
 {
-    mConfigDialog = new GanttConfigDialog( this );
+    mConfigDialog = new GanttConfigDialog(m_widget.data());
     connect( mConfigDialog, SIGNAL( configChanged() ),
              SLOT( slotConfigChanged() ) );
 
-    setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
-    setWidget( mTopWidget );
-    setWidgetResizable( true );
+    m_widget->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
+    m_widget->setWidget( mTopWidget );
+    m_widget->setWidgetResizable( true );
 
     QPalette palette = mTopWidget->palette();
     palette.setColor( mTopWidget->backgroundRole(), Qt::white );
@@ -314,7 +314,7 @@ GanttStatusView::GanttStatusView( HostInfoManager *m, QWidget *parent)
     mUpdateInterval = 25;
     mTimeScale->setPixelsPerSecond( 1000 / mUpdateInterval );
 
-    mMinimumProgressHeight = QFontMetrics( font() ).height() + 6;
+    mMinimumProgressHeight = QFontMetrics(m_widget->font()).height() + 6;
 
     slotConfigChanged();
 
@@ -389,9 +389,9 @@ void GanttStatusView::update( const Job &job )
     mAgeMap[ processor ] = 0;
 }
 
-QWidget * GanttStatusView::widget()
+QWidget * GanttStatusView::widget() const
 {
-    return this;
+    return m_widget.data();
 }
 
 void GanttStatusView::checkNode( unsigned int hostid )

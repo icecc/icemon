@@ -114,11 +114,11 @@ class GanttProgress : public QWidget
     bool mIsFree;
 };
 
-class GanttStatusView : public QScrollArea, public StatusView
+class GanttStatusView : public StatusView
 {
     Q_OBJECT
   public:
-    GanttStatusView( HostInfoManager *, QWidget *parent );
+    GanttStatusView(QObject *parent = 0);
     virtual ~GanttStatusView() {}
 
     QString id() const { return "gantt"; }
@@ -134,9 +134,10 @@ class GanttStatusView : public QScrollArea, public StatusView
     bool isPausable() { return true; }
     bool isConfigurable() { return true; }
 
+    virtual QWidget *widget() const;
+
   public slots:
     virtual void update( const Job &job );
-    virtual QWidget *widget();
 
   private slots:
     void slotConfigChanged();
@@ -150,6 +151,7 @@ class GanttStatusView : public QScrollArea, public StatusView
 
     GanttConfigDialog *mConfigDialog;
 
+    QScopedPointer<QScrollArea> m_widget;
     QWidget *mTopWidget;
     QGridLayout *m_topLayout;
 

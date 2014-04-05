@@ -24,7 +24,7 @@ set(icemon_SRCS
   views/joblistmodel.cc
   views/joblistview.cc
   views/listview.cc
-  views/poolview.cc
+  #views/poolview.cc
   views/starview.cc
   views/summaryview.cc
 )

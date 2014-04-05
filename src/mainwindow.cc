@@ -52,24 +52,24 @@ namespace {
 class ViewFactory
 {
 public:
-    StatusView* create(const QString &id, HostInfoManager* manager,
-                       QWidget* parent = 0) const
+    StatusView* create(const QString &id,
+                       QObject* parent = 0) const
     {
         if (id == "list") {
-            return new ListStatusView(manager, parent);
+            return new ListStatusView(parent);
         } else if (id == "gantt") {
-            return new GanttStatusView(manager, parent);
+            return new GanttStatusView(parent);
         } else if (id == "star") {
-            return new StarView(manager, parent);
+            return new StarView(parent);
         } else if (id == "pool") {
-            //return new PoolView(manager, parent);
+            //return new PoolView(parent);
         } else if (id == "flow") {
-            return new FlowTableView(manager, parent);
+            return new FlowTableView(parent);
         } else if (id == "detailedhost") {
-            return new DetailedHostView(manager, parent);
+            return new DetailedHostView(parent);
         }
 
-        return new SummaryView(manager, parent);
+        return new SummaryView(parent);
     }
 };
 
@@ -191,7 +191,7 @@ void MainWindow::readSettings()
     restoreState(settings.value("windowState").toByteArray());
     QString viewId = settings.value("currentView").toString();
 
-    StatusView* view = s_viewFactory.create(viewId, m_hostInfoManager, this);
+    StatusView* view = s_viewFactory.create(viewId, this);
     setView(view);
 }
 
@@ -217,11 +217,14 @@ void MainWindow::setMonitor(Monitor* monitor)
     m_monitor = monitor;
 
     if (m_monitor) {
-        m_monitor->setCurrentView(m_view);
         connect(m_monitor, SIGNAL( schedulerStateChanged( bool ) ), SLOT( setSchedulerState( bool ) ));
         setSchedulerState(m_monitor->schedulerState());
         connect(m_monitor, SIGNAL( jobUpdated( const Job& ) ), SLOT( updateJob( const Job& ) ));
         connect(m_monitor->hostInfoManager(), SIGNAL( hostMapChanged() ), SLOT( updateJobStats() ));
+    }
+
+    if (m_view) {
+        m_view->setMonitor(m_monitor);
     }
 }
 
@@ -243,7 +246,7 @@ void MainWindow::setView(StatusView *view)
         m_configureViewAction->setEnabled(m_view->isConfigurable());
         m_pauseViewAction->setEnabled(m_view->isPausable());
         m_checkNodesAction->setEnabled(m_view->canCheckNodes());
-        m_monitor->setCurrentView(m_view);
+        m_view->setMonitor(m_monitor);
 
         setCentralWidget(m_view->widget());
     }
@@ -439,14 +442,14 @@ void MainWindow::updateJobStats()
 
 void MainWindow::setCurrentNet( const QByteArray &netName )
 {
-  m_monitor->setCurrentNet( netName );
+  m_monitor->setCurrentNetname(netName);
 }
 
 void MainWindow::handleViewModeActionTriggered(QAction* action)
 {
     const QString viewId = action->data().toString();
     Q_ASSERT(!viewId.isEmpty());
-    setView(s_viewFactory.create(viewId, m_hostInfoManager, this));
+    setView(s_viewFactory.create(viewId, this));
 }
 
 // It's nasty that we have to hard-code the implementations of Monitor

@@ -30,6 +30,7 @@ class QLabel;
 class QGridLayout;
 
 class SummaryView;
+class SummaryViewScrollArea;
 
 class SummaryViewItem
 {
@@ -64,23 +65,22 @@ private:
     QList<QWidget *> m_widgets;
 };
 
-class SummaryView : public QScrollArea, public StatusView
+class SummaryView : public StatusView
 {
     Q_OBJECT
 
 public:
-    SummaryView(HostInfoManager *h, QWidget *parent);
+    SummaryView(QObject* parent = 0);
     ~SummaryView();
 
-    virtual QWidget *widget();
+    virtual QWidget *widget() const;
     virtual void update(const Job &job);
     virtual void checkNode(unsigned int hostid);
     virtual QString id() const { return "summary"; }
 
-protected:
-    virtual void resizeEvent(QResizeEvent *e);
-
 private:
+    QScopedPointer<SummaryViewScrollArea> m_widget;
+
     QMap<unsigned int, SummaryViewItem *> m_items;
     QGridLayout *m_layout;
     QWidget *m_base;

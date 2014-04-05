@@ -24,12 +24,14 @@
 #include "job.h"
 #include "statusview.h"
 
+#include <QGraphicsView>
 #include <QResizeEvent>
 #include <QLabel>
 #include <QGraphicsEllipseItem>
 #include <QDialog>
 
 class HostInfo;
+class StarView;
 
 class QSlider;
 class QLabel;
@@ -74,7 +76,7 @@ public:
 
     enum { RttiHostItem = 1000 };
 
-    HostItem( HostInfoManager * );
+    HostItem(const QString &text);
     HostItem( HostInfo *hostInfo, HostInfoManager * );
     ~HostItem();
 
@@ -140,20 +142,45 @@ private:
     JobList m_jobs;
 };
 
-
-class StarView : public QWidget, public StatusView
+class StarViewGraphicsView : public QGraphicsView
 {
     Q_OBJECT
 
 public:
-    StarView( HostInfoManager *, QWidget *parent );
+    StarViewGraphicsView(QGraphicsScene* scene, StarView* starView, QWidget* parent = 0);
+
+    void arrangeItems();
+    void drawNodeStatus();
+
+protected:
+    virtual void resizeEvent( QResizeEvent *e );
+    virtual bool event(QEvent *event);
+
+private:
+    void arrangeHostItems();
+    void arrangeSchedulerItem();
+    void drawState(HostItem *node);
+
+    StarView* m_starView;
+    HostItem *m_schedulerItem;
+};
+
+class StarView : public StatusView
+{
+    Q_OBJECT
+
+public:
+    StarView( QObject* parent );
 
     void update( const Job &job );
-    QWidget *widget();
+    virtual QWidget* widget() const;
 
     QString id() const { return "star"; }
 
+    QList<HostItem*> hostItems() const;
     HostItem *findHostItem( unsigned int hostid );
+
+    virtual void setMonitor(Monitor* monitor);
 
     void checkNode( unsigned int hostid );
 
@@ -165,9 +192,7 @@ public:
 
     bool isConfigurable() { return true; }
 
-protected:
-    virtual void resizeEvent( QResizeEvent *e );
-    virtual bool event(QEvent *event);
+    StarViewConfigDialog* configDialog() const;
 
     /**
        Return true if node should be shown and false if not.
@@ -181,22 +206,17 @@ protected:
     void removeItem( HostItem * );
     void forceRemoveNode( unsigned int hostid );
 
-    protected slots:
+protected slots:
     void slotConfigChanged();
 
 private:
     void createKnownHosts();
-    void centerSchedulerItem();
     HostItem *createHostItem( unsigned int hostid );
-    void arrangeHostItems();
-    void drawNodeStatus();
-    void drawState( HostItem *node );
 
+    QGraphicsScene* m_canvas;
+    QScopedPointer<StarViewGraphicsView> m_widget;
     StarViewConfigDialog *mConfigDialog;
 
-    QGraphicsScene *m_canvas;
-    QGraphicsView *m_canvasView;
-    HostItem *m_schedulerItem;
     QMap<unsigned int,HostItem *> m_hostItems;
     QMap<unsigned int,HostItem *> mJobMap;
 };

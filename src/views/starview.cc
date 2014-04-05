@@ -23,6 +23,7 @@
 
 #include "hostinfo.h"
 #include "utils.h"
+#include <monitor.h>
 
 #include <qdebug.h>
 
@@ -122,11 +123,15 @@ void StarViewConfigDialog::slotSuppressDomainName( bool b )
 }
 
 
-HostItem::HostItem( HostInfoManager *m )
-    : QGraphicsItemGroup( 0 ), mHostInfo( 0 ), mHostInfoManager( m ),
+HostItem::HostItem(const QString &text)
+    : QGraphicsItemGroup( 0 ), mHostInfo( 0 ), mHostInfoManager( 0 ),
       m_stateItem( 0 )
 {
     init();
+
+    m_textItem->setPlainText(text);
+
+    updateName();
 }
 
 HostItem::HostItem( HostInfo *hostInfo, HostInfoManager *m )
@@ -299,6 +304,8 @@ void HostItem::deleteJobHalo( const Job &job )
 
 void HostItem::updateHalos()
 {
+    Q_ASSERT(m_jobHalos.isEmpty() || mHostInfoManager);
+
     int count = 1;
 
     QMap<Job,QGraphicsEllipseItem*>::Iterator it;
@@ -312,32 +319,17 @@ void HostItem::updateHalos()
     }
 }
 
-StarView::StarView( HostInfoManager *m, QWidget *parent )
-    : QWidget( parent ), StatusView( m )
+StarView::StarView(QObject* parent)
+    : StatusView(parent)
+    , m_canvas(new QGraphicsScene)
+    , m_widget(new StarViewGraphicsView(m_canvas, this))
 {
-    mConfigDialog = new StarViewConfigDialog( this );
+    mConfigDialog = new StarViewConfigDialog(m_widget.data());
     connect( mConfigDialog, SIGNAL( configChanged() ),
              SLOT( slotConfigChanged() ) );
 
-    m_canvas = new QGraphicsScene ( this );
-    m_canvas->setSceneRect( 0, 0, width(), height() );
-
-    QHBoxLayout *layout = new QHBoxLayout( this );
-    layout->setMargin( 0 );
-
-    m_canvasView = new QGraphicsView( m_canvas, this );
-    m_canvasView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_canvasView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_canvasView->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-    layout->addWidget( m_canvasView );
-
-    m_schedulerItem = new HostItem( hostInfoManager() );
-    m_canvas->addItem(m_schedulerItem);
-    m_schedulerItem->setZValue(150);
-    updateSchedulerState( false );
-    m_schedulerItem->show();
-
-    createKnownHosts();
+    m_widget->setScene(m_canvas);
+    m_widget->arrangeItems();
 }
 
 void StarView::update( const Job &job )
@@ -348,7 +340,7 @@ void StarView::update( const Job &job )
              << " state: " << job.stateAsString() << endl;
 #endif
     if (job.state() == Job::WaitingForCS) {
-        drawNodeStatus();
+        m_widget->drawNodeStatus();
         return;
     }
 
@@ -377,7 +369,7 @@ void StarView::update( const Job &job )
             HostItem *clientItem = findHostItem( clientid );
             if ( clientItem ) clientItem->setIsActiveClient( false );
         }
-        drawNodeStatus();
+        m_widget->drawNodeStatus();
         return;
     }
 
@@ -392,7 +384,12 @@ void StarView::update( const Job &job )
         }
     }
 
-    drawNodeStatus();
+    m_widget->drawNodeStatus();
+}
+
+QList< HostItem* > StarView::hostItems() const
+{
+    return m_hostItems.values();
 }
 
 HostItem *StarView::findHostItem( unsigned int hostid )
@@ -401,6 +398,16 @@ HostItem *StarView::findHostItem( unsigned int hostid )
     QMap<unsigned int, HostItem*>::iterator it = m_hostItems.find( hostid );
     if ( it != m_hostItems.end() ) hostItem = it.value();
     return hostItem;
+}
+
+void StarView::setMonitor(Monitor* monitor)
+{
+    StatusView::setMonitor(monitor);
+
+    if (monitor) {
+        createKnownHosts();
+        m_widget->arrangeItems();
+    }
 }
 
 void StarView::checkNode( unsigned int hostid )
@@ -413,8 +420,8 @@ void StarView::checkNode( unsigned int hostid )
 
     HostItem *hostItem = findHostItem( hostid );
     if ( !hostItem ) {
-        hostItem = createHostItem( hostid );
-        arrangeHostItems();
+        createHostItem(hostid);
+        m_widget->arrangeItems();
     }
 }
 
@@ -471,13 +478,11 @@ void StarView::removeItem( HostItem *hostItem )
     delete hostItem->stateItem();
     delete hostItem;
 
-    arrangeHostItems();
+    m_widget->arrangeItems();
 }
 
 void StarView::updateSchedulerState( bool online )
 {
-    m_schedulerItem->setFixedText( online ? tr( "Scheduler" ) : "<b>?</b>" );
-
     if ( !online ) {
         QMap<unsigned int,HostItem *>::ConstIterator it;
         for( it = m_hostItems.constBegin(); it != m_hostItems.constEnd(); ++it ) {
@@ -487,36 +492,54 @@ void StarView::updateSchedulerState( bool online )
         mJobMap.clear();
     }
 
-    centerSchedulerItem();
+    m_widget->arrangeItems();
 }
 
-QWidget *StarView::widget()
+QWidget *StarView::widget() const
 {
-    return this;
+    return m_widget.data();
 }
 
-void StarView::resizeEvent( QResizeEvent * )
+StarViewGraphicsView::StarViewGraphicsView(QGraphicsScene* scene, StarView* starView, QWidget* parent)
+    : QGraphicsView(scene, parent)
+    , m_starView(starView)
 {
-    m_canvas->setSceneRect( 0, 0, width(), height() );
-    centerSchedulerItem();
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+    scene->setSceneRect(0, 0, width(), height());
+
+    // add scheduler item
+    m_schedulerItem = new HostItem(QString());
+    scene->addItem(m_schedulerItem);
+    m_schedulerItem->setZValue(150);
+    m_schedulerItem->show();
+    arrangeSchedulerItem();
+}
+
+void StarViewGraphicsView::resizeEvent( QResizeEvent * )
+{
+    scene()->setSceneRect( 0, 0, width(), height() );
+
+    arrangeSchedulerItem();
     arrangeHostItems();
     drawNodeStatus();
 }
 
-bool StarView::event ( QEvent* e )
+bool StarViewGraphicsView::event ( QEvent* e )
 {
-    if (e->type() != QEvent::ToolTip) return QWidget::event(e);
+    if (e->type() != QEvent::ToolTip) return QGraphicsView::event(e);
 
     QPoint p ( static_cast<QHelpEvent*>(e)->pos());
 
     HostItem *item = 0;
-    QGraphicsItem* graphicsItem = m_canvasView->itemAt( p );
+    QGraphicsItem* graphicsItem = itemAt( p );
     if ( graphicsItem )
         item = dynamic_cast<HostItem*>( graphicsItem->parentItem() );
     if ( item ) {
         HostInfo *hostInfo = item->hostInfo();
         const QPoint gp( static_cast<QHelpEvent*>(e)->globalPos());
-        const QRect itemRect = m_canvasView->mapFromScene(graphicsItem->sceneBoundingRect()).boundingRect();
+        const QRect itemRect = mapFromScene(graphicsItem->sceneBoundingRect()).boundingRect();
         if ( hostInfo ) {
             QToolTip::showText(gp+QPoint(10,10), hostInfo->toolTip(), this, itemRect );
         } else {
@@ -524,19 +547,22 @@ bool StarView::event ( QEvent* e )
                            "<p><table><tr><td>"
                            "<img align=\"right\" source=\"icons:computer.png\"><br><b>" + tr("Scheduler") + "</b><br/>"
                            "<table>" +
-                           "<tr><td>" + tr("Host: %1").arg(hostInfoManager()->schedulerName()) + "</td></tr>" +
-                           "<tr><td>" + tr("Network name: %1").arg(hostInfoManager()->networkName()) + "</td></tr>" +
+                           "<tr><td>" + tr("Host: %1").arg(m_starView->hostInfoManager()->schedulerName()) + "</td></tr>" +
+                           "<tr><td>" + tr("Network name: %1").arg(m_starView->hostInfoManager()->networkName()) + "</td></tr>" +
                            "</table>"
                            "</td></tr></table></p>", this, itemRect );
         }
     } else {
          QToolTip::hideText();
     }
-    return QWidget::event(e);
+    return QGraphicsView::event(e);
 }
 
-void StarView::centerSchedulerItem()
+void StarViewGraphicsView::arrangeSchedulerItem()
 {
+    const Monitor* monitor = m_starView->monitor();
+    const bool isOnline = (monitor ? monitor->schedulerState() : false);
+    m_schedulerItem->setFixedText( isOnline ? tr( "Scheduler" ) : "<b>?</b>" );
     m_schedulerItem->setCenterPos( width() / 2, height() / 2 );
 }
 
@@ -551,42 +577,45 @@ void StarView::slotConfigChanged()
         else forceRemoveNode( it.key() );
     }
 
-    arrangeHostItems();
+    m_widget->arrangeItems();
 }
 
-void StarView::arrangeHostItems()
+void StarViewGraphicsView::arrangeItems()
+{
+    arrangeHostItems();
+    arrangeSchedulerItem();
+}
+
+void StarViewGraphicsView::arrangeHostItems()
 {
 //  qDebug() << "StarView::arrangeHostItems()" << endl;
 
-    int count = m_hostItems.count();
+    const QList<HostItem*> hostItems = m_starView->hostItems();
+    int count = hostItems.count();
 
 //  qDebug() << "  Count: " << count << endl;
 
-    int nodesPerRing = mConfigDialog->nodesPerRing();
+    int nodesPerRing = m_starView->configDialog()->nodesPerRing();
 
     int ringCount = int( count / nodesPerRing ) + 1;
 
 //  qDebug() << "  Rings: " << ringCount << endl;
     double radiusFactor = 2.5;
     if (suppressDomain) radiusFactor = 4;
-    const int xRadius = qRound( m_canvas->width() / radiusFactor );
-    const int yRadius = qRound( m_canvas->height() / radiusFactor );
+    const int xRadius = qRound( scene()->width() / radiusFactor );
+    const int yRadius = qRound( scene()->height() / radiusFactor );
 
     const double step = 2 * M_PI / count;
 
     double angle = 0.0;
     int i = 0;
-    QMap<unsigned int, HostItem*>::ConstIterator it;
-    for ( it = m_hostItems.constBegin(); it != m_hostItems.constEnd(); ++it ) {
+    foreach (HostItem* item, hostItems) {
         double factor = 1 - ( 1.0 / ( ringCount + 1 ) ) * ( i % ringCount );
 
         double xr = xRadius * factor;
         double yr = yRadius * factor;
 
-        HostItem *item = it.value();
-
         item->updateName();
-
         item->setCenterPos( width() / 2 + cos( angle ) * xr,
                             height() / 2 + sin( angle ) * yr );
 
@@ -612,8 +641,6 @@ HostItem *StarView::createHostItem( unsigned int hostid )
     m_hostItems.insert( hostid, hostItem );
     hostItem->show();
 
-    arrangeHostItems();
-
     if ( m_hostItems.count() > 25 ) {
         mConfigDialog->setMaxNodes( m_hostItems.count() );
     }
@@ -621,21 +648,21 @@ HostItem *StarView::createHostItem( unsigned int hostid )
     return hostItem;
 }
 
-void StarView::drawNodeStatus()
+void StarViewGraphicsView::drawNodeStatus()
 {
-    QMap<unsigned int, HostItem*>::ConstIterator it;
-    for ( it = m_hostItems.constBegin(); it != m_hostItems.constEnd(); ++it ) {
-        drawState( *it );
+    const QList<HostItem*> hostItems = m_starView->hostItems();
+    foreach (HostItem* item, hostItems) {
+        drawState(item);
     }
 }
 
-void StarView::drawState( HostItem *node )
+void StarViewGraphicsView::drawState( HostItem *node )
 {
     delete node->stateItem();
     QGraphicsLineItem *newItem = 0;
 
     unsigned int client = node->client();
-    QColor color = client ? hostColor( client ) : Qt::green;
+    QColor color = client ? m_starView->hostColor( client ) : Qt::green;
 
     if ( node->isCompiling() || node->isActiveClient() ) {
         newItem = new QGraphicsLineItem( qRound( node->centerPosX() ),
@@ -649,7 +676,7 @@ void StarView::drawState( HostItem *node )
             newItem->setPen( QPen( color, 1, Qt::DashLine ) );
             newItem->setZValue( -300 );
         }
-        m_canvas->addItem( newItem );
+        scene()->addItem( newItem );
     }
 
     node->setStateItem( newItem );
@@ -696,6 +723,11 @@ bool StarView::filterArch( HostInfo *i )
     }
 
     return false;
+}
+
+StarViewConfigDialog* StarView::configDialog() const
+{
+    return mConfigDialog;
 }
 
 #include "starview.moc"

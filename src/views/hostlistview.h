@@ -31,12 +31,9 @@ class HostListView :public QTreeView
     Q_OBJECT
 
 public:
-    HostListView( HostInfoManager* manager, QWidget* parent );
+    HostListView(QWidget* parent);
 
     virtual void setModel(QAbstractItemModel* model);
-
-private:
-    HostInfoManager* mHostInfoManager;
 };
 
 #endif

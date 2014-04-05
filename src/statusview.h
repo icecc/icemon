@@ -22,8 +22,12 @@
 #ifndef ICEMON_STATUSVIEW_H
 #define ICEMON_STATUSVIEW_H
 
-#include <qglobal.h>
+#include "types.h"
 
+#include <QObject>
+#include <QPointer>
+
+class Monitor;
 class HostInfoManager;
 class Job;
 
@@ -31,8 +35,10 @@ class QColor;
 class QString;
 class QWidget;
 
-class StatusView
+class StatusView : public QObject
 {
+    Q_OBJECT
+
 public:
     enum Option {
         NoOptions = 0, ///< No option
@@ -40,21 +46,29 @@ public:
     };
     Q_DECLARE_FLAGS(Options, Option);
 
-    StatusView( HostInfoManager * );
+    StatusView(QObject* parent = 0);
     virtual ~StatusView();
 
     virtual Options options() const;
 
-    HostInfoManager *hostInfoManager() const { return mHostInfoManager; }
+    Monitor* monitor() const;
+    virtual void setMonitor(Monitor* monitor);
 
-    virtual void update( const Job &job ) = 0;
-    virtual QWidget *widget() = 0;
-    virtual void checkNode( unsigned int hostid );
-    virtual void removeNode( unsigned int hostid );
-    virtual void updateSchedulerState( bool online );
+    /// Convenience function to access the Monitor's host info manager
+    HostInfoManager *hostInfoManager() const;
+
+    virtual QWidget *widget() const = 0;
+
+    virtual bool canCheckNodes() { return false; }
+    virtual bool isPausable() { return false; }
+    virtual bool isConfigurable() { return false; }
+
+    virtual void checkNodes() {}
+    virtual void configureView() {}
 
     virtual void stop() {}
     virtual void start() {}
+
     void togglePause() {
         if (m_paused)
             start();
@@ -62,11 +76,6 @@ public:
             stop();
         m_paused = !m_paused;
     }
-    virtual void checkNodes() {}
-    virtual bool canCheckNodes() { return false; }
-    virtual bool isPausable() { return false; }
-    virtual bool isConfigurable() { return false; }
-    virtual void configureView() {}
 
     virtual QString id() const = 0;
 
@@ -77,8 +86,15 @@ public:
 
     static QColor textColor( const QColor &backGroundColor );
 
+protected Q_SLOTS:
+    virtual void update(const Job &job);
+    virtual void checkNode(HostId hostid);
+    virtual void removeNode(HostId hostid);
+    virtual void updateSchedulerState( bool online );
+
+
 private:
-    HostInfoManager *mHostInfoManager;
+    QPointer<Monitor> m_monitor;
     bool m_paused;
 };
 

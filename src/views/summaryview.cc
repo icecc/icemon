@@ -44,6 +44,14 @@ private:
     QColor m_frameColor;
 };
 
+class SummaryViewScrollArea : public QScrollArea
+{
+public:
+    explicit SummaryViewScrollArea(QWidget* parent = 0);
+
+    virtual void resizeEvent(QResizeEvent*);
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 // SummaryViewItem implementation
 ////////////////////////////////////////////////////////////////////////////////
@@ -186,24 +194,47 @@ QLabel *SummaryViewItem::addLine(const QString &caption, QWidget *parent,
     return statusLabel;
 }
 
+SummaryViewScrollArea::SummaryViewScrollArea(QWidget* parent)
+    : QScrollArea(parent)
+{
+}
+
+void SummaryViewScrollArea::resizeEvent(QResizeEvent *e)
+{
+    Q_ASSERT(widget());
+
+    QSize s = e->size();
+
+    setMinimumWidth(widget()->minimumSizeHint().width() + verticalScrollBar()->width());
+    widget()->setMinimumWidth(s.width());
+
+    if(widget()->height() <= s.height())
+        widget()->setMinimumHeight(s.height());
+    else
+        widget()->setMinimumHeight(widget()->sizeHint().height());
+
+    QScrollArea::resizeEvent(e);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // SummaryView implementation
 ////////////////////////////////////////////////////////////////////////////////
 
-SummaryView::SummaryView(HostInfoManager *h, QWidget *parent) :
-    QScrollArea(parent), StatusView(h)
+SummaryView::SummaryView(QObject* parent)
+    : StatusView(parent)
+    , m_widget(new SummaryViewScrollArea)
 {
     m_base = new QWidget;
     m_base->setStyleSheet("QWidget { background-color: 'white'; }");
-    setWidget(m_base);
+    m_widget->setWidget(m_base);
 
     m_layout = new QGridLayout(m_base);
     m_layout->setColumnStretch(1, 1);
     m_layout->setSpacing(5);
     m_layout->setMargin(5);
 
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setMinimumHeight(150);
+    m_widget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_widget->setMinimumHeight(150);
 }
 
 SummaryView::~SummaryView()
@@ -211,9 +242,9 @@ SummaryView::~SummaryView()
 
 }
 
-QWidget *SummaryView::widget()
+QWidget *SummaryView::widget() const
 {
-    return this;
+    return m_widget.data();
 }
 
 void SummaryView::update(const Job &job)
@@ -241,21 +272,6 @@ void SummaryView::checkNode(unsigned int hostid)
         SummaryViewItem *i = new SummaryViewItem(hostid, m_base, this, m_layout);
         m_items.insert(hostid, i);
     }
-}
-
-void SummaryView::resizeEvent(QResizeEvent *e)
-{
-    QSize s = e->size();
-
-    setMinimumWidth(m_base->minimumSizeHint().width() + verticalScrollBar()->width());
-    m_base->setMinimumWidth(s.width());
-
-    if(m_base->height() <= s.height())
-        m_base->setMinimumHeight(s.height());
-    else
-        m_base->setMinimumHeight(m_base->sizeHint().height());
-
-    QScrollArea::resizeEvent(e);
 }
 
 #include "summaryview.moc"

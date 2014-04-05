@@ -19,16 +19,44 @@
 */
 
 #include "hostlistmodel.h"
+#include "monitor.h"
 
-#include <algorithm>
 #include <QLocale>
 #include <QApplication>
 #include <QPalette>
 
-HostListModel::HostListModel(HostInfoManager* manager, QObject* parent)
+#include <algorithm>
+
+HostListModel::HostListModel(QObject* parent)
     : QAbstractListModel(parent)
-    , m_hostInfoManager(manager)
 {
+}
+
+Monitor* HostListModel::monitor() const
+{
+    return m_monitor;
+}
+
+void HostListModel::setMonitor(Monitor* monitor)
+{
+    if (m_monitor == monitor)
+        return;
+
+    if (m_monitor) {
+        disconnect(m_monitor.data(), SIGNAL(nodeRemoved(HostId)), this, SLOT(removeNodeById(HostId)));
+        disconnect(m_monitor.data(), SIGNAL(nodeUpdated(HostId)), this, SLOT(checkNode(HostId)));
+    }
+
+    beginResetModel();
+    m_hostInfos.clear();
+    m_monitor = monitor;
+    fill();
+    endResetModel();
+
+    if (m_monitor) {
+        connect(m_monitor.data(), SIGNAL(nodeRemoved(HostId)), this, SLOT(removeNodeById(HostId)));
+        connect(m_monitor.data(), SIGNAL(nodeUpdated(HostId)), this, SLOT(checkNode(HostId)));
+    }
 }
 
 QVariant HostListModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -151,7 +179,9 @@ QModelIndex HostListModel::indexForHostInfo(const HostInfo& info, int column) co
 
 void HostListModel::checkNode(unsigned int hostid)
 {
-    const HostInfo* info = m_hostInfoManager->find( hostid );
+    Q_ASSERT(m_monitor);
+
+    const HostInfo* info = m_monitor->hostInfoManager()->find(hostid);
     if (!info)
         return;
 
@@ -193,11 +223,20 @@ void HostListModel::removeNodeById(unsigned int hostId)
     endRemoveRows();
 }
 
-void HostListModel::clear()
+void HostListModel::fill()
 {
-    m_hostInfos.clear();
-    reset();
-}
+    if (!m_monitor)
+        return;
 
+    const HostInfoManager* manager = m_monitor->hostInfoManager();
+    const HostInfoManager::HostMap hosts(manager->hostMap());
+    foreach (int hostid, hosts.keys()) {
+        const HostInfo* info = m_monitor->hostInfoManager()->find(hostid);
+        if (!info)
+            continue;
+
+        m_hostInfos << *info;
+    }
+}
 
 #include "hostlistmodel.moc"

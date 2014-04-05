@@ -21,14 +21,14 @@
 #ifndef JOBLISTMODEL_H
 #define JOBLISTMODEL_H
 
-#include <QAbstractItemModel>
-#include <QSortFilterProxyModel>
-
 #include "job.h"
 
+#include <QAbstractItemModel>
+#include <QSortFilterProxyModel>
+#include <QPointer>
 #include <QVector>
 
-class HostInfoManager;
+class Monitor;
 class QTimer;
 
 class JobListModel : public QAbstractListModel
@@ -51,15 +51,15 @@ public:
         _JobColumnCount
     };
 
-    explicit JobListModel(HostInfoManager* manager, QObject* parent = 0);
+    explicit JobListModel(QObject* parent = 0);
 
-    void update(const Job& job);
-
-    void clear();
+    Monitor* monitor() const;
+    void setMonitor(Monitor* monitor);
 
     int expireDuration() const {
         return m_expireDuration;
     }
+
     void setExpireDuration( int duration ) {
         m_expireDuration = duration;
     }
@@ -73,12 +73,11 @@ public:
     Job jobForIndex(const QModelIndex& index) const;
     QModelIndex indexForJob(const Job& job, int column);
 
-    const HostInfoManager* hostInfoManager() const {
-        return m_hostInfoManager;
-    }
-
 private Q_SLOTS:
     void slotExpireFinishedJobs();
+
+    void updateJob(const Job& job);
+    void clear();
 
 private:
     QVector<Job> m_jobs;
@@ -87,7 +86,7 @@ private:
     void removeItem(const Job& job);
     void removeItemById(unsigned int jobId);
 
-    const HostInfoManager* m_hostInfoManager;
+    QPointer<Monitor> m_monitor;
 
     /**
      * Number of parts (directories) of the file path which should be displayed.

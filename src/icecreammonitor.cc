@@ -46,7 +46,6 @@ using namespace std;
 IcecreamMonitor::IcecreamMonitor( HostInfoManager *manager, QObject *parent)
     : Monitor(manager, parent)
     , m_scheduler( 0 )
-    , m_schedulerState( false )
     , m_discover( 0 )
     , m_fd_notify( 0 )
     , m_fd_type(QSocketNotifier::Exception)
@@ -59,6 +58,11 @@ IcecreamMonitor::~IcecreamMonitor()
 {
     delete m_scheduler;
     delete m_discover;
+}
+
+QList<Job> IcecreamMonitor::jobHistory() const
+{
+    return m_rememberedJobs.values();
 }
 
 void IcecreamMonitor::checkScheduler(bool deleteit)
@@ -99,8 +103,8 @@ void IcecreamMonitor::slotCheckScheduler()
 
     list<string> names;
 
-    if ( !m_current_netname.isEmpty() )
-        names.push_front( m_current_netname.data() );
+    if ( !currentNetname().isEmpty() )
+        names.push_front( currentNetname().data() );
     else
         names.push_front("ICECREAM");
 
@@ -110,11 +114,11 @@ void IcecreamMonitor::slotCheckScheduler()
     for ( list<string>::const_iterator it = names.begin(); it != names.end();
           ++it ) {
 
-        m_current_netname = it->c_str();
+        setCurrentNetname(it->c_str());
         if (!m_discover
             || m_discover->timed_out()) {
             delete m_discover;
-            m_discover = new DiscoverSched ( m_current_netname.data() );
+            m_discover = new DiscoverSched (currentNetname().data());
         }
 
         m_scheduler = m_discover->try_get_scheduler ();
@@ -214,8 +218,7 @@ void IcecreamMonitor::handle_getcs( Msg *_m )
                                        m->filename.c_str(),
                                        m->lang == CompileJob::Lang_C ? "C" :
                                        "C++" );
-    emit jobUpdated( m_rememberedJobs[m->job_id] );
-    m_view->update( m_rememberedJobs[m->job_id] );
+    emit jobUpdated(m_rememberedJobs[m->job_id]);
 }
 
 void IcecreamMonitor::handle_local_begin( Msg *_m )
@@ -227,8 +230,7 @@ void IcecreamMonitor::handle_local_begin( Msg *_m )
                                        m->file.c_str(),
                                        "C++" );
     m_rememberedJobs[m->job_id].setState( Job::LocalOnly );
-    emit jobUpdated( m_rememberedJobs[m->job_id] );
-    m_view->update( m_rememberedJobs[m->job_id] );
+    emit jobUpdated(m_rememberedJobs[m->job_id]);
 }
 
 void IcecreamMonitor::handle_local_done( Msg *_m )
@@ -243,8 +245,7 @@ void IcecreamMonitor::handle_local_done( Msg *_m )
     }
 
     ( *it ).setState( Job::Finished );
-    emit jobUpdated( *it );
-    m_view->update( *it );
+    emit jobUpdated(*it);
 
     if ( m_rememberedJobs.size() > 3000 ) { // now remove 1000
         uint count = 1000;
@@ -273,9 +274,9 @@ void IcecreamMonitor::handle_stats( Msg *_m )
     HostInfo *hostInfo = hostInfoManager()->checkNode( m->hostid, stats );
 
     if ( hostInfo->isOffline() ) {
-        m_view->removeNode( m->hostid );
+        emit nodeRemoved(m->hostid);
     } else {
-        m_view->checkNode( m->hostid );
+        emit nodeUpdated(m->hostid);
     }
 }
 
@@ -299,8 +300,7 @@ void IcecreamMonitor::handle_job_begin( Msg *_m )
              << ")" << endl;
 #endif
 
-    emit jobUpdated( *it );
-    m_view->update( *it );
+    emit jobUpdated(*it);
 }
 
 void IcecreamMonitor::handle_job_done( Msg *_m )
@@ -335,40 +335,7 @@ void IcecreamMonitor::handle_job_done( Msg *_m )
              << ")" << endl;
 #endif
 
-    emit jobUpdated( m_rememberedJobs[m->job_id] );
-    m_view->update( *it );
-}
-
-void IcecreamMonitor::setCurrentView(StatusView *view)
-{
-    if (m_view == view)
-        return;
-
-    m_view = view;
-
-    if (m_view) {
-        m_view->updateSchedulerState( m_schedulerState );
-
-        if (m_view->options().testFlag(StatusView::RememberJobsOption)) {
-            JobList::ConstIterator it = m_rememberedJobs.constBegin();
-            for ( ; it != m_rememberedJobs.constEnd(); ++it )
-                m_view->update( *it );
-        }
-    }
-}
-
-void IcecreamMonitor::setCurrentNet( const QByteArray &netName )
-{
-    m_current_netname = netName;
-}
-
-void IcecreamMonitor::setSchedulerState( bool online )
-{
-    if (m_schedulerState == online)
-        return;
-    m_schedulerState = online;
-    emit schedulerStateChanged( online );
-    m_view->updateSchedulerState( online );
+    emit jobUpdated(*it);
 }
 
 void IcecreamMonitor::setupDebug()

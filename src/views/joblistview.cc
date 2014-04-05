@@ -51,15 +51,6 @@ void JobListView::setModel(QAbstractItemModel* model)
     QTreeView::setModel(model);
 }
 
-void JobListView::update( const Job& job )
-{
-    JobListModel* model = jobListModel();
-    if (!model)
-        return;
-
-    model->update(job);
-}
-
 bool JobListView::isClientColumnVisible() const
 {
     return !isColumnHidden(JobListModel::JobColumnClient);

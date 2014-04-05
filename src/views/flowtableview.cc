@@ -70,16 +70,19 @@ void ProgressWidget::resizeEvent(QResizeEvent *) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-FlowTableView::FlowTableView(HostInfoManager *hostInfoManager, QWidget *parent) :
-    QTableWidget(parent), StatusView(hostInfoManager), m_updateTimer(new QTimer)
+FlowTableView::FlowTableView(QObject* parent)
+    : StatusView(parent)
+    , m_updateTimer(new QTimer)
+    , m_widget(new QTableWidget)
 {
-    setColumnCount(4);
+    m_widget->setColumnCount(4);
     QStringList labels;
     labels << tr("Host") << tr("File") << tr("History") << tr("State");
-    setHorizontalHeaderLabels(labels);
-    horizontalHeader()->setResizeMode(2, QHeaderView::Stretch);
-    verticalHeader()->hide();
-    setSelectionMode(QAbstractItemView::NoSelection);
+    m_widget->setHorizontalHeaderLabels(labels);
+    m_widget->horizontalHeader()->setResizeMode(2, QHeaderView::Stretch);
+    m_widget->verticalHeader()->hide();
+    m_widget->setSelectionMode(QAbstractItemView::NoSelection);
+
     m_updateTimer->setInterval(50);
     m_updateTimer->start();
 }
@@ -95,8 +98,8 @@ void FlowTableView::update(const Job &job)
         return;
 
     int serverRow = m_idToRowMap.value(serverId);
-    QTableWidgetItem *fileNameItem = item(serverRow, 1);
-    QTableWidgetItem *jobStateItem = item(serverRow, 3);
+    QTableWidgetItem *fileNameItem = m_widget->item(serverRow, 1);
+    QTableWidgetItem *jobStateItem = m_widget->item(serverRow, 3);
 
     if (job.state() == Job::Finished) {
         fileNameItem->setText("");
@@ -112,12 +115,12 @@ void FlowTableView::update(const Job &job)
         jobStateItem->setFlags(Qt::ItemIsEnabled);
     }
 
-    if (ProgressWidget *progressWidget = static_cast<ProgressWidget*>(cellWidget(serverRow, 2))) {
+    if (ProgressWidget *progressWidget = static_cast<ProgressWidget*>(m_widget->cellWidget(serverRow, 2))) {
         progressWidget->setCurrentJob(job);
     }
 
     // update the host column for the server requesting the job
-    QTableWidgetItem *hostNameItem = item(serverRow, 0);
+    QTableWidgetItem *hostNameItem = m_widget->item(serverRow, 0);
     int usageCount = hostNameItem->data(Qt::UserRole).toInt();
     if (job.state() == Job::LocalOnly || job.state() == Job::Compiling)
         ++usageCount;
@@ -126,10 +129,15 @@ void FlowTableView::update(const Job &job)
 
     hostNameItem->setData(Qt::UserRole, usageCount);
 
-    QFont f = font();
+    QFont f = m_widget->font();
     f.setBold(usageCount > 0);
     hostNameItem->setFont(f);
     hostNameItem->setText(hostInfoText(hostInfoManager()->find(serverId), usageCount));
+}
+
+QWidget* FlowTableView::widget() const
+{
+    return m_widget.data();
 }
 
 QString FlowTableView::hostInfoText(HostInfo *hostInfo, int runningProcesses) {
@@ -152,30 +160,30 @@ void FlowTableView::checkNode(unsigned int hostId)
     // usage count
     widgetItem->setData(Qt::UserRole, 0);
     widgetItem->setFlags(Qt::ItemIsEnabled);
-    int insertRow = rowCount();
-    setRowCount(insertRow + 1);
+    int insertRow = m_widget->rowCount();
+    m_widget->setRowCount(insertRow + 1);
     m_idToRowMap.insert(hostId, insertRow);
-    setItem(insertRow, 0, widgetItem);
+    m_widget->setItem(insertRow, 0, widgetItem);
     // adjust column width
     int width = QFontMetrics(widgetItem->font()).width(widgetItem->text())+32;
-    horizontalHeader()->resizeSection(0, qMax(horizontalHeader()->sectionSize(0), width));
+    m_widget->horizontalHeader()->resizeSection(0, qMax(m_widget->horizontalHeader()->sectionSize(0), width));
 
     widgetItem = new QTableWidgetItem;
     widgetItem->setFlags(Qt::ItemIsEnabled);
-    setItem(insertRow, 1, widgetItem);
+    m_widget->setItem(insertRow, 1, widgetItem);
 
     widgetItem = new QTableWidgetItem;
     widgetItem->setFlags(Qt::ItemIsEnabled);
-    setItem(insertRow, 3, widgetItem);
+    m_widget->setItem(insertRow, 3, widgetItem);
 
     ProgressWidget *pw = new ProgressWidget(hostInfo, this);
     connect(m_updateTimer, SIGNAL(timeout()), pw, SLOT(update()));
-    setCellWidget(insertRow, 2, pw);
+    m_widget->setCellWidget(insertRow, 2, pw);
 }
 
 void FlowTableView::removeNode(unsigned int hostId)
 {
-    removeRow(m_idToRowMap.value(hostId));
+    m_widget->removeRow(m_idToRowMap.value(hostId));
     m_idToRowMap.remove(hostId);
 }
 

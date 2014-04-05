@@ -22,8 +22,12 @@
 #define ICEMON_HOSTLISTMODEL_H
 
 #include <QAbstractItemModel>
+#include <QPointer>
 
 #include "hostinfo.h"
+#include "types.h"
+
+class Monitor;
 
 class HostListModel : public QAbstractListModel
 {
@@ -49,7 +53,7 @@ public:
         HostIdRole = Qt::UserRole
     };
 
-    explicit HostListModel(HostInfoManager* manager, QObject* parent = 0);
+    explicit HostListModel(QObject* parent = 0);
 
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     virtual QVariant data(const QModelIndex& index, int role) const;
@@ -57,18 +61,23 @@ public:
     virtual int rowCount(const QModelIndex& parent) const;
     virtual QModelIndex parent(const QModelIndex& child) const;
 
-    void checkNode(unsigned int hostId);
-    void removeNodeById(unsigned int hostId);
-    void clear();
+    Monitor* monitor() const;
+    void setMonitor(Monitor* monitor);
 
     HostInfo hostInfoForIndex(const QModelIndex& index) const;
     QModelIndex indexForHostInfo(const HostInfo& info, int column) const;
 
+private Q_SLOTS:
+    void checkNode(HostId hostId);
+    void removeNodeById(HostId hostId);
+
 private:
-    const HostInfoManager* m_hostInfoManager;
+    void fill();
 
+    QPointer<Monitor> m_monitor;
     QVector<HostInfo> m_hostInfos;
-
 };
 
 #endif // ICEMON_HOSTLISTMODEL_H
+
+class Monitor;

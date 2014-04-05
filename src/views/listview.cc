@@ -29,20 +29,19 @@
 #include <QBoxLayout>
 #include <QSortFilterProxyModel>
 
-ListStatusView::ListStatusView( HostInfoManager* manager,
-                                QWidget* parent )
-    : QWidget( parent ),
-      StatusView( manager ),
-      mJobsListView( new JobListView(this) )
+ListStatusView::ListStatusView(QObject* parent)
+    : StatusView(parent)
+    , m_widget(new QWidget)
+    , mJobsListView(new JobListView(m_widget.data()))
 {
-    mJobsListModel = new JobListModel(manager, this);
+    mJobsListModel = new JobListModel(this);
     mSortedJobsListModel = new QSortFilterProxyModel(this);
     mSortedJobsListModel->setDynamicSortFilter(true);
     mSortedJobsListModel->setSourceModel(mJobsListModel);
 
     mJobsListView->setModel(mSortedJobsListModel);
 
-    QVBoxLayout* topLayout = new QVBoxLayout( this );
+    QVBoxLayout* topLayout = new QVBoxLayout(m_widget.data());
     topLayout->setMargin(0);
     topLayout->addWidget( mJobsListView );
 }
@@ -52,9 +51,16 @@ StatusView::Options ListStatusView::options() const
     return RememberJobsOption;
 }
 
-void ListStatusView::update( const Job &job )
+QWidget* ListStatusView::widget() const
 {
-    mJobsListModel->update( job );
+    return m_widget.data();
+}
+
+void ListStatusView::setMonitor(Monitor* monitor)
+{
+    StatusView::setMonitor(monitor);
+
+    mJobsListModel->setMonitor(monitor);
 }
 
 #include "listview.moc"

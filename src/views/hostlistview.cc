@@ -23,10 +23,8 @@
 
 #include "hostlistmodel.h"
 
-HostListView::HostListView( HostInfoManager* manager,
-                            QWidget* parent )
+HostListView::HostListView(QWidget* parent)
     : QTreeView( parent )
-    , mHostInfoManager( manager )
 {
     setAllColumnsShowFocus(true);
     setRootIsDecorated(false);

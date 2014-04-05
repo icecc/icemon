@@ -23,6 +23,7 @@
 
 #include "statusview.h"
 
+#include <QScopedPointer>
 #include <QWidget>
 
 class HostListModel;
@@ -31,32 +32,25 @@ class JobListModel;
 class HostListView;
 class QSortFilterProxyModel;
 
-class DetailedHostView : public QWidget, public StatusView
+class DetailedHostView : public StatusView
 {
     Q_OBJECT
 
 public:
+    DetailedHostView(QObject* parent);
 
-    DetailedHostView( HostInfoManager* manager, QWidget *parent );
+    virtual void setMonitor(Monitor* monitor);
 
-    void update( const Job &job );
-
-    QWidget* widget();
+    QWidget* widget() const;
 
     QString id() const { return "detailedhost"; }
 
     void checkNode( unsigned int hostid );
 
-    void removeNode( unsigned int hostid );
-
-    void updateSchedulerState( bool online );
-
-private slots:
-    void slotNodeActivated();
-
 private:
-
     void createKnownHosts();
+
+    QScopedPointer<QWidget> m_widget;
 
     HostListModel* mHostListModel;
     HostListView* mHostListView;

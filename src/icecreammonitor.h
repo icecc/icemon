@@ -24,7 +24,6 @@
 #define ICEMON_ICECREAMMONITOR_H
 
 #include "monitor.h"
-#include "job.h"
 
 #include <QtCore/QSocketNotifier>
 
@@ -43,12 +42,7 @@ class IcecreamMonitor : public Monitor
     IcecreamMonitor(HostInfoManager *, QObject *parent);
     ~IcecreamMonitor();
 
-    void setCurrentView( StatusView* view );
-
-    void setSchedulerState( bool );
-    void setCurrentNet( const QByteArray & );
-
-    bool schedulerState() const { return m_schedulerState; }
+    virtual QList<Job> jobHistory() const;
 
   private slots:
     void slotCheckScheduler();
@@ -67,11 +61,8 @@ class IcecreamMonitor : public Monitor
     void handle_local_begin( Msg *m );
     void handle_local_done( Msg *m );
 
-    StatusView *m_view;
     JobList m_rememberedJobs;
     MsgChannel *m_scheduler;
-    QByteArray m_current_netname;
-    bool m_schedulerState;
 
     DiscoverSched *m_discover;
     QSocketNotifier *m_fd_notify;

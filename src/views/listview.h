@@ -30,21 +30,21 @@ class JobListModel;
 class JobListView;
 class QSortFilterProxyModel;
 
-class ListStatusView :public QWidget, public StatusView
+class ListStatusView : public StatusView
 {
     Q_OBJECT
 public:
-    ListStatusView( HostInfoManager* manager, QWidget* parent );
+    ListStatusView(QObject* parent );
 
     virtual Options options() const;
-
-    virtual QWidget* widget() { return this; }
-
-    virtual void update( const Job& job );
-
+    virtual QWidget* widget() const;
     virtual QString id() const { return "list"; }
 
+    virtual void setMonitor(Monitor* monitor);
+
 private:
+    QScopedPointer<QWidget> m_widget;
+
     JobListView* mJobsListView;
     JobListModel* mJobsListModel;
     QSortFilterProxyModel* mSortedJobsListModel;

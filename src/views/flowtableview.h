@@ -21,11 +21,13 @@
 #ifndef FLOWTABLEVIEW_H
 #define FLOWTABLEVIEW_H
 
+#include "job.h"
+#include "hostinfo.h"
+#include "statusview.h"
+
+#include <QScopedPointer>
 #include <QTableWidget>
 #include <QTableWidgetItem>
-#include "statusview.h"
-#include "hostinfo.h"
-#include "job.h"
 
 class Job;
 
@@ -50,14 +52,13 @@ private:
     bool m_isVirgin;
 };
 
-class FlowTableView : public QTableWidget, public StatusView
+class FlowTableView : public StatusView
 {
     Q_OBJECT
 public:
-    explicit FlowTableView(HostInfoManager *, QWidget *parent = 0);
+    explicit FlowTableView(QObject* parent);
     
-    // status view reimpls
-    QWidget* widget() { return this; }
+    virtual QWidget* widget() const;
 
     void update( const Job &job);
     void checkNode( unsigned int hostid );
@@ -75,6 +76,7 @@ public:
     bool isConfigurable() { return false; }
 
 private:
+    QScopedPointer<QTableWidget> m_widget;
     QString hostInfoText(HostInfo *hostInfo, int runningProcesses = 0);
     HostIdRowMap m_idToRowMap;
     QTimer *m_updateTimer;
