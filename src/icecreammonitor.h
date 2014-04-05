@@ -43,7 +43,7 @@ class IcecreamMonitor : public Monitor
     IcecreamMonitor(HostInfoManager *, QObject *parent);
     ~IcecreamMonitor();
 
-    void setCurrentView( StatusView *, bool rememberJobs );
+    void setCurrentView( StatusView* view );
 
     void setSchedulerState( bool );
     void setCurrentNet( const QByteArray & );

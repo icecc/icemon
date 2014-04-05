@@ -45,8 +45,39 @@
 
 #include <QMenu>
 
+namespace {
+
+class ViewFactory
+{
+public:
+    StatusView* create(const QString &id, HostInfoManager* manager,
+                       QWidget* parent = 0) const
+    {
+        if (id == "list") {
+            return new ListStatusView(manager, parent);
+        } else if (id == "gantt") {
+            return new GanttStatusView(manager, parent);
+        } else if (id == "star") {
+            return new StarView(manager, parent);
+        } else if (id == "pool") {
+            //return new PoolView(manager, parent);
+        } else if (id == "flow") {
+            return new FlowTableView(manager, parent);
+        } else if (id == "detailedhost") {
+            return new DetailedHostView(manager, parent);
+        }
+
+        return new SummaryView(manager, parent);
+    }
+};
+
+const ViewFactory s_viewFactory;
+
+}
+
 MainWindow::MainWindow( QWidget *parent )
-  : QMainWindow( parent ), m_view( 0 )
+    : QMainWindow(parent)
+    , m_view(0)
 {
     QIcon appIcon = QIcon();
     appIcon.addFile(":/images/hi128-app-icemon.png", QSize(128, 128));
@@ -56,10 +87,6 @@ MainWindow::MainWindow( QWidget *parent )
     appIcon.addFile(":/images/hi16-app-icemon.png", QSize(16, 16));
     setWindowIcon(appIcon);
     setWindowTitle(QApplication::translate("appName", Icemon::Version::appName));
-    m_hostInfoManager = new HostInfoManager;
-
-    m_monitor = new IcecreamMonitor( m_hostInfoManager, this );
-    connect(m_monitor, SIGNAL( schedulerStateChanged( bool ) ), SLOT( setSchedulerState( bool ) ));
 
     QMenu* fileMenu = menuBar()->addMenu(tr("&File"));
     QMenu* viewMenu = menuBar()->addMenu(tr("&View"));
@@ -76,44 +103,32 @@ MainWindow::MainWindow( QWidget *parent )
     action->setMenuRole(QAction::QuitRole);
 
     m_viewMode = new QActionGroup(this);
-
-    QMenu* modeMenu = viewMenu->addMenu(tr("Mode"));
-
     action = m_viewMode->addAction(tr( "&List View" ));
     action->setCheckable(true);
-    modeMenu->addAction(action);
-    connect( action, SIGNAL( triggered() ), this, SLOT( setupListView() ) );
-
+    action->setData("list");
     action = m_viewMode->addAction(tr( "&Star View" ));
     action->setCheckable(true);
-    modeMenu->addAction(action);
-    connect( action, SIGNAL( triggered() ), this, SLOT( setupStarView() ) );
-
+    action->setData("star");
     action = m_viewMode->addAction(tr( "&Pool View" ));
     action->setDisabled(true); // FIXME
     action->setCheckable(true);
-    modeMenu->addAction(action);
-    connect( action, SIGNAL( triggered() ), this, SLOT( setupPoolView() ) );
-
+    action->setData("pool");
     action = m_viewMode->addAction(tr( "&Gantt View" ));
     action->setCheckable(true);
-    modeMenu->addAction(action);
-    connect( action, SIGNAL( triggered() ), this, SLOT( setupGanttView() ) );
-
+    action->setData("gantt");
     action = m_viewMode->addAction(tr( "Summary &View" ));
     action->setCheckable(true);
-    modeMenu->addAction(action);
-    connect( action, SIGNAL( triggered() ), this, SLOT( setupSummaryView() ) );
-
+    action->setData("summary");
     action = m_viewMode->addAction(tr( "&Flow View" ));
     action->setCheckable(true);
-    modeMenu->addAction(action);
-    connect( action, SIGNAL( triggered() ), this, SLOT( setupFlowTableView() ) );
-
+    action->setData("flow");
     action = m_viewMode->addAction(tr( "&Detailed Host View" ));
     action->setCheckable(true);
-    modeMenu->addAction(action);
-    connect( action, SIGNAL( triggered() ), this, SLOT( setupDetailedHostView() ) );
+    action->setData("detailedhost");
+    connect(m_viewMode, SIGNAL(triggered(QAction*)), this, SLOT(handleViewModeActionTriggered(QAction*)));
+
+    QMenu* modeMenu = viewMenu->addMenu(tr("Mode"));
+    modeMenu->addActions(m_viewMode->actions());
 
     viewMenu->addSeparator();
 
@@ -146,9 +161,11 @@ MainWindow::MainWindow( QWidget *parent )
     connect(action, SIGNAL(triggered()), this, SLOT(about()));
     action->setMenuRole(QAction::AboutRole);
 
-    readSettings();
+    m_hostInfoManager = new HostInfoManager;
+    setMonitor(new IcecreamMonitor(m_hostInfoManager, this));
 
-    setSchedulerState(m_monitor->schedulerState());
+    resize(600, 400);
+    readSettings();
 }
 
 MainWindow::~MainWindow()
@@ -165,40 +182,13 @@ void MainWindow::closeEvent( QCloseEvent *e )
 
 void MainWindow::readSettings()
 {
-  QSettings settings;
-  resize(600, 400);
-  restoreGeometry(settings.value("geometry").toByteArray());
-  restoreState(settings.value("windowState").toByteArray());
-  QString viewId = settings.value("currentView").toString();
+    QSettings settings;
+    restoreGeometry(settings.value("geometry").toByteArray());
+    restoreState(settings.value("windowState").toByteArray());
+    QString viewId = settings.value("currentView").toString();
 
-  m_viewMode->blockSignals(true);
-  if ( viewId == "gantt" ) {
-    setupGanttView();
-    (m_viewMode->actions()[GanttViewType])->setChecked(true);
-
-  } else if ( viewId == "list" ) {
-    setupListView();
-    (m_viewMode->actions()[ListViewType])->setChecked(true);
-
-  } else if ( viewId == "star" ) {
-    setupStarView();
-    (m_viewMode->actions()[StarViewType])->setChecked(true);
-
-  } else if ( viewId == "pool" ) {
-    setupPoolView();
-    (m_viewMode->actions()[PoolViewType])->setChecked(true);
-
-  } else if ( viewId == "detailedhost" ) {
-    setupDetailedHostView();
-    (m_viewMode->actions()[DetailedHostViewType])->setChecked(true);
-  } else if ( viewId == "flow" ) {
-    setupFlowTableView();
-    (m_viewMode->actions()[FlowTableViewType])->setChecked(true);
-  } else {
-    setupSummaryView();
-    (m_viewMode->actions()[SummaryViewType])->setChecked(true);
-  }
-  m_viewMode->blockSignals(false);
+    StatusView* view = s_viewFactory.create(viewId, m_hostInfoManager, this);
+    setView(view);
 }
 
 void MainWindow::writeSettings()
@@ -206,58 +196,60 @@ void MainWindow::writeSettings()
     QSettings settings;
     settings.setValue("geometry", saveGeometry());
     settings.setValue("windowState", saveState());
-    settings.setValue("currentView", m_view->id());
+    settings.setValue("currentView", (m_view ? m_view->id() : QString()));
     settings.sync();
 }
 
-void MainWindow::setupView( StatusView *view, bool rememberJobs )
+Monitor *MainWindow::monitor() const
 {
-    if (m_view != view) {
-        delete m_view;
-        m_view = view;
+    return m_monitor;
+}
+
+void MainWindow::setMonitor(Monitor* monitor)
+{
+    if (m_monitor == monitor)
+        return;
+
+    m_monitor = monitor;
+
+    if (m_monitor) {
+        m_monitor->setCurrentView(m_view);
+        connect(m_monitor, SIGNAL( schedulerStateChanged( bool ) ), SLOT( setSchedulerState( bool ) ));
+        setSchedulerState(m_monitor->schedulerState());
+    }
+}
+
+StatusView* MainWindow::view() const
+{
+    return m_view;
+}
+
+void MainWindow::setView(StatusView *view)
+{
+    if (m_view == view)
+        return;
+
+    delete m_view;
+
+    m_view = view;
+
+    if (m_view) {
+        m_configureViewAction->setEnabled(m_view->isConfigurable());
+        m_pauseViewAction->setEnabled(m_view->isPausable());
+        m_checkNodesAction->setEnabled(m_view->canCheckNodes());
+        m_monitor->setCurrentView(m_view);
+
+        setCentralWidget(m_view->widget());
     }
 
-    m_configureViewAction->setEnabled( view->isConfigurable() );
-    m_pauseViewAction->setEnabled( view->isPausable() );
-    m_checkNodesAction->setEnabled( view->canCheckNodes() );
-    m_monitor->setCurrentView( m_view, rememberJobs );
-
-    setCentralWidget( m_view->widget() );
-}
-
-void MainWindow::setupListView()
-{
-    setupView( new ListStatusView( m_hostInfoManager, this ), true );
-}
-
-void MainWindow::setupSummaryView()
-{
-    setupView( new SummaryView( m_hostInfoManager, this ), false );
-}
-
-void MainWindow::setupGanttView()
-{
-    setupView( new GanttStatusView( m_hostInfoManager, this ), false );
-}
-
-void MainWindow::setupPoolView()
-{
-//    setupView( new PoolView( m_hostInfoManager, this ), false );
-}
-
-void MainWindow::setupStarView()
-{
-    setupView( new StarView( m_hostInfoManager, this ), false );
-}
-
-void MainWindow::setupFlowTableView()
-{
-    setupView( new FlowTableView( m_hostInfoManager, this ), false );
-}
-
-void MainWindow::setupDetailedHostView()
-{
-    setupView( new DetailedHostView( m_hostInfoManager, this ), false );
+    // update action-group
+    const QString viewId = (m_view ? m_view->id() : QString());
+    foreach (QAction* action, m_viewMode->actions()) {
+        if (action->data().toString() == viewId) {
+            action->setChecked(true);
+            break;
+        }
+    }
 }
 
 void MainWindow::pauseView()
@@ -317,21 +309,22 @@ void MainWindow::setCurrentNet( const QByteArray &netName )
   m_currNetWidget->setText(tr("Current Network: %1").arg(QString::fromLatin1(netName)));
 }
 
+void MainWindow::handleViewModeActionTriggered(QAction* action)
+{
+    const QString viewId = action->data().toString();
+    Q_ASSERT(!viewId.isEmpty());
+    setView(s_viewFactory.create(viewId, m_hostInfoManager, this));
+}
+
 // It's nasty that we have to hard-code the implementations of Monitor
 // But we can't just add a setMonitor() method because we require the host info manager
 void MainWindow::setTestModeEnabled(bool testMode)
 {
     if (testMode) {
-        delete m_monitor;
-        m_monitor = new FakeMonitor(m_hostInfoManager, this);
+        setMonitor(new FakeMonitor(m_hostInfoManager, this));
     } else {
-        delete m_monitor;
-        m_monitor = new IcecreamMonitor(m_hostInfoManager, this);
+        setMonitor(new IcecreamMonitor(m_hostInfoManager, this));
     }
-    setupView(m_view, false);
-
-    connect(m_monitor, SIGNAL( schedulerStateChanged( bool ) ), SLOT( setSchedulerState( bool ) ));
-    setSchedulerState(m_monitor->schedulerState());
 }
 
 #include "mainwindow.moc"

@@ -38,6 +38,11 @@ StatusView::~StatusView()
 {
 }
 
+StatusView::Options StatusView::options() const
+{
+    return NoOptions;
+}
+
 void StatusView::checkNode( unsigned int )
 {
 }

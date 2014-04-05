@@ -22,6 +22,8 @@
 #ifndef ICEMON_STATUSVIEW_H
 #define ICEMON_STATUSVIEW_H
 
+#include <qglobal.h>
+
 class HostInfoManager;
 class Job;
 
@@ -32,8 +34,16 @@ class QWidget;
 class StatusView
 {
 public:
+    enum Option {
+        NoOptions = 0, ///< No option
+        RememberJobsOption = 1 ///< Show old jobs in case this view gets reactivated
+    };
+    Q_DECLARE_FLAGS(Options, Option);
+
     StatusView( HostInfoManager * );
     virtual ~StatusView();
+
+    virtual Options options() const;
 
     HostInfoManager *hostInfoManager() const { return mHostInfoManager; }
 

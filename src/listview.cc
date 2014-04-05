@@ -47,6 +47,11 @@ ListStatusView::ListStatusView( HostInfoManager* manager,
     topLayout->addWidget( mJobsListView );
 }
 
+StatusView::Options ListStatusView::options() const
+{
+    return RememberJobsOption;
+}
+
 void ListStatusView::update( const Job &job )
 {
     mJobsListModel->update( job );

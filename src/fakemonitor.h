@@ -17,7 +17,7 @@ class FakeMonitor : public Monitor
 public:
     explicit FakeMonitor(HostInfoManager* manager, QObject* parent = 0);
 
-    virtual void setCurrentView(StatusView* view, bool rememberJobs);
+    virtual void setCurrentView(StatusView* view);
     virtual void setCurrentNet(const QByteArray& net) { Q_UNUSED(net); }
 
     virtual void setSchedulerState(bool online) { Q_UNUSED(online); }

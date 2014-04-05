@@ -23,7 +23,8 @@
 #ifndef ICEMON_MAINWINDOW_H
 #define ICEMON_MAINWINDOW_H
 
-#include <QtGui/QMainWindow>
+#include <QMainWindow>
+#include <QPointer>
 
 class HostInfoManager;
 class Monitor;
@@ -35,26 +36,22 @@ class QLabel;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-  public:
+
+public:
     MainWindow( QWidget *parent = 0 );
     virtual ~MainWindow();
 
     void setCurrentNet(const QByteArray &netname);
+
+    Monitor *monitor() const;
+    StatusView *view() const;
 
     void setTestModeEnabled(bool testMode);
 
 protected:
     void closeEvent(QCloseEvent *e);
 
-  private slots:
-    void setupListView();
-    void setupStarView();
-    void setupPoolView();
-    void setupSummaryView();
-    void setupGanttView();
-    void setupDetailedHostView();
-    void setupFlowTableView();
-
+private slots:
     void pauseView();
     void checkNodes();
     void configureView();
@@ -64,27 +61,23 @@ protected:
 
     void setSchedulerState(bool online);
 
-  private:
+    void handleViewModeActionTriggered(QAction* action);
+
+private:
     void readSettings();
     void writeSettings();
 
-    void setupView( StatusView *view, bool rememberJobs );
+    /// Does *not* take ownership over @p monitor
+    void setMonitor(Monitor *monitor);
+    /// Takes ownership over @p view
+    void setView(StatusView *view);
 
     HostInfoManager *m_hostInfoManager;
+    QPointer<Monitor> m_monitor;
+    StatusView* m_view;
+
     QLabel *m_schedStatusWidget;
     QLabel *m_currNetWidget;
-    Monitor *m_monitor;
-    StatusView *m_view;
-
-    enum views {
-        ListViewType,
-        StarViewType,
-        PoolViewType,
-        GanttViewType,
-        SummaryViewType,
-        FlowTableViewType,
-        DetailedHostViewType
-    };
 
     QActionGroup* m_viewMode;
     QAction *m_configureViewAction;

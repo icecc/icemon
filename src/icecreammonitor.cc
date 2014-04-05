@@ -334,16 +334,21 @@ void IcecreamMonitor::handle_job_done( Msg *_m )
     m_view->update( *it );
 }
 
-void IcecreamMonitor::setCurrentView( StatusView *view, bool rememberJobs )
+void IcecreamMonitor::setCurrentView(StatusView *view)
 {
+    if (m_view == view)
+        return;
+
     m_view = view;
 
-    m_view->updateSchedulerState( m_schedulerState );
+    if (m_view) {
+        m_view->updateSchedulerState( m_schedulerState );
 
-    if ( rememberJobs ) {
-        JobList::ConstIterator it = m_rememberedJobs.constBegin();
-        for ( ; it != m_rememberedJobs.constEnd(); ++it )
-            m_view->update( *it );
+        if (m_view->options().testFlag(StatusView::RememberJobsOption)) {
+            JobList::ConstIterator it = m_rememberedJobs.constBegin();
+            for ( ; it != m_rememberedJobs.constEnd(); ++it )
+                m_view->update( *it );
+        }
     }
 }
 

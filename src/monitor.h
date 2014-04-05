@@ -17,7 +17,7 @@ class Monitor : public QObject
 public:
     explicit Monitor(HostInfoManager *manager, QObject* parent = 0);
 
-    virtual void setCurrentView(StatusView *view, bool rememberJobs) = 0;
+    virtual void setCurrentView(StatusView *view) = 0;
     virtual void setCurrentNet(const QByteArray &) = 0;
 
     virtual void setSchedulerState(bool online) = 0;

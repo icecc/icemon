@@ -36,6 +36,8 @@ class ListStatusView :public QWidget, public StatusView
 public:
     ListStatusView( HostInfoManager* manager, QWidget* parent );
 
+    virtual Options options() const;
+
     virtual QWidget* widget() { return this; }
 
     virtual void update( const Job& job );
