@@ -22,6 +22,8 @@
 
 #include <algorithm>
 #include <QLocale>
+#include <QApplication>
+#include <QPalette>
 
 HostListModel::HostListModel(HostInfoManager* manager, QObject* parent)
     : QAbstractListModel(parent)
@@ -37,6 +39,8 @@ QVariant HostListModel::headerData(int section, Qt::Orientation orientation, int
             return tr("ID");
         case ColumnName:
             return tr("Name");
+        case ColumnNoRemote:
+            return tr("No remote?");
         case ColumnColor:
             return tr("Color");
         case ColumnIP:
@@ -72,6 +76,8 @@ QVariant HostListModel::data(const QModelIndex& index, int role) const
             return info.id();
         case ColumnName:
             return info.name();
+        case ColumnNoRemote:
+            return info.noRemote() ? tr("Yes") : "";
         case ColumnColor:
             return HostInfo::colorName(info.color());
         case ColumnIP:
@@ -91,6 +97,8 @@ QVariant HostListModel::data(const QModelIndex& index, int role) const
         switch (column) {
         case ColumnID:
             return Qt::AlignRight;
+        case ColumnNoRemote:
+            return Qt::AlignCenter;
         case ColumnMaxJobs:
             return Qt::AlignRight;
         case ColumnSpeed:
@@ -99,6 +107,14 @@ QVariant HostListModel::data(const QModelIndex& index, int role) const
             return Qt::AlignRight;
         default:
             break;
+        }
+    } else if (role == Qt::BackgroundRole) {
+        if (info.noRemote()) {
+            return QApplication::palette().color(QPalette::Disabled, QPalette::Base);
+        }
+    } else if (role == Qt::ForegroundRole) {
+        if (info.noRemote()) {
+            return QApplication::palette().color(QPalette::Disabled, QPalette::Text);
         }
     }
     return QVariant();
@@ -141,9 +157,13 @@ void HostListModel::checkNode(unsigned int hostid)
 
     const int index = m_hostInfos.indexOf(*info);
     if (index != -1) {
-        m_hostInfos[index] = *info;
-        emit dataChanged(indexForHostInfo(*info, 0), indexForHostInfo(*info, _ColumnCount - 1));
-    } else {
+        if(info->isOffline()) {
+            removeNodeById(hostid);
+        } else {
+            m_hostInfos[index] = *info;
+            emit dataChanged(indexForHostInfo(*info, 0), indexForHostInfo(*info, _ColumnCount - 1));
+        }
+    } else if(!info->isOffline()) {
         beginInsertRows(QModelIndex(), m_hostInfos.size(), m_hostInfos.size());
         m_hostInfos << *info;
         endInsertRows();
