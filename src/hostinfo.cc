@@ -121,6 +121,7 @@ void HostInfo::updateFromStatsMap( const StatsMap &stats )
     mPlatform = stats["Platform"];
   }
 
+  mNoRemote = ( stats["NoRemote"].compare( "true", Qt::CaseInsensitive ) == 0 );
   mMaxJobs = stats["MaxJobs"].toUInt();
   mOffline = ( stats["State"] == "Offline" );
 

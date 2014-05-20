@@ -50,6 +50,8 @@ class HostInfo
     void setOffline(bool offline) { mOffline = offline; }
     bool isOffline() const { return mOffline; }
 
+    bool noRemote() const { return mNoRemote; }
+
     typedef QMap<QString,QString> StatsMap;
     void updateFromStatsMap( const StatsMap &stats );
 
@@ -84,6 +86,7 @@ class HostInfo
 
     unsigned int mMaxJobs;
     bool mOffline;
+    bool mNoRemote;
 
     float mServerSpeed;
 
