@@ -24,6 +24,7 @@
 
 #include "hostinfo.h"
 #include "job.h"
+#include "utils.h"
 
 #include <assert.h>
 #include <QDebug>
@@ -68,14 +69,7 @@ QColor StatusView::hostColor( unsigned int id )
 
 QColor StatusView::textColor( const QColor &color )
 {
-  QColor textColor;
-
-  float luminance = ( color.red() * 0.299 ) + ( color.green() * 0.587 ) +
-                    ( color.blue() * 0.114 );
-  if ( luminance > 140.0 ) textColor = Qt::black;
-  else textColor = Qt::white;
-
-  return textColor;
+  return utils::getBetterContrastColor( color, Qt::black, Qt::white );
 }
 
 unsigned int StatusView::processor( const Job &job )

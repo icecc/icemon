@@ -96,6 +96,7 @@ void FakeMonitor::update()
     job.setState(Job::Compiling);
     const int serverId = HOST_IDS[(JOB_ID+1) % HOST_IDS.size()];
     job.setServer(serverId);
+    emit jobUpdated(job);
     m_view->update(job);
     m_activeJobs << job;
 
@@ -104,6 +105,7 @@ void FakeMonitor::update()
         Job job = m_activeJobs.first();
         m_activeJobs.removeFirst();
         job.setState(Job::Finished);
+        emit jobUpdated(job);
         m_view->update(job);
     }
 

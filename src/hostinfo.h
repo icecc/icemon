@@ -96,8 +96,10 @@ class HostInfo
     static QMap<int,QString> mColorNameMap;
 };
 
-class HostInfoManager
+class HostInfoManager : public QObject
 {
+  Q_OBJECT
+
   public:
     HostInfoManager();
     ~HostInfoManager();
@@ -120,6 +122,9 @@ class HostInfoManager
     void setSchedulerName( const QString& schedulerName );
     QString networkName() const { return mNetworkName; }
     void setNetworkName( const QString& networkName );
+
+  signals:
+    void hostMapChanged();
 
   private:
     HostMap mHostMap;

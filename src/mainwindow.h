@@ -26,6 +26,8 @@
 #include <QMainWindow>
 #include <QPointer>
 
+#include "job.h"
+
 class HostInfoManager;
 class Monitor;
 class StatusView;
@@ -60,6 +62,8 @@ private slots:
     void aboutQt();
 
     void setSchedulerState(bool online);
+    void updateJob( const Job& );
+    void updateJobStats();
 
     void handleViewModeActionTriggered(QAction* action);
 
@@ -77,12 +81,14 @@ private:
     StatusView* m_view;
 
     QLabel *m_schedStatusWidget;
-    QLabel *m_currNetWidget;
+    QLabel *m_jobStatsWidget;
 
     QActionGroup* m_viewMode;
     QAction *m_configureViewAction;
     QAction *m_pauseViewAction;
     QAction *m_checkNodesAction;
+
+    JobList m_activeJobs;
 };
 
 #endif // ICEMON_MAINWINDOW_H
