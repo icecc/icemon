@@ -5,6 +5,7 @@
 
 class StatusView;
 class HostInfoManager;
+class Job;
 
 /**
  * Abstract base class for monitoring a icecream-like scheduler
@@ -27,6 +28,7 @@ public:
 
 Q_SIGNALS:
     void schedulerStateChanged(bool);
+    void jobUpdated(const Job&);
 
 private:
     HostInfoManager *m_hostInfoManager;

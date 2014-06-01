@@ -61,6 +61,8 @@ class Job
     State state() const { return m_state; }
     QString stateAsString() const;
     time_t stime() const { return m_stime; }
+    bool isDone() const { return m_state == Finished || m_state == Failed; }
+    bool isActive() const { return m_state == LocalOnly || m_state == Compiling; }
 
     void setServer( unsigned int hostid ) {
         m_server = hostid;

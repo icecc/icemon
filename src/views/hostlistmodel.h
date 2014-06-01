@@ -34,6 +34,7 @@ public:
     {
         ColumnID,
         ColumnName,
+        ColumnNoRemote,
         ColumnColor,
         ColumnIP,
         ColumnPlatform,

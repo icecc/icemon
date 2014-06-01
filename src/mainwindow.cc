@@ -36,6 +36,8 @@
 #include "fakemonitor.h"
 #include "icecreammonitor.h"
 
+#include "utils.h"
+
 #include <QDebug>
 #include <QMenuBar>
 #include <QStatusBar>
@@ -92,8 +94,9 @@ MainWindow::MainWindow( QWidget *parent )
     QMenu* viewMenu = menuBar()->addMenu(tr("&View"));
     QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
 
-    m_currNetWidget = new QLabel;
-    statusBar()->addPermanentWidget(m_currNetWidget);
+    m_jobStatsWidget = new QLabel;
+    m_jobStatsWidget->setVisible(false);
+    statusBar()->addPermanentWidget(m_jobStatsWidget);
 
     m_schedStatusWidget = new QLabel;
     statusBar()->addPermanentWidget(m_schedStatusWidget);
@@ -217,6 +220,8 @@ void MainWindow::setMonitor(Monitor* monitor)
         m_monitor->setCurrentView(m_view);
         connect(m_monitor, SIGNAL( schedulerStateChanged( bool ) ), SLOT( setSchedulerState( bool ) ));
         setSchedulerState(m_monitor->schedulerState());
+        connect(m_monitor, SIGNAL( jobUpdated( const Job& ) ), SLOT( updateJob( const Job& ) ));
+        connect(m_monitor->hostInfoManager(), SIGNAL( hostMapChanged() ), SLOT( updateJobStats() ));
     }
 }
 
@@ -295,19 +300,146 @@ void MainWindow::aboutQt()
     QMessageBox::aboutQt(this);
 }
 
-
 void MainWindow::setSchedulerState(bool online)
 {
-    m_schedStatusWidget->setText(online ?
-                                     tr("Scheduler is online.") :
-                                     tr("Scheduler is offline.")
-                );
+    if( online )
+    {
+        QString statusText = m_hostInfoManager->schedulerName();
+
+        if( !m_hostInfoManager->networkName().isEmpty() )
+        {
+            statusText.append( " @ " ).append( m_hostInfoManager->networkName() );
+        }
+
+        m_schedStatusWidget->setText( statusText );
+    }
+    else
+    {
+        m_schedStatusWidget->setText(tr("Scheduler is offline."));
+    }
+
+    m_activeJobs.clear();
+    updateJobStats();
+}
+
+void MainWindow::updateJob( const Job& job )
+{
+#ifndef NDEBUG
+    if( job.isActive() || job.isDone() )
+    {
+        qDebug() << QString( "jobId: %1 state: %2 clientId: %3 client: '%4' serverId: %5 server: '%6'" )
+                    .arg( job.jobId(), 3 )
+                    .arg( job.stateAsString(), 10 )
+                    .arg( job.client() )
+                    .arg( job.client() == 0 ? QString( "<none>" ) : m_hostInfoManager->hostMap()[job.client()]->name() )
+                    .arg( job.server() )
+                    .arg( job.server() == 0 ? QString( "<none>" ) : m_hostInfoManager->hostMap()[job.server()]->name() );
+    }
+#endif
+
+    if( job.isActive() )
+    {
+        m_activeJobs[job.jobId()] = job;
+        updateJobStats();
+    }
+    else if( job.isDone() )
+    {
+        m_activeJobs.remove( job.jobId() );
+        updateJobStats();
+    }
+}
+
+void MainWindow::updateJobStats()
+{
+    if( !m_monitor->schedulerState() )
+    {
+        m_jobStatsWidget->clear();
+        m_jobStatsWidget->setVisible( false );
+        return;
+    }
+
+    HostInfoManager::HostMap hostMap = m_monitor->hostInfoManager()->hostMap();
+
+    QMap<QString, unsigned> maxJobsPerPlatform;
+    QMap<QString, unsigned> jobUsagePerPlatform;
+    QMap<QString, QMap<const HostInfo*, unsigned> > jobUsagePerHostPerPlatform;
+
+    // Populate maxJobsPerPlatform
+    for( HostInfoManager::HostMap::iterator i = hostMap.begin(); i != hostMap.end(); ++i )
+    {
+        if( !i.value()->isOffline() && !i.value()->noRemote() )
+        {
+            maxJobsPerPlatform[i.value()->platform()] += i.value()->maxJobs();
+        }
+    }
+
+    // Populate jobUsagePerHostPerPlatform
+    for( JobList::const_iterator i = m_activeJobs.constBegin(); i != m_activeJobs.constEnd(); ++i )
+    {
+        const HostInfo* client = hostMap[i.value().client()];
+        const HostInfo* server = hostMap[i.value().server() != 0 ? i.value().server() : i.value().client()];
+
+        if( !server->isOffline() && !server->noRemote() )
+        {
+            ++jobUsagePerPlatform[server->platform()];
+            ++jobUsagePerHostPerPlatform[server->platform()][client];
+        }
+    }
+
+    QString text;
+
+    // Compose the text
+    for( QMap<QString, unsigned>::const_iterator i = maxJobsPerPlatform.constBegin(); i != maxJobsPerPlatform.constEnd(); ++i )
+    {
+        if( i.value() == 0 )
+        {
+            continue;
+        }
+
+        if( !text.isEmpty() )
+        {
+            text.append( " | " );
+        }
+
+        text.append( QString( "%1: [%2/%3]" ).arg( i.key() ).arg( jobUsagePerPlatform[i.key()] ).arg( i.value() ) );
+
+        const QMap<const HostInfo*, unsigned>& jobUsagePerHost = jobUsagePerHostPerPlatform[i.key()];
+
+        if( !jobUsagePerHost.isEmpty() )
+        {
+            QString usageText;
+
+            for( QMap<const HostInfo*, unsigned>::const_iterator i = jobUsagePerHost.constBegin(); i != jobUsagePerHost.constEnd(); ++i )
+            {
+                usageText.append( " " );
+
+                QString coloredFormat;
+
+                if( utils::isLowContrast( m_jobStatsWidget->palette().color( QPalette::Window ), i.key()->color() ) )
+                {
+                    const QColor backColor = utils::getBetterContrastColor( i.key()->color(), Qt::black, Qt::white );
+
+                    coloredFormat = QString( "<span style='font-weight: bold; color: %1; background-color: %2'>&nbsp;&#9679;&nbsp;%3&nbsp;</span>" ).arg( i.key()->color().name() ).arg( backColor.name() ).arg( "%1" );
+                }
+                else
+                {
+                    coloredFormat = QString( "<span style='font-weight: bold; color: %1'>&#9679;&nbsp;%2</span>" ).arg( i.key()->color().name() ).arg( "%1" );
+                }
+
+                usageText.append( coloredFormat.arg( QString( "%1: %2" ).arg( i.key()->name() ).arg( i.value() ) ) );
+            }
+
+            text.append( usageText );
+        }
+    }
+
+    m_jobStatsWidget->setText( text );
+    m_jobStatsWidget->setVisible( true );
 }
 
 void MainWindow::setCurrentNet( const QByteArray &netName )
 {
   m_monitor->setCurrentNet( netName );
-  m_currNetWidget->setText(tr("Current Network: %1").arg(QString::fromLatin1(netName)));
 }
 
 void MainWindow::handleViewModeActionTriggered(QAction* action)

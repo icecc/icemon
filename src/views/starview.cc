@@ -22,6 +22,7 @@
 #include "starview.h"
 
 #include "hostinfo.h"
+#include "utils.h"
 
 #include <qdebug.h>
 
@@ -121,15 +122,11 @@ void StarViewConfigDialog::slotSuppressDomainName( bool b )
 }
 
 
-HostItem::HostItem( const QString &text, HostInfoManager *m )
+HostItem::HostItem( HostInfoManager *m )
     : QGraphicsItemGroup( 0 ), mHostInfo( 0 ), mHostInfoManager( m ),
       m_stateItem( 0 )
 {
     init();
-
-    m_textItem->setText(text);
-
-    updateName();
 }
 
 HostItem::HostItem( HostInfo *hostInfo, HostInfoManager *m )
@@ -152,7 +149,7 @@ void HostItem::init()
     m_boxItem->setZValue( 80 );
     m_boxItem->setPen( QPen( Qt::NoPen ) );
 
-    m_textItem = new QGraphicsSimpleTextItem( this );
+    m_textItem = new QGraphicsTextItem( this );
     m_textItem->setZValue( 100 );
 
     setHostColor( QColor( 200, 200, 200 ) );
@@ -166,7 +163,8 @@ void HostItem::init()
 void HostItem::setHostColor( const QColor &color )
 {
     m_boxItem->setBrush( color );
-    m_textItem->setBrush( StatusView::textColor( color ) );
+    m_boxItem->setPen( color.darker( PenDarkerFactor ) );
+    m_textItem->setDefaultTextColor( StatusView::textColor( color ) );
 }
 
 QString HostItem::hostName() const
@@ -176,6 +174,9 @@ QString HostItem::hostName() const
 
 void HostItem::updateName()
 {
+    // Autosize the textItem's width to determine the desired size...
+    m_textItem->setTextWidth( -1 );
+
     if (mHostInfo) {
         QString s = mHostInfo->name();
         if (suppressDomain) {
@@ -183,16 +184,57 @@ void HostItem::updateName()
             if (l>0)
                 s.truncate(l);
         }
-        m_textItem->setText(s);
+
+        QPen pen = m_boxItem->pen();
+
+        if( mHostInfo->noRemote() || mHostInfo->maxJobs() == 0 )
+        {
+            s = QString( "<i>%1</i>" ).arg( s );
+            pen.setStyle( Qt::DotLine );
+        }
+        else
+        {
+            s.append( QString( "<br>[%1/%2]" ).arg( m_jobs.size() ).arg( mHostInfo->maxJobs() ) );
+            pen.setStyle( Qt::SolidLine );
+        }
+
+        m_boxItem->setPen( pen );
+        m_textItem->setHtml( s );
+    }
+    else
+    {
+        m_textItem->setHtml( m_fixedText );
     }
 
-    QRectF r = m_textItem->boundingRect();
-    mBaseWidth = r.width() + 10 ;
-    mBaseHeight = r.height() + 10 ;
+    QTextBlockFormat format;
+    format.setAlignment( Qt::AlignCenter );
+    QTextCursor cursor = m_textItem->textCursor();
+    cursor.select( QTextCursor::Document );
+    cursor.mergeBlockFormat( format );
+    cursor.clearSelection();
 
-    m_boxItem->setRect(-5, -5, mBaseWidth, mBaseHeight);
+    QRectF r = m_textItem->boundingRect();
+
+    // Set the textItem to fixed width based on previous autosize to apply the alignment.
+    m_textItem->setTextWidth( r.width() );
+
+    mBaseWidth = r.width() * utils::Sqrt2;
+    mBaseHeight = r.height() * utils::Sqrt2;
+
+    m_boxItem->setRect( - baseXMargin(), - baseYMargin(), mBaseWidth, mBaseHeight );
 
     updateHalos();
+}
+
+void HostItem::setFixedText( const QString& text )
+{
+    if( m_fixedText == text )
+    {
+        return;
+    }
+
+    m_fixedText = text;
+    updateName();
 }
 
 void HostItem::setCenterPos( double x, double y )
@@ -221,9 +263,11 @@ void HostItem::update( const Job &job )
     if ( newJob ) {
         m_jobs.insert( job.jobId(), job );
         createJobHalo( job );
+        updateName();
     } else if ( finished ) {
         deleteJobHalo( job );
         m_jobs.erase( it );
+        updateName();
     }
 }
 
@@ -233,7 +277,6 @@ void HostItem::createJobHalo( const Job &job )
         centerPosX(), centerPosY(), mBaseWidth, mBaseHeight,
         this );
 
-    halo->setZValue( 70 - m_jobHalos.size() );
     halo->setPen(QPen(Qt::NoPen));
     halo->show();
 
@@ -261,9 +304,10 @@ void HostItem::updateHalos()
     QMap<Job,QGraphicsEllipseItem*>::Iterator it;
     for( it = m_jobHalos.begin(); it != m_jobHalos.end(); ++it ) {
         QGraphicsEllipseItem *halo = it.value();
-        halo->setRect( halo->x() - 5 - count * 3, halo->y() - 5 - count * 3, mBaseWidth + count * 6, mBaseHeight + count * 6 );
+        halo->setZValue( 70 - count );
+        halo->setRect( halo->x() - baseXMargin() - count * HaloMargin, halo->y() - baseYMargin() - count * HaloMargin, mBaseWidth + count * HaloMargin * 2, mBaseHeight + count * HaloMargin * 2 );
         halo->setBrush( mHostInfoManager->hostColor( it.key().client() ) );
-        halo->setPen( Qt::NoPen );
+        halo->setPen( mHostInfoManager->hostColor( it.key().client() ).darker( PenDarkerFactor ) );
         ++count;
     }
 }
@@ -287,10 +331,10 @@ StarView::StarView( HostInfoManager *m, QWidget *parent )
     m_canvasView->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     layout->addWidget( m_canvasView );
 
-    m_schedulerItem = new HostItem( "", hostInfoManager() );
+    m_schedulerItem = new HostItem( hostInfoManager() );
     m_canvas->addItem(m_schedulerItem);
     m_schedulerItem->setZValue(150);
-    centerSchedulerItem();
+    updateSchedulerState( false );
     m_schedulerItem->show();
 
     createKnownHosts();
@@ -432,13 +476,7 @@ void StarView::removeItem( HostItem *hostItem )
 
 void StarView::updateSchedulerState( bool online )
 {
-    QString txt;
-    if ( online ) {
-        txt = tr("Scheduler");
-    } else {
-        txt = "";
-    }
-    delete m_schedulerItem;
+    m_schedulerItem->setFixedText( online ? tr( "Scheduler" ) : "<b>?</b>" );
 
     if ( !online ) {
         QMap<unsigned int,HostItem *>::ConstIterator it;
@@ -449,10 +487,6 @@ void StarView::updateSchedulerState( bool online )
         mJobMap.clear();
     }
 
-    m_schedulerItem = new HostItem( txt, hostInfoManager() );
-    m_canvas->addItem(m_schedulerItem);
-    m_schedulerItem->setZValue(100);
-    m_schedulerItem->show();
     centerSchedulerItem();
 }
 

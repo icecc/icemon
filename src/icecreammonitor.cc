@@ -214,6 +214,7 @@ void IcecreamMonitor::handle_getcs( Msg *_m )
                                        m->filename.c_str(),
                                        m->lang == CompileJob::Lang_C ? "C" :
                                        "C++" );
+    emit jobUpdated( m_rememberedJobs[m->job_id] );
     m_view->update( m_rememberedJobs[m->job_id] );
 }
 
@@ -226,6 +227,7 @@ void IcecreamMonitor::handle_local_begin( Msg *_m )
                                        m->file.c_str(),
                                        "C++" );
     m_rememberedJobs[m->job_id].setState( Job::LocalOnly );
+    emit jobUpdated( m_rememberedJobs[m->job_id] );
     m_view->update( m_rememberedJobs[m->job_id] );
 }
 
@@ -241,6 +243,7 @@ void IcecreamMonitor::handle_local_done( Msg *_m )
     }
 
     ( *it ).setState( Job::Finished );
+    emit jobUpdated( *it );
     m_view->update( *it );
 
     if ( m_rememberedJobs.size() > 3000 ) { // now remove 1000
@@ -296,6 +299,7 @@ void IcecreamMonitor::handle_job_begin( Msg *_m )
              << ")" << endl;
 #endif
 
+    emit jobUpdated( *it );
     m_view->update( *it );
 }
 
@@ -331,6 +335,7 @@ void IcecreamMonitor::handle_job_done( Msg *_m )
              << ")" << endl;
 #endif
 
+    emit jobUpdated( m_rememberedJobs[m->job_id] );
     m_view->update( *it );
 }
 

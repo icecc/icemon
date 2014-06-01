@@ -50,6 +50,8 @@ class HostInfo
     void setOffline(bool offline) { mOffline = offline; }
     bool isOffline() const { return mOffline; }
 
+    bool noRemote() const { return mNoRemote; }
+
     typedef QMap<QString,QString> StatsMap;
     void updateFromStatsMap( const StatsMap &stats );
 
@@ -84,6 +86,7 @@ class HostInfo
 
     unsigned int mMaxJobs;
     bool mOffline;
+    bool mNoRemote;
 
     float mServerSpeed;
 
@@ -93,8 +96,10 @@ class HostInfo
     static QMap<int,QString> mColorNameMap;
 };
 
-class HostInfoManager
+class HostInfoManager : public QObject
 {
+  Q_OBJECT
+
   public:
     HostInfoManager();
     ~HostInfoManager();
@@ -117,6 +122,9 @@ class HostInfoManager
     void setSchedulerName( const QString& schedulerName );
     QString networkName() const { return mNetworkName; }
     void setNetworkName( const QString& networkName );
+
+  signals:
+    void hostMapChanged();
 
   private:
     HostMap mHostMap;

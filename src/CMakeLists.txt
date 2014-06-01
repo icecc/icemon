@@ -14,6 +14,7 @@ set(icemon_SRCS
   mainwindow.cc
   monitor.cc
   statusview.cc
+  utils.cc
 
   views/detailedhostview.cc
   views/flowtableview.cc

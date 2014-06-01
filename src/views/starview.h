@@ -69,9 +69,12 @@ private:
 class HostItem : public QGraphicsItemGroup
 {
 public:
+    static const qreal HaloMargin = 4;
+    static const int PenDarkerFactor = 125;
+
     enum { RttiHostItem = 1000 };
 
-    HostItem( const QString &text, HostInfoManager * );
+    HostItem( HostInfoManager * );
     HostItem( HostInfo *hostInfo, HostInfoManager * );
     ~HostItem();
 
@@ -95,12 +98,16 @@ public:
 
     QString hostName() const;
     void updateName();
+    void setFixedText( const QString& text );
 
     double centerPosX() const { return pos().x()+m_textItem->boundingRect().width()/2; }
     double centerPosY() const { return pos().y()+m_textItem->boundingRect().height()/2; }
 
     double relativeCenterPosX() const { return m_textItem->boundingRect().width()/2; }
     double relativeCenterPosY() const { return m_textItem->boundingRect().height()/2; }
+
+    qreal baseXMargin() const { return ( mBaseWidth - m_textItem->boundingRect().width() ) / 2; }
+    qreal baseYMargin() const { return ( mBaseHeight - m_textItem->boundingRect().height() ) / 2; }
 
     void setCenterPos( double x, double y );
 
@@ -119,7 +126,8 @@ private:
     bool mIsCompiling;
 
     QGraphicsItem *m_stateItem;
-    QGraphicsSimpleTextItem* m_textItem;
+    QGraphicsTextItem* m_textItem;
+    QString m_fixedText;
     unsigned int m_client;
 
     qreal mBaseWidth;

@@ -121,6 +121,7 @@ void HostInfo::updateFromStatsMap( const StatsMap &stats )
     mPlatform = stats["Platform"];
   }
 
+  mNoRemote = ( stats["NoRemote"].compare( "true", Qt::CaseInsensitive ) == 0 );
   mMaxJobs = stats["MaxJobs"].toUInt();
   mOffline = ( stats["State"] == "Offline" );
 
@@ -190,6 +191,7 @@ void HostInfoManager::checkNode(const HostInfo &info)
   if (it == mHostMap.constEnd()) {
     HostInfo *hostInfo = new HostInfo(info);
     mHostMap.insert(info.id(), hostInfo);
+    emit hostMapChanged();
   } else {
     // no-op
   }
@@ -208,6 +210,7 @@ HostInfo *HostInfoManager::checkNode( unsigned int hostid,
   }
 
   hostInfo->updateFromStatsMap( stats );
+  emit hostMapChanged();
 
   return hostInfo;
 }
@@ -261,3 +264,5 @@ void HostInfoManager::setNetworkName( const QString& networkName )
 {
     mNetworkName = networkName;
 }
+
+#include "hostinfo.moc"
