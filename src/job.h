@@ -105,11 +105,7 @@ class IdleJob : public Job
     IdleJob() : Job() { setState( Job::Idle ); }
 };
 
-class JobList : public QMap<unsigned int, Job>
-{
-  public:
-    JobList() {}
-};
+typedef QMap<unsigned int, Job> JobList;
 
 #endif
 // vim:ts=4:sw=4:noet
