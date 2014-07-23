@@ -562,7 +562,7 @@ void StarViewGraphicsView::arrangeSchedulerItem()
 {
     const Monitor* monitor = m_starView->monitor();
     const bool isOnline = (monitor ? monitor->schedulerState() : false);
-    m_schedulerItem->setFixedText( isOnline ? tr( "Scheduler" ) : "<b>?</b>" );
+    m_schedulerItem->setFixedText( isOnline ? tr( "Scheduler" ) : "<b>No scheduler available</b>" );
     m_schedulerItem->setCenterPos( width() / 2, height() / 2 );
 }
 
