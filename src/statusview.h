@@ -69,14 +69,7 @@ public:
 
     virtual void stop() {}
     virtual void start() {}
-
-    void togglePause() {
-        if (m_paused)
-            start();
-        else
-            stop();
-        m_paused = !m_paused;
-    }
+    void togglePause();
 
     virtual QString id() const = 0;
 

@@ -137,4 +137,15 @@ unsigned int StatusView::processor( const Job &job )
     return ret;
 }
 
+void StatusView::togglePause()
+{
+    if (m_paused) {
+        start();
+    } else {
+        stop();
+    }
+
+    m_paused = !m_paused;
+}
+
 #include "statusview.moc"
