@@ -39,18 +39,19 @@ class Monitor : public QObject
     Q_PROPERTY(bool schedulerState READ schedulerState WRITE setSchedulerState NOTIFY schedulerStateChanged)
 
 public:
-
     explicit Monitor(HostInfoManager *manager, QObject* parent = 0);
 
     QByteArray currentNetname() const;
     void setCurrentNetname(const QByteArray &);
 
-    void setSchedulerState(bool online);
     bool schedulerState() const;
 
     virtual QList<Job> jobHistory() const;
 
     HostInfoManager *hostInfoManager() const { return m_hostInfoManager; }
+
+protected:
+    void setSchedulerState(bool online);
 
 Q_SIGNALS:
     void schedulerStateChanged(bool);
