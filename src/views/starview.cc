@@ -36,12 +36,14 @@
 #include <qregexp.h>
 #include <qcheckbox.h>
 #include <qdir.h>
+#include <QSettings>
 #include <QResizeEvent>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 
 #include <math.h>
 
+// TODO: This shouldn't be global
 static bool suppressDomain = false;
 
 StarViewConfigDialog::StarViewConfigDialog( QWidget *parent )
@@ -57,20 +59,17 @@ StarViewConfigDialog::StarViewConfigDialog( QWidget *parent )
     QBoxLayout *nodesLayout = new QHBoxLayout();
     topLayout->addLayout( nodesLayout );
 
-    int nodesPerRing = 25;
-
     mNodesPerRingSlider = new QSlider( Qt::Horizontal );
     mNodesPerRingSlider->setMinimum( 1 );
     mNodesPerRingSlider->setMaximum( 50 );
     mNodesPerRingSlider->setSingleStep( 1 );
-    mNodesPerRingSlider->setValue( nodesPerRing );
     nodesLayout->addWidget( mNodesPerRingSlider );
     connect( mNodesPerRingSlider, SIGNAL( valueChanged( int ) ),
              SIGNAL( configChanged() ) );
     connect( mNodesPerRingSlider, SIGNAL( valueChanged( int ) ),
              SLOT( slotNodesPerRingChanged( int ) ) );
 
-    mNodesPerRingLabel = new QLabel( QString::number( nodesPerRing ) );
+    mNodesPerRingLabel = new QLabel;
     nodesLayout->addWidget( mNodesPerRingLabel );
 
     label = new QLabel( tr("Architecture filter:") );
@@ -109,6 +108,24 @@ void StarViewConfigDialog::setMaxNodes( int maxNodes )
 int StarViewConfigDialog::nodesPerRing()
 {
     return mNodesPerRingSlider->value();
+}
+
+void StarViewConfigDialog::setNodesPerRing(int nodes)
+{
+    mNodesPerRingSlider->setValue(nodes);
+    slotNodesPerRingChanged(nodes);
+    configChanged();
+}
+
+bool StarViewConfigDialog::suppressDomainName() const
+{
+    return ::suppressDomain;
+}
+
+void StarViewConfigDialog::setSuppressDomainName(bool suppress)
+{
+    mSuppressDomainName->setChecked(suppress);
+    configChanged();
 }
 
 QString StarViewConfigDialog::archFilter()
@@ -326,8 +343,34 @@ StarView::StarView(QObject* parent)
     connect( mConfigDialog, SIGNAL( configChanged() ),
              SLOT( slotConfigChanged() ) );
 
+    readSettings();
+
     m_widget->setScene(m_canvas);
     m_widget->arrangeItems();
+}
+
+StarView::~StarView()
+{
+    writeSettings();
+}
+
+void StarView::readSettings()
+{
+    QSettings settings;
+    settings.beginGroup("view_" + id());
+    mConfigDialog->setNodesPerRing(settings.value("nodesPerRing", 25).toInt());
+    mConfigDialog->setSuppressDomainName(settings.value("suppressDomainName", true).toBool());
+    settings.endGroup();
+}
+
+void StarView::writeSettings()
+{
+    QSettings settings;
+    settings.beginGroup("view_" + id());
+    settings.setValue("nodesPerRing", mConfigDialog->nodesPerRing());
+    settings.setValue("suppressDomainName", mConfigDialog->suppressDomainName());
+    settings.endGroup();
+    settings.sync();
 }
 
 void StarView::update( const Job &job )
@@ -566,7 +609,9 @@ void StarViewGraphicsView::arrangeSchedulerItem()
 
 void StarView::slotConfigChanged()
 {
-//  qDebug() << "StarView::slotConfigChanged()" << endl;
+    if (!hostInfoManager()) {
+        return;
+    }
 
     HostInfoManager::HostMap hostMap = hostInfoManager()->hostMap();
     HostInfoManager::HostMap::ConstIterator it;

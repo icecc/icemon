@@ -47,7 +47,10 @@ public:
     StarViewConfigDialog( QWidget *parent );
 
     int nodesPerRing();
+    void setNodesPerRing(int nodes);
+
     bool suppressDomainName() const;
+    void setSuppressDomainName(bool suppress);
 
     void setMaxNodes( int );
 
@@ -171,6 +174,10 @@ class StarView : public StatusView
 
 public:
     StarView( QObject* parent );
+    virtual ~StarView();
+
+    void readSettings();
+    void writeSettings();
 
     void update( const Job &job );
     virtual QWidget* widget() const;
@@ -183,11 +190,8 @@ public:
     virtual void setMonitor(Monitor* monitor);
 
     void checkNode( unsigned int hostid );
-
     void removeNode( unsigned int hostid );
-
     void updateSchedulerState( bool online );
-
     void configureView();
 
     bool isConfigurable() { return true; }
