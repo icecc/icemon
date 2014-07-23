@@ -192,7 +192,7 @@ void HostItem::updateName()
 
         QPen pen = m_boxItem->pen();
 
-        if( true || mHostInfo->noRemote() || mHostInfo->maxJobs() == 0 )
+        if( mHostInfo->noRemote() || mHostInfo->maxJobs() == 0 )
         {
             text = QString( "<i>%1</i>" ).arg( text );
             pen.setStyle( Qt::DotLine );
