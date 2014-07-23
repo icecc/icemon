@@ -26,8 +26,11 @@
 namespace Utils {
 
 int luminance( const QColor& color );
+
 bool isLowContrast( const QColor& color1, const QColor& color2, int treshold = 128 );
-const QColor betterContrastColor( const QColor& baseColor, const QColor& color1, const QColor& color2 );
+
+QColor betterContrastColor( const QColor& baseColor, const QColor& color1, const QColor& color2 );
+QColor textColor( const QColor& baseColor );
 
 }
 

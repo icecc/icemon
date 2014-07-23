@@ -169,7 +169,7 @@ void HostItem::setHostColor( const QColor &color )
 {
     m_boxItem->setBrush( color );
     m_boxItem->setPen( color.darker( PenDarkerFactor ) );
-    m_textItem->setDefaultTextColor( StatusView::textColor( color ) );
+    m_textItem->setDefaultTextColor( Utils::textColor( color ) );
 }
 
 QString HostItem::hostName() const

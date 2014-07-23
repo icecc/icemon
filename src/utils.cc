@@ -30,7 +30,12 @@ bool Utils::isLowContrast( const QColor& color1, const QColor& color2, int tresh
     return qAbs( luminance( color1 ) - luminance( color2 ) ) < treshold;
 }
 
-const QColor Utils::betterContrastColor( const QColor& baseColor, const QColor& color1, const QColor& color2 )
+QColor Utils::betterContrastColor( const QColor& baseColor, const QColor& color1, const QColor& color2 )
 {
     return qAbs( luminance( baseColor ) - luminance( color1 ) ) >= qAbs( luminance( baseColor ) - luminance( color2 ) ) ? color1 : color2;
+}
+
+QColor Utils::textColor(const QColor& baseColor)
+{
+    return betterContrastColor( baseColor, Qt::black, Qt::white );
 }

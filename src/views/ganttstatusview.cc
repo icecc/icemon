@@ -23,6 +23,7 @@
 
 #include "job.h"
 #include "hostinfo.h"
+#include "utils.h"
 
 #include <QDebug>
 #include <qlabel.h>
@@ -243,7 +244,7 @@ void GanttProgress::drawGraph( QPainter &p )
                         (*it).text_cache = QPixmap( text_width, height() - 4 );
                         (*it).text_cache.fill( color );
                         QPainter painter( &(*it).text_cache );
-                        painter.setPen( StatusView::textColor( color ) );
+                        painter.setPen( Utils::textColor( color ) );
                         painter.drawText( 0, 0, text_width, height() - 4,
                                           Qt::AlignVCenter | Qt::AlignLeft, s );
                     }

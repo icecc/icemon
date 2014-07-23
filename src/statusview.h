@@ -78,8 +78,6 @@ public:
     QString nameForHost( unsigned int hostid );
     QColor hostColor( unsigned int hostid );
 
-    static QColor textColor( const QColor &backGroundColor );
-
 protected Q_SLOTS:
     virtual void update(const Job &job);
     virtual void checkNode(HostId hostid);
