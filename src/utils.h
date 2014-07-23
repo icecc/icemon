@@ -5,9 +5,6 @@
 
 namespace utils {
 
-// General purpose constants
-const qreal Sqrt2 = 1.41421356237309504880;
-
 // Color helpers
 int getLuminance( const QColor& color );
 bool isLowContrast( const QColor& color1, const QColor& color2, int treshold = 128 );

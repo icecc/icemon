@@ -223,8 +223,8 @@ void HostItem::updateName()
     // Set the textItem to fixed width based on previous autosize to apply the alignment.
     m_textItem->setTextWidth( r.width() );
 
-    mBaseWidth = r.width() * utils::Sqrt2;
-    mBaseHeight = r.height() * utils::Sqrt2;
+    mBaseWidth = r.width() * M_SQRT2;
+    mBaseHeight = r.height() * M_SQRT2;
 
     m_boxItem->setRect( - baseXMargin(), - baseYMargin(), mBaseWidth, mBaseHeight );
 
