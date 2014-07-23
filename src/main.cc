@@ -30,7 +30,8 @@
 
 #include <stdio.h>
 
-void printHelp() {
+void printHelp()
+{
     QTextStream out(stdout);
     out << "Usage: " << Icemon::Version::appShortName << " [options]" << endl;
     out << endl;
