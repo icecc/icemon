@@ -118,7 +118,7 @@ QColor StatusView::hostColor( HostId id )
 
 QColor StatusView::textColor( const QColor &color )
 {
-  return utils::getBetterContrastColor( color, Qt::black, Qt::white );
+  return Utils::betterContrastColor( color, Qt::black, Qt::white );
 }
 
 unsigned int StatusView::processor( const Job &job )

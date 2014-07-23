@@ -419,9 +419,9 @@ void MainWindow::updateJobStats()
 
                 QString coloredFormat;
 
-                if( utils::isLowContrast( m_jobStatsWidget->palette().color( QPalette::Window ), i.key()->color() ) )
+                if( Utils::isLowContrast( m_jobStatsWidget->palette().color( QPalette::Window ), i.key()->color() ) )
                 {
-                    const QColor backColor = utils::getBetterContrastColor( i.key()->color(), Qt::black, Qt::white );
+                    const QColor backColor = Utils::betterContrastColor( i.key()->color(), Qt::black, Qt::white );
 
                     coloredFormat = QString( "<span style='font-weight: bold; color: %1; background-color: %2'>&nbsp;&#9679;&nbsp;%3&nbsp;</span>" ).arg( i.key()->color().name() ).arg( backColor.name() ).arg( "%1" );
                 }
