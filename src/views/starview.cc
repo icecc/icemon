@@ -174,6 +174,10 @@ void HostItem::setHostColor( const QColor &color )
 
 QString HostItem::hostName() const
 {
+    QString name = mHostInfo->name();
+    if (suppressDomain) {
+        return name.section('.', 0, 0);
+    }
     return mHostInfo->name();
 }
 
@@ -183,23 +187,17 @@ void HostItem::updateName()
     m_textItem->setTextWidth( -1 );
 
     if (mHostInfo) {
-        QString text = mHostInfo->name();
-        if (suppressDomain) {
-            int l = text.indexOf('.');
-            if (l>0)
-                text.truncate(l);
-        }
-
         QPen pen = m_boxItem->pen();
+        QString text;
 
         if( mHostInfo->noRemote() || mHostInfo->maxJobs() == 0 )
         {
-            text = QString( "<i>%1</i>" ).arg( text );
+            text = QString( "<i>%1</i>" ).arg( hostName() );
             pen.setStyle( Qt::DotLine );
         }
         else
         {
-            text.append( QString( "<br>[%1/%2]" ).arg( m_jobs.size() ).arg( mHostInfo->maxJobs() ) );
+            text = QString( "%1<br/>[%2/%3]" ).arg( hostName() ).arg( m_jobs.size() ).arg( mHostInfo->maxJobs() );
             pen.setStyle( Qt::SolidLine );
         }
 
