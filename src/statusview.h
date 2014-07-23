@@ -60,7 +60,6 @@ public:
 
     virtual QWidget *widget() const = 0;
 
-    virtual bool canCheckNodes() { return false; }
     virtual bool isPausable() { return false; }
     virtual bool isConfigurable() { return false; }
 

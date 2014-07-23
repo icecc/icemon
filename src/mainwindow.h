@@ -56,7 +56,6 @@ protected:
 
 private slots:
     void pauseView();
-    void checkNodes();
     void configureView();
 
     void about();
@@ -87,7 +86,6 @@ private:
     QActionGroup* m_viewMode;
     QAction *m_configureViewAction;
     QAction *m_pauseViewAction;
-    QAction *m_checkNodesAction;
 
     JobList m_activeJobs;
 };

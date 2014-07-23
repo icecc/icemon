@@ -145,13 +145,6 @@ MainWindow::MainWindow( QWidget *parent )
 
     viewMenu->addSeparator();
 
-    action =  viewMenu->addAction(tr("Check Nodes"));
-    connect( action, SIGNAL( triggered() ), this, SLOT( checkNodes() ) );
-    viewMenu->addAction(action);
-    m_checkNodesAction = action;
-
-    viewMenu->addSeparator();
-
     action = viewMenu->addAction(tr("Configure View..."));
     action->setIcon(QIcon::fromTheme("configure"));
     connect( action, SIGNAL( triggered() ), this, SLOT( configureView() ) );
@@ -246,7 +239,6 @@ void MainWindow::setView(StatusView *view)
     if (m_view) {
         m_configureViewAction->setEnabled(m_view->isConfigurable());
         m_pauseViewAction->setEnabled(m_view->isPausable());
-        m_checkNodesAction->setEnabled(m_view->canCheckNodes());
         m_view->setMonitor(m_monitor);
 
         setCentralWidget(m_view->widget());
@@ -265,11 +257,6 @@ void MainWindow::setView(StatusView *view)
 void MainWindow::pauseView()
 {
   m_view->togglePause();
-}
-
-void MainWindow::checkNodes()
-{
-  m_view->checkNodes();
 }
 
 void MainWindow::configureView()

@@ -549,11 +549,6 @@ void GanttStatusView::start()
   m_ageTimer->start( 10000 );
 }
 
-void GanttStatusView::checkNodes()
-{
-  checkAge();
-}
-
 void GanttStatusView::checkAge()
 {
     QList<unsigned int> to_unregister;

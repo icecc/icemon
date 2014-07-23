@@ -64,14 +64,11 @@ public:
     void checkNode( unsigned int hostid );
     void removeNode( unsigned int hostid );
 
-    void checkNodes() {}
-
     QString id() const { return "flow"; }
 
     void stop() {}
     void start() {}
 
-    bool canCheckNodes() { return false; }
     bool isPausable() { return false; }
     bool isConfigurable() { return false; }
 

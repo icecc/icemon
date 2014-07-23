@@ -127,10 +127,8 @@ class GanttStatusView : public StatusView
 
     void start();
     void stop();
-    void checkNodes();
 
     void configureView();
-    bool canCheckNodes() { return true; }
     bool isPausable() { return true; }
     bool isConfigurable() { return true; }
 
