@@ -31,24 +31,11 @@ class Job
 {
   public:
     enum State { WaitingForCS, LocalOnly, Compiling, Finished, Failed, Idle };
+
     explicit Job(unsigned int id = 0,
         unsigned int client = 0,
         const QString &filename = QString(),
-        const QString &lang = QString())
-    {
-        m_id = id;
-        m_fileName = filename;
-        m_lang = lang;
-        m_state = WaitingForCS;
-        m_client = client;
-        real_msec = 0;
-        user_msec = 0;
-        sys_msec = 0;
-        pfaults = 0;
-        exitcode = 0;
-        m_server = 0;
-        in_compressed = in_uncompressed = out_compressed = out_uncompressed = 0;
-    }
+        const QString &lang = QString());
 
     bool operator==( const Job &rhs ) const { return m_id == rhs.m_id; }
     bool operator!=( const Job &rhs ) const { return m_id != rhs.m_id; }
