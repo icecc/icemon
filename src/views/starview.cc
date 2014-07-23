@@ -183,28 +183,28 @@ void HostItem::updateName()
     m_textItem->setTextWidth( -1 );
 
     if (mHostInfo) {
-        QString s = mHostInfo->name();
+        QString text = mHostInfo->name();
         if (suppressDomain) {
-            int l = s.indexOf('.');
+            int l = text.indexOf('.');
             if (l>0)
-                s.truncate(l);
+                text.truncate(l);
         }
 
         QPen pen = m_boxItem->pen();
 
-        if( mHostInfo->noRemote() || mHostInfo->maxJobs() == 0 )
+        if( true || mHostInfo->noRemote() || mHostInfo->maxJobs() == 0 )
         {
-            s = QString( "<i>%1</i>" ).arg( s );
+            text = QString( "<i>%1</i>" ).arg( text );
             pen.setStyle( Qt::DotLine );
         }
         else
         {
-            s.append( QString( "<br>[%1/%2]" ).arg( m_jobs.size() ).arg( mHostInfo->maxJobs() ) );
+            text.append( QString( "<br>[%1/%2]" ).arg( m_jobs.size() ).arg( mHostInfo->maxJobs() ) );
             pen.setStyle( Qt::SolidLine );
         }
 
         m_boxItem->setPen( pen );
-        m_textItem->setHtml( s );
+        m_textItem->setHtml( text );
     }
     else
     {
@@ -218,13 +218,13 @@ void HostItem::updateName()
     cursor.mergeBlockFormat( format );
     cursor.clearSelection();
 
-    QRectF r = m_textItem->boundingRect();
+    QRectF rect = m_textItem->boundingRect();
 
     // Set the textItem to fixed width based on previous autosize to apply the alignment.
-    m_textItem->setTextWidth( r.width() );
+    m_textItem->setTextWidth( rect.width() );
 
-    mBaseWidth = r.width() * M_SQRT2;
-    mBaseHeight = r.height() * M_SQRT2;
+    mBaseWidth = rect.width() * M_SQRT2;
+    mBaseHeight = rect.height() * M_SQRT2;
 
     m_boxItem->setRect( - baseXMargin(), - baseYMargin(), mBaseWidth, mBaseHeight );
 
