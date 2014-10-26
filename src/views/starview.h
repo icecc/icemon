@@ -74,7 +74,7 @@ private:
 class HostItem : public QGraphicsItemGroup
 {
 public:
-    static const qreal HaloMargin = 4;
+    static const int HaloMargin = 4;
     static const int PenDarkerFactor = 125;
 
     enum { RttiHostItem = 1000 };
