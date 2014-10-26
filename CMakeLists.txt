@@ -32,11 +32,15 @@ endif()
 
 find_package(Qt4 REQUIRED)
 find_package(Icecream REQUIRED)
+set_package_properties(Icecream PROPERTIES
+  DESCRIPTION "Package providing API for accessing icecc information. Provides 'icecc/comm.h' header"
+  URL "http://en.opensuse.org/Icecream"
+)
 find_package(Docbook2X QUIET)
 set_package_properties(Docbook2X PROPERTIES
-  PURPOSE "docbook2X converts DocBook documents into the traditional Unix man page format. Required for man-page generation."
+  DESCRIPTION "docbook2X converts DocBook documents into the traditional Unix man page format"
+  PURPOSE "Required for man-page generation"
   URL "http://docbook2x.sourceforge.net/"
-  ""
 )
 
 if(CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
