@@ -33,7 +33,7 @@ class HostListView :public QTreeView
 public:
     HostListView(QWidget* parent);
 
-    virtual void setModel(QAbstractItemModel* model);
+    virtual void setModel(QAbstractItemModel* model) override;
 };
 
 #endif

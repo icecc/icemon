@@ -36,9 +36,9 @@ class JobListView : public QTreeView
     Q_OBJECT
 
 public:
-    JobListView(QWidget* parent = 0);
+    JobListView(QWidget* parent = nullptr);
 
-    virtual void setModel(QAbstractItemModel* model);
+    virtual void setModel(QAbstractItemModel* model) override;
 
     bool isClientColumnVisible() const;
     void setClientColumnVisible( bool visible );

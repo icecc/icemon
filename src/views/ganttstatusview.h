@@ -59,7 +59,7 @@ class GanttTimeScaleWidget : public QWidget
     void setPixelsPerSecond( int );
 
   protected:
-    virtual void paintEvent( QPaintEvent *e );
+    virtual void paintEvent( QPaintEvent *e ) override;
 
   private:
     int mPixelsPerSecond;
@@ -80,8 +80,8 @@ class GanttProgress : public QWidget
     void update( const Job &job );
 
   protected:
-    virtual void paintEvent( QPaintEvent *e );
-    virtual void resizeEvent( QResizeEvent *e );
+    virtual void paintEvent( QPaintEvent *e ) override;
+    virtual void resizeEvent( QResizeEvent *e ) override;
 
   private:
     void adjustGraph();
@@ -90,8 +90,8 @@ class GanttProgress : public QWidget
 
     struct JobData
     {
-      JobData( const Job& j, int c )
-        : job( j ), clock( c ), next_text_width( 0 ) {}
+      JobData( Job  j, int c )
+        : job(std::move( j )), clock( c ), next_text_width( 0 ) {}
       JobData() {} // stupid QValueList
 
       bool operator==( const JobData& d )
@@ -118,24 +118,24 @@ class GanttStatusView : public StatusView
 {
     Q_OBJECT
   public:
-    GanttStatusView(QObject *parent = 0);
+    GanttStatusView(QObject *parent = nullptr);
     virtual ~GanttStatusView() {}
 
-    QString id() const { return "gantt"; }
+    QString id() const override { return "gantt"; }
 
-    virtual void checkNode( unsigned int hostid );
+    virtual void checkNode( unsigned int hostid ) override;
 
-    void start();
-    void stop();
+    void start() override;
+    void stop() override;
 
-    void configureView();
-    bool isPausable() { return true; }
-    bool isConfigurable() { return true; }
+    void configureView() override;
+    bool isPausable() override { return true; }
+    bool isConfigurable() override { return true; }
 
-    virtual QWidget *widget() const;
+    virtual QWidget *widget() const override;
 
   public slots:
-    virtual void update( const Job &job );
+    virtual void update( const Job &job ) override;
 
   private slots:
     void slotConfigChanged();

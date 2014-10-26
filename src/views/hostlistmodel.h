@@ -53,13 +53,13 @@ public:
         HostIdRole = Qt::UserRole
     };
 
-    explicit HostListModel(QObject* parent = 0);
+    explicit HostListModel(QObject* parent = nullptr);
 
-    virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    virtual QVariant data(const QModelIndex& index, int role) const;
-    virtual int columnCount(const QModelIndex& parent) const;
-    virtual int rowCount(const QModelIndex& parent) const;
-    virtual QModelIndex parent(const QModelIndex& child) const;
+    virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    virtual QVariant data(const QModelIndex& index, int role) const override;
+    virtual int columnCount(const QModelIndex& parent) const override;
+    virtual int rowCount(const QModelIndex& parent) const override;
+    virtual QModelIndex parent(const QModelIndex& child) const override;
 
     Monitor* monitor() const;
     void setMonitor(Monitor* monitor);

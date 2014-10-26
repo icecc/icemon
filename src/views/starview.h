@@ -150,14 +150,14 @@ class StarViewGraphicsView : public QGraphicsView
     Q_OBJECT
 
 public:
-    StarViewGraphicsView(QGraphicsScene* scene, StarView* starView, QWidget* parent = 0);
+    StarViewGraphicsView(QGraphicsScene* scene, StarView* starView, QWidget* parent = nullptr);
 
     void arrangeItems();
     void drawNodeStatus();
 
 protected:
-    virtual void resizeEvent( QResizeEvent *e );
-    virtual bool event(QEvent *event);
+    virtual void resizeEvent( QResizeEvent *e ) override;
+    virtual bool event(QEvent *event) override;
 
 private:
     void arrangeHostItems();
@@ -179,22 +179,22 @@ public:
     void readSettings();
     void writeSettings();
 
-    void update( const Job &job );
-    virtual QWidget* widget() const;
+    void update( const Job &job ) override;
+    virtual QWidget* widget() const override;
 
-    QString id() const { return "star"; }
+    QString id() const override { return "star"; }
 
     QList<HostItem*> hostItems() const;
     HostItem *findHostItem( unsigned int hostid );
 
-    virtual void setMonitor(Monitor* monitor);
+    virtual void setMonitor(Monitor* monitor) override;
 
-    void checkNode( unsigned int hostid );
-    void removeNode( unsigned int hostid );
-    void updateSchedulerState( bool online );
-    void configureView();
+    void checkNode( unsigned int hostid ) override;
+    void removeNode( unsigned int hostid ) override;
+    void updateSchedulerState( bool online ) override;
+    void configureView() override;
 
-    bool isConfigurable() { return true; }
+    bool isConfigurable() override { return true; }
 
     StarViewConfigDialog* configDialog() const;
 

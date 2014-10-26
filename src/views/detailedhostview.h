@@ -39,13 +39,13 @@ class DetailedHostView : public StatusView
 public:
     DetailedHostView(QObject* parent);
 
-    virtual void setMonitor(Monitor* monitor);
+    virtual void setMonitor(Monitor* monitor) override;
 
-    QWidget* widget() const;
+    QWidget* widget() const override;
 
-    QString id() const { return "detailedhost"; }
+    QString id() const override { return "detailedhost"; }
 
-    void checkNode( unsigned int hostid );
+    void checkNode( unsigned int hostid ) override;
 
 private:
     void createKnownHosts();

@@ -37,13 +37,13 @@ class ProgressWidget : public QWidget
 {
     Q_OBJECT
 public:
-    ProgressWidget(HostInfo *info, StatusView *statusView, QWidget *parent = 0);
+    ProgressWidget(HostInfo *info, StatusView *statusView, QWidget *parent = nullptr);
 
     void setCurrentJob(const Job &job) { m_currentJob = job; }
     Job currentJob() const { return m_currentJob; }
 
-    void resizeEvent(QResizeEvent *);
-    void paintEvent(QPaintEvent *);
+    void resizeEvent(QResizeEvent *) override;
+    void paintEvent(QPaintEvent *) override;
 private:
     HostInfo *m_hostInfo;
     StatusView *m_statusView;
@@ -58,19 +58,19 @@ class FlowTableView : public StatusView
 public:
     explicit FlowTableView(QObject* parent);
     
-    virtual QWidget* widget() const;
+    virtual QWidget* widget() const override;
 
-    void update( const Job &job);
-    void checkNode( unsigned int hostid );
-    void removeNode( unsigned int hostid );
+    void update( const Job &job) override;
+    void checkNode( unsigned int hostid ) override;
+    void removeNode( unsigned int hostid ) override;
 
-    QString id() const { return "flow"; }
+    QString id() const override { return "flow"; }
 
-    void stop() {}
-    void start() {}
+    void stop() override {}
+    void start() override {}
 
-    bool isPausable() { return false; }
-    bool isConfigurable() { return false; }
+    bool isPausable() override { return false; }
+    bool isConfigurable() override { return false; }
 
 private:
     QScopedPointer<QTableWidget> m_widget;

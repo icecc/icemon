@@ -35,7 +35,7 @@ class FakeMonitor : public Monitor
     Q_OBJECT
 
 public:
-    explicit FakeMonitor(HostInfoManager* manager, QObject* parent = 0);
+    explicit FakeMonitor(HostInfoManager* manager, QObject* parent = nullptr);
 
 private Q_SLOTS:
     void update();

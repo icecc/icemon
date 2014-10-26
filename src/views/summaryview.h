@@ -46,7 +46,7 @@ private:
 
     struct JobHandler
     {
-        JobHandler() : stateWidget(0), sourceLabel(0), stateLabel(0) {}
+        JobHandler() : stateWidget(nullptr), sourceLabel(nullptr), stateLabel(nullptr) {}
 
         QFrame *stateWidget;
         QLabel *sourceLabel;
@@ -70,13 +70,13 @@ class SummaryView : public StatusView
     Q_OBJECT
 
 public:
-    SummaryView(QObject* parent = 0);
+    SummaryView(QObject* parent = nullptr);
     ~SummaryView();
 
-    virtual QWidget *widget() const;
-    virtual void update(const Job &job);
-    virtual void checkNode(unsigned int hostid);
-    virtual QString id() const { return "summary"; }
+    virtual QWidget *widget() const override;
+    virtual void update(const Job &job) override;
+    virtual void checkNode(unsigned int hostid) override;
+    virtual QString id() const override { return "summary"; }
 
 private:
     QScopedPointer<SummaryViewScrollArea> m_widget;

@@ -36,11 +36,11 @@ class ListStatusView : public StatusView
 public:
     ListStatusView(QObject* parent );
 
-    virtual Options options() const;
-    virtual QWidget* widget() const;
-    virtual QString id() const { return "list"; }
+    virtual Options options() const override;
+    virtual QWidget* widget() const override;
+    virtual QString id() const override { return "list"; }
 
-    virtual void setMonitor(Monitor* monitor);
+    virtual void setMonitor(Monitor* monitor) override;
 
 private:
     QScopedPointer<QWidget> m_widget;

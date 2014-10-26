@@ -47,7 +47,7 @@ public:
     };
     Q_DECLARE_FLAGS(Options, Option);
 
-    StatusView(QObject* parent = 0);
+    StatusView(QObject* parent = nullptr);
     virtual ~StatusView();
 
     virtual Options options() const;

@@ -51,7 +51,7 @@ public:
         _JobColumnCount
     };
 
-    explicit JobListModel(QObject* parent = 0);
+    explicit JobListModel(QObject* parent = nullptr);
 
     Monitor* monitor() const;
     void setMonitor(Monitor* monitor);
@@ -64,11 +64,11 @@ public:
         m_expireDuration = duration;
     }
 
-    virtual int columnCount(const QModelIndex& parent = QModelIndex()) const;
-    virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
-    virtual QModelIndex parent(const QModelIndex& child) const;
-    virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
+    virtual int columnCount(const QModelIndex& parent = QModelIndex()) const override;
+    virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    virtual QModelIndex parent(const QModelIndex& child) const override;
+    virtual int rowCount(const QModelIndex& parent = QModelIndex()) const override;
 
     Job jobForIndex(const QModelIndex& index) const;
     QModelIndex indexForJob(const Job& job, int column);
@@ -125,9 +125,9 @@ class JobListSortFilterProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
 public:
-    JobListSortFilterProxyModel( QObject* parent = NULL );
+    JobListSortFilterProxyModel( QObject* parent = nullptr );
 protected:
-    virtual bool lessThan( const QModelIndex& left, const QModelIndex& right ) const;
+    virtual bool lessThan( const QModelIndex& left, const QModelIndex& right ) const override;
 };
 
 #endif
