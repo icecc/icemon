@@ -54,9 +54,7 @@ private:
         QString currentFile;
     };
 
-    QFrame *m_stateWidget;
     QLabel *m_jobsLabel;
-    QLabel *m_sourceLabel;
 
     int m_jobCount;
     SummaryView *m_view;
