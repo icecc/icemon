@@ -1,6 +1,6 @@
 project(icemon)
 
-cmake_minimum_required(VERSION 2.8.5)
+cmake_minimum_required(VERSION 2.8.6)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 
@@ -8,7 +8,7 @@ include(CheckCXXCompilerFlag)
 include(GNUInstallDirs)
 include(KDE4Macros-Icecream)
 include(CheckIncludeFileCXX)
-include(MacroLogFeature)
+include(FeatureSummary)
 
 # version info
 set(ICEMON_VERSION_MAJOR "2")
@@ -33,15 +33,10 @@ endif()
 find_package(Qt4 REQUIRED)
 find_package(Icecream REQUIRED)
 find_package(Docbook2X QUIET)
-
-macro_log_feature(
-  DOCBOOK_TO_MAN_EXECUTABLE
-  "docbook2X"
-  "docbook2X converts DocBook documents into the traditional Unix man page format"
-  "http://docbook2x.sourceforge.net/"
-  FALSE
+set_package_properties(Docbook2X PROPERTIES
+  PURPOSE "docbook2X converts DocBook documents into the traditional Unix man page format. Required for man-page generation."
+  URL "http://docbook2x.sourceforge.net/"
   ""
-  "Required for man-page generation"
 )
 
 if(CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -94,4 +89,4 @@ configure_file(
 add_subdirectory(src)
 add_subdirectory(doc)
 
-macro_display_feature_log()
+feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
