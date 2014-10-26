@@ -24,8 +24,6 @@
 
 #include <qdebug.h>
 
-#include <assert.h>
-
 QVector<QColor> HostInfo::mColorTable;
 QMap<int,QString> HostInfo::mColorNameMap;
 
@@ -229,13 +227,13 @@ QColor HostInfoManager::hostColor( unsigned int id ) const
     HostInfo *hostInfo = find( id );
     if ( hostInfo ) {
         QColor tmp = hostInfo->color();
-        assert( tmp.isValid() && ( tmp.red() + tmp.green() + tmp.blue() ));
+        Q_ASSERT( tmp.isValid() && ( tmp.red() + tmp.green() + tmp.blue() ));
         return tmp;
     }
   }
 
   //qDebug() << "id " << id << " got no color\n";
-  assert( false );
+  Q_ASSERT( false );
 
   return QColor( 0, 0, 0 );
 }

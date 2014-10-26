@@ -28,7 +28,6 @@
 #include "job.h"
 #include "utils.h"
 
-#include <assert.h>
 #include <QDebug>
 #include <QTime>
 
@@ -128,7 +127,7 @@ unsigned int StatusView::processor( const Job &job )
             ret = job.client();
         }
     }
-    assert( ret );
+    Q_ASSERT( ret );
     return ret;
 }
 
