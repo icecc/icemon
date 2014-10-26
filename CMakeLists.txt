@@ -1,8 +1,10 @@
 project(icemon)
 
-cmake_minimum_required(VERSION 2.8.6)
+cmake_minimum_required(VERSION 2.8.9)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 include(CheckCXXCompilerFlag)
 include(GNUInstallDirs)
@@ -30,7 +32,8 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
   endif()
 endif()
 
-find_package(Qt4 REQUIRED)
+set(QT_MIN_VERSION "5.2.0")
+find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED Core Widgets)
 find_package(Icecream REQUIRED)
 set_package_properties(Icecream PROPERTIES
   DESCRIPTION "Package providing API for accessing icecc information. Provides 'icecc/comm.h' header"
@@ -63,13 +66,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   endif()
 endif()
 
-add_definitions(
-  ${QT_DEFINITIONS}
-)
-
 include_directories(
-    ${Icecream_INCLUDE_DIR}
-    ${QT_INCLUDES}
     ${CMAKE_CURRENT_BINARY_DIR} # config-icemon.h
 )
 

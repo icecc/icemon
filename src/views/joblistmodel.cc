@@ -120,9 +120,10 @@ void JobListModel::updateJob(const Job& job)
 
 void JobListModel::clear()
 {
+    beginResetModel();
     m_jobs.clear();
     m_finishedJobs.clear();
-    reset();
+    endResetModel();
 }
 
 int JobListModel::columnCount(const QModelIndex& parent) const

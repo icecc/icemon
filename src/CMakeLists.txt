@@ -1,8 +1,7 @@
 add_subdirectory(images)
 
 include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
+    ${Icecream_INCLUDE_DIR}
 )
 
 set(icemon_SRCS
@@ -29,16 +28,13 @@ set(icemon_SRCS
   views/summaryview.cc
 )
 
-qt4_add_resources(resources_SRCS icemon.qrc)
-qt4_automoc(${icemon_SRCS})
+qt5_add_resources(resources_SRCS icemon.qrc)
 
 add_executable(icemon ${icemon_SRCS} ${resources_SRCS})
 
 target_link_libraries(icemon
     ${Icecream_LIBRARIES}
-    ${QT_QTCORE_LIBRARY}
-    ${QT_QTGUI_LIBRARY}
-    ${QT_QTNETWORK_LIBRARY}
+    Qt5::Widgets
     ${CMAKE_DL_LIBS}
 )
 

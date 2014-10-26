@@ -79,7 +79,7 @@ FlowTableView::FlowTableView(QObject* parent)
     QStringList labels;
     labels << tr("Host") << tr("File") << tr("History") << tr("State");
     m_widget->setHorizontalHeaderLabels(labels);
-    m_widget->horizontalHeader()->setResizeMode(2, QHeaderView::Stretch);
+    m_widget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
     m_widget->verticalHeader()->hide();
     m_widget->setSelectionMode(QAbstractItemView::NoSelection);
 
