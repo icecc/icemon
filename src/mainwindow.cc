@@ -52,6 +52,8 @@ namespace {
 class ViewFactory
 {
 public:
+    ViewFactory() {}
+
     StatusView* create(const QString &id,
                        QObject* parent = 0) const
     {
