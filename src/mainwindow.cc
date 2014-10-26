@@ -207,18 +207,26 @@ void MainWindow::setMonitor(Monitor* monitor)
     if (m_monitor == monitor)
         return;
 
+    if (m_monitor) {
+        disconnect(m_monitor, SIGNAL(schedulerStateChanged(Monitor::SchedulerState)),
+                   this, SLOT(updateSchedulerState(Monitor::SchedulerState)));
+        disconnect(m_monitor, SIGNAL(jobUpdated(const Job&)), this, SLOT(updateJob(Job)));
+        disconnect(m_monitor->hostInfoManager(), SIGNAL(hostMapChanged()), this, SLOT( updateJobStats()));
+    }
+
     m_monitor = monitor;
 
     if (m_monitor) {
-        connect(m_monitor, SIGNAL(schedulerStateChanged(Monitor::SchedulerState)), SLOT(setSchedulerState(Monitor::SchedulerState)));
-        setSchedulerState(m_monitor->schedulerState());
-        connect(m_monitor, SIGNAL( jobUpdated( const Job& ) ), SLOT( updateJob( const Job& ) ));
-        connect(m_monitor->hostInfoManager(), SIGNAL( hostMapChanged() ), SLOT( updateJobStats() ));
+        connect(m_monitor, SIGNAL(schedulerStateChanged(Monitor::SchedulerState)),
+                this, SLOT(updateSchedulerState(Monitor::SchedulerState)));
+        connect(m_monitor, SIGNAL(jobUpdated(const Job&)), this, SLOT(updateJob(Job)));
+        connect(m_monitor->hostInfoManager(), SIGNAL(hostMapChanged()), this, SLOT( updateJobStats()));
     }
 
     if (m_view) {
         m_view->setMonitor(m_monitor);
     }
+    updateSchedulerState(m_monitor ? m_monitor->schedulerState() : Monitor::Offline);
 }
 
 StatusView* MainWindow::view() const
@@ -290,7 +298,7 @@ void MainWindow::aboutQt()
     QMessageBox::aboutQt(this);
 }
 
-void MainWindow::setSchedulerState(Monitor::SchedulerState state)
+void MainWindow::updateSchedulerState(Monitor::SchedulerState state)
 {
     if (state == Monitor::Online)
     {

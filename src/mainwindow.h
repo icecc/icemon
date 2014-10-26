@@ -61,8 +61,8 @@ private slots:
     void about();
     void aboutQt();
 
-    void setSchedulerState(Monitor::SchedulerState state);
-    void updateJob( const Job& );
+    void updateSchedulerState(Monitor::SchedulerState state);
+    void updateJob(const Job&);
     void updateJobStats();
 
     void handleViewModeActionTriggered(QAction* action);
