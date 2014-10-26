@@ -60,6 +60,7 @@ void StatusView::setMonitor(Monitor* monitor)
         disconnect(m_monitor.data(), SIGNAL(jobUpdated(Job)), this, SLOT(update(Job)));
         disconnect(m_monitor.data(), SIGNAL(nodeRemoved(HostId)), this, SLOT(removeNode(HostId)));
         disconnect(m_monitor.data(), SIGNAL(nodeUpdated(HostId)), this, SLOT(checkNode(HostId)));
+        disconnect(m_monitor.data(), SIGNAL(schedulerStateChanged(bool)), this, SLOT(updateSchedulerState(bool)));
     }
 
     m_monitor = monitor;
@@ -68,6 +69,7 @@ void StatusView::setMonitor(Monitor* monitor)
         connect(m_monitor.data(), SIGNAL(jobUpdated(Job)), this, SLOT(update(Job)));
         connect(m_monitor.data(), SIGNAL(nodeRemoved(HostId)), this, SLOT(removeNode(HostId)));
         connect(m_monitor.data(), SIGNAL(nodeUpdated(HostId)), this, SLOT(checkNode(HostId)));
+        connect(m_monitor.data(), SIGNAL(schedulerStateChanged(bool)), this, SLOT(updateSchedulerState(bool)));
 
         if (options().testFlag(RememberJobsOption)) {
             foreach (const Job& job, m_monitor->jobHistory()) {
