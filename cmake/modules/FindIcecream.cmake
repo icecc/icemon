@@ -7,13 +7,10 @@
 #  Icecream_VERSION - the libicecream version, if available
 
 if (Icecream_INCLUDE_DIR AND Icecream_LIBRARIES)
-
   # in cache already
   set(Icecream_FOUND TRUE)
-
 else ()
-
-  set( Icecream_LIB_EXTRA )
+  set(Icecream_LIB_EXTRA)
 
   if(NOT WIN32)
     # use pkg-config to get the directories and then use these values
@@ -45,7 +42,7 @@ else ()
     /opt/icecream/lib
   )
 
-  set( Icecream_LIBRARIES ${Icecream_LIBRARY} ${Icecream_LIB_EXTRA} CACHE INTERNAL "The libraries for libicecream" )
+  set(Icecream_LIBRARIES ${Icecream_LIBRARY} ${Icecream_LIB_EXTRA} CACHE INTERNAL "The libraries for libicecream" )
 
   include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(Icecream
@@ -54,7 +51,7 @@ else ()
   )
 
   mark_as_advanced(
-     Icecream_INCLUDE_DIR Icecream_LIBRARIES
+    Icecream_INCLUDE_DIR Icecream_LIBRARIES
   )
 
-endif ()
+endif()
