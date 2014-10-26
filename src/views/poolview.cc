@@ -734,5 +734,3 @@ bool PoolView::showJobLines()
 {
   return ::showJobLines;
 }
-
-#include "poolview.moc"

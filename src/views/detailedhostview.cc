@@ -147,5 +147,3 @@ QWidget* DetailedHostView::widget() const
 {
     return m_widget.data();
 }
-
-#include "detailedhostview.moc"

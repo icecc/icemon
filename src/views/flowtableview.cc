@@ -186,5 +186,3 @@ void FlowTableView::removeNode(unsigned int hostId)
     m_widget->removeRow(m_idToRowMap.value(hostId));
     m_idToRowMap.remove(hostId);
 }
-
-#include "flowtableview.moc"

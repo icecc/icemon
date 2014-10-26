@@ -40,5 +40,3 @@ void HostListView::setModel(QAbstractItemModel* model)
 
     QTreeView::setModel(model);
 }
-
-#include "hostlistview.moc"

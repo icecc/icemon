@@ -238,5 +238,3 @@ void HostListModel::fill()
         m_hostInfos << *info;
     }
 }
-
-#include "hostlistmodel.moc"

@@ -86,5 +86,3 @@ void JobListView::setServerColumnVisible( bool visible )
         setColumnHidden(JobListModel::JobColumnServer, true);
     }
 }
-
-#include "joblistview.moc"

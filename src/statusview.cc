@@ -142,5 +142,3 @@ void StatusView::togglePause()
 
     m_paused = !m_paused;
 }
-
-#include "statusview.moc"

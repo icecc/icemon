@@ -62,5 +62,3 @@ void ListStatusView::setMonitor(Monitor* monitor)
 
     mJobsListModel->setMonitor(monitor);
 }
-
-#include "listview.moc"

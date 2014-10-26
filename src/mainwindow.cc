@@ -450,5 +450,3 @@ void MainWindow::setTestModeEnabled(bool testMode)
         setMonitor(new IcecreamMonitor(m_hostInfoManager, this));
     }
 }
-
-#include "mainwindow.moc"

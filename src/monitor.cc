@@ -57,5 +57,3 @@ QList<Job> Monitor::jobHistory() const
 {
     return QList<Job>();
 }
-
-#include "monitor.moc"

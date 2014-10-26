@@ -273,5 +273,3 @@ void SummaryView::checkNode(unsigned int hostid)
         m_items.insert(hostid, i);
     }
 }
-
-#include "summaryview.moc"

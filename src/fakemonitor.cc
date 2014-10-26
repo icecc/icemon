@@ -115,5 +115,3 @@ void FakeMonitor::update()
         }
     }
 }
-
-#include "fakemonitor.moc"

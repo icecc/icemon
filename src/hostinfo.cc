@@ -264,5 +264,3 @@ void HostInfoManager::setNetworkName( const QString& networkName )
 {
     mNetworkName = networkName;
 }
-
-#include "hostinfo.moc"

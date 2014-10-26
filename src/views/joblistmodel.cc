@@ -324,5 +324,3 @@ bool JobListSortFilterProxyModel::lessThan( const QModelIndex& left, const QMode
     unsigned int rightValue = right.column() == JobListModel::JobColumnSizeIn ? jobRight.in_uncompressed : jobRight.out_uncompressed;
     return leftValue < rightValue;
 }
-
-#include "joblistmodel.moc"

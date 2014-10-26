@@ -363,5 +363,3 @@ void IcecreamMonitor::setupDebug()
     setup_debug(debug_level, logfile, "ICEMON");
 #endif
 }
-
-#include "icecreammonitor.moc"

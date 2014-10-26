@@ -772,5 +772,3 @@ StarViewConfigDialog* StarView::configDialog() const
 {
     return mConfigDialog;
 }
-
-#include "starview.moc"
