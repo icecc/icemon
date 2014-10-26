@@ -36,25 +36,31 @@ class Job;
 class Monitor : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(bool schedulerState READ schedulerState WRITE setSchedulerState NOTIFY schedulerStateChanged)
+    Q_PROPERTY(SchedulerState schedulerState READ schedulerState WRITE setSchedulerState NOTIFY schedulerStateChanged)
+    Q_ENUMS(SchedulerState)
 
 public:
+    enum SchedulerState {
+        Online,
+        Offline,
+    };
+
     explicit Monitor(HostInfoManager *manager, QObject* parent = 0);
 
     QByteArray currentNetname() const;
     void setCurrentNetname(const QByteArray &);
 
-    bool schedulerState() const;
+    SchedulerState schedulerState() const;
 
     virtual QList<Job> jobHistory() const;
 
     HostInfoManager *hostInfoManager() const { return m_hostInfoManager; }
 
 protected:
-    void setSchedulerState(bool online);
+    void setSchedulerState(SchedulerState online);
 
 Q_SIGNALS:
-    void schedulerStateChanged(bool);
+    void schedulerStateChanged(SchedulerState);
 
     void jobUpdated(const Job& job);
     void nodeRemoved(HostId id);
@@ -63,7 +69,7 @@ Q_SIGNALS:
 private:
     HostInfoManager *m_hostInfoManager;
     QByteArray m_currentNetname;
-    bool m_schedulerState;
+    SchedulerState m_schedulerState;
 };
 
 #endif // ICEMON_MONITOR_H

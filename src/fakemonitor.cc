@@ -61,7 +61,7 @@ FakeMonitor::FakeMonitor(HostInfoManager* manager, QObject* parent)
     m_updateTimer->start();
     connect(m_updateTimer, SIGNAL(timeout()), SLOT(update()));
 
-    setSchedulerState(true);
+    setSchedulerState(Online);
 
     for (HostId i = 0; i < MAX_HOST_COUNT; ++i) {
         createHostInfo(i+1);

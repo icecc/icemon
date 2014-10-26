@@ -25,7 +25,7 @@
 Monitor::Monitor(HostInfoManager *manager, QObject *parent)
     : QObject(parent)
     , m_hostInfoManager(manager)
-    , m_schedulerState(false)
+    , m_schedulerState(Offline)
 {
 }
 
@@ -39,18 +39,18 @@ void Monitor::setCurrentNetname(const QByteArray& netname)
     m_currentNetname = netname;
 }
 
-bool Monitor::schedulerState() const
+Monitor::SchedulerState Monitor::schedulerState() const
 {
     return m_schedulerState;
 }
 
-void Monitor::setSchedulerState( bool online )
+void Monitor::setSchedulerState(SchedulerState state)
 {
-    if (m_schedulerState == online)
+    if (m_schedulerState == state)
         return;
 
-    m_schedulerState = online;
-    emit schedulerStateChanged( online );
+    m_schedulerState = state;
+    emit schedulerStateChanged(state);
 }
 
 QList<Job> Monitor::jobHistory() const
