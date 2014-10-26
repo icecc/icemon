@@ -322,19 +322,6 @@ void MainWindow::updateSchedulerState(Monitor::SchedulerState state)
 
 void MainWindow::updateJob( const Job& job )
 {
-#ifndef NDEBUG
-    if( job.isActive() || job.isDone() )
-    {
-        qDebug() << QString( "jobId: %1 state: %2 clientId: %3 client: '%4' serverId: %5 server: '%6'" )
-                    .arg( job.jobId(), 3 )
-                    .arg( job.stateAsString(), 10 )
-                    .arg( job.client() )
-                    .arg( job.client() == 0 ? QString( "<none>" ) : m_hostInfoManager->hostMap()[job.client()]->name() )
-                    .arg( job.server() )
-                    .arg( job.server() == 0 ? QString( "<none>" ) : m_hostInfoManager->hostMap()[job.server()]->name() );
-    }
-#endif
-
     if( job.isActive() )
     {
         m_activeJobs[job.jobId()] = job;
