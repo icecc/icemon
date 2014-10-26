@@ -68,7 +68,7 @@ add_definitions(
 )
 
 include_directories(
-    ${LIBICECREAM_INCLUDE_DIR}
+    ${Icecream_INCLUDE_DIR}
     ${QT_INCLUDES}
     ${CMAKE_CURRENT_BINARY_DIR} # config-icemon.h
 )

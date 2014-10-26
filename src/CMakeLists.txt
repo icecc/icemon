@@ -35,7 +35,7 @@ qt4_automoc(${icemon_SRCS})
 add_executable(icemon ${icemon_SRCS} ${resources_SRCS})
 
 target_link_libraries(icemon
-    ${LIBICECREAM_LIBRARIES}
+    ${Icecream_LIBRARIES}
     ${QT_QTCORE_LIBRARY}
     ${QT_QTGUI_LIBRARY}
     ${QT_QTNETWORK_LIBRARY}
