@@ -478,9 +478,6 @@ void PoolView::update( const Job &job )
 {
     unsigned int hostid = processor( job );
     if ( !hostid ) {
-#if 0
-        qDebug() << "Empty host" << endl;
-#endif
         return;
     }
 
@@ -563,14 +560,7 @@ void PoolView::removeItem( PoolItem *poolItem )
 
     QMap<unsigned int,PoolItem *>::Iterator it;
     for( it = mJobMap.begin(); it != mJobMap.end(); ++it ) {
-#if 0
-        qDebug() << " JOB: " << it.key() << " (" << int( it.value() )
-                 << ")" << endl;
-#endif
         if ( it.value() == poolItem ) {
-#if 0
-            qDebug() << " Delete Job " << it.key() << endl;
-#endif
             obsoleteJobs.append( it.key() );
         }
     }

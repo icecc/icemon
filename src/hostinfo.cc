@@ -102,14 +102,6 @@ QString HostInfo::toolTip() const
 
 void HostInfo::updateFromStatsMap( const StatsMap &stats )
 {
-#if 0
-  qDebug() << "HostInfo::updateFromStatsMap():" << endl;
-  StatsMap::ConstIterator it;
-  for( it = stats.begin(); it != stats.end(); it++ ) {
-    qDebug() << "  STAT: " << it.key() << ": " << it.data() << endl;
-  }
-#endif
-
   QString name = stats["Name"];
 
   if ( name != mName ) {
@@ -157,15 +149,6 @@ QColor HostInfo::createColor()
   static int num = 0;
 
   return mColorTable.at( num++ % mColorTable.count() );
-
-#if 0
-  QColor color( num, 255 - num, ( num * 3 ) % 255 );
-
-  num += 48;
-  num %= 255;
-
-  return color;
-#endif
 }
 
 HostInfoManager::HostInfoManager()

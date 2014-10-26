@@ -154,34 +154,20 @@ void GanttProgress::adjustGraph()
 
 void GanttProgress::update( const Job &job )
 {
-#if 0
-    qDebug() << "GanttProgress::update( job ): " << job.fileName() << endl;
-
-    qDebug() << "  num jobs: " << m_jobs.count() << endl;
-    if (!m_jobs.isEmpty())
-        qDebug() << "  first id: " << m_jobs.first().job.jobId() << endl;
-    qDebug() << "  this id: " << job.jobId() << endl;
-#endif
-
     if ( !m_jobs.isEmpty() && m_jobs.first().job == job ) {
-//       qDebug() << "  Known Job. State: " << job.state() << endl;
         if ( job.state() == Job::Finished || job.state() == Job::Failed ) {
           Job j = IdleJob();
           m_jobs.prepend( JobData( j, mClock ) );
           mIsFree = true;
         }
     } else {
-//        qDebug() << " New Job" << endl;
         m_jobs.prepend( JobData( job, mClock ) );
         mIsFree = ( job.state() == Job::Idle );
     }
-
-//    qDebug() << "num jobs: " << m_jobs.count() << " jobs" << endl;
 }
 
 void GanttProgress::drawGraph( QPainter &p )
 {
-//    qDebug() << "drawGraph() " << m_jobs.count() << " jobs" << endl;
     if( height() == 0 )
         return;
 
@@ -200,8 +186,6 @@ void GanttProgress::drawGraph( QPainter &p )
         if( xWidth == 0 )
             continue;
 
-//        qDebug() << "XStart: " << xStart << "  xWidth: " << xWidth << endl;
-
         // Draw the rectangle for the current job
         QColor color = colorForStatus( ( *it ).job );
         p.fillRect( xStart, 0, xWidth, height(), color );
@@ -213,8 +197,7 @@ void GanttProgress::drawGraph( QPainter &p )
             QString s = ( *it ).job.fileName();
             if ( !s.isEmpty() ) {
                 s = s.mid( s.lastIndexOf( '/' ) + 1, s.length() );
-//              s = s.left( s.lastIndexOf( '.' ) );
-//              s[0] = s[0].upper();
+
         // Optimization - cache the drawn text in a pixmap, and update the cache
         // only if the pixmap height doesn't match, if the pixmap width is too large,
         // or if the shortened text with another character added (next_text_width) would fit
@@ -328,18 +311,11 @@ void GanttStatusView::update( const Job &job )
 
     if ( job.state() == Job::WaitingForCS ) return;
 
-#if 0
-    qDebug() << "GanttStatusView::update(): ID: " << job.jobId() << "  "
-              << job.fileName() << "  Status:" << int( job.state() )
-              << "  Server: " << job.server() << endl;
-#endif
-
     QMap<unsigned int, GanttProgress *>::Iterator it;
 
     it = mJobMap.find( job.jobId() );
 
     if ( it != mJobMap.end() ) {
-//        qDebug() << "  Job found" << endl;
         it.value()->update( job );
         if ( job.state() == Job::Finished || job.state() == Job::Failed ) {
             mJobMap.erase( it );
@@ -357,29 +333,22 @@ void GanttStatusView::update( const Job &job )
     else processor = job.server();
 
     if ( !processor ) {
-#if 0
-      qDebug() << "GanttStatusView::update(): processor for job "
-                << job.jobId() << " is empty.";
-#endif
       return;
     }
 
     NodeMap::ConstIterator it2 = mNodeMap.constFind( processor );
     if ( it2 == mNodeMap.constEnd() ) {
-//        qDebug() << "  Server not known" << endl;
         slot = registerNode( processor );
     } else {
         SlotList slotList = it2.value();
         SlotList::ConstIterator it3;
         for( it3 = slotList.constBegin(); it3 != slotList.constEnd(); ++it3 ) {
             if ( (*it3)->isFree() ) {
-//                qDebug() << "  Found free slot" << endl;
                 slot = *it3;
                 break;
             }
         }
         if ( it3 == slotList.constEnd() ) {
-//            qDebug() << "  Create new slot" << endl;
             slot = registerNode( processor );
         }
     }
@@ -451,9 +420,6 @@ GanttProgress *GanttStatusView::registerNode( unsigned int hostid )
 
     NodeRowMap::ConstIterator rowIt = mNodeRows.constFind( hostid );
     if ( rowIt == mNodeRows.constEnd() ) {
-#if 0
-      qDebug() << "Unknown node row.";
-#endif
     } else {
       int row = *rowIt;
       NodeLabelMap::ConstIterator labelIt = mNodeLabels.constFind( hostid );

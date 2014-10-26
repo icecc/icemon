@@ -375,11 +375,6 @@ void StarView::writeSettings()
 
 void StarView::update( const Job &job )
 {
-#if 0
-    qDebug() << "StarView::update() " << job.jobId()
-             << " server: " << job.server() << " client: " << job.client()
-             << " state: " << job.stateAsString() << endl;
-#endif
     if (job.state() == Job::WaitingForCS) {
         m_widget->drawNodeStatus();
         return;
@@ -387,9 +382,6 @@ void StarView::update( const Job &job )
 
     unsigned int hostid = processor( job );
     if ( !hostid ) {
-#if 0
-        qDebug() << "Empty host" << endl;
-#endif
         return;
     }
 
@@ -488,25 +480,13 @@ void StarView::forceRemoveNode( unsigned int hostid )
 
 void StarView::removeItem( HostItem *hostItem )
 {
-#if 0
-    qDebug() << "StarView::removeItem() " << hostid << " ("
-             << int( hostItem ) << ")" << endl;
-#endif
-
     m_hostItems.remove( hostItem->hostInfo()->id() );
 
     QList<unsigned int> obsoleteJobs;
 
     QMap<unsigned int,HostItem *>::Iterator it;
     for( it = mJobMap.begin(); it != mJobMap.end(); ++it ) {
-#if 0
-        qDebug() << " JOB: " << it.key() << " (" << int( it.value() )
-                 << ")" << endl;
-#endif
         if ( it.value() == hostItem ) {
-#if 0
-            qDebug() << " Delete Job " << it.key() << endl;
-#endif
             obsoleteJobs.append( it.key() );
         }
     }
@@ -746,9 +726,6 @@ bool StarView::filterArch( unsigned int hostid )
 {
     HostInfo *i = hostInfoManager()->find( hostid );
     if ( !i ) {
-#if 0
-        qDebug() << "No HostInfo for id " << hostid;
-#endif
         return false;
     }
 

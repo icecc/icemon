@@ -67,9 +67,6 @@ QList<Job> IcecreamMonitor::jobHistory() const
 
 void IcecreamMonitor::checkScheduler(bool deleteit)
 {
-#if 0
-    qDebug() << "checkScheduler " << deleteit << endl;
-#endif
     if ( deleteit ) {
         m_rememberedJobs.clear();
         delete m_scheduler;
@@ -171,9 +168,6 @@ bool IcecreamMonitor::handle_activity()
 {
     Msg *m = m_scheduler->get_msg ();
     if ( !m ) {
-#if 0
-        qDebug() << "lost connection to scheduler\n";
-#endif
         checkScheduler( true );
         setSchedulerState( false );
         return false;
@@ -295,11 +289,6 @@ void IcecreamMonitor::handle_job_begin( Msg *_m )
     ( *it ).setStartTime( m->stime );
     ( *it ).setState( Job::Compiling );
 
-#if 0
-    qDebug() << "BEGIN: " << (*it).fileName() << " (" << (*it).jobId()
-             << ")" << endl;
-#endif
-
     emit jobUpdated(*it);
 }
 
@@ -329,11 +318,6 @@ void IcecreamMonitor::handle_job_done( Msg *_m )
         ( *it ).out_compressed = m->out_compressed;
         ( *it ).out_uncompressed = m->out_uncompressed;
     }
-
-#if 0
-    qDebug() << "DONE: " << (*it).fileName() << " (" << (*it).jobId()
-             << ")" << endl;
-#endif
 
     emit jobUpdated(*it);
 }
