@@ -24,7 +24,6 @@
 #include "statusview.h"
 
 #include "hostinfo.h"
-#include "monitor.h"
 #include "job.h"
 #include "utils.h"
 
@@ -60,7 +59,8 @@ void StatusView::setMonitor(Monitor* monitor)
         disconnect(m_monitor.data(), SIGNAL(jobUpdated(Job)), this, SLOT(update(Job)));
         disconnect(m_monitor.data(), SIGNAL(nodeRemoved(HostId)), this, SLOT(removeNode(HostId)));
         disconnect(m_monitor.data(), SIGNAL(nodeUpdated(HostId)), this, SLOT(checkNode(HostId)));
-        disconnect(m_monitor.data(), SIGNAL(schedulerStateChanged(bool)), this, SLOT(updateSchedulerState(bool)));
+        disconnect(m_monitor.data(), SIGNAL(schedulerStateChanged(Monitor::SchedulerState)),
+                   this, SLOT(updateSchedulerState(Monitor::SchedulerState)));
     }
 
     m_monitor = monitor;
@@ -69,7 +69,8 @@ void StatusView::setMonitor(Monitor* monitor)
         connect(m_monitor.data(), SIGNAL(jobUpdated(Job)), this, SLOT(update(Job)));
         connect(m_monitor.data(), SIGNAL(nodeRemoved(HostId)), this, SLOT(removeNode(HostId)));
         connect(m_monitor.data(), SIGNAL(nodeUpdated(HostId)), this, SLOT(checkNode(HostId)));
-        connect(m_monitor.data(), SIGNAL(schedulerStateChanged(bool)), this, SLOT(updateSchedulerState(bool)));
+        connect(m_monitor.data(), SIGNAL(schedulerStateChanged(Monitor::SchedulerState)),
+                this, SLOT(updateSchedulerState(Monitor::SchedulerState)));
 
         if (options().testFlag(RememberJobsOption)) {
             foreach (const Job& job, m_monitor->jobHistory()) {
@@ -96,9 +97,9 @@ void StatusView::removeNode( HostId )
 {
 }
 
-void StatusView::updateSchedulerState( bool online )
+void StatusView::updateSchedulerState(Monitor::SchedulerState state)
 {
-    Q_UNUSED(online);
+    Q_UNUSED(state);
 }
 
 QString StatusView::nameForHost( HostId id )

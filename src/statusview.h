@@ -23,12 +23,12 @@
 #ifndef ICEMON_STATUSVIEW_H
 #define ICEMON_STATUSVIEW_H
 
+#include "monitor.h"
 #include "types.h"
 
 #include <QObject>
 #include <QPointer>
 
-class Monitor;
 class HostInfoManager;
 class Job;
 
@@ -81,7 +81,7 @@ protected Q_SLOTS:
     virtual void update(const Job &job);
     virtual void checkNode(HostId hostid);
     virtual void removeNode(HostId hostid);
-    virtual void updateSchedulerState( bool online );
+    virtual void updateSchedulerState(Monitor::SchedulerState state);
 
 
 private:

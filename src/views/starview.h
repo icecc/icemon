@@ -191,7 +191,7 @@ public:
 
     void checkNode( unsigned int hostid ) override;
     void removeNode( unsigned int hostid ) override;
-    void updateSchedulerState( bool online ) override;
+    void updateSchedulerState(Monitor::SchedulerState state) override;
     void configureView() override;
 
     bool isConfigurable() override { return true; }

@@ -41,8 +41,8 @@ class Monitor : public QObject
 
 public:
     enum SchedulerState {
-        Online,
         Offline,
+        Online,
     };
 
     explicit Monitor(HostInfoManager *manager, QObject* parent = 0);
@@ -60,7 +60,7 @@ protected:
     void setSchedulerState(SchedulerState online);
 
 Q_SIGNALS:
-    void schedulerStateChanged(SchedulerState);
+    void schedulerStateChanged(Monitor::SchedulerState);
 
     void jobUpdated(const Job& job);
     void nodeRemoved(HostId id);

@@ -27,10 +27,10 @@
 #include <QMainWindow>
 #include <QPointer>
 
+#include "monitor.h"
 #include "job.h"
 
 class HostInfoManager;
-class Monitor;
 class StatusView;
 
 class QActionGroup;
@@ -61,7 +61,7 @@ private slots:
     void about();
     void aboutQt();
 
-    void setSchedulerState(bool online);
+    void setSchedulerState(Monitor::SchedulerState state);
     void updateJob( const Job& );
     void updateJobStats();
 
