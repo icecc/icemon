@@ -68,6 +68,7 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR} # config-icemon.h
 )
 
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 check_include_file_cxx(icecc/logging.h ICECC_HAVE_LOGGING_H)
 
 set(
