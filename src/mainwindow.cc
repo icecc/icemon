@@ -132,9 +132,7 @@ MainWindow::MainWindow( QWidget *parent )
     action->setCheckable(true);
     action->setData("detailedhost");
     connect(m_viewMode, SIGNAL(triggered(QAction*)), this, SLOT(handleViewModeActionTriggered(QAction*)));
-
-    QMenu* modeMenu = viewMenu->addMenu(tr("Mode"));
-    modeMenu->addActions(m_viewMode->actions());
+    viewMenu->addActions(m_viewMode->actions());
 
     viewMenu->addSeparator();
 
