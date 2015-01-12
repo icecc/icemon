@@ -114,7 +114,7 @@ MainWindow::MainWindow( QWidget *parent )
     m_configureViewAction = action;
 
     action = helpMenu->addAction(tr("About Qt..."));
-    connect(action, SIGNAL(triggered()), this, SLOT(aboutQt()));
+    connect(action, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
     action->setMenuRole(QAction::AboutQtRole);
 
     action = helpMenu->addAction(tr("About..."));
@@ -255,11 +255,6 @@ void MainWindow::about()
             .arg(Icemon::Version::homePage);
 
     QMessageBox::about(this, tr("About %1").arg(Icemon::Version::appShortName), about);
-}
-
-void MainWindow::aboutQt()
-{
-    QMessageBox::aboutQt(this);
 }
 
 void MainWindow::updateSchedulerState(Monitor::SchedulerState state)

@@ -59,7 +59,6 @@ private slots:
     void configureView();
 
     void about();
-    void aboutQt();
 
     void updateSchedulerState(Monitor::SchedulerState state);
     void updateJob(const Job&);
