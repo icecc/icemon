@@ -83,11 +83,6 @@ MainWindow::MainWindow( QWidget *parent )
     action = m_viewMode->addAction(tr( "&Star View" ));
     action->setCheckable(true);
     action->setData("star");
-#if 0 // Disabled for now, does not work
-    action = m_viewMode->addAction(tr( "&Pool View" ));
-    action->setCheckable(true);
-    action->setData("pool");
-#endif
     action = m_viewMode->addAction(tr( "&Gantt View" ));
     action->setCheckable(true);
     action->setData("gantt");
