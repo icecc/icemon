@@ -39,8 +39,6 @@ StatusView* StatusViewFactory::create ( const QString& id, QObject* parent ) con
         return new GanttStatusView(parent);
     } else if (id == "summary") {
         return new SummaryView(parent);
-    } else if (id == "pool") {
-        //return new PoolView(parent);
     } else if (id == "flow") {
         return new FlowTableView(parent);
     } else if (id == "detailedhost") {
