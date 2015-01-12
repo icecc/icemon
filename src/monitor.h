@@ -45,7 +45,7 @@ public:
         Online,
     };
 
-    explicit Monitor(HostInfoManager *manager, QObject* parent = 0);
+    explicit Monitor(HostInfoManager *manager, QObject* parent = nullptr);
 
     QByteArray currentNetname() const;
     void setCurrentNetname(const QByteArray &);

@@ -55,7 +55,7 @@ public:
     ViewFactory() {}
 
     StatusView* create(const QString &id,
-                       QObject* parent = 0) const
+                       QObject* parent = nullptr) const
     {
         if (id == "list") {
             return new ListStatusView(parent);

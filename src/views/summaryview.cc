@@ -47,7 +47,7 @@ private:
 class SummaryViewScrollArea : public QScrollArea
 {
 public:
-    explicit SummaryViewScrollArea(QWidget* parent = 0);
+    explicit SummaryViewScrollArea(QWidget* parent = nullptr);
 
     virtual void resizeEvent(QResizeEvent*);
 };
