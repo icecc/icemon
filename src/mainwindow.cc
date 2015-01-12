@@ -65,12 +65,12 @@ MainWindow::MainWindow( QWidget *parent )
     QMenu* viewMenu = menuBar()->addMenu(tr("&View"));
     QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
 
+    m_schedStatusWidget = new QLabel;
+    statusBar()->addPermanentWidget(m_schedStatusWidget);
+
     m_jobStatsWidget = new QLabel;
     m_jobStatsWidget->setVisible(false);
     statusBar()->addPermanentWidget(m_jobStatsWidget);
-
-    m_schedStatusWidget = new QLabel;
-    statusBar()->addPermanentWidget(m_schedStatusWidget);
 
     QAction* action = fileMenu->addAction(tr("&Quit"), this, SLOT(close()), tr("Ctrl+Q"));
     action->setIcon(QIcon::fromTheme("application-exit"));
@@ -273,7 +273,7 @@ void MainWindow::updateSchedulerState(Monitor::SchedulerState state)
             statusText.append( " @ " ).append( m_hostInfoManager->networkName() );
         }
 
-        m_schedStatusWidget->setText( statusText );
+        m_schedStatusWidget->setText(statusText.isEmpty() ? tr("Scheduler is online.") : statusText);
     }
     else
     {
@@ -338,9 +338,9 @@ void MainWindow::updateJobStats()
     QString text;
 
     // Compose the text
-    for( QMap<QString, unsigned>::const_iterator i = maxJobsPerPlatform.constBegin(); i != maxJobsPerPlatform.constEnd(); ++i )
+    for (auto it = maxJobsPerPlatform.constBegin(); it != maxJobsPerPlatform.constEnd(); ++it)
     {
-        if( i.value() == 0 )
+        if( it.value() == 0 )
         {
             continue;
         }
@@ -350,39 +350,10 @@ void MainWindow::updateJobStats()
             text.append( " | " );
         }
 
-        text.append( QString( "%1: [%2/%3]" ).arg( i.key() ).arg( jobUsagePerPlatform[i.key()] ).arg( i.value() ) );
-
-        const QMap<const HostInfo*, unsigned>& jobUsagePerHost = jobUsagePerHostPerPlatform[i.key()];
-
-        if( !jobUsagePerHost.isEmpty() )
-        {
-            QString usageText;
-
-            for( QMap<const HostInfo*, unsigned>::const_iterator i = jobUsagePerHost.constBegin(); i != jobUsagePerHost.constEnd(); ++i )
-            {
-                usageText.append( " " );
-
-                QString coloredFormat;
-
-                if( Utils::isLowContrast( m_jobStatsWidget->palette().color( QPalette::Window ), i.key()->color() ) )
-                {
-                    const QColor backColor = Utils::betterContrastColor( i.key()->color(), Qt::black, Qt::white );
-
-                    coloredFormat = QString( "<span style='font-weight: bold; color: %1; background-color: %2'>&nbsp;&#9679;&nbsp;%3&nbsp;</span>" ).arg( i.key()->color().name() ).arg( backColor.name() ).arg( "%1" );
-                }
-                else
-                {
-                    coloredFormat = QString( "<span style='font-weight: bold; color: %1'>&#9679;&nbsp;%2</span>" ).arg( i.key()->color().name() ).arg( "%1" );
-                }
-
-                usageText.append( coloredFormat.arg( QString( "%1: %2" ).arg( i.key()->name() ).arg( i.value() ) ) );
-            }
-
-            text.append( usageText );
-        }
+        text.append(QString("%2/%3 (on %1)").arg(it.key()).arg(jobUsagePerPlatform[it.key()]).arg(it.value()));
     }
 
-    m_jobStatsWidget->setText( text );
+    m_jobStatsWidget->setText(tr("Active jobs: %1").arg(text));
     m_jobStatsWidget->setVisible( true );
 }
 
