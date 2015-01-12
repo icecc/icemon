@@ -51,6 +51,12 @@ QColor randomColor()
     return QColor(r, g, b);
 };
 
+QString randomPlatform()
+{
+    static const QStringList hostNames = {"Linux 2.6", "Linux 3.2", "Linux 3.6"};
+    return hostNames[qrand() % hostNames.size()];
+};
+
 }
 
 FakeMonitor::FakeMonitor(HostInfoManager* manager, QObject* parent)
@@ -78,7 +84,7 @@ void FakeMonitor::createHostInfo(HostId id)
     info.setMaxJobs(5);
     info.setName(QString("Host%1").arg(id));
     info.setOffline(false);
-    info.setPlatform("Linux 3.6");
+    info.setPlatform(randomPlatform());
     info.setServerLoad(1.0);
     info.setServerSpeed(10);
     hostInfoManager()->checkNode(info);
