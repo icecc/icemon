@@ -185,7 +185,7 @@ public:
     QString id() const override { return "star"; }
 
     QList<HostItem*> hostItems() const;
-    HostItem *findHostItem( unsigned int hostid );
+    HostItem *findHostItem(unsigned int hostid) const;
 
     virtual void setMonitor(Monitor* monitor) override;
 

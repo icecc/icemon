@@ -425,12 +425,9 @@ QList< HostItem* > StarView::hostItems() const
     return m_hostItems.values();
 }
 
-HostItem *StarView::findHostItem( unsigned int hostid )
+HostItem *StarView::findHostItem(unsigned int hostid) const
 {
-    HostItem *hostItem = 0;
-    QMap<unsigned int, HostItem*>::iterator it = m_hostItems.find( hostid );
-    if ( it != m_hostItems.end() ) hostItem = it.value();
-    return hostItem;
+    return m_hostItems.value(hostid);
 }
 
 void StarView::setMonitor(Monitor* monitor)
