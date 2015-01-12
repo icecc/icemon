@@ -61,8 +61,8 @@ public:
             return new ListStatusView(parent);
         } else if (id == "gantt") {
             return new GanttStatusView(parent);
-        } else if (id == "star") {
-            return new StarView(parent);
+        } else if (id == "summary") {
+            return new SummaryView(parent);
         } else if (id == "pool") {
             //return new PoolView(parent);
         } else if (id == "flow") {
@@ -71,7 +71,7 @@ public:
             return new DetailedHostView(parent);
         }
 
-        return new SummaryView(parent);
+        return new StarView(parent);
     }
 };
 
