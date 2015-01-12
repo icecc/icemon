@@ -23,22 +23,17 @@
 
 #include "mainwindow.h"
 
-#include "views/starview.h"
-#include "views/summaryview.h"
-#include "views/detailedhostview.h"
-#include "views/ganttstatusview.h"
-#include "views/listview.h"
-//#include "views/poolview.h"
-#include "views/flowtableview.h"
-
 #include "hostinfo.h"
 #include "version.h"
 #include "fakemonitor.h"
 #include "icecreammonitor.h"
+#include "statusview.h"
+#include "statusviewfactory.h"
 
 #include "utils.h"
 
 #include <QDebug>
+#include <QLabel>
 #include <QMenuBar>
 #include <QStatusBar>
 #include <QMessageBox>
@@ -49,33 +44,7 @@
 
 namespace {
 
-class ViewFactory
-{
-public:
-    ViewFactory() {}
-
-    StatusView* create(const QString &id,
-                       QObject* parent = nullptr) const
-    {
-        if (id == "list") {
-            return new ListStatusView(parent);
-        } else if (id == "gantt") {
-            return new GanttStatusView(parent);
-        } else if (id == "summary") {
-            return new SummaryView(parent);
-        } else if (id == "pool") {
-            //return new PoolView(parent);
-        } else if (id == "flow") {
-            return new FlowTableView(parent);
-        } else if (id == "detailedhost") {
-            return new DetailedHostView(parent);
-        }
-
-        return new StarView(parent);
-    }
-};
-
-const ViewFactory s_viewFactory;
+const StatusViewFactory s_viewFactory;
 
 }
 

@@ -13,6 +13,7 @@ set(icemon_SRCS
   mainwindow.cc
   monitor.cc
   statusview.cc
+  statusviewfactory.cc
   utils.cc
 
   views/detailedhostview.cc
