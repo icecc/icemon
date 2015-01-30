@@ -563,7 +563,7 @@ bool StarViewGraphicsView::event ( QEvent* e )
         } else {
             QToolTip::showText(gp+QPoint(10,10),
                            "<p><table><tr><td>"
-                           "<img align=\"right\" source=\"icons:computer.png\"><br><b>" + tr("Scheduler") + "</b><br/>"
+                           "<img align=\"right\" src=\":/images/icemonnode.png\"><br><b>" + tr("Scheduler") + "</b><br/>"
                            "<table>" +
                            "<tr><td>" + tr("Host: %1").arg(m_starView->hostInfoManager()->schedulerName()) + "</td></tr>" +
                            "<tr><td>" + tr("Network name: %1").arg(m_starView->hostInfoManager()->networkName()) + "</td></tr>" +
