@@ -38,6 +38,7 @@ int main( int argc, char **argv )
     QCommandLineParser parser;
     parser.setApplicationDescription(Icemon::Version::description);
     parser.addHelpOption();
+    parser.addVersionOption();
     QCommandLineOption netnameOption(QStringList() << "n" << "netname",
         QCoreApplication::translate("main", "Icecream network name."),
         QCoreApplication::translate("main", "name", "network name"));
