@@ -23,54 +23,38 @@
  */
 
 #include <QApplication>
-#include <QTextStream>
+#include <QCommandLineParser>
 
 #include "mainwindow.h"
 #include "version.h"
 
-#include <stdio.h>
-
-void printHelp()
+int main(int argc, char **argv)
 {
-    QTextStream out(stdout);
-    out << "Usage: " << Icemon::Version::appShortName << " [options]" << endl;
-    out << endl;
-    out << Icemon::Version::description << endl;
-    out << endl;
-    out << "Options:" << endl;
-    out << "\t-h, --help          \tShow this help" << endl;
-    out << "\t-n, --netname <name>\tIcecream network name" << endl;
-}
-
-int main(int argc, char * *argv)
-{
-    QByteArray netName;
-    bool enableTestMode = false;
-    for (int i = 1; i < argc; ++i) {
-        if (qstrcmp(argv[i], "--help") == 0 || qstrcmp(argv[i], "-h")  == 0) {
-            printHelp();
-            return 0;
-        }
-        if (qstrcmp(argv[i], "--netname") == 0 || qstrcmp(argv[i], "-n")  == 0) {
-            if (i + 1 < argc) {
-                netName = argv[++i];
-            }
-        }
-        if (qstrcmp(argv[i], "--testmode") == 0) {
-            enableTestMode = true;
-        }
-    }
-
     QApplication app(argc, argv);
     QApplication::setOrganizationDomain("kde.org");
     QApplication::setApplicationName(Icemon::Version::appShortName);
     QApplication::setApplicationVersion(Icemon::Version::version);
 
+    QCommandLineParser parser;
+    parser.setApplicationDescription(Icemon::Version::description);
+    parser.addHelpOption();
+    QCommandLineOption netnameOption(QStringList() << "n" << "netname",
+        QCoreApplication::translate("main", "Icecream network name."),
+        QCoreApplication::translate("main", "name", "network name"));
+    parser.addOption(netnameOption);
+    QCommandLineOption testmodeOption("testmode",
+        QCoreApplication::translate("main", "Testing mode."));
+    parser.addOption(testmodeOption);
+
+    parser.process(app);
+
+    const QByteArray netName = parser.value(netnameOption).toLatin1();
+
     MainWindow mainWindow;
     if (!netName.isEmpty()) {
         mainWindow.setCurrentNet(netName);
     }
-    if (enableTestMode) {
+    if (parser.isSet(testmodeOption)) {
         mainWindow.setTestModeEnabled(true);
     }
     mainWindow.show();
