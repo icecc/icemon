@@ -620,8 +620,7 @@ void StarViewGraphicsView::arrangeHostItems()
     int ringCount = int( count / nodesPerRing ) + 1;
 
 //  qDebug() << "  Rings: " << ringCount << endl;
-    double radiusFactor = 2.5;
-    if (suppressDomain) radiusFactor = 4;
+    const double radiusFactor = 2.5;
     const int xRadius = qRound( scene()->width() / radiusFactor );
     const int yRadius = qRound( scene()->height() / radiusFactor );
 
