@@ -43,6 +43,12 @@ const QStringList JOB_FILENAMES(QStringList()
     << QLatin1String("/some/very/long/path/containing/averyverylongfilename.cc")
 );
 
+const QStringList HOST_NAMES(QStringList()
+    << QLatin1String("Hostname")
+    << QLatin1String("VeryLongHostname")
+    << QLatin1String("VeryLongHostname.localdomain")
+);
+
 QColor randomColor()
 {
     const int r = qrand() % 255;
@@ -82,7 +88,7 @@ void FakeMonitor::createHostInfo(HostId id)
     info.setIp(QString("1.0.0.%1").arg(id));
     info.setColor(randomColor());
     info.setMaxJobs(5);
-    info.setName(QString("Host%1").arg(id));
+    info.setName(HOST_NAMES[id % HOST_NAMES.length()] + QString::number(id));
     info.setOffline(false);
     info.setPlatform(randomPlatform());
     info.setServerLoad(1.0);
