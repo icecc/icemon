@@ -342,13 +342,13 @@ void MainWindow::updateJobStats()
 
         if( !text.isEmpty() )
         {
-            text.append( " | " );
+            text.append(" - ");
         }
 
-        text.append(QString("%2/%3 (on %1)").arg(it.key()).arg(jobUsagePerPlatform[it.key()]).arg(it.value()));
+        text.append(QString("<strong>%2/%3</strong> on %1").arg(it.key()).arg(jobUsagePerPlatform[it.key()]).arg(it.value()));
     }
 
-    m_jobStatsWidget->setText(tr("Active jobs: %1").arg(text));
+    m_jobStatsWidget->setText(tr("| Active jobs: %1").arg(text));
     m_jobStatsWidget->setVisible( true );
 }
 
