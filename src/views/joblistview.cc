@@ -23,7 +23,7 @@
 
 #include "joblistview.h"
 
-#include "joblistmodel.h"
+#include "models/joblistmodel.h"
 
 #include <QDebug>
 #include <QHeaderView>

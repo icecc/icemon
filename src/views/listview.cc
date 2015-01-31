@@ -24,7 +24,7 @@
 #include "listview.h"
 
 #include "joblistview.h"
-#include "joblistmodel.h"
+#include "models/joblistmodel.h"
 
 #include <QBoxLayout>
 #include <QSortFilterProxyModel>

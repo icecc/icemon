@@ -21,7 +21,7 @@
 
 #include "hostlistview.h"
 
-#include "hostlistmodel.h"
+#include "models/hostlistmodel.h"
 
 HostListView::HostListView(QWidget* parent)
     : QTreeView( parent )

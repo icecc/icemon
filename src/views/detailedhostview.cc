@@ -26,11 +26,11 @@
 
 #include "detailedhostview.h"
 
+#include "joblistview.h"
 #include "hostinfo.h"
 #include "hostlistview.h"
-#include "hostlistmodel.h"
-#include "joblistview.h"
-#include "joblistmodel.h"
+#include "models/joblistmodel.h"
+#include "models/hostlistmodel.h"
 
 #include <sys/utsname.h>
 

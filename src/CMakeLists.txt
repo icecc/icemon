@@ -16,12 +16,13 @@ set(icemon_SRCS
   statusviewfactory.cc
   utils.cc
 
+  models/hostlistmodel.cc
+  models/joblistmodel.cc
+
   views/detailedhostview.cc
   views/flowtableview.cc
   views/ganttstatusview.cc
-  views/hostlistmodel.cc
   views/hostlistview.cc
-  views/joblistmodel.cc
   views/joblistview.cc
   views/listview.cc
   #views/poolview.cc
