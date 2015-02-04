@@ -71,6 +71,8 @@ class HostInfo
     int operator<( const HostInfo &rhs ) const{ return mId < rhs.mId; }
 
   protected:
+    // TODO: Move the whole color managing feature into a separate class
+    friend class FakeMonitor;
     static void initColor( const QString &value, const QString &name );
 
     QColor createColor();
