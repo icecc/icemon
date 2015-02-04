@@ -94,8 +94,8 @@ QString HostInfo::toolTip() const
     "<tr><td>Id:</td><td>%5</td></tr>"
     "<tr><td>Speed:</td><td>%6</td></tr>"
     "</table></td></tr></table></p>")
-            .arg(name()).arg(ip())
-            .arg(platform()).arg(colorName(color()))
+            .arg(name().toHtmlEscaped()).arg(ip())
+            .arg(platform()).arg(colorName(color()).toHtmlEscaped())
             .arg(QString::number(id()))
             .arg(QString::number(serverSpeed()));
 }
