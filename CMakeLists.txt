@@ -39,7 +39,7 @@ set_package_properties(Icecream PROPERTIES
   DESCRIPTION "Package providing API for accessing icecc information. Provides 'icecc/comm.h' header"
   URL "http://en.opensuse.org/Icecream"
 )
-find_package(Docbook2X QUIET)
+find_package(Docbook2X)
 set_package_properties(Docbook2X PROPERTIES
   DESCRIPTION "docbook2X converts DocBook documents into the traditional Unix man page format"
   PURPOSE "Required for man-page generation"
