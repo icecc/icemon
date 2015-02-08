@@ -6,7 +6,7 @@ Introduction
 
 Icemon is an Icecream GUI monitor.
 
-<!-- A screenshot would be nice here -->
+![Screenshot: Star View](https://github.com/icecc/icemon/wiki/screenshots/icemon-starview.png)
 
 Installation
 ------------
