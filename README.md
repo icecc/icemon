@@ -30,3 +30,18 @@ Finally, compile and install the application:
 Run:
 
     $ icemon
+
+Bug tracker
+-----------
+
+Create a github issue on https://github.com/icecc/icemon
+
+Repository
+----------
+
+The git repository lives at https://github.com/icecc/icemon
+
+Contact
+-------
+
+- Current maintainer: Kevin Funk <kfunk@kde.org>
