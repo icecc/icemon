@@ -39,10 +39,21 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QSettings>
-
 #include <QMenu>
 
+#include <algorithm>
+
 namespace {
+struct PlatformStat
+{
+    PlatformStat()
+        : jobs(0)
+        , maxJobs(0) {}
+
+    unsigned int jobs;
+    unsigned int maxJobs;
+};
+
 const StatusViewFactory s_viewFactory;
 }
 
@@ -295,35 +306,38 @@ void MainWindow::updateJobStats()
         return;
     }
 
-    HostInfoManager::HostMap hostMap = m_monitor->hostInfoManager()->hostMap();
-
-    QMap<QString, unsigned> maxJobsPerPlatform;
-    QMap<QString, unsigned> jobUsagePerPlatform;
-    QMap<QString, QMap<const HostInfo *, unsigned> > jobUsagePerHostPerPlatform;
-
-    // Populate maxJobsPerPlatform
-    for (HostInfoManager::HostMap::iterator i = hostMap.begin(); i != hostMap.end(); ++i) {
+    QMap<QString, PlatformStat> perPlatformStats;
+    const HostInfoManager::HostMap hostMap = m_monitor->hostInfoManager()->hostMap();
+    for (auto i = hostMap.begin(); i != hostMap.end(); ++i) {
         if (!i.value()->isOffline() && !i.value()->noRemote()) {
-            maxJobsPerPlatform[i.value()->platform()] += i.value()->maxJobs();
+            perPlatformStats[i.value()->platform()].maxJobs += i.value()->maxJobs();
         }
     }
-
-    // Populate jobUsagePerHostPerPlatform
     for (JobList::const_iterator i = m_activeJobs.constBegin(); i != m_activeJobs.constEnd(); ++i) {
-        const HostInfo *client = hostMap[i.value().client()];
         const HostInfo *server = hostMap[i.value().server() != 0 ? i.value().server() : i.value().client()];
-
         if (!server->isOffline() && !server->noRemote()) {
-            ++jobUsagePerPlatform[server->platform()];
-            ++jobUsagePerHostPerPlatform[server->platform()][client];
+            ++perPlatformStats[server->platform()].jobs;
         }
     }
 
-    QString text;
+    // Turn into something we can sort differently
+    QVector<QPair<QString, PlatformStat>> statistics;
+    for (auto it = perPlatformStats.constBegin(); it != perPlatformStats.constEnd(); ++it) {
+        statistics << qMakePair(it.key(), it.value());
+    }
+
+    // Sort, move the platform with the highest max jobs count to the front
+    std::sort(statistics.begin(), statistics.end(), [](const QPair<QString, PlatformStat>& a,
+                                                       const QPair<QString, PlatformStat>& b) {
+        return a.second.maxJobs > b.second.maxJobs;
+    });
 
     // Compose the text
-    for (auto it = maxJobsPerPlatform.constBegin(); it != maxJobsPerPlatform.constEnd(); ++it) {
-        if (it.value() == 0) {
+    QString text;
+    foreach (auto pair, statistics) {
+        const QString& platform = pair.first;
+        const PlatformStat& stat = pair.second;
+        if (stat.maxJobs == 0) {
             continue;
         }
 
@@ -331,7 +345,7 @@ void MainWindow::updateJobStats()
             text.append(" - ");
         }
 
-        text.append(QString("<strong>%2/%3</strong> on %1").arg(it.key()).arg(jobUsagePerPlatform[it.key()]).arg(it.value()));
+        text.append(QString("<strong>%2/%3</strong> on %1").arg(platform).arg(stat.jobs).arg(stat.maxJobs));
     }
 
     m_jobStatsWidget->setText(tr("| Active jobs: %1").arg(text));
