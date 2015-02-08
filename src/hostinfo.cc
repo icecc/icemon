@@ -84,16 +84,14 @@ HostInfo::HostInfo( unsigned int id )
 QString HostInfo::toolTip() const
 {
     return QApplication::translate(("tooltip"),
-    "<p><table><tr><td>"
-    "<img align=\"right\" src=\":/images/icemonnode.png\"><br><b>%1"
-    "</b><br>"
+    "<p><b>%1</b><img src=\":/images/icemonnode.png\" width=\"32\"/></p>"
     "<table>"
     "<tr><td>IP:</td><td>%2</td></tr>"
     "<tr><td>Platform:</td><td>%3</td></tr>"
     "<tr><td>Flavor:</td><td> %4</td></tr>"
     "<tr><td>Id:</td><td>%5</td></tr>"
     "<tr><td>Speed:</td><td>%6</td></tr>"
-    "</table></td></tr></table></p>")
+    "</table>")
             .arg(name().toHtmlEscaped()).arg(ip())
             .arg(platform()).arg(colorName(color()).toHtmlEscaped())
             .arg(QString::number(id()))
