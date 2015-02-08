@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #include "flowtableview.h"
 
@@ -26,8 +26,11 @@
 #include <QPainter>
 #include <QTimer>
 
-ProgressWidget::ProgressWidget(HostInfo *info, StatusView *statusView, QWidget *parent) :
-    QWidget(parent), m_hostInfo(info), m_statusView(statusView), m_isVirgin(true)
+ProgressWidget::ProgressWidget(HostInfo *info, StatusView *statusView, QWidget *parent)
+    : QWidget(parent)
+    , m_hostInfo(info)
+    , m_statusView(statusView)
+    , m_isVirgin(true)
 {
     setAutoFillBackground(false);
     setAttribute(Qt::WA_OpaquePaintEvent);
@@ -41,7 +44,7 @@ void ProgressWidget::paintEvent(QPaintEvent *)
     QImage temp(size(), QImage::Format_RGB32);
     QPainter p(&temp);
 
-    p.drawImage(-1,0, m_backingStore);
+    p.drawImage(-1, 0, m_backingStore);
 
     if (m_isVirgin) {
         p.fillRect(rect(), palette().base());
@@ -49,14 +52,14 @@ void ProgressWidget::paintEvent(QPaintEvent *)
     }
 
     if (m_currentJob.state() == Job::Compiling ||
-            m_currentJob.state() == Job::LocalOnly) {
+        m_currentJob.state() == Job::LocalOnly) {
         QLinearGradient gradient;
         gradient.setCoordinateMode(QGradient::ObjectBoundingMode);
         gradient.setColorAt(0, palette().base().color());
         gradient.setColorAt(1, m_statusView->hostColor(m_currentJob.client()));
-        p.fillRect(width()-1,0, 1, height(), gradient);
+        p.fillRect(width() - 1, 0, 1, height(), gradient);
     } else {
-        p.fillRect(width()-1,0, 1, height(), palette().base().color());
+        p.fillRect(width() - 1, 0, 1, height(), palette().base().color());
     }
 
     QPainter screenp(this);
@@ -70,7 +73,7 @@ void ProgressWidget::resizeEvent(QResizeEvent *) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-FlowTableView::FlowTableView(QObject* parent)
+FlowTableView::FlowTableView(QObject *parent)
     : StatusView(parent)
     , m_updateTimer(new QTimer)
     , m_widget(new QTableWidget)
@@ -90,12 +93,14 @@ FlowTableView::FlowTableView(QObject* parent)
 void FlowTableView::update(const Job &job)
 {
     int serverId = job.server();
-    if (serverId == 0)
+    if (serverId == 0) {
         return;
+    }
 
     // checkNode hasn't been run for this server yet.
-    if (!m_idToRowMap.contains(serverId))
+    if (!m_idToRowMap.contains(serverId)) {
         return;
+    }
 
     int serverRow = m_idToRowMap.value(serverId);
     QTableWidgetItem *fileNameItem = m_widget->item(serverRow, 1);
@@ -106,7 +111,7 @@ void FlowTableView::update(const Job &job)
         jobStateItem->setText("");
     } else {
         QString filePath = job.fileName();
-        QString fileName = filePath.mid(filePath.lastIndexOf('/')+1);
+        QString fileName = filePath.mid(filePath.lastIndexOf('/') + 1);
         fileNameItem->setText(fileName);
         fileNameItem->setToolTip(job.fileName());
         fileNameItem->setFlags(Qt::ItemIsEnabled);
@@ -115,17 +120,18 @@ void FlowTableView::update(const Job &job)
         jobStateItem->setFlags(Qt::ItemIsEnabled);
     }
 
-    if (ProgressWidget *progressWidget = static_cast<ProgressWidget*>(m_widget->cellWidget(serverRow, 2))) {
+    if (ProgressWidget * progressWidget = static_cast<ProgressWidget *>(m_widget->cellWidget(serverRow, 2))) {
         progressWidget->setCurrentJob(job);
     }
 
     // update the host column for the server requesting the job
     QTableWidgetItem *hostNameItem = m_widget->item(serverRow, 0);
     int usageCount = hostNameItem->data(Qt::UserRole).toInt();
-    if (job.state() == Job::LocalOnly || job.state() == Job::Compiling)
+    if (job.state() == Job::LocalOnly || job.state() == Job::Compiling) {
         ++usageCount;
-    else if (job.state() == Job::Finished || job.state() == Job::Failed)
+    } else if (job.state() == Job::Finished || job.state() == Job::Failed) {
         --usageCount;
+    }
 
     hostNameItem->setData(Qt::UserRole, usageCount);
 
@@ -135,22 +141,24 @@ void FlowTableView::update(const Job &job)
     hostNameItem->setText(hostInfoText(hostInfoManager()->find(serverId), usageCount));
 }
 
-QWidget* FlowTableView::widget() const
+QWidget *FlowTableView::widget() const
 {
     return m_widget.data();
 }
 
 QString FlowTableView::hostInfoText(HostInfo *hostInfo, int runningProcesses) {
-    if (hostInfo->serverSpeed() == 0) // host disabled
+    if (hostInfo->serverSpeed() == 0) { // host disabled
         return tr("%1 (Disabled)").arg(hostInfo->name());
-    else
+    } else {
         return tr("%1 (%2/%3)").arg(hostInfo->name()).arg(runningProcesses).arg(hostInfo->maxJobs());
+    }
 }
 
 void FlowTableView::checkNode(unsigned int hostId)
 {
-    if (m_idToRowMap.contains(hostId))
+    if (m_idToRowMap.contains(hostId)) {
         return;
+    }
 
     HostInfo *hostInfo = hostInfoManager()->hostMap().value(hostId);
     QTableWidgetItem *widgetItem = new QTableWidgetItem(hostInfoText(hostInfo));
@@ -165,7 +173,7 @@ void FlowTableView::checkNode(unsigned int hostId)
     m_idToRowMap.insert(hostId, insertRow);
     m_widget->setItem(insertRow, 0, widgetItem);
     // adjust column width
-    int width = QFontMetrics(widgetItem->font()).width(widgetItem->text())+32;
+    int width = QFontMetrics(widgetItem->font()).width(widgetItem->text()) + 32;
     m_widget->horizontalHeader()->resizeSection(0, qMax(m_widget->horizontalHeader()->sectionSize(0), width));
 
     widgetItem = new QTableWidgetItem;

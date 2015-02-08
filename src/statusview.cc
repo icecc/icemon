@@ -19,7 +19,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #include "statusview.h"
 
@@ -30,7 +30,7 @@
 #include <QDebug>
 #include <QTime>
 
-StatusView::StatusView(QObject* parent)
+StatusView::StatusView(QObject *parent)
     : QObject(parent)
     , m_paused(false)
 {
@@ -45,15 +45,16 @@ StatusView::Options StatusView::options() const
     return NoOptions;
 }
 
-Monitor* StatusView::monitor() const
+Monitor *StatusView::monitor() const
 {
     return m_monitor;
 }
 
-void StatusView::setMonitor(Monitor* monitor)
+void StatusView::setMonitor(Monitor *monitor)
 {
-    if (m_monitor == monitor)
+    if (m_monitor == monitor) {
         return;
+    }
 
     if (m_monitor) {
         disconnect(m_monitor.data(), SIGNAL(jobUpdated(Job)), this, SLOT(update(Job)));
@@ -73,27 +74,27 @@ void StatusView::setMonitor(Monitor* monitor)
                 this, SLOT(updateSchedulerState(Monitor::SchedulerState)));
 
         if (options().testFlag(RememberJobsOption)) {
-            foreach (const Job& job, m_monitor->jobHistory()) {
+            foreach(const Job &job, m_monitor->jobHistory()) {
                 update(job);
             }
         }
     }
 }
 
-HostInfoManager* StatusView::hostInfoManager() const
+HostInfoManager *StatusView::hostInfoManager() const
 {
     return (m_monitor ? m_monitor->hostInfoManager() : 0);
 }
 
-void StatusView::update(const Job&)
+void StatusView::update(const Job &)
 {
 }
 
-void StatusView::checkNode( HostId )
+void StatusView::checkNode(HostId)
 {
 }
 
-void StatusView::removeNode( HostId )
+void StatusView::removeNode(HostId)
 {
 }
 
@@ -102,35 +103,37 @@ void StatusView::updateSchedulerState(Monitor::SchedulerState state)
     Q_UNUSED(state);
 }
 
-QString StatusView::nameForHost( HostId id )
+QString StatusView::nameForHost(HostId id)
 {
-    if (!m_monitor)
+    if (!m_monitor) {
         return QString();
+    }
 
     return m_monitor->hostInfoManager()->nameForHost(id);
 }
 
-QColor StatusView::hostColor( HostId id )
+QColor StatusView::hostColor(HostId id)
 {
-    if (!m_monitor)
+    if (!m_monitor) {
         return QColor();
+    }
 
     return m_monitor->hostInfoManager()->hostColor(id);
 }
 
-unsigned int StatusView::processor( const Job &job )
+unsigned int StatusView::processor(const Job &job)
 {
     unsigned int ret = 0;
-    if ( job.state() == Job::LocalOnly || job.state() == Job::WaitingForCS ) {
+    if (job.state() == Job::LocalOnly || job.state() == Job::WaitingForCS) {
         ret = job.client();
     } else {
         ret = job.server();
-        if ( !ret ) {
-	  //            Q_ASSERT( job.state() == Job::Finished );
+        if (!ret) {
+            //            Q_ASSERT( job.state() == Job::Finished );
             ret = job.client();
         }
     }
-    Q_ASSERT( ret );
+    Q_ASSERT(ret);
     return ret;
 }
 

@@ -19,7 +19,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #include "icecreammonitor.h"
 
@@ -43,11 +43,11 @@
 
 using namespace std;
 
-IcecreamMonitor::IcecreamMonitor( HostInfoManager *manager, QObject *parent)
+IcecreamMonitor::IcecreamMonitor(HostInfoManager *manager, QObject *parent)
     : Monitor(manager, parent)
-    , m_scheduler( 0 )
-    , m_discover( 0 )
-    , m_fd_notify( 0 )
+    , m_scheduler(0)
+    , m_discover(0)
+    , m_fd_notify(0)
     , m_fd_type(QSocketNotifier::Exception)
 {
     setupDebug();
@@ -67,7 +67,7 @@ QList<Job> IcecreamMonitor::jobHistory() const
 
 void IcecreamMonitor::checkScheduler(bool deleteit)
 {
-    if ( deleteit ) {
+    if (deleteit) {
         m_rememberedJobs.clear();
         delete m_scheduler;
         m_scheduler = 0;
@@ -77,12 +77,13 @@ void IcecreamMonitor::checkScheduler(bool deleteit)
         delete m_discover;
         m_discover = 0;
         setSchedulerState(Offline);
-    } else if ( m_scheduler )
+    } else if (m_scheduler) {
         return;
-    QTimer::singleShot( 1000+(qrand()&1023), this, SLOT( slotCheckScheduler() ) ); // TODO: check if correct
+    }
+    QTimer::singleShot(1000 + (qrand() & 1023), this, SLOT(slotCheckScheduler())); // TODO: check if correct
 }
 
-void IcecreamMonitor::registerNotify(int fd, QSocketNotifier::Type type, const char* slot)
+void IcecreamMonitor::registerNotify(int fd, QSocketNotifier::Type type, const char *slot)
 {
     if (m_fd_notify) {
         m_fd_notify->disconnect(this);
@@ -95,45 +96,45 @@ void IcecreamMonitor::registerNotify(int fd, QSocketNotifier::Type type, const c
 
 void IcecreamMonitor::slotCheckScheduler()
 {
-    if ( m_scheduler )
+    if (m_scheduler) {
         return;
+    }
 
     list<string> names;
 
-    if ( !currentNetname().isEmpty() )
-        names.push_front( currentNetname().data() );
-    else
+    if (!currentNetname().isEmpty()) {
+        names.push_front(currentNetname().data());
+    } else {
         names.push_front("ICECREAM");
+    }
 
-    if (!qgetenv("USE_SCHEDULER").isEmpty())
+    if (!qgetenv("USE_SCHEDULER").isEmpty()) {
         names.push_front(""); // try $USE_SCHEDULER
-
-    for ( list<string>::const_iterator it = names.begin(); it != names.end();
-          ++it ) {
-
+    }
+    for (list<string>::const_iterator it = names.begin(); it != names.end();
+         ++it) {
         setCurrentNetname(it->c_str());
         if (!m_discover
             || m_discover->timed_out()) {
             delete m_discover;
-            m_discover = new DiscoverSched (currentNetname().data());
+            m_discover = new DiscoverSched(currentNetname().data());
         }
 
-        m_scheduler = m_discover->try_get_scheduler ();
+        m_scheduler = m_discover->try_get_scheduler();
 
-        if ( m_scheduler ) {
-            hostInfoManager()->setSchedulerName( QString::fromLatin1(m_discover->schedulerName().data()) );
-            hostInfoManager()->setNetworkName( QString::fromLatin1(m_discover->networkName().data()) );
+        if (m_scheduler) {
+            hostInfoManager()->setSchedulerName(QString::fromLatin1(m_discover->schedulerName().data()));
+            hostInfoManager()->setNetworkName(QString::fromLatin1(m_discover->networkName().data()));
             m_scheduler->setBulkTransfer();
             delete m_discover;
             m_discover = 0;
             registerNotify(m_scheduler->fd,
-                    QSocketNotifier::Read, SLOT(msgReceived()));
+                           QSocketNotifier::Read, SLOT(msgReceived()));
 
-            if ( !m_scheduler->send_msg ( MonLoginMsg() ) ) {
+            if (!m_scheduler->send_msg(MonLoginMsg())) {
                 checkScheduler(true);
                 QTimer::singleShot(0, this, SLOT(slotCheckScheduler()));
-            }
-            else {
+            } else {
                 setSchedulerState(Online);
             }
             return;
@@ -142,59 +143,60 @@ void IcecreamMonitor::slotCheckScheduler()
         if (m_fd_type != QSocketNotifier::Write
             && m_discover->connect_fd() >= 0) {
             registerNotify(m_discover->connect_fd(),
-                    QSocketNotifier::Write, SLOT(slotCheckScheduler()));
+                           QSocketNotifier::Write, SLOT(slotCheckScheduler()));
             return;
+        } else if (m_fd_type != QSocketNotifier::Read
+                   && m_discover->listen_fd() >= 0) {
+            registerNotify(m_discover->listen_fd(),
+                           QSocketNotifier::Read, SLOT(slotCheckScheduler()));
         }
-        else if (m_fd_type != QSocketNotifier::Read
-                && m_discover->listen_fd() >= 0) {
-                registerNotify(m_discover->listen_fd(),
-                        QSocketNotifier::Read, SLOT(slotCheckScheduler()));
+        if (m_fd_type == QSocketNotifier::Read) {
+            QTimer::singleShot(1000 + (qrand() & 1023), this, SLOT(slotCheckScheduler()));
         }
-        if (m_fd_type == QSocketNotifier::Read)
-            QTimer::singleShot(1000+(qrand()&1023), this, SLOT(slotCheckScheduler()));
-
     }
+
     setSchedulerState(Offline);
 }
 
 void IcecreamMonitor::msgReceived()
 {
     while (!m_scheduler->read_a_bit() || m_scheduler->has_msg())
-        if (!handle_activity())
+        if (!handle_activity()) {
             break;
+        }
 }
 
 bool IcecreamMonitor::handle_activity()
 {
-    Msg *m = m_scheduler->get_msg ();
-    if ( !m ) {
-        checkScheduler( true );
+    Msg *m = m_scheduler->get_msg();
+    if (!m) {
+        checkScheduler(true);
         setSchedulerState(Offline);
         return false;
     }
 
-    switch ( m->type ) {
+    switch (m->type) {
     case M_MON_GET_CS:
-        handle_getcs( m );
+        handle_getcs(m);
         break;
     case M_MON_JOB_BEGIN:
-        handle_job_begin( m );
+        handle_job_begin(m);
         break;
     case M_MON_JOB_DONE:
-        handle_job_done( m );
+        handle_job_done(m);
         break;
     case M_END:
         std::cout << "END" << endl;
-        checkScheduler( true );
+        checkScheduler(true);
         break;
     case M_MON_STATS:
-        handle_stats( m );
+        handle_stats(m);
         break;
     case M_MON_LOCAL_JOB_BEGIN:
-        handle_local_begin( m );
+        handle_local_begin(m);
         break;
     case M_JOB_LOCAL_DONE:
-        handle_local_done( m );
+        handle_local_done(m);
         break;
     default:
         cout << "UNKNOWN" << endl;
@@ -204,119 +206,131 @@ bool IcecreamMonitor::handle_activity()
     return true;
 }
 
-void IcecreamMonitor::handle_getcs( Msg *_m )
+void IcecreamMonitor::handle_getcs(Msg *_m)
 {
-    MonGetCSMsg *m = dynamic_cast<MonGetCSMsg*>( _m );
-    if ( !m ) return;
-    m_rememberedJobs[m->job_id] = Job( m->job_id, m->clientid,
-                                       m->filename.c_str(),
-                                       m->lang == CompileJob::Lang_C ? "C" :
-                                       "C++" );
+    MonGetCSMsg *m = dynamic_cast<MonGetCSMsg *>(_m);
+    if (!m) {
+        return;
+    }
+    m_rememberedJobs[m->job_id] = Job(m->job_id, m->clientid,
+                                      m->filename.c_str(),
+                                      m->lang == CompileJob::Lang_C ? "C" :
+                                      "C++");
     emit jobUpdated(m_rememberedJobs[m->job_id]);
 }
 
-void IcecreamMonitor::handle_local_begin( Msg *_m )
+void IcecreamMonitor::handle_local_begin(Msg *_m)
 {
-    MonLocalJobBeginMsg *m = dynamic_cast<MonLocalJobBeginMsg*>( _m );
-    if ( !m ) return;
+    MonLocalJobBeginMsg *m = dynamic_cast<MonLocalJobBeginMsg *>(_m);
+    if (!m) {
+        return;
+    }
 
-    m_rememberedJobs[m->job_id] = Job( m->job_id, m->hostid,
-                                       m->file.c_str(),
-                                       "C++" );
-    m_rememberedJobs[m->job_id].setState( Job::LocalOnly );
+    m_rememberedJobs[m->job_id] = Job(m->job_id, m->hostid,
+                                      m->file.c_str(),
+                                      "C++");
+    m_rememberedJobs[m->job_id].setState(Job::LocalOnly);
     emit jobUpdated(m_rememberedJobs[m->job_id]);
 }
 
-void IcecreamMonitor::handle_local_done( Msg *_m )
+void IcecreamMonitor::handle_local_done(Msg *_m)
 {
-    JobLocalDoneMsg *m = dynamic_cast<JobLocalDoneMsg*>( _m );
-    if ( !m ) return;
+    JobLocalDoneMsg *m = dynamic_cast<JobLocalDoneMsg *>(_m);
+    if (!m) {
+        return;
+    }
 
-    JobList::iterator it = m_rememberedJobs.find( m->job_id );
-    if ( it == m_rememberedJobs.end() ) {
+    JobList::iterator it = m_rememberedJobs.find(m->job_id);
+    if (it == m_rememberedJobs.end()) {
         // we started in between
         return;
     }
 
-    ( *it ).setState( Job::Finished );
+    (*it).setState(Job::Finished);
     emit jobUpdated(*it);
 
-    if ( m_rememberedJobs.size() > 3000 ) { // now remove 1000
+    if (m_rememberedJobs.size() > 3000) {   // now remove 1000
         uint count = 1000;
 
-        while ( --count )
-            m_rememberedJobs.erase( m_rememberedJobs.begin() );
+        while (--count)
+            m_rememberedJobs.erase(m_rememberedJobs.begin());
     }
 }
 
-void IcecreamMonitor::handle_stats( Msg *_m )
+void IcecreamMonitor::handle_stats(Msg *_m)
 {
-    MonStatsMsg *m = dynamic_cast<MonStatsMsg*>( _m );
-    if ( !m ) return;
+    MonStatsMsg *m = dynamic_cast<MonStatsMsg *>(_m);
+    if (!m) {
+        return;
+    }
 
-    QStringList statmsg = QString( m->statmsg.c_str() ).split( '\n' );
+    QStringList statmsg = QString(m->statmsg.c_str()).split('\n');
     HostInfo::StatsMap stats;
-    for ( QStringList::ConstIterator it = statmsg.constBegin(); it != statmsg.constEnd();
-          ++it ) {
+    for (QStringList::ConstIterator it = statmsg.constBegin(); it != statmsg.constEnd();
+         ++it) {
         QString key = *it;
-        key = key.left( key.indexOf( ':' ) );
+        key = key.left(key.indexOf(':'));
         QString value = *it;
-        value = value.mid( value.indexOf( ':' ) + 1 );
+        value = value.mid(value.indexOf(':') + 1);
         stats[key] = value;
     }
 
-    HostInfo *hostInfo = hostInfoManager()->checkNode( m->hostid, stats );
+    HostInfo *hostInfo = hostInfoManager()->checkNode(m->hostid, stats);
 
-    if ( hostInfo->isOffline() ) {
+    if (hostInfo->isOffline()) {
         emit nodeRemoved(m->hostid);
     } else {
         emit nodeUpdated(m->hostid);
     }
 }
 
-void IcecreamMonitor::handle_job_begin( Msg *_m )
+void IcecreamMonitor::handle_job_begin(Msg *_m)
 {
-    MonJobBeginMsg *m = dynamic_cast<MonJobBeginMsg*>( _m );
-    if ( !m ) return;
+    MonJobBeginMsg *m = dynamic_cast<MonJobBeginMsg *>(_m);
+    if (!m) {
+        return;
+    }
 
-    JobList::iterator it = m_rememberedJobs.find( m->job_id );
-    if ( it == m_rememberedJobs.end() ) {
+    JobList::iterator it = m_rememberedJobs.find(m->job_id);
+    if (it == m_rememberedJobs.end()) {
         // we started in between
         return;
     }
 
-    ( *it ).setServer( m->hostid );
-    ( *it ).setStartTime( m->stime );
-    ( *it ).setState( Job::Compiling );
+    (*it).setServer(m->hostid);
+    (*it).setStartTime(m->stime);
+    (*it).setState(Job::Compiling);
 
     emit jobUpdated(*it);
 }
 
-void IcecreamMonitor::handle_job_done( Msg *_m )
+void IcecreamMonitor::handle_job_done(Msg *_m)
 {
-    MonJobDoneMsg *m = dynamic_cast<MonJobDoneMsg*>( _m );
-    if ( !m ) return;
+    MonJobDoneMsg *m = dynamic_cast<MonJobDoneMsg *>(_m);
+    if (!m) {
+        return;
+    }
 
-    JobList::iterator it = m_rememberedJobs.find( m->job_id );
-    if ( it == m_rememberedJobs.end() ) {
+    JobList::iterator it = m_rememberedJobs.find(m->job_id);
+    if (it == m_rememberedJobs.end()) {
         // we started in between
         return;
     }
 
-    ( *it ).exitcode = m->exitcode;
-    if ( m->exitcode ) {
-        ( *it ).setState( Job::Failed );
+    (*it).exitcode = m->exitcode;
+    if (m->exitcode) {
+        (*it).setState(Job::Failed);
     } else {
-        ( *it ).setState( Job::Finished );
-        ( *it ).real_msec = m->real_msec;
-        ( *it ).user_msec = m->user_msec;
-        ( *it ).sys_msec = m->sys_msec;   /* system time used */
-        ( *it ).pfaults = m->pfaults;     /* page faults */
+        (*it).setState(Job::Finished);
+        (*it).real_msec = m->real_msec;
+        (*it).user_msec = m->user_msec;
+        (*it).sys_msec = m->sys_msec;     /* system time used */
+        (*it).pfaults = m->pfaults;       /* page faults */
 
-        ( *it ).in_compressed = m->in_compressed;
-        ( *it ).in_uncompressed = m->in_uncompressed;
-        ( *it ).out_compressed = m->out_compressed;
-        ( *it ).out_uncompressed = m->out_uncompressed;
+        (*it).in_compressed = m->in_compressed;
+        (*it).in_uncompressed = m->in_uncompressed;
+        (*it).out_compressed = m->out_compressed;
+        (*it).out_uncompressed = m->out_uncompressed;
     }
 
     emit jobUpdated(*it);
@@ -329,7 +343,7 @@ void IcecreamMonitor::setupDebug()
     int debug_level = Error;
 
     if (env) {
-        if (!strcasecmp(env, "info"))  {
+        if (!strcasecmp(env, "info")) {
             debug_level |= Info | Warning;
         } else if (!strcasecmp(env, "warnings")) {
             debug_level |= Warning; // taking out warning

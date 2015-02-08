@@ -19,7 +19,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #include "mainwindow.h"
 
@@ -43,12 +43,10 @@
 #include <QMenu>
 
 namespace {
-
 const StatusViewFactory s_viewFactory;
-
 }
 
-MainWindow::MainWindow( QWidget *parent )
+MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_view(0)
 {
@@ -61,9 +59,9 @@ MainWindow::MainWindow( QWidget *parent )
     setWindowIcon(appIcon);
     setWindowTitle(QApplication::translate("appName", Icemon::Version::appName));
 
-    QMenu* fileMenu = menuBar()->addMenu(tr("&File"));
-    QMenu* viewMenu = menuBar()->addMenu(tr("&View"));
-    QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
+    QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
+    QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
+    QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
 
     m_schedStatusWidget = new QLabel;
     statusBar()->addPermanentWidget(m_schedStatusWidget);
@@ -72,30 +70,30 @@ MainWindow::MainWindow( QWidget *parent )
     m_jobStatsWidget->setVisible(false);
     statusBar()->addPermanentWidget(m_jobStatsWidget);
 
-    QAction* action = fileMenu->addAction(tr("&Quit"), this, SLOT(close()), tr("Ctrl+Q"));
+    QAction *action = fileMenu->addAction(tr("&Quit"), this, SLOT(close()), tr("Ctrl+Q"));
     action->setIcon(QIcon::fromTheme("application-exit"));
     action->setMenuRole(QAction::QuitRole);
 
     m_viewMode = new QActionGroup(this);
-    action = m_viewMode->addAction(tr( "&List View" ));
+    action = m_viewMode->addAction(tr("&List View"));
     action->setCheckable(true);
     action->setData("list");
-    action = m_viewMode->addAction(tr( "&Star View" ));
+    action = m_viewMode->addAction(tr("&Star View"));
     action->setCheckable(true);
     action->setData("star");
-    action = m_viewMode->addAction(tr( "&Gantt View" ));
+    action = m_viewMode->addAction(tr("&Gantt View"));
     action->setCheckable(true);
     action->setData("gantt");
-    action = m_viewMode->addAction(tr( "Summary &View" ));
+    action = m_viewMode->addAction(tr("Summary &View"));
     action->setCheckable(true);
     action->setData("summary");
-    action = m_viewMode->addAction(tr( "&Flow View" ));
+    action = m_viewMode->addAction(tr("&Flow View"));
     action->setCheckable(true);
     action->setData("flow");
-    action = m_viewMode->addAction(tr( "&Detailed Host View" ));
+    action = m_viewMode->addAction(tr("&Detailed Host View"));
     action->setCheckable(true);
     action->setData("detailedhost");
-    connect(m_viewMode, SIGNAL(triggered(QAction*)), this, SLOT(handleViewModeActionTriggered(QAction*)));
+    connect(m_viewMode, SIGNAL(triggered(QAction *)), this, SLOT(handleViewModeActionTriggered(QAction *)));
     viewMenu->addActions(m_viewMode->actions());
 
     viewMenu->addSeparator();
@@ -103,14 +101,14 @@ MainWindow::MainWindow( QWidget *parent )
     action = viewMenu->addAction(tr("Pause"));
     action->setIcon(QIcon::fromTheme("media-playback-pause"));
     action->setCheckable(true);
-    connect( action, SIGNAL( triggered() ), this, SLOT( pauseView() ) );
+    connect(action, SIGNAL(triggered()), this, SLOT(pauseView()));
     m_pauseViewAction = action;
 
     viewMenu->addSeparator();
 
     action = viewMenu->addAction(tr("Configure View..."));
     action->setIcon(QIcon::fromTheme("configure"));
-    connect( action, SIGNAL( triggered() ), this, SLOT( configureView() ) );
+    connect(action, SIGNAL(triggered()), this, SLOT(configureView()));
     m_configureViewAction = action;
 
     action = helpMenu->addAction(tr("About Qt..."));
@@ -134,7 +132,7 @@ MainWindow::~MainWindow()
     delete m_hostInfoManager;
 }
 
-void MainWindow::closeEvent( QCloseEvent *e )
+void MainWindow::closeEvent(QCloseEvent *e)
 {
     writeSettings();
 
@@ -148,7 +146,7 @@ void MainWindow::readSettings()
     restoreState(settings.value("windowState").toByteArray());
     QString viewId = settings.value("currentView").toString();
 
-    StatusView* view = s_viewFactory.create(viewId, this);
+    StatusView *view = s_viewFactory.create(viewId, this);
     setView(view);
 }
 
@@ -166,16 +164,17 @@ Monitor *MainWindow::monitor() const
     return m_monitor;
 }
 
-void MainWindow::setMonitor(Monitor* monitor)
+void MainWindow::setMonitor(Monitor *monitor)
 {
-    if (m_monitor == monitor)
+    if (m_monitor == monitor) {
         return;
+    }
 
     if (m_monitor) {
         disconnect(m_monitor, SIGNAL(schedulerStateChanged(Monitor::SchedulerState)),
                    this, SLOT(updateSchedulerState(Monitor::SchedulerState)));
-        disconnect(m_monitor, SIGNAL(jobUpdated(const Job&)), this, SLOT(updateJob(Job)));
-        disconnect(m_monitor->hostInfoManager(), SIGNAL(hostMapChanged()), this, SLOT( updateJobStats()));
+        disconnect(m_monitor, SIGNAL(jobUpdated(const Job &)), this, SLOT(updateJob(Job)));
+        disconnect(m_monitor->hostInfoManager(), SIGNAL(hostMapChanged()), this, SLOT(updateJobStats()));
     }
 
     m_monitor = monitor;
@@ -183,8 +182,8 @@ void MainWindow::setMonitor(Monitor* monitor)
     if (m_monitor) {
         connect(m_monitor, SIGNAL(schedulerStateChanged(Monitor::SchedulerState)),
                 this, SLOT(updateSchedulerState(Monitor::SchedulerState)));
-        connect(m_monitor, SIGNAL(jobUpdated(const Job&)), this, SLOT(updateJob(Job)));
-        connect(m_monitor->hostInfoManager(), SIGNAL(hostMapChanged()), this, SLOT( updateJobStats()));
+        connect(m_monitor, SIGNAL(jobUpdated(const Job &)), this, SLOT(updateJob(Job)));
+        connect(m_monitor->hostInfoManager(), SIGNAL(hostMapChanged()), this, SLOT(updateJobStats()));
     }
 
     if (m_view) {
@@ -193,15 +192,16 @@ void MainWindow::setMonitor(Monitor* monitor)
     updateSchedulerState(m_monitor ? m_monitor->schedulerState() : Monitor::Offline);
 }
 
-StatusView* MainWindow::view() const
+StatusView *MainWindow::view() const
 {
     return m_view;
 }
 
 void MainWindow::setView(StatusView *view)
 {
-    if (m_view == view)
+    if (m_view == view) {
         return;
+    }
 
     delete m_view;
 
@@ -217,7 +217,7 @@ void MainWindow::setView(StatusView *view)
 
     // update action-group
     const QString viewId = (m_view ? m_view->id() : QString());
-    foreach (QAction* action, m_viewMode->actions()) {
+    foreach(QAction * action, m_viewMode->actions()) {
         if (action->data().toString() == viewId) {
             action->setChecked(true);
             break;
@@ -227,7 +227,7 @@ void MainWindow::setView(StatusView *view)
 
 void MainWindow::pauseView()
 {
-  m_view->togglePause();
+    m_view->togglePause();
 }
 
 void MainWindow::configureView()
@@ -238,39 +238,36 @@ void MainWindow::configureView()
 void MainWindow::about()
 {
     QString about = tr("<strong>%1</strong><br/>"
-        "Version: %2<br/><br/>"
-        "<strong>%3</strong><br/><br/>"
-        "Maintainers:<br/>"
-        "Daniel Molkentin &lt;molkentin@kde.org&gt;<br/>"
-        "Kevin Funk &lt;kfunk@kde.org&gt;<br/><br/>"
-        "Based on Icemon for KDE written by:<br/>"
-        "Frerich Raabe &lt;raabe@kde.org&gt;<br/>"
-        "Stephan Kulow &lt;coolo@kde.org&gt;<br/>"
-        "Cornelius Schumacher &lt;schumacher@kde.org&gt;<br/><br/>"
-        "Homepage: <a href=\"%4\">%4</a><br/><br/>"
-        "Licensed under the GPLv2.<br/>")
-            .arg(Icemon::Version::appName)
-            .arg(Icemon::Version::version)
-            .arg(Icemon::Version::description)
-            .arg(Icemon::Version::homePage);
+                       "Version: %2<br/><br/>"
+                       "<strong>%3</strong><br/><br/>"
+                       "Maintainers:<br/>"
+                       "Daniel Molkentin &lt;molkentin@kde.org&gt;<br/>"
+                       "Kevin Funk &lt;kfunk@kde.org&gt;<br/><br/>"
+                       "Based on Icemon for KDE written by:<br/>"
+                       "Frerich Raabe &lt;raabe@kde.org&gt;<br/>"
+                       "Stephan Kulow &lt;coolo@kde.org&gt;<br/>"
+                       "Cornelius Schumacher &lt;schumacher@kde.org&gt;<br/><br/>"
+                       "Homepage: <a href=\"%4\">%4</a><br/><br/>"
+                       "Licensed under the GPLv2.<br/>")
+                    .arg(Icemon::Version::appName)
+                    .arg(Icemon::Version::version)
+                    .arg(Icemon::Version::description)
+                    .arg(Icemon::Version::homePage);
 
     QMessageBox::about(this, tr("About %1").arg(Icemon::Version::appShortName), about);
 }
 
 void MainWindow::updateSchedulerState(Monitor::SchedulerState state)
 {
-    if (state == Monitor::Online)
-    {
+    if (state == Monitor::Online) {
         QString statusText = m_hostInfoManager->schedulerName();
 
-        if( !m_hostInfoManager->networkName().isEmpty() )
-        {
-            statusText.append( " @ " ).append( m_hostInfoManager->networkName() );
+        if (!m_hostInfoManager->networkName().isEmpty()) {
+            statusText.append(" @ ").append(m_hostInfoManager->networkName());
         }
 
         m_schedStatusWidget->setText(statusText.isEmpty() ? tr("Scheduler is online.") : statusText);
-    }
-    else
+    } else
     {
         m_schedStatusWidget->setText(tr("Scheduler is offline."));
     }
@@ -279,26 +276,22 @@ void MainWindow::updateSchedulerState(Monitor::SchedulerState state)
     updateJobStats();
 }
 
-void MainWindow::updateJob( const Job& job )
+void MainWindow::updateJob(const Job &job)
 {
-    if( job.isActive() )
-    {
+    if (job.isActive()) {
         m_activeJobs[job.jobId()] = job;
         updateJobStats();
-    }
-    else if( job.isDone() )
-    {
-        m_activeJobs.remove( job.jobId() );
+    } else if (job.isDone()) {
+        m_activeJobs.remove(job.jobId());
         updateJobStats();
     }
 }
 
 void MainWindow::updateJobStats()
 {
-    if( !m_monitor->schedulerState() )
-    {
+    if (!m_monitor->schedulerState()) {
         m_jobStatsWidget->clear();
-        m_jobStatsWidget->setVisible( false );
+        m_jobStatsWidget->setVisible(false);
         return;
     }
 
@@ -306,25 +299,21 @@ void MainWindow::updateJobStats()
 
     QMap<QString, unsigned> maxJobsPerPlatform;
     QMap<QString, unsigned> jobUsagePerPlatform;
-    QMap<QString, QMap<const HostInfo*, unsigned> > jobUsagePerHostPerPlatform;
+    QMap<QString, QMap<const HostInfo *, unsigned> > jobUsagePerHostPerPlatform;
 
     // Populate maxJobsPerPlatform
-    for( HostInfoManager::HostMap::iterator i = hostMap.begin(); i != hostMap.end(); ++i )
-    {
-        if( !i.value()->isOffline() && !i.value()->noRemote() )
-        {
+    for (HostInfoManager::HostMap::iterator i = hostMap.begin(); i != hostMap.end(); ++i) {
+        if (!i.value()->isOffline() && !i.value()->noRemote()) {
             maxJobsPerPlatform[i.value()->platform()] += i.value()->maxJobs();
         }
     }
 
     // Populate jobUsagePerHostPerPlatform
-    for( JobList::const_iterator i = m_activeJobs.constBegin(); i != m_activeJobs.constEnd(); ++i )
-    {
-        const HostInfo* client = hostMap[i.value().client()];
-        const HostInfo* server = hostMap[i.value().server() != 0 ? i.value().server() : i.value().client()];
+    for (JobList::const_iterator i = m_activeJobs.constBegin(); i != m_activeJobs.constEnd(); ++i) {
+        const HostInfo *client = hostMap[i.value().client()];
+        const HostInfo *server = hostMap[i.value().server() != 0 ? i.value().server() : i.value().client()];
 
-        if( !server->isOffline() && !server->noRemote() )
-        {
+        if (!server->isOffline() && !server->noRemote()) {
             ++jobUsagePerPlatform[server->platform()];
             ++jobUsagePerHostPerPlatform[server->platform()][client];
         }
@@ -333,15 +322,12 @@ void MainWindow::updateJobStats()
     QString text;
 
     // Compose the text
-    for (auto it = maxJobsPerPlatform.constBegin(); it != maxJobsPerPlatform.constEnd(); ++it)
-    {
-        if( it.value() == 0 )
-        {
+    for (auto it = maxJobsPerPlatform.constBegin(); it != maxJobsPerPlatform.constEnd(); ++it) {
+        if (it.value() == 0) {
             continue;
         }
 
-        if( !text.isEmpty() )
-        {
+        if (!text.isEmpty()) {
             text.append(" - ");
         }
 
@@ -349,15 +335,15 @@ void MainWindow::updateJobStats()
     }
 
     m_jobStatsWidget->setText(tr("| Active jobs: %1").arg(text));
-    m_jobStatsWidget->setVisible( true );
+    m_jobStatsWidget->setVisible(true);
 }
 
-void MainWindow::setCurrentNet( const QByteArray &netName )
+void MainWindow::setCurrentNet(const QByteArray &netName)
 {
-  m_monitor->setCurrentNetname(netName);
+    m_monitor->setCurrentNetname(netName);
 }
 
-void MainWindow::handleViewModeActionTriggered(QAction* action)
+void MainWindow::handleViewModeActionTriggered(QAction *action)
 {
     const QString viewId = action->data().toString();
     Q_ASSERT(!viewId.isEmpty());

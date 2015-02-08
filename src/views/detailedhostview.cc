@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #include <QLabel>
 #include <QBoxLayout>
@@ -34,82 +34,82 @@
 
 #include <sys/utsname.h>
 
-
 static QString myHostName()
 {
     struct utsname uname_buf;
-    if ( ::uname( &uname_buf ) == 0 )
+    if (::uname(&uname_buf) == 0) {
         return uname_buf.nodename;
-    else
+    } else {
         return QString();
+    }
 }
 
-DetailedHostView::DetailedHostView(QObject* parent)
+DetailedHostView::DetailedHostView(QObject *parent)
     :  StatusView(parent)
     , m_widget(new QWidget)
 {
-  QBoxLayout* topLayout = new QVBoxLayout(m_widget.data());
-  topLayout->setMargin( 10 );
+    QBoxLayout *topLayout = new QVBoxLayout(m_widget.data());
+    topLayout->setMargin(10);
 
-  QSplitter* viewSplitter = new QSplitter(Qt::Vertical);
-  topLayout->addWidget( viewSplitter );
+    QSplitter *viewSplitter = new QSplitter(Qt::Vertical);
+    topLayout->addWidget(viewSplitter);
 
-  QWidget *hosts = new QWidget( viewSplitter );
-  QVBoxLayout *dummy = new QVBoxLayout( hosts );
-  dummy->setSpacing( 10 );
-  dummy->setMargin( 0 );
+    QWidget *hosts = new QWidget(viewSplitter);
+    QVBoxLayout *dummy = new QVBoxLayout(hosts);
+    dummy->setSpacing(10);
+    dummy->setMargin(0);
 
-  mHostListModel = new HostListModel(this);
+    mHostListModel = new HostListModel(this);
 
-  mSortedHostListModel = new QSortFilterProxyModel(this);
-  mSortedHostListModel->setDynamicSortFilter(true);
-  mSortedHostListModel->setSourceModel(mHostListModel);
+    mSortedHostListModel = new QSortFilterProxyModel(this);
+    mSortedHostListModel->setDynamicSortFilter(true);
+    mSortedHostListModel->setSourceModel(mHostListModel);
 
-  dummy->addWidget(new QLabel( tr("Hosts" ), hosts ));
-  mHostListView = new HostListView(hosts);
-  mHostListView->setModel(mSortedHostListModel);
-  dummy->addWidget(mHostListView);
-  //connect(mHostListView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
-  //        SLOT(slotNodeActivated()));
+    dummy->addWidget(new QLabel(tr("Hosts"), hosts));
+    mHostListView = new HostListView(hosts);
+    mHostListView->setModel(mSortedHostListModel);
+    dummy->addWidget(mHostListView);
+    //connect(mHostListView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
+    //        SLOT(slotNodeActivated()));
 
-  QWidget *locals = new QWidget( viewSplitter );
-  dummy = new QVBoxLayout( locals );
-  dummy->setSpacing( 10 );
-  dummy->setMargin( 0 );
+    QWidget *locals = new QWidget(viewSplitter);
+    dummy = new QVBoxLayout(locals);
+    dummy->setSpacing(10);
+    dummy->setMargin(0);
 
-  mLocalJobsModel = new JobListModel(this);
-  mLocalJobsModel->setExpireDuration(5);
-  mSortedLocalJobsModel = new JobListSortFilterProxyModel(this);
-  mSortedLocalJobsModel->setDynamicSortFilter(true);
-  mSortedLocalJobsModel->setSourceModel(mLocalJobsModel);
+    mLocalJobsModel = new JobListModel(this);
+    mLocalJobsModel->setExpireDuration(5);
+    mSortedLocalJobsModel = new JobListSortFilterProxyModel(this);
+    mSortedLocalJobsModel->setDynamicSortFilter(true);
+    mSortedLocalJobsModel->setSourceModel(mLocalJobsModel);
 
-  dummy->addWidget(new QLabel( tr("Outgoing jobs" ), locals ));
-  mLocalJobsView = new JobListView(locals);
-  mLocalJobsView->setModel(mSortedLocalJobsModel);
-  mLocalJobsView->setClientColumnVisible( false );
-  dummy->addWidget(mLocalJobsView);
+    dummy->addWidget(new QLabel(tr("Outgoing jobs"), locals));
+    mLocalJobsView = new JobListView(locals);
+    mLocalJobsView->setModel(mSortedLocalJobsModel);
+    mLocalJobsView->setClientColumnVisible(false);
+    dummy->addWidget(mLocalJobsView);
 
-  QWidget* remotes = new QWidget( viewSplitter );
-  dummy = new QVBoxLayout( remotes );
-  dummy->setSpacing( 10 );
-  dummy->setMargin( 0 );
+    QWidget *remotes = new QWidget(viewSplitter);
+    dummy = new QVBoxLayout(remotes);
+    dummy->setSpacing(10);
+    dummy->setMargin(0);
 
-  mRemoteJobsModel = new JobListModel(this);
-  mRemoteJobsModel->setExpireDuration(5);
-  mSortedRemoteJobsModel = new JobListSortFilterProxyModel(this);
-  mSortedRemoteJobsModel->setDynamicSortFilter(true);
-  mSortedRemoteJobsModel->setSourceModel(mRemoteJobsModel);
+    mRemoteJobsModel = new JobListModel(this);
+    mRemoteJobsModel->setExpireDuration(5);
+    mSortedRemoteJobsModel = new JobListSortFilterProxyModel(this);
+    mSortedRemoteJobsModel->setDynamicSortFilter(true);
+    mSortedRemoteJobsModel->setSourceModel(mRemoteJobsModel);
 
-  dummy->addWidget(new QLabel( tr("Incoming jobs" ), remotes ));
-  mRemoteJobsView = new JobListView(remotes);
-  mRemoteJobsView->setModel(mSortedRemoteJobsModel);
-  mRemoteJobsView->setServerColumnVisible( false );
-  dummy->addWidget(mRemoteJobsView);
+    dummy->addWidget(new QLabel(tr("Incoming jobs"), remotes));
+    mRemoteJobsView = new JobListView(remotes);
+    mRemoteJobsView->setModel(mSortedRemoteJobsModel);
+    mRemoteJobsView->setServerColumnVisible(false);
+    dummy->addWidget(mRemoteJobsView);
 
-  createKnownHosts();
+    createKnownHosts();
 }
 
-void DetailedHostView::setMonitor(Monitor* monitor)
+void DetailedHostView::setMonitor(Monitor *monitor)
 {
     StatusView::setMonitor(monitor);
 
@@ -120,30 +120,33 @@ void DetailedHostView::setMonitor(Monitor* monitor)
     createKnownHosts();
 }
 
-void DetailedHostView::checkNode( unsigned int hostid )
+void DetailedHostView::checkNode(unsigned int hostid)
 {
-    if ( !hostid )
+    if (!hostid) {
         return;
+    }
 
-    if ( !mHostListView->selectionModel()->hasSelection() ) {
-        HostInfo* info = hostInfoManager()->find( hostid );
-        if ( info->name() == myHostName() )
-            mHostListView->setCurrentIndex( mSortedHostListModel->mapFromSource(mHostListModel->indexForHostInfo(*info, 0) ));
+    if (!mHostListView->selectionModel()->hasSelection()) {
+        HostInfo *info = hostInfoManager()->find(hostid);
+        if (info->name() == myHostName()) {
+            mHostListView->setCurrentIndex(mSortedHostListModel->mapFromSource(mHostListModel->indexForHostInfo(*info, 0)));
+        }
     }
 }
 
 void DetailedHostView::createKnownHosts()
 {
-    if (!hostInfoManager())
+    if (!hostInfoManager()) {
         return;
+    }
 
     const HostInfoManager::HostMap hosts(hostInfoManager()->hostMap());
-    foreach (int hostid, hosts.keys()) {
+    foreach(int hostid, hosts.keys()) {
         checkNode(hostid);
     }
 }
 
-QWidget* DetailedHostView::widget() const
+QWidget *DetailedHostView::widget() const
 {
     return m_widget.data();
 }

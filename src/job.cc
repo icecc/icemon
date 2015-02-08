@@ -18,14 +18,14 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #include "job.h"
 
 #include <QObject>
 #include <QApplication>
 
-Job::Job(unsigned int id, unsigned int client, const QString& filename, const QString& lang)
+Job::Job(unsigned int id, unsigned int client, const QString &filename, const QString &lang)
     : m_id(id)
     , m_fileName(filename)
     , m_lang(lang)
@@ -46,35 +46,35 @@ Job::Job(unsigned int id, unsigned int client, const QString& filename, const QS
 
 QString Job::stateAsString() const
 {
-    switch ( m_state ) {
+    switch (m_state) {
     case WaitingForCS:
-        return QApplication::tr( "Waiting" );
+        return QApplication::tr("Waiting");
         break;
     case Compiling:
-        return QApplication::tr( "Compiling" );
+        return QApplication::tr("Compiling");
         break;
     case Finished:
-        return QApplication::tr( "Finished" );
+        return QApplication::tr("Finished");
         break;
     case Failed:
-        return QApplication::tr( "Failed" );
+        return QApplication::tr("Failed");
         break;
     case Idle:
-        return QApplication::tr( "Idle" );
+        return QApplication::tr("Idle");
         break;
     case LocalOnly:
-        return QApplication::tr( "Local Only" );
+        return QApplication::tr("Local Only");
         break;
     }
     return QString();
 }
 
-QDebug operator<<(QDebug dbg, const Job& job)
+QDebug operator<<(QDebug dbg, const Job &job)
 {
     return dbg.nospace() << "Job[id=" << job.jobId()
-        << ", client=" << job.client()
-        << ", server=" << job.server()
-        << ", fileName=" << job.fileName()
-        << ", state=" << job.stateAsString()
-        << "]";
+           << ", client=" << job.client()
+           << ", server=" << job.server()
+           << ", fileName=" << job.fileName()
+           << ", state=" << job.stateAsString()
+           << "]";
 }

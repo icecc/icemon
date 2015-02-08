@@ -19,7 +19,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #include "joblistview.h"
 
@@ -28,8 +28,8 @@
 #include <QDebug>
 #include <QHeaderView>
 
-JobListView::JobListView(QWidget* parent)
-    : QTreeView( parent )
+JobListView::JobListView(QWidget *parent)
+    : QTreeView(parent)
 {
     setAllColumnsShowFocus(true);
     setRootIsDecorated(false);
@@ -37,12 +37,12 @@ JobListView::JobListView(QWidget* parent)
     setWindowTitle(tr("Jobs"));
 }
 
-JobListModel* JobListView::jobListModel() const
+JobListModel *JobListView::jobListModel() const
 {
-    return qobject_cast<JobListModel*>(model());
+    return qobject_cast<JobListModel *>(model());
 }
 
-void JobListView::setModel(QAbstractItemModel* model)
+void JobListView::setModel(QAbstractItemModel *model)
 {
     if (model) {
         sortByColumn(JobListModel::JobColumnID);
@@ -56,12 +56,13 @@ bool JobListView::isClientColumnVisible() const
     return !isColumnHidden(JobListModel::JobColumnClient);
 }
 
-void JobListView::setClientColumnVisible( bool visible )
+void JobListView::setClientColumnVisible(bool visible)
 {
-    if ( visible == isClientColumnVisible() )
+    if (visible == isClientColumnVisible()) {
         return;
+    }
 
-    if ( visible ) {
+    if (visible) {
         setColumnHidden(JobListModel::JobColumnClient, false);
         resizeColumnToContents(JobListModel::JobColumnClient);
     } else {
@@ -74,12 +75,13 @@ bool JobListView::isServerColumnVisible() const
     return !isColumnHidden(JobListModel::JobColumnServer);
 }
 
-void JobListView::setServerColumnVisible( bool visible )
+void JobListView::setServerColumnVisible(bool visible)
 {
-    if ( visible == isServerColumnVisible() )
+    if (visible == isServerColumnVisible()) {
         return;
+    }
 
-    if ( visible ) {
+    if (visible) {
         setColumnHidden(JobListModel::JobColumnServer, false);
         resizeColumnToContents(JobListModel::JobColumnServer);
     } else {

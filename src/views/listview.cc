@@ -19,7 +19,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #include "listview.h"
 
@@ -29,7 +29,7 @@
 #include <QBoxLayout>
 #include <QSortFilterProxyModel>
 
-ListStatusView::ListStatusView(QObject* parent)
+ListStatusView::ListStatusView(QObject *parent)
     : StatusView(parent)
     , m_widget(new QWidget)
     , mJobsListView(new JobListView(m_widget.data()))
@@ -41,9 +41,9 @@ ListStatusView::ListStatusView(QObject* parent)
 
     mJobsListView->setModel(mSortedJobsListModel);
 
-    QVBoxLayout* topLayout = new QVBoxLayout(m_widget.data());
+    QVBoxLayout *topLayout = new QVBoxLayout(m_widget.data());
     topLayout->setMargin(0);
-    topLayout->addWidget( mJobsListView );
+    topLayout->addWidget(mJobsListView);
 }
 
 StatusView::Options ListStatusView::options() const
@@ -51,12 +51,12 @@ StatusView::Options ListStatusView::options() const
     return RememberJobsOption;
 }
 
-QWidget* ListStatusView::widget() const
+QWidget *ListStatusView::widget() const
 {
     return m_widget.data();
 }
 
-void ListStatusView::setMonitor(Monitor* monitor)
+void ListStatusView::setMonitor(Monitor *monitor)
 {
     StatusView::setMonitor(monitor);
 

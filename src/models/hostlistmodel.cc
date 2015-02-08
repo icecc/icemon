@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #include "hostlistmodel.h"
 #include "monitor.h"
@@ -27,20 +27,21 @@
 
 #include <algorithm>
 
-HostListModel::HostListModel(QObject* parent)
+HostListModel::HostListModel(QObject *parent)
     : QAbstractListModel(parent)
 {
 }
 
-Monitor* HostListModel::monitor() const
+Monitor *HostListModel::monitor() const
 {
     return m_monitor;
 }
 
-void HostListModel::setMonitor(Monitor* monitor)
+void HostListModel::setMonitor(Monitor *monitor)
 {
-    if (m_monitor == monitor)
+    if (m_monitor == monitor) {
         return;
+    }
 
     if (m_monitor) {
         disconnect(m_monitor.data(), SIGNAL(nodeRemoved(HostId)), this, SLOT(removeNodeById(HostId)));
@@ -62,7 +63,7 @@ void HostListModel::setMonitor(Monitor* monitor)
 QVariant HostListModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
-        switch(section) {
+        switch (section) {
         case ColumnID:
             return tr("ID");
         case ColumnName:
@@ -89,10 +90,11 @@ QVariant HostListModel::headerData(int section, Qt::Orientation orientation, int
     return QAbstractItemModel::headerData(section, orientation, role);
 }
 
-QVariant HostListModel::data(const QModelIndex& index, int role) const
+QVariant HostListModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid())
+    if (!index.isValid()) {
         return QVariant();
+    }
 
     const HostInfo info = hostInfoForIndex(index);
     const int column = index.column();
@@ -115,7 +117,7 @@ QVariant HostListModel::data(const QModelIndex& index, int role) const
         case ColumnMaxJobs:
             return info.maxJobs();
         case ColumnSpeed:
-            return int(info.serverSpeed());
+            return int( info.serverSpeed());
         case ColumnLoad:
             return info.serverLoad();
         default:
@@ -148,30 +150,30 @@ QVariant HostListModel::data(const QModelIndex& index, int role) const
     return QVariant();
 }
 
-int HostListModel::columnCount(const QModelIndex& parent) const
+int HostListModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return _ColumnCount;
 }
 
-int HostListModel::rowCount(const QModelIndex& parent) const
+int HostListModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return m_hostInfos.size();
 }
 
-QModelIndex HostListModel::parent(const QModelIndex& child) const
+QModelIndex HostListModel::parent(const QModelIndex &child) const
 {
     Q_UNUSED(child);
     return QModelIndex();
 }
 
-HostInfo HostListModel::hostInfoForIndex(const QModelIndex& index) const
+HostInfo HostListModel::hostInfoForIndex(const QModelIndex &index) const
 {
     return m_hostInfos.value(index.row());
 }
 
-QModelIndex HostListModel::indexForHostInfo(const HostInfo& info, int column) const
+QModelIndex HostListModel::indexForHostInfo(const HostInfo &info, int column) const
 {
     const int i = m_hostInfos.indexOf(info);
     return index(i, column);
@@ -181,31 +183,34 @@ void HostListModel::checkNode(unsigned int hostid)
 {
     Q_ASSERT(m_monitor);
 
-    const HostInfo* info = m_monitor->hostInfoManager()->find(hostid);
-    if (!info)
+    const HostInfo *info = m_monitor->hostInfoManager()->find(hostid);
+    if (!info) {
         return;
+    }
 
     const int index = m_hostInfos.indexOf(*info);
     if (index != -1) {
-        if(info->isOffline()) {
+        if (info->isOffline()) {
             removeNodeById(hostid);
         } else {
             m_hostInfos[index] = *info;
             emit dataChanged(indexForHostInfo(*info, 0), indexForHostInfo(*info, _ColumnCount - 1));
         }
-    } else if(!info->isOffline()) {
+    } else if (!info->isOffline()) {
         beginInsertRows(QModelIndex(), m_hostInfos.size(), m_hostInfos.size());
         m_hostInfos << *info;
         endInsertRows();
     }
 }
 
-struct find_hostid : public std::unary_function<HostInfo, bool>
+struct find_hostid
+    : public std::unary_function<HostInfo, bool>
 {
 public:
-    find_hostid(unsigned int hostId) : m_hostId(hostId) {}
+    find_hostid(unsigned int hostId)
+        : m_hostId(hostId) {}
 
-    bool operator()(const HostInfo& info) const
+    bool operator()(const HostInfo &info) const
     {
         return info.id() == m_hostId;
     }
@@ -225,15 +230,17 @@ void HostListModel::removeNodeById(unsigned int hostId)
 
 void HostListModel::fill()
 {
-    if (!m_monitor)
+    if (!m_monitor) {
         return;
+    }
 
-    const HostInfoManager* manager = m_monitor->hostInfoManager();
+    const HostInfoManager *manager = m_monitor->hostInfoManager();
     const HostInfoManager::HostMap hosts(manager->hostMap());
-    foreach (int hostid, hosts.keys()) {
-        const HostInfo* info = m_monitor->hostInfoManager()->find(hostid);
-        if (!info)
+    foreach(int hostid, hosts.keys()) {
+        const HostInfo *info = m_monitor->hostInfoManager()->find(hostid);
+        if (!info) {
             continue;
+        }
 
         m_hostInfos << *info;
     }

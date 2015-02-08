@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #include "fakemonitor.h"
 
@@ -30,7 +30,6 @@
 #include <QTimer>
 
 namespace {
-
 // counter variable
 int JOB_ID = 0;
 
@@ -41,23 +40,22 @@ const QStringList JOB_FILENAMES(QStringList()
     << QLatin1String("/tmp/filename.cc")
     << QLatin1String("/some/very/long/path/containing/filename.cc")
     << QLatin1String("/some/very/long/path/containing/averyverylongfilename.cc")
-);
+    );
 
 const QStringList HOST_NAMES(QStringList()
     << QLatin1String("Hostname")
     << QLatin1String("VeryLongHostname")
     << QLatin1String("VeryLongHostname.localdomain")
-);
+    );
 
 QString randomPlatform()
 {
     static const QStringList hostNames = {"Linux 2.6", "Linux 3.2", "Linux 3.6"};
     return hostNames[qrand() % hostNames.size()];
 };
-
 }
 
-FakeMonitor::FakeMonitor(HostInfoManager* manager, QObject* parent)
+FakeMonitor::FakeMonitor(HostInfoManager *manager, QObject *parent)
     : Monitor(manager, parent)
     , m_updateTimer(new QTimer(this))
 {
@@ -68,7 +66,7 @@ FakeMonitor::FakeMonitor(HostInfoManager* manager, QObject* parent)
     setSchedulerState(Online);
 
     for (HostId i = 0; i < MAX_HOST_COUNT; ++i) {
-        createHostInfo(i+1);
+        createHostInfo(i + 1);
     }
 
     qsrand(QTime::currentTime().msec());
@@ -91,14 +89,14 @@ void FakeMonitor::createHostInfo(HostId id)
 void FakeMonitor::update()
 {
     // create job
-    const int clientId = (JOB_ID % MAX_HOST_COUNT)+1;
+    const int clientId = (JOB_ID % MAX_HOST_COUNT) + 1;
     const QString fileName = JOB_FILENAMES[JOB_ID % JOB_FILENAMES.length()];
     Job job(JOB_ID++, clientId, fileName);
     time_t rawtime;
     time(&rawtime);
     job.setStartTime(rawtime);
     job.setState(Job::Compiling);
-    const int serverId = ((JOB_ID+1) % MAX_HOST_COUNT)+1;
+    const int serverId = ((JOB_ID + 1) % MAX_HOST_COUNT) + 1;
     job.setServer(serverId);
     emit jobUpdated(job);
     m_activeJobs << job;
@@ -111,8 +109,8 @@ void FakeMonitor::update()
         emit jobUpdated(job);
     }
 
-    Q_FOREACH(const HostInfo* info, hostInfoManager()->hostMap().values()) {
-        if ( info->isOffline() ) {
+    Q_FOREACH(const HostInfo * info, hostInfoManager()->hostMap().values()) {
+        if (info->isOffline()) {
             emit nodeRemoved(info->id());
         } else {
             emit nodeUpdated(info->id());

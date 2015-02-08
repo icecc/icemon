@@ -20,7 +20,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #include <QApplication>
 #include <QTextStream>
@@ -42,18 +42,19 @@ void printHelp()
     out << "\t-n, --netname <name>\tIcecream network name" << endl;
 }
 
-int main( int argc, char **argv )
+int main(int argc, char * *argv)
 {
     QByteArray netName;
     bool enableTestMode = false;
-    for (int i = 1; i < argc; ++i ) {
+    for (int i = 1; i < argc; ++i) {
         if (qstrcmp(argv[i], "--help") == 0 || qstrcmp(argv[i], "-h")  == 0) {
             printHelp();
             return 0;
         }
         if (qstrcmp(argv[i], "--netname") == 0 || qstrcmp(argv[i], "-n")  == 0) {
-            if (i+1 < argc)
+            if (i + 1 < argc) {
                 netName = argv[++i];
+            }
         }
         if (qstrcmp(argv[i], "--testmode") == 0) {
             enableTestMode = true;
@@ -76,5 +77,4 @@ int main( int argc, char **argv )
 
     return app.exec();
 }
-
 

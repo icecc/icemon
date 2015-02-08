@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #include "joblistmodel.h"
 
@@ -35,13 +35,13 @@
 
 static QString formatByteSize(unsigned int value)
 {
-    static const char* const units[] = { "B", "KiB", "MiB" };
+    static const char *const units[] = { "B", "KiB", "MiB" };
     unsigned int unit = 0;
-    while( unit < sizeof( units ) / sizeof( units[ 0 ] ) && value > 1024 ) {
+    while (unit < sizeof(units) / sizeof(units[0]) && value > 1024) {
         ++unit;
         value /= 1024;
     }
-    return QCoreApplication::tr("%1 %2").arg( QLocale::system().toString(value), units[unit]);
+    return QCoreApplication::tr("%1 %2").arg(QLocale::system().toString(value), units[unit]);
 }
 
 /**
@@ -52,44 +52,46 @@ static QString formatByteSize(unsigned int value)
  *     If 1 => Return '.../ancestorDir/file.ext' if possible
  *     If 2 => ...
  */
-static QString trimFilePath(const QString& filePath, int numberOfFilePathParts)
+static QString trimFilePath(const QString &filePath, int numberOfFilePathParts)
 {
     const QChar separator = QDir::separator();
     if (numberOfFilePathParts == 0) {
-        return filePath.mid(filePath.lastIndexOf( separator ) + 1);
+        return filePath.mid(filePath.lastIndexOf(separator) + 1);
     }
 
     int counter = numberOfFilePathParts;
     int index = 0;
     do {
-        index = filePath.lastIndexOf( separator, index - 1);
-    } while ( counter-- && index > 0 );
+        index = filePath.lastIndexOf(separator, index - 1);
+    } while (counter-- && index > 0);
 
-    if ( index > 0 )
-        return QString::fromLatin1( "..." ) + filePath.mid( index );
+    if (index > 0) {
+        return QString::fromLatin1("...") + filePath.mid(index);
+    }
 
     return filePath;
 }
 
-JobListModel::JobListModel(QObject* parent)
+JobListModel::JobListModel(QObject *parent)
     : QAbstractListModel(parent)
     , m_numberOfFilePathParts(2)
     , m_expireDuration(-1)
     , m_expireTimer(new QTimer(this))
 {
-     connect(m_expireTimer, SIGNAL(timeout()),
-             this, SLOT(slotExpireFinishedJobs()));
+    connect(m_expireTimer, SIGNAL(timeout()),
+            this, SLOT(slotExpireFinishedJobs()));
 }
 
-Monitor* JobListModel::monitor() const
+Monitor *JobListModel::monitor() const
 {
     return m_monitor;
 }
 
-void JobListModel::setMonitor(Monitor* monitor)
+void JobListModel::setMonitor(Monitor *monitor)
 {
-    if (m_monitor == monitor)
+    if (m_monitor == monitor) {
         return;
+    }
 
     if (m_monitor) {
         disconnect(m_monitor.data(), SIGNAL(jobUpdated(Job)), this, SLOT(updateJob(Job)));
@@ -100,13 +102,12 @@ void JobListModel::setMonitor(Monitor* monitor)
     }
 }
 
-
-void JobListModel::updateJob(const Job& job)
+void JobListModel::updateJob(const Job &job)
 {
     const int index = m_jobs.indexOf(job);
     if (index != -1) {
         m_jobs[index] = job;
-        emit dataChanged(indexForJob(job, 0), indexForJob(job, _JobColumnCount - 1 ));
+        emit dataChanged(indexForJob(job, 0), indexForJob(job, _JobColumnCount - 1));
     } else {
         beginInsertRows(QModelIndex(), m_jobs.size(), m_jobs.size());
         m_jobs << job;
@@ -114,8 +115,9 @@ void JobListModel::updateJob(const Job& job)
     }
 
     const bool finished = (job.state() == Job::Finished || job.state() == Job::Failed);
-    if (finished)
+    if (finished) {
         expireItem(job);
+    }
 }
 
 void JobListModel::clear()
@@ -126,18 +128,18 @@ void JobListModel::clear()
     endResetModel();
 }
 
-int JobListModel::columnCount(const QModelIndex& parent) const
+int JobListModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return _JobColumnCount;
 }
 
-Job JobListModel::jobForIndex(const QModelIndex& index) const
+Job JobListModel::jobForIndex(const QModelIndex &index) const
 {
     return m_jobs.value(index.row());
 }
 
-QModelIndex JobListModel::indexForJob(const Job& job, int column)
+QModelIndex JobListModel::indexForJob(const Job &job, int column)
 {
     const int i = m_jobs.indexOf(job);
     return index(i, column);
@@ -172,15 +174,16 @@ QVariant JobListModel::headerData(int section, Qt::Orientation orientation, int 
     return QAbstractListModel::headerData(section, orientation, role);
 }
 
-QVariant JobListModel::data(const QModelIndex& index, int role) const
+QVariant JobListModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid())
+    if (!index.isValid()) {
         return QVariant();
+    }
 
     const Job job = jobForIndex(index);
     const int column = index.column();
     Q_ASSERT(m_monitor);
-    const HostInfoManager* manager = m_monitor->hostInfoManager();
+    const HostInfoManager *manager = m_monitor->hostInfoManager();
     if (role == Qt::DisplayRole) {
         switch (column) {
         case JobColumnID:
@@ -227,24 +230,26 @@ QVariant JobListModel::data(const QModelIndex& index, int role) const
     return QVariant();
 }
 
-QModelIndex JobListModel::parent(const QModelIndex& child) const
+QModelIndex JobListModel::parent(const QModelIndex &child) const
 {
     Q_UNUSED(child);
     return QModelIndex();
 }
 
-int JobListModel::rowCount(const QModelIndex& parent) const
+int JobListModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return m_jobs.size();
 }
 
-struct find_jobid : public std::unary_function<Job, bool>
+struct find_jobid
+    : public std::unary_function<Job, bool>
 {
 public:
-    find_jobid(unsigned int jobId) : m_jobId(jobId) {}
+    find_jobid(unsigned int jobId)
+        : m_jobId(jobId) {}
 
-    bool operator()(const Job& job) const
+    bool operator()(const Job &job) const
     {
         return job.jobId() == m_jobId;
     }
@@ -260,10 +265,10 @@ void JobListModel::slotExpireFinishedJobs()
     // this list is sorted by the age of the finished jobs, the oldest is the first
     // so we've to find the first job which isn't old enough to expire
     FinishedJobs::iterator it = m_finishedJobs.begin();
-    for (const FinishedJobs::iterator itEnd = m_finishedJobs.end(); it != itEnd; ++it)
-    {
-        if (currentTime - (*it).time < (uint)m_expireDuration)
+    for (const FinishedJobs::iterator itEnd = m_finishedJobs.end(); it != itEnd; ++it) {
+        if (currentTime - (*it).time < ( uint )m_expireDuration) {
             break;
+        }
 
         unsigned int jobId = (*it).jobId;
         removeItemById(jobId);
@@ -271,11 +276,12 @@ void JobListModel::slotExpireFinishedJobs()
 
     m_finishedJobs.erase(m_finishedJobs.begin(), it);
 
-    if (m_finishedJobs.empty())
+    if (m_finishedJobs.empty()) {
         m_expireTimer->stop();
+    }
 }
 
-void JobListModel::removeItem(const Job& job)
+void JobListModel::removeItem(const Job &job)
 {
     removeItemById(job.jobId());
 }
@@ -289,27 +295,27 @@ void JobListModel::removeItemById(unsigned int jobId)
     endRemoveRows();
 }
 
-void JobListModel::expireItem(const Job& job)
+void JobListModel::expireItem(const Job &job)
 {
     if (m_expireDuration == 0) {
-        removeItem( job );
+        removeItem(job);
         return;
     }
 
     const uint currentTime = QDateTime::currentDateTime().toTime_t();
     m_finishedJobs.push_back(FinishedJob(currentTime, job.jobId()));
 
-    if (!m_expireTimer->isActive())
+    if (!m_expireTimer->isActive()) {
         m_expireTimer->start(1000);
+    }
 }
 
-
-JobListSortFilterProxyModel::JobListSortFilterProxyModel(QObject* parent)
-    : QSortFilterProxyModel( parent )
+JobListSortFilterProxyModel::JobListSortFilterProxyModel(QObject *parent)
+    : QSortFilterProxyModel(parent)
 {
 }
 
-bool JobListSortFilterProxyModel::lessThan( const QModelIndex& left, const QModelIndex& right ) const
+bool JobListSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
     if ((left.column() != JobListModel::JobColumnSizeIn && left.column() != JobListModel::JobColumnSizeOut)
         || (right.column() != JobListModel::JobColumnSizeIn && right.column() != JobListModel::JobColumnSizeOut)) {
@@ -317,7 +323,7 @@ bool JobListSortFilterProxyModel::lessThan( const QModelIndex& left, const QMode
     }
     // Sort file sizes correctly, the view shows them already formatted in a way that wouldn't be correctly numerically
     // compared.
-    const JobListModel* model = static_cast< JobListModel* >( sourceModel());
+    const JobListModel *model = static_cast<JobListModel *>(sourceModel());
     Job jobLeft = model->jobForIndex(left);
     Job jobRight = model->jobForIndex(right);
     unsigned int leftValue = left.column() == JobListModel::JobColumnSizeIn ? jobLeft.in_uncompressed : jobLeft.out_uncompressed;

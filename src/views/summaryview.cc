@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #include "summaryview.h"
 
@@ -31,11 +31,13 @@
 #include <QScrollBar>
 #include <QApplication>
 
-class NodeInfoFrame : public QFrame
+class NodeInfoFrame
+    : public QFrame
 {
 public:
-    NodeInfoFrame(QWidget *parent, const QColor &frameColor) :
-        QFrame(parent), m_frameColor(frameColor)
+    NodeInfoFrame(QWidget *parent, const QColor &frameColor)
+        : QFrame(parent)
+        , m_frameColor(frameColor)
     {
         setObjectName("nodeInfoFrame");
         setStyleSheet(QString("QFrame#nodeInfoFrame { border: 2px solid %1 }").arg(frameColor.name()));
@@ -44,21 +46,22 @@ private:
     QColor m_frameColor;
 };
 
-class SummaryViewScrollArea : public QScrollArea
+class SummaryViewScrollArea
+    : public QScrollArea
 {
 public:
-    explicit SummaryViewScrollArea(QWidget* parent = nullptr);
+    explicit SummaryViewScrollArea(QWidget *parent = nullptr);
 
-    virtual void resizeEvent(QResizeEvent*);
+    virtual void resizeEvent(QResizeEvent *);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // SummaryViewItem implementation
 ////////////////////////////////////////////////////////////////////////////////
 
-SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryView *view, QGridLayout *layout) :
-    m_jobCount(0),
-    m_view(view)
+SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryView *view, QGridLayout *layout)
+    : m_jobCount(0)
+    , m_view(view)
 {
     const int row = layout->rowCount();
     const QColor nodeColor = view->hostInfoManager()->hostColor(hostid);
@@ -79,22 +82,22 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
     l = new QLabel(view->nameForHost(hostid), labelBox);
     l->setAlignment(Qt::AlignCenter);
     l->show();
-    labelLayout->addWidget( l );
+    labelLayout->addWidget(l);
 
     const int maxJobs = view->hostInfoManager()->maxJobs(hostid);
 
     m_jobHandlers.resize(maxJobs);
 
-    for(int i = 0; i < maxJobs; i++) {
+    for (int i = 0; i < maxJobs; i++) {
         m_jobHandlers[i].stateWidget = new QFrame(labelBox);
         m_jobHandlers[i].stateWidget->setFrameStyle(QFrame::Box | QFrame::Plain);
         m_jobHandlers[i].stateWidget->setLineWidth(2);
         m_jobHandlers[i].stateWidget->setFixedHeight(15);
         QPalette palette = m_jobHandlers[i].stateWidget->palette();
-        palette.setColor( m_jobHandlers[i].stateWidget->backgroundRole(), Qt::black );
-        m_jobHandlers[i].stateWidget->setPalette( palette );
+        palette.setColor(m_jobHandlers[i].stateWidget->backgroundRole(), Qt::black);
+        m_jobHandlers[i].stateWidget->setPalette(palette);
         m_jobHandlers[i].stateWidget->show();
-        labelLayout->addWidget( m_jobHandlers[i].stateWidget );
+        labelLayout->addWidget(m_jobHandlers[i].stateWidget);
     }
 
     NodeInfoFrame *detailsBox = new NodeInfoFrame(parent, nodeColor);
@@ -109,8 +112,8 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
 
     m_jobsLabel = addLine(QApplication::tr("Jobs:"), detailsBox, grid, Qt::AlignBottom, "0");
 
-    for(int i = 0; i < maxJobs; i++) {
-        if(maxJobs > 1) {
+    for (int i = 0; i < maxJobs; i++) {
+        if (maxJobs > 1) {
             QSpacerItem *spacer  = new QSpacerItem(1, 8, QSizePolicy::Expanding);
             const int row = grid->rowCount();
             grid->addItem(spacer, row, 0, 1, grid->columnCount() - 1);
@@ -126,27 +129,27 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
 
 SummaryViewItem::~SummaryViewItem()
 {
-  qDeleteAll( m_widgets );
-  m_widgets.clear();
+    qDeleteAll(m_widgets);
+    m_widgets.clear();
 }
 
 void SummaryViewItem::update(const Job &job)
 {
-    switch(job.state()) {
+    switch (job.state()) {
     case Job::Compiling:
     {
         m_jobCount++;
         m_jobsLabel->setText(QString::number(m_jobCount));
 
         QVector<JobHandler>::Iterator it = m_jobHandlers.begin();
-        while(it != m_jobHandlers.end() && !(*it).currentFile.isNull())
+        while (it != m_jobHandlers.end() && !(*it).currentFile.isNull())
             ++it;
 
-        if(it != m_jobHandlers.end()) {
+        if (it != m_jobHandlers.end()) {
             const QColor nodeColor = m_view->hostInfoManager()->hostColor(job.client());
             QPalette palette = (*it).stateWidget->palette();
-            palette.setColor( (*it).stateWidget->backgroundRole(), nodeColor );
-            (*it).stateWidget->setPalette( palette );
+            palette.setColor((*it).stateWidget->backgroundRole(), nodeColor);
+            (*it).stateWidget->setPalette(palette);
             const QString fileName = job.fileName().section('/', -1);
             const QString hostName = m_view->nameForHost(job.client());
             (*it).sourceLabel->setText(QString("%1 (%2)").arg(fileName).arg(hostName));
@@ -159,13 +162,13 @@ void SummaryViewItem::update(const Job &job)
     case Job::Failed:
     {
         QVector<JobHandler>::Iterator it = m_jobHandlers.begin();
-        while(it != m_jobHandlers.end() && (*it).currentFile != job.fileName())
+        while (it != m_jobHandlers.end() && (*it).currentFile != job.fileName())
             ++it;
 
-        if(it != m_jobHandlers.end()) {
+        if (it != m_jobHandlers.end()) {
             QPalette palette = (*it).stateWidget->palette();
-            palette.setColor( (*it).stateWidget->backgroundRole(), Qt::black );
-            (*it).stateWidget->setPalette( palette );
+            palette.setColor((*it).stateWidget->backgroundRole(), Qt::black);
+            (*it).stateWidget->setPalette(palette);
             (*it).sourceLabel->clear();
             (*it).stateLabel->setText(job.stateAsString());
             (*it).currentFile = QString();
@@ -178,8 +181,8 @@ void SummaryViewItem::update(const Job &job)
 }
 
 QLabel *SummaryViewItem::addLine(const QString &caption, QWidget *parent,
-                                             QGridLayout *grid, Qt::Alignment flags,
-                                             const QString &status)
+                                 QGridLayout *grid, Qt::Alignment flags,
+                                 const QString &status)
 {
     QLabel *label = new QLabel(caption, parent);
     label->setAlignment(Qt::AlignRight | flags);
@@ -194,7 +197,7 @@ QLabel *SummaryViewItem::addLine(const QString &caption, QWidget *parent,
     return statusLabel;
 }
 
-SummaryViewScrollArea::SummaryViewScrollArea(QWidget* parent)
+SummaryViewScrollArea::SummaryViewScrollArea(QWidget *parent)
     : QScrollArea(parent)
 {
 }
@@ -208,10 +211,11 @@ void SummaryViewScrollArea::resizeEvent(QResizeEvent *e)
     setMinimumWidth(widget()->minimumSizeHint().width() + verticalScrollBar()->width());
     widget()->setMinimumWidth(s.width());
 
-    if(widget()->height() <= s.height())
+    if (widget()->height() <= s.height()) {
         widget()->setMinimumHeight(s.height());
-    else
+    } else {
         widget()->setMinimumHeight(widget()->sizeHint().height());
+    }
 
     QScrollArea::resizeEvent(e);
 }
@@ -220,7 +224,7 @@ void SummaryViewScrollArea::resizeEvent(QResizeEvent *e)
 // SummaryView implementation
 ////////////////////////////////////////////////////////////////////////////////
 
-SummaryView::SummaryView(QObject* parent)
+SummaryView::SummaryView(QObject *parent)
     : StatusView(parent)
     , m_widget(new SummaryViewScrollArea)
 {
@@ -239,7 +243,6 @@ SummaryView::SummaryView(QObject* parent)
 
 SummaryView::~SummaryView()
 {
-
 }
 
 QWidget *SummaryView::widget() const
@@ -249,11 +252,12 @@ QWidget *SummaryView::widget() const
 
 void SummaryView::update(const Job &job)
 {
-    if(!job.server())
+    if (!job.server()) {
         return;
+    }
 
     SummaryViewItem *i = m_items[job.server()];
-    if(!i) {
+    if (!i) {
         i = new SummaryViewItem(job.server(), m_base, this, m_layout);
         m_items.insert(job.server(), i);
     }
@@ -264,11 +268,10 @@ void SummaryView::checkNode(unsigned int hostid)
 {
     HostInfo *hostInfo = hostInfoManager()->find(hostid);
 
-    if(hostInfo && nameForHost(hostid).isNull()) {
+    if (hostInfo && nameForHost(hostid).isNull()) {
         delete m_items[hostid];
         m_items.remove(hostid);
-    }
-    else if(!m_items[hostid]) {
+    } else if (!m_items[hostid]) {
         SummaryViewItem *i = new SummaryViewItem(hostid, m_base, this, m_layout);
         m_items.insert(hostid, i);
     }

@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #include "monitor.h"
 
@@ -34,7 +34,7 @@ QByteArray Monitor::currentNetname() const
     return m_currentNetname;
 }
 
-void Monitor::setCurrentNetname(const QByteArray& netname)
+void Monitor::setCurrentNetname(const QByteArray &netname)
 {
     m_currentNetname = netname;
 }
@@ -46,8 +46,9 @@ Monitor::SchedulerState Monitor::schedulerState() const
 
 void Monitor::setSchedulerState(SchedulerState state)
 {
-    if (m_schedulerState == state)
+    if (m_schedulerState == state) {
         return;
+    }
 
     m_schedulerState = state;
     emit schedulerStateChanged(state);
