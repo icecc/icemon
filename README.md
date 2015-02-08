@@ -44,4 +44,4 @@ The git repository lives at https://github.com/icecc/icemon
 Contact
 -------
 
-- Current maintainer: Kevin Funk <kfunk@kde.org>
+- Current maintainer: Kevin Funk \<kfunk@kde.org\>
