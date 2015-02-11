@@ -45,9 +45,9 @@ using namespace std;
 
 IcecreamMonitor::IcecreamMonitor(HostInfoManager *manager, QObject *parent)
     : Monitor(manager, parent)
-    , m_scheduler(0)
-    , m_discover(0)
-    , m_fd_notify(0)
+    , m_scheduler(nullptr)
+    , m_discover(nullptr)
+    , m_fd_notify(nullptr)
     , m_fd_type(QSocketNotifier::Exception)
 {
     setupDebug();
@@ -70,12 +70,12 @@ void IcecreamMonitor::checkScheduler(bool deleteit)
     if (deleteit) {
         m_rememberedJobs.clear();
         delete m_scheduler;
-        m_scheduler = 0;
+        m_scheduler = nullptr;
         delete m_fd_notify;
-        m_fd_notify = 0;
+        m_fd_notify = nullptr;
         m_fd_type = QSocketNotifier::Exception;
         delete m_discover;
-        m_discover = 0;
+        m_discover = nullptr;
         setSchedulerState(Offline);
     } else if (m_scheduler) {
         return;
@@ -127,7 +127,7 @@ void IcecreamMonitor::slotCheckScheduler()
             hostInfoManager()->setNetworkName(QString::fromLatin1(m_discover->networkName().data()));
             m_scheduler->setBulkTransfer();
             delete m_discover;
-            m_discover = 0;
+            m_discover = nullptr;
             registerNotify(m_scheduler->fd,
                            QSocketNotifier::Read, SLOT(msgReceived()));
 

@@ -83,7 +83,7 @@ void StatusView::setMonitor(Monitor *monitor)
 
 HostInfoManager *StatusView::hostInfoManager() const
 {
-    return (m_monitor ? m_monitor->hostInfoManager() : 0);
+    return (m_monitor ? m_monitor->hostInfoManager() : nullptr);
 }
 
 void StatusView::update(const Job &)

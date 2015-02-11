@@ -59,7 +59,7 @@ const StatusViewFactory s_viewFactory;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , m_view(0)
+    , m_view(nullptr)
 {
     QIcon appIcon = QIcon();
     appIcon.addFile(":/images/hi128-app-icemon.png", QSize(128, 128));

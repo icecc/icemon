@@ -339,7 +339,7 @@ void GanttStatusView::update(const Job &job)
         return;
     }
 
-    GanttProgress *slot = 0;
+    GanttProgress *slot = nullptr;
 
     unsigned int processor;
     if (job.state() == Job::LocalOnly) {

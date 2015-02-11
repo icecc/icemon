@@ -140,10 +140,10 @@ void StarViewConfigDialog::slotSuppressDomainName(bool b)
 }
 
 HostItem::HostItem(const QString &text)
-    : QGraphicsItemGroup(0)
-    , mHostInfo(0)
-    , mHostInfoManager(0)
-    , m_stateItem(0)
+    : QGraphicsItemGroup(nullptr)
+    , mHostInfo(nullptr)
+    , mHostInfoManager(nullptr)
+    , m_stateItem(nullptr)
 {
     init();
 
@@ -153,10 +153,10 @@ HostItem::HostItem(const QString &text)
 }
 
 HostItem::HostItem(HostInfo *hostInfo, HostInfoManager *m)
-    : QGraphicsItemGroup(0)
+    : QGraphicsItemGroup(nullptr)
     , mHostInfo(hostInfo)
     , mHostInfoManager(m)
-    , m_stateItem(0)
+    , m_stateItem(nullptr)
 {
     init();
 }
@@ -570,7 +570,7 @@ bool StarViewGraphicsView::event(QEvent *e)
 
     QPoint p(static_cast<QHelpEvent *>(e)->pos());
 
-    HostItem *item = 0;
+    HostItem *item = nullptr;
     QGraphicsItem *graphicsItem = itemAt(p);
     if (graphicsItem) {
         item = dynamic_cast<HostItem *>(graphicsItem->parentItem());
@@ -672,7 +672,7 @@ HostItem *StarView::createHostItem(unsigned int hostid)
     HostInfo *i = hostInfoManager()->find(hostid);
 
     if (!i || i->isOffline() || i->name().isEmpty()) {
-        return 0;
+        return nullptr;
     }
 
 //  qDebug() << "New node for " << hostid << " (" << i->name() << ")" << endl;
@@ -703,7 +703,7 @@ void StarViewGraphicsView::drawNodeStatus()
 void StarViewGraphicsView::drawState(HostItem *node)
 {
     delete node->stateItem();
-    QGraphicsLineItem *newItem = 0;
+    QGraphicsLineItem *newItem = nullptr;
 
     unsigned int client = node->client();
     QColor color = client ? m_starView->hostColor(client) : Qt::green;

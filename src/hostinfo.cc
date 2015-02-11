@@ -161,7 +161,7 @@ HostInfoManager::~HostInfoManager()
 
 HostInfo *HostInfoManager::find(unsigned int hostid) const
 {
-    return mHostMap.value(hostid, 0);
+    return mHostMap.value(hostid, nullptr);
 }
 
 void HostInfoManager::checkNode(const HostInfo &info)
