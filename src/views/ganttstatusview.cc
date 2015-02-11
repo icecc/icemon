@@ -53,7 +53,7 @@ GanttConfigDialog::GanttConfigDialog(QWidget *parent)
     connect(mTimeScaleVisibleCheck, SIGNAL(clicked()),
             SIGNAL(configChanged()));
 
-    QFrame *hline = new QFrame(this);
+    auto hline = new QFrame(this);
     hline->setFrameShape(QFrame::HLine);
     topLayout->addWidget(hline);
 
@@ -448,7 +448,7 @@ GanttProgress *GanttStatusView::registerNode(unsigned int hostid)
         NodeLabelMap::ConstIterator labelIt = mNodeLabels.constFind(hostid);
         if (labelIt == mNodeLabels.constEnd()) {
             QString name = nameForHost(hostid);
-            QLabel *l = new QLabel(name, mTopWidget);
+            auto l = new QLabel(name, mTopWidget);
             QPalette palette = l->palette();
             palette.setColor(l->foregroundRole(), color);
             palette.setColor(l->backgroundRole(), Qt::white);
@@ -464,7 +464,7 @@ GanttProgress *GanttStatusView::registerNode(unsigned int hostid)
         }
     }
 
-    GanttProgress *w = new GanttProgress(this, mTopWidget);
+    auto w = new GanttProgress(this, mTopWidget);
     w->setMinimumHeight(mMinimumProgressHeight);
     nodeLayout->addWidget(w);
 

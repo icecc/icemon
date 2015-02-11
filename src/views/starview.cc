@@ -81,7 +81,7 @@ StarViewConfigDialog::StarViewConfigDialog(QWidget *parent)
 
     mSuppressDomainName = new QCheckBox(tr("Suppress domain name"));
     topLayout->addWidget(mSuppressDomainName);
-    QFrame *hline = new QFrame;
+    auto hline = new QFrame;
     hline->setFrameShape(QFrame::HLine);
     hline->setFrameShadow(QFrame::Sunken);
     topLayout->addWidget(hline);
@@ -298,7 +298,7 @@ void HostItem::update(const Job &job)
 
 void HostItem::createJobHalo(const Job &job)
 {
-    QGraphicsEllipseItem *halo = new QGraphicsEllipseItem(
+    auto halo = new QGraphicsEllipseItem(
         centerPosX(), centerPosY(), mBaseWidth, mBaseHeight,
         this);
 
@@ -679,7 +679,7 @@ HostItem *StarView::createHostItem(unsigned int hostid)
 
     //assert( !i->name().isEmpty() );
 
-    HostItem *hostItem = new HostItem(i, hostInfoManager());
+    auto hostItem = new HostItem(i, hostInfoManager());
     m_canvas->addItem(hostItem);
     hostItem->setHostColor(hostColor(hostid));
     m_hostItems.insert(hostid, hostItem);

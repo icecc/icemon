@@ -66,14 +66,14 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
     const int row = layout->rowCount();
     const QColor nodeColor = view->hostInfoManager()->hostColor(hostid);
 
-    NodeInfoFrame *labelBox = new NodeInfoFrame(parent, nodeColor);
+    auto labelBox = new NodeInfoFrame(parent, nodeColor);
     layout->setMargin(5);
     layout->addWidget(labelBox, row, 0);
     labelBox->show();
     labelBox->setMinimumWidth(75);
     m_widgets.append(labelBox);
 
-    QVBoxLayout *labelLayout = new QVBoxLayout(labelBox);
+    auto labelLayout = new QVBoxLayout(labelBox);
     labelLayout->setMargin(10);
     labelLayout->setSpacing(5);
 
@@ -100,13 +100,13 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
         labelLayout->addWidget(m_jobHandlers[i].stateWidget);
     }
 
-    NodeInfoFrame *detailsBox = new NodeInfoFrame(parent, nodeColor);
+    auto detailsBox = new NodeInfoFrame(parent, nodeColor);
     layout->setMargin(5);
     layout->addWidget(detailsBox, row, 1);
     detailsBox->show();
     m_widgets.append(detailsBox);
 
-    QGridLayout *grid = new QGridLayout(detailsBox);
+    auto grid = new QGridLayout(detailsBox);
     grid->setMargin(10);
     grid->setSpacing(5);
 
@@ -114,7 +114,7 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
 
     for (int i = 0; i < maxJobs; i++) {
         if (maxJobs > 1) {
-            QSpacerItem *spacer  = new QSpacerItem(1, 8, QSizePolicy::Expanding);
+            auto spacer  = new QSpacerItem(1, 8, QSizePolicy::Expanding);
             const int row = grid->rowCount();
             grid->addItem(spacer, row, 0, 1, grid->columnCount() - 1);
         }
@@ -184,11 +184,11 @@ QLabel *SummaryViewItem::addLine(const QString &caption, QWidget *parent,
                                  QGridLayout *grid, Qt::Alignment flags,
                                  const QString &status)
 {
-    QLabel *label = new QLabel(caption, parent);
+    auto label = new QLabel(caption, parent);
     label->setAlignment(Qt::AlignRight | flags);
     const int row = grid->rowCount();
     grid->addWidget(label, row, 0);
-    QLabel *statusLabel = new QLabel(status, parent);
+    auto statusLabel = new QLabel(status, parent);
     //statusLabel->setAlignment(Qt::AlignLeft | flags);
     grid->addWidget(statusLabel, row, 1);
     label->show();
@@ -272,7 +272,7 @@ void SummaryView::checkNode(unsigned int hostid)
         delete m_items[hostid];
         m_items.remove(hostid);
     } else if (!m_items[hostid]) {
-        SummaryViewItem *i = new SummaryViewItem(hostid, m_base, this, m_layout);
+        auto i = new SummaryViewItem(hostid, m_base, this, m_layout);
         m_items.insert(hostid, i);
     }
 }

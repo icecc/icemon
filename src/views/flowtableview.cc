@@ -184,7 +184,7 @@ void FlowTableView::checkNode(unsigned int hostId)
     widgetItem->setFlags(Qt::ItemIsEnabled);
     m_widget->setItem(insertRow, 3, widgetItem);
 
-    ProgressWidget *pw = new ProgressWidget(hostInfo, this);
+    auto pw = new ProgressWidget(hostInfo, this);
     connect(m_updateTimer, SIGNAL(timeout()), pw, SLOT(update()));
     m_widget->setCellWidget(insertRow, 2, pw);
 }

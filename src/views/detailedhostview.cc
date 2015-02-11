@@ -51,11 +51,11 @@ DetailedHostView::DetailedHostView(QObject *parent)
     QBoxLayout *topLayout = new QVBoxLayout(m_widget.data());
     topLayout->setMargin(10);
 
-    QSplitter *viewSplitter = new QSplitter(Qt::Vertical);
+    auto viewSplitter = new QSplitter(Qt::Vertical);
     topLayout->addWidget(viewSplitter);
 
-    QWidget *hosts = new QWidget(viewSplitter);
-    QVBoxLayout *dummy = new QVBoxLayout(hosts);
+    auto hosts = new QWidget(viewSplitter);
+    auto dummy = new QVBoxLayout(hosts);
     dummy->setSpacing(10);
     dummy->setMargin(0);
 
@@ -72,7 +72,7 @@ DetailedHostView::DetailedHostView(QObject *parent)
     //connect(mHostListView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
     //        SLOT(slotNodeActivated()));
 
-    QWidget *locals = new QWidget(viewSplitter);
+    auto locals = new QWidget(viewSplitter);
     dummy = new QVBoxLayout(locals);
     dummy->setSpacing(10);
     dummy->setMargin(0);
@@ -89,7 +89,7 @@ DetailedHostView::DetailedHostView(QObject *parent)
     mLocalJobsView->setClientColumnVisible(false);
     dummy->addWidget(mLocalJobsView);
 
-    QWidget *remotes = new QWidget(viewSplitter);
+    auto remotes = new QWidget(viewSplitter);
     dummy = new QVBoxLayout(remotes);
     dummy->setSpacing(10);
     dummy->setMargin(0);

@@ -41,7 +41,7 @@ ListStatusView::ListStatusView(QObject *parent)
 
     mJobsListView->setModel(mSortedJobsListModel);
 
-    QVBoxLayout *topLayout = new QVBoxLayout(m_widget.data());
+    auto topLayout = new QVBoxLayout(m_widget.data());
     topLayout->setMargin(0);
     topLayout->addWidget(mJobsListView);
 }
