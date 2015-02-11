@@ -52,7 +52,7 @@ class SummaryViewScrollArea
 public:
     explicit SummaryViewScrollArea(QWidget *parent = nullptr);
 
-    virtual void resizeEvent(QResizeEvent *);
+    virtual void resizeEvent(QResizeEvent *) override;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
