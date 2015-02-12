@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #ifndef ICEMON_FAKEMONITOR_H
 #define ICEMON_FAKEMONITOR_H
@@ -30,12 +30,13 @@ class StatusView;
 
 class QTimer;
 
-class FakeMonitor : public Monitor
+class FakeMonitor
+    : public Monitor
 {
     Q_OBJECT
 
 public:
-    explicit FakeMonitor(HostInfoManager* manager, QObject* parent = nullptr);
+    explicit FakeMonitor(HostInfoManager *manager, QObject *parent = nullptr);
 
 private Q_SLOTS:
     void update();
@@ -45,7 +46,7 @@ private:
 
     QList<Job> m_activeJobs;
 
-    QTimer* m_updateTimer;
+    QTimer *m_updateTimer;
 };
 
 #endif // ICEMON_FAKEMONITOR_H

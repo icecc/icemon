@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #ifndef ICEMON_HOSTLISTMODEL_H
 #define ICEMON_HOSTLISTMODEL_H
@@ -29,7 +29,8 @@
 
 class Monitor;
 
-class HostListModel : public QAbstractListModel
+class HostListModel
+    : public QAbstractListModel
 {
     Q_OBJECT
 
@@ -53,19 +54,19 @@ public:
         HostIdRole = Qt::UserRole
     };
 
-    explicit HostListModel(QObject* parent = nullptr);
+    explicit HostListModel(QObject *parent = nullptr);
 
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
-    virtual QVariant data(const QModelIndex& index, int role) const override;
-    virtual int columnCount(const QModelIndex& parent) const override;
-    virtual int rowCount(const QModelIndex& parent) const override;
-    virtual QModelIndex parent(const QModelIndex& child) const override;
+    virtual QVariant data(const QModelIndex &index, int role) const override;
+    virtual int columnCount(const QModelIndex &parent) const override;
+    virtual int rowCount(const QModelIndex &parent) const override;
+    virtual QModelIndex parent(const QModelIndex &child) const override;
 
-    Monitor* monitor() const;
-    void setMonitor(Monitor* monitor);
+    Monitor *monitor() const;
+    void setMonitor(Monitor *monitor);
 
-    HostInfo hostInfoForIndex(const QModelIndex& index) const;
-    QModelIndex indexForHostInfo(const HostInfo& info, int column) const;
+    HostInfo hostInfoForIndex(const QModelIndex &index) const;
+    QModelIndex indexForHostInfo(const HostInfo &info, int column) const;
 
 private Q_SLOTS:
     void checkNode(HostId hostId);

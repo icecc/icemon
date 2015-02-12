@@ -19,7 +19,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 #ifndef ICEMON_STATUSVIEW_H
 #define ICEMON_STATUSVIEW_H
 
@@ -36,7 +36,8 @@ class QColor;
 class QString;
 class QWidget;
 
-class StatusView : public QObject
+class StatusView
+    : public QObject
 {
     Q_OBJECT
 
@@ -47,13 +48,13 @@ public:
     };
     Q_DECLARE_FLAGS(Options, Option);
 
-    StatusView(QObject* parent = nullptr);
+    StatusView(QObject *parent = nullptr);
     virtual ~StatusView();
 
     virtual Options options() const;
 
-    Monitor* monitor() const;
-    virtual void setMonitor(Monitor* monitor);
+    Monitor *monitor() const;
+    virtual void setMonitor(Monitor *monitor);
 
     /// Convenience function to access the Monitor's host info manager
     HostInfoManager *hostInfoManager() const;
@@ -72,17 +73,16 @@ public:
 
     virtual QString id() const = 0;
 
-    unsigned int processor( const Job & );
+    unsigned int processor(const Job &);
 
-    QString nameForHost( unsigned int hostid );
-    QColor hostColor( unsigned int hostid );
+    QString nameForHost(unsigned int hostid);
+    QColor hostColor(unsigned int hostid);
 
 protected Q_SLOTS:
     virtual void update(const Job &job);
     virtual void checkNode(HostId hostid);
     virtual void removeNode(HostId hostid);
     virtual void updateSchedulerState(Monitor::SchedulerState state);
-
 
 private:
     QPointer<Monitor> m_monitor;

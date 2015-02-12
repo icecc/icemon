@@ -18,7 +18,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 #ifndef ICEMON_JOB_H
 #define ICEMON_JOB_H
 
@@ -29,17 +29,17 @@
 
 class Job
 {
-  public:
+public:
     enum State { WaitingForCS, LocalOnly, Compiling, Finished, Failed, Idle };
 
     explicit Job(unsigned int id = 0,
-        unsigned int client = 0,
-        const QString &filename = QString(),
-        const QString &lang = QString());
+                 unsigned int client = 0,
+                 const QString &filename = QString(),
+                 const QString &lang = QString());
 
-    bool operator==( const Job &rhs ) const { return m_id == rhs.m_id; }
-    bool operator!=( const Job &rhs ) const { return m_id != rhs.m_id; }
-    int operator<( const Job &rhs ) const{ return m_id < rhs.m_id; }
+    bool operator==(const Job &rhs) const { return m_id == rhs.m_id; }
+    bool operator!=(const Job &rhs) const { return m_id != rhs.m_id; }
+    int operator<(const Job &rhs) const { return m_id < rhs.m_id; }
 
     unsigned int jobId() const { return m_id; }
     QString fileName() const { return m_fileName; }
@@ -51,17 +51,17 @@ class Job
     bool isDone() const { return m_state == Finished || m_state == Failed; }
     bool isActive() const { return m_state == LocalOnly || m_state == Compiling; }
 
-    void setServer( unsigned int hostid ) {
+    void setServer(unsigned int hostid) {
         m_server = hostid;
     }
-    void setStartTime( time_t t ) {
+    void setStartTime(time_t t) {
         m_stime = t;
     }
-    void setState( State ss ) {
+    void setState(State ss) {
         m_state = ss;
     }
 
-  private:
+private:
     unsigned int m_id;
     QString m_fileName;
     unsigned int m_server;
@@ -70,7 +70,7 @@ class Job
     State m_state;
     time_t m_stime;
 
-  public:
+public:
     unsigned int real_msec;  /* real time it used */
     unsigned int user_msec;  /* user time used */
     unsigned int sys_msec;   /* system time used */
@@ -84,12 +84,14 @@ class Job
     unsigned int out_uncompressed;
 };
 
-QDebug operator<<(QDebug dbg, const Job& job);
+QDebug operator<<(QDebug dbg, const Job &job);
 
-class IdleJob : public Job
+class IdleJob
+    : public Job
 {
-  public:
-    IdleJob() : Job() { setState( Job::Idle ); }
+public:
+    IdleJob()
+        : Job() { setState(Job::Idle); }
 };
 
 typedef QMap<unsigned int, Job> JobList;

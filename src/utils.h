@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #ifndef ICEMON_UTILS_H
 #define ICEMON_UTILS_H
@@ -24,14 +24,12 @@
 #include <QColor>
 
 namespace Utils {
+int luminance(const QColor &color);
 
-int luminance( const QColor& color );
+bool isLowContrast(const QColor &color1, const QColor &color2, int treshold = 128);
 
-bool isLowContrast( const QColor& color1, const QColor& color2, int treshold = 128 );
-
-QColor betterContrastColor( const QColor& baseColor, const QColor& color1, const QColor& color2 );
-QColor textColor( const QColor& baseColor );
-
+QColor betterContrastColor(const QColor &baseColor, const QColor &color1, const QColor &color2);
+QColor textColor(const QColor &baseColor);
 }
 
 #endif // ICEMON_UTILS_H

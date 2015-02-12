@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #ifndef FLOWTABLEVIEW_H
 #define FLOWTABLEVIEW_H
@@ -33,7 +33,8 @@ class Job;
 
 typedef QHash<int, int> HostIdRowMap;
 
-class ProgressWidget : public QWidget
+class ProgressWidget
+    : public QWidget
 {
     Q_OBJECT
 public:
@@ -52,17 +53,18 @@ private:
     bool m_isVirgin;
 };
 
-class FlowTableView : public StatusView
+class FlowTableView
+    : public StatusView
 {
     Q_OBJECT
 public:
-    explicit FlowTableView(QObject* parent);
-    
-    virtual QWidget* widget() const override;
+    explicit FlowTableView(QObject *parent);
 
-    void update( const Job &job) override;
-    void checkNode( unsigned int hostid ) override;
-    void removeNode( unsigned int hostid ) override;
+    virtual QWidget *widget() const override;
+
+    void update(const Job &job) override;
+    void checkNode(unsigned int hostid) override;
+    void removeNode(unsigned int hostid) override;
 
     QString id() const override { return "flow"; }
 
@@ -77,7 +79,6 @@ private:
     QString hostInfoText(HostInfo *hostInfo, int runningProcesses = 0);
     HostIdRowMap m_idToRowMap;
     QTimer *m_updateTimer;
-    
 };
 
 #endif // FLOWTABLEVIEW_H

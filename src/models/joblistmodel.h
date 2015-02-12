@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #ifndef JOBLISTMODEL_H
 #define JOBLISTMODEL_H
@@ -31,7 +31,8 @@
 class Monitor;
 class QTimer;
 
-class JobListModel : public QAbstractListModel
+class JobListModel
+    : public QAbstractListModel
 {
     Q_OBJECT
 
@@ -51,39 +52,39 @@ public:
         _JobColumnCount
     };
 
-    explicit JobListModel(QObject* parent = nullptr);
+    explicit JobListModel(QObject *parent = nullptr);
 
-    Monitor* monitor() const;
-    void setMonitor(Monitor* monitor);
+    Monitor *monitor() const;
+    void setMonitor(Monitor *monitor);
 
     int expireDuration() const {
         return m_expireDuration;
     }
 
-    void setExpireDuration( int duration ) {
+    void setExpireDuration(int duration) {
         m_expireDuration = duration;
     }
 
-    virtual int columnCount(const QModelIndex& parent = QModelIndex()) const override;
+    virtual int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
-    virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
-    virtual QModelIndex parent(const QModelIndex& child) const override;
-    virtual int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    virtual QModelIndex parent(const QModelIndex &child) const override;
+    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
-    Job jobForIndex(const QModelIndex& index) const;
-    QModelIndex indexForJob(const Job& job, int column);
+    Job jobForIndex(const QModelIndex &index) const;
+    QModelIndex indexForJob(const Job &job, int column);
 
 private Q_SLOTS:
     void slotExpireFinishedJobs();
 
-    void updateJob(const Job& job);
+    void updateJob(const Job &job);
     void clear();
 
 private:
     QVector<Job> m_jobs;
 
-    void expireItem(const Job& job);
-    void removeItem(const Job& job);
+    void expireItem(const Job &job);
+    void removeItem(const Job &job);
     void removeItemById(unsigned int jobId);
 
     QPointer<Monitor> m_monitor;
@@ -109,7 +110,9 @@ private:
 
     struct FinishedJob
     {
-        FinishedJob(uint _time = 0, uint _jobId = 0) : time(_time), jobId(_jobId) {}
+        FinishedJob(uint _time = 0, uint _jobId = 0)
+            : time(_time)
+            , jobId(_jobId) {}
         uint time;
         uint jobId;
     };
@@ -118,16 +121,17 @@ private:
     /// List with job ids that are expired
     FinishedJobs m_finishedJobs;
 
-    QTimer* m_expireTimer;
+    QTimer *m_expireTimer;
 };
 
-class JobListSortFilterProxyModel : public QSortFilterProxyModel
+class JobListSortFilterProxyModel
+    : public QSortFilterProxyModel
 {
     Q_OBJECT
 public:
-    JobListSortFilterProxyModel( QObject* parent = nullptr );
+    JobListSortFilterProxyModel(QObject *parent = nullptr);
 protected:
-    virtual bool lessThan( const QModelIndex& left, const QModelIndex& right ) const override;
+    virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
 };
 
 #endif

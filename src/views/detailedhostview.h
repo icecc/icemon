@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #ifndef ICEMON_DETAILEDHOSTVIEW_H
 #define ICEMON_DETAILEDHOSTVIEW_H
@@ -32,38 +32,38 @@ class JobListModel;
 class HostListView;
 class QSortFilterProxyModel;
 
-class DetailedHostView : public StatusView
+class DetailedHostView
+    : public StatusView
 {
     Q_OBJECT
 
 public:
-    DetailedHostView(QObject* parent);
+    DetailedHostView(QObject *parent);
 
-    virtual void setMonitor(Monitor* monitor) override;
+    virtual void setMonitor(Monitor *monitor) override;
 
-    QWidget* widget() const override;
+    QWidget *widget() const override;
 
     QString id() const override { return "detailedhost"; }
 
-    void checkNode( unsigned int hostid ) override;
+    void checkNode(unsigned int hostid) override;
 
 private:
     void createKnownHosts();
 
     QScopedPointer<QWidget> m_widget;
 
-    HostListModel* mHostListModel;
-    HostListView* mHostListView;
-    QSortFilterProxyModel* mSortedHostListModel;
+    HostListModel *mHostListModel;
+    HostListView *mHostListView;
+    QSortFilterProxyModel *mSortedHostListModel;
 
-    JobListModel* mLocalJobsModel;
-    JobListView* mLocalJobsView;
-    QSortFilterProxyModel* mSortedLocalJobsModel;
+    JobListModel *mLocalJobsModel;
+    JobListView *mLocalJobsView;
+    QSortFilterProxyModel *mSortedLocalJobsModel;
 
-    JobListModel* mRemoteJobsModel;
-    JobListView* mRemoteJobsView;
-    QSortFilterProxyModel* mSortedRemoteJobsModel;
+    JobListModel *mRemoteJobsModel;
+    JobListView *mRemoteJobsView;
+    QSortFilterProxyModel *mSortedRemoteJobsModel;
 };
-
 
 #endif

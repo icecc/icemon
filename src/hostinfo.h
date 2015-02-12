@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 #ifndef ICEMON_HOSTINFO_H
 #define ICEMON_HOSTINFO_H
 
@@ -27,21 +27,21 @@
 
 class HostInfo
 {
-  public:
-    explicit HostInfo( unsigned int id = 0 );
+public:
+    explicit HostInfo(unsigned int id = 0);
 
     unsigned int id() const { return mId; }
 
-    void setName(const QString& name) { mName = name; }
+    void setName(const QString &name) { mName = name; }
     QString name() const { return mName; }
 
-    void setColor(const QColor& color) { mColor = color; }
+    void setColor(const QColor &color) { mColor = color; }
     QColor color() const { return mColor; }
 
-    void setIp(const QString& ip) { mIp = ip; }
+    void setIp(const QString &ip) { mIp = ip; }
     QString ip() const { return mIp; }
 
-    void setPlatform(const QString& platform) { mPlatform = platform; }
+    void setPlatform(const QString &platform) { mPlatform = platform; }
     QString platform() const { return mPlatform; }
 
     void setMaxJobs(unsigned int jobs) { mMaxJobs = jobs; }
@@ -52,11 +52,11 @@ class HostInfo
 
     bool noRemote() const { return mNoRemote; }
 
-    typedef QMap<QString,QString> StatsMap;
-    void updateFromStatsMap( const StatsMap &stats );
+    typedef QMap<QString, QString> StatsMap;
+    void updateFromStatsMap(const StatsMap &stats);
 
     static void initColorTable();
-    static QString colorName( const QColor & );
+    static QString colorName(const QColor &);
 
     void setServerSpeed(float serverSpeed) { mServerSpeed = serverSpeed; }
     float serverSpeed() const { return mServerSpeed; }
@@ -66,19 +66,19 @@ class HostInfo
 
     QString toolTip() const;
 
-    bool operator==( const HostInfo &rhs ) const { return mId == rhs.mId; }
-    bool operator!=( const HostInfo &rhs ) const { return mId != rhs.mId; }
-    int operator<( const HostInfo &rhs ) const{ return mId < rhs.mId; }
+    bool operator==(const HostInfo &rhs) const { return mId == rhs.mId; }
+    bool operator!=(const HostInfo &rhs) const { return mId != rhs.mId; }
+    int operator<(const HostInfo &rhs) const { return mId < rhs.mId; }
 
-  protected:
+protected:
     // TODO: Move the whole color managing feature into a separate class
     friend class FakeMonitor;
-    static void initColor( const QString &value, const QString &name );
+    static void initColor(const QString &value, const QString &name);
 
     QColor createColor();
-    QColor createColor( const QString &name );
+    QColor createColor(const QString &name);
 
-  private:
+private:
     unsigned int mId;
     QString mName;
     QColor mColor;
@@ -95,40 +95,41 @@ class HostInfo
     unsigned int mServerLoad;
 
     static QVector<QColor> mColorTable;
-    static QMap<int,QString> mColorNameMap;
+    static QMap<int, QString> mColorNameMap;
 };
 
-class HostInfoManager : public QObject
+class HostInfoManager
+    : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 
-  public:
+public:
     HostInfoManager();
     ~HostInfoManager();
 
-    HostInfo *find( unsigned int hostid ) const;
+    HostInfo *find(unsigned int hostid) const;
 
-    typedef QMap<unsigned int,HostInfo *> HostMap;
+    typedef QMap<unsigned int, HostInfo *> HostMap;
 
     HostMap hostMap() const;
 
     void checkNode(const HostInfo &info);
-    HostInfo *checkNode( unsigned int hostid,
-                         const HostInfo::StatsMap &statmsg );
+    HostInfo *checkNode(unsigned int hostid,
+                        const HostInfo::StatsMap &statmsg);
 
-    QString nameForHost( unsigned int id ) const;
-    QColor hostColor( unsigned int id ) const;
-    unsigned int maxJobs( unsigned int id ) const;
+    QString nameForHost(unsigned int id) const;
+    QColor hostColor(unsigned int id) const;
+    unsigned int maxJobs(unsigned int id) const;
 
     QString schedulerName() const { return mSchedulerName; }
-    void setSchedulerName( const QString& schedulerName );
+    void setSchedulerName(const QString &schedulerName);
     QString networkName() const { return mNetworkName; }
-    void setNetworkName( const QString& networkName );
+    void setNetworkName(const QString &networkName);
 
-  signals:
+signals:
     void hostMapChanged();
 
-  private:
+private:
     HostMap mHostMap;
     QString mSchedulerName;
     QString mNetworkName;

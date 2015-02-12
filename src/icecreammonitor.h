@@ -18,7 +18,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #ifndef ICEMON_ICECREAMMONITOR_H
 #define ICEMON_ICECREAMMONITOR_H
@@ -34,32 +34,33 @@ class StatusView;
 class DiscoverSched;
 class QSocketNotifier;
 
-class IcecreamMonitor : public Monitor
+class IcecreamMonitor
+    : public Monitor
 {
     Q_OBJECT
 
-  public:
+public:
     IcecreamMonitor(HostInfoManager *, QObject *parent);
     ~IcecreamMonitor();
 
     virtual QList<Job> jobHistory() const override;
 
-  private slots:
+private slots:
     void slotCheckScheduler();
     void msgReceived();
 
-  private:
+private:
     void checkScheduler(bool deleteit = false);
-    void registerNotify(int fd, QSocketNotifier::Type type, const char* slot);
+    void registerNotify(int fd, QSocketNotifier::Type type, const char *slot);
     void setupDebug();
 
     bool handle_activity();
-    void handle_getcs( Msg *m );
-    void handle_job_begin( Msg *m );
-    void handle_job_done( Msg *m );
-    void handle_stats( Msg *m );
-    void handle_local_begin( Msg *m );
-    void handle_local_done( Msg *m );
+    void handle_getcs(Msg *m);
+    void handle_job_begin(Msg *m);
+    void handle_job_done(Msg *m);
+    void handle_stats(Msg *m);
+    void handle_local_begin(Msg *m);
+    void handle_local_done(Msg *m);
 
     JobList m_rememberedJobs;
     MsgChannel *m_scheduler;

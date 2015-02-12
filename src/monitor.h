@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #ifndef ICEMON_MONITOR_H
 #define ICEMON_MONITOR_H
@@ -33,19 +33,20 @@ class Job;
 /**
  * Abstract base class for monitoring a icecream-like scheduler
  */
-class Monitor : public QObject
+class Monitor
+    : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(SchedulerState schedulerState READ schedulerState WRITE setSchedulerState NOTIFY schedulerStateChanged)
     Q_ENUMS(SchedulerState)
 
-public:
-    enum SchedulerState {
+public
+        : enum SchedulerState {
         Offline,
         Online,
     };
 
-    explicit Monitor(HostInfoManager *manager, QObject* parent = nullptr);
+    explicit Monitor(HostInfoManager *manager, QObject *parent = nullptr);
 
     QByteArray currentNetname() const;
     void setCurrentNetname(const QByteArray &);
@@ -62,7 +63,7 @@ protected:
 Q_SIGNALS:
     void schedulerStateChanged(Monitor::SchedulerState);
 
-    void jobUpdated(const Job& job);
+    void jobUpdated(const Job &job);
     void nodeRemoved(HostId id);
     void nodeUpdated(HostId id);
 

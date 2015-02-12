@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #ifndef SUMMARYVIEW_H
 #define SUMMARYVIEW_H
@@ -41,12 +41,15 @@ public:
 
 private:
     QLabel *addLine(const QString &caption, QWidget *parent, QGridLayout *grid,
-                                Qt::Alignment flags = Qt::AlignTop,
-                                const QString &status = QString());
+                    Qt::Alignment flags = Qt::AlignTop,
+                    const QString &status = QString());
 
     struct JobHandler
     {
-        JobHandler() : stateWidget(nullptr), sourceLabel(nullptr), stateLabel(nullptr) {}
+        JobHandler()
+            : stateWidget(nullptr)
+            , sourceLabel(nullptr)
+            , stateLabel(nullptr) {}
 
         QFrame *stateWidget;
         QLabel *sourceLabel;
@@ -63,12 +66,13 @@ private:
     QList<QWidget *> m_widgets;
 };
 
-class SummaryView : public StatusView
+class SummaryView
+    : public StatusView
 {
     Q_OBJECT
 
 public:
-    SummaryView(QObject* parent = nullptr);
+    SummaryView(QObject *parent = nullptr);
     ~SummaryView();
 
     virtual QWidget *widget() const override;

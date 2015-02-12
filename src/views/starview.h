@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 #ifndef ICEMON_STARVIEW_H
 #define ICEMON_STARVIEW_H
 
@@ -39,12 +39,13 @@ class QLineEdit;
 class QCheckBox;
 class QGraphicsView;
 
-class StarViewConfigDialog : public QDialog
+class StarViewConfigDialog
+    : public QDialog
 {
     Q_OBJECT
 
 public:
-    StarViewConfigDialog( QWidget *parent );
+    StarViewConfigDialog(QWidget *parent);
 
     int nodesPerRing();
     void setNodesPerRing(int nodes);
@@ -52,13 +53,13 @@ public:
     bool suppressDomainName() const;
     void setSuppressDomainName(bool suppress);
 
-    void setMaxNodes( int );
+    void setMaxNodes(int);
 
     QString archFilter();
 
 protected slots:
-    void slotNodesPerRingChanged( int nodes );
-    void slotSuppressDomainName( bool );
+    void slotNodesPerRingChanged(int nodes);
+    void slotSuppressDomainName(bool);
 
 signals:
     void configChanged();
@@ -70,8 +71,8 @@ private:
     QCheckBox *mSuppressDomainName;
 };
 
-
-class HostItem : public QGraphicsItemGroup
+class HostItem
+    : public QGraphicsItemGroup
 {
 public:
     static const int HaloMargin = 4;
@@ -80,47 +81,47 @@ public:
     enum { RttiHostItem = 1000 };
 
     HostItem(const QString &text);
-    HostItem( HostInfo *hostInfo, HostInfoManager * );
+    HostItem(HostInfo *hostInfo, HostInfoManager *);
     ~HostItem();
 
     void init();
 
     HostInfo *hostInfo() const { return mHostInfo; }
 
-    void setHostColor( const QColor &color );
+    void setHostColor(const QColor &color);
 
-    void setIsActiveClient( bool active ) { mIsActiveClient = active; }
+    void setIsActiveClient(bool active) { mIsActiveClient = active; }
     bool isActiveClient() const { return mIsActiveClient; }
 
-    void setIsCompiling( bool compiling ) { mIsCompiling = compiling; }
+    void setIsCompiling(bool compiling) { mIsCompiling = compiling; }
     bool isCompiling() const { return mIsCompiling; }
 
-    void setStateItem( QGraphicsItem *item ) { m_stateItem = item; }
+    void setStateItem(QGraphicsItem *item) { m_stateItem = item; }
     QGraphicsItem *stateItem() { return m_stateItem; }
 
-    void setClient( unsigned int client ) { m_client = client; }
+    void setClient(unsigned int client) { m_client = client; }
     unsigned int client() const { return m_client; }
 
     QString hostName() const;
     void updateName();
-    void setFixedText( const QString& text );
+    void setFixedText(const QString &text);
 
-    double centerPosX() const { return pos().x()+m_textItem->boundingRect().width()/2; }
-    double centerPosY() const { return pos().y()+m_textItem->boundingRect().height()/2; }
+    double centerPosX() const { return pos().x() + m_textItem->boundingRect().width() / 2; }
+    double centerPosY() const { return pos().y() + m_textItem->boundingRect().height() / 2; }
 
-    double relativeCenterPosX() const { return m_textItem->boundingRect().width()/2; }
-    double relativeCenterPosY() const { return m_textItem->boundingRect().height()/2; }
+    double relativeCenterPosX() const { return m_textItem->boundingRect().width() / 2; }
+    double relativeCenterPosY() const { return m_textItem->boundingRect().height() / 2; }
 
-    qreal baseXMargin() const { return ( mBaseWidth - m_textItem->boundingRect().width() ) / 2; }
-    qreal baseYMargin() const { return ( mBaseHeight - m_textItem->boundingRect().height() ) / 2; }
+    qreal baseXMargin() const { return (mBaseWidth - m_textItem->boundingRect().width()) / 2; }
+    qreal baseYMargin() const { return (mBaseHeight - m_textItem->boundingRect().height()) / 2; }
 
-    void setCenterPos( double x, double y );
+    void setCenterPos(double x, double y);
 
-    void update( const Job &job );
+    void update(const Job &job);
 
 protected:
-    void createJobHalo( const Job & );
-    void deleteJobHalo( const Job &job );
+    void createJobHalo(const Job &);
+    void deleteJobHalo(const Job &job);
     void updateHalos();
 
 private:
@@ -131,7 +132,7 @@ private:
     bool mIsCompiling;
 
     QGraphicsItem *m_stateItem;
-    QGraphicsTextItem* m_textItem;
+    QGraphicsTextItem *m_textItem;
     QString m_fixedText;
     unsigned int m_client;
 
@@ -145,18 +146,19 @@ private:
     JobList m_jobs;
 };
 
-class StarViewGraphicsView : public QGraphicsView
+class StarViewGraphicsView
+    : public QGraphicsView
 {
     Q_OBJECT
 
 public:
-    StarViewGraphicsView(QGraphicsScene* scene, StarView* starView, QWidget* parent = nullptr);
+    StarViewGraphicsView(QGraphicsScene *scene, StarView *starView, QWidget *parent = nullptr);
 
     void arrangeItems();
     void drawNodeStatus();
 
 protected:
-    virtual void resizeEvent( QResizeEvent *e ) override;
+    virtual void resizeEvent(QResizeEvent *e) override;
     virtual bool event(QEvent *event) override;
 
 private:
@@ -164,65 +166,66 @@ private:
     void arrangeSchedulerItem();
     void drawState(HostItem *node);
 
-    StarView* m_starView;
+    StarView *m_starView;
     HostItem *m_schedulerItem;
 };
 
-class StarView : public StatusView
+class StarView
+    : public StatusView
 {
     Q_OBJECT
 
 public:
-    StarView( QObject* parent );
+    StarView(QObject *parent);
     virtual ~StarView();
 
     void readSettings();
     void writeSettings();
 
-    void update( const Job &job ) override;
-    virtual QWidget* widget() const override;
+    void update(const Job &job) override;
+    virtual QWidget *widget() const override;
 
     QString id() const override { return "star"; }
 
-    QList<HostItem*> hostItems() const;
+    QList<HostItem *> hostItems() const;
     HostItem *findHostItem(unsigned int hostid) const;
 
-    virtual void setMonitor(Monitor* monitor) override;
+    virtual void setMonitor(Monitor *monitor) override;
 
-    void checkNode( unsigned int hostid ) override;
-    void removeNode( unsigned int hostid ) override;
+    void checkNode(unsigned int hostid) override;
+    void removeNode(unsigned int hostid) override;
     void updateSchedulerState(Monitor::SchedulerState state) override;
     void configureView() override;
 
     bool isConfigurable() override { return true; }
 
-    StarViewConfigDialog* configDialog() const;
+    StarViewConfigDialog *configDialog() const;
 
     /**
        Return true if node should be shown and false if not.
-    */
-    bool filterArch( unsigned int hostid );
+     */
+    bool filterArch(unsigned int hostid);
     /**
        Return true if node should be shown and false if not.
-    */
-    bool filterArch( HostInfo * );
+     */
+    bool filterArch(HostInfo *);
 
-    void removeItem( HostItem * );
-    void forceRemoveNode( unsigned int hostid );
+    void removeItem(HostItem *);
+    void forceRemoveNode(unsigned int hostid);
 
 protected slots:
     void slotConfigChanged();
 
 private:
     void createKnownHosts();
-    HostItem *createHostItem( unsigned int hostid );
+    HostItem *createHostItem(unsigned int hostid);
 
-    QGraphicsScene* m_canvas;
+    QGraphicsScene *m_canvas;
     QScopedPointer<StarViewGraphicsView> m_widget;
     StarViewConfigDialog *mConfigDialog;
 
-    QMap<unsigned int,HostItem *> m_hostItems;
-    QMap<unsigned int,HostItem *> mJobMap;
+    QMap<unsigned int, HostItem *> m_hostItems;
+    QMap<unsigned int, HostItem *> mJobMap;
 };
 
 #endif

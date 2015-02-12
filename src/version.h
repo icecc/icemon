@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #ifndef ICEMON_VERSION_H
 #define ICEMON_VERSION_H
@@ -27,14 +27,12 @@
 
 namespace Icemon {
 namespace Version {
-
-const char appName[] = QT_TRANSLATE_NOOP("appName", "Icecream Monitor" );
+const char appName[] = QT_TRANSLATE_NOOP("appName", "Icecream Monitor");
 const char appShortName[] = "icemon";
 const char version[] = ICEMON_VERSION_STRING;
 const char homePage[] = "http://github.com/icecc/icemon";
-const char description[] = QT_TRANSLATE_NOOP( "description", "Icecream monitor for Qt" );
-const char copyright[] = QT_TRANSLATE_NOOP( "copyright", "(c) 2003, 2004, 2011 The Icecream developers" );
-
+const char description[] = QT_TRANSLATE_NOOP("description", "Icecream monitor for Qt");
+const char copyright[] = QT_TRANSLATE_NOOP("copyright", "(c) 2003, 2004, 2011 The Icecream developers");
 } // Version
 } // Icemon
 

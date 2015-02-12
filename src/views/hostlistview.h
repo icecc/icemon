@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #ifndef ICEMON_HOSTLISTVIEW_H
 #define ICEMON_HOSTLISTVIEW_H
@@ -26,14 +26,15 @@
 
 #include <QTreeView>
 
-class HostListView :public QTreeView
+class HostListView
+    : public QTreeView
 {
     Q_OBJECT
 
 public:
-    HostListView(QWidget* parent);
+    HostListView(QWidget *parent);
 
-    virtual void setModel(QAbstractItemModel* model) override;
+    virtual void setModel(QAbstractItemModel *model) override;
 };
 
 #endif

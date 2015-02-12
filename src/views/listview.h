@@ -18,7 +18,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 #ifndef ICEMON_LISTVIEW_H
 #define ICEMON_LISTVIEW_H
 
@@ -30,24 +30,25 @@ class JobListModel;
 class JobListView;
 class QSortFilterProxyModel;
 
-class ListStatusView : public StatusView
+class ListStatusView
+    : public StatusView
 {
     Q_OBJECT
 public:
-    ListStatusView(QObject* parent );
+    ListStatusView(QObject *parent);
 
     virtual Options options() const override;
-    virtual QWidget* widget() const override;
+    virtual QWidget *widget() const override;
     virtual QString id() const override { return "list"; }
 
-    virtual void setMonitor(Monitor* monitor) override;
+    virtual void setMonitor(Monitor *monitor) override;
 
 private:
     QScopedPointer<QWidget> m_widget;
 
-    JobListView* mJobsListView;
-    JobListModel* mJobsListModel;
-    QSortFilterProxyModel* mSortedJobsListModel;
+    JobListView *mJobsListView;
+    JobListModel *mJobsListModel;
+    QSortFilterProxyModel *mSortedJobsListModel;
 };
 
 #endif

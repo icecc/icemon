@@ -19,7 +19,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #ifndef ICEMON_JOBLISTVIEW_H
 #define ICEMON_JOBLISTVIEW_H
@@ -31,26 +31,26 @@
 class JobListModel;
 class HostInfoManager;
 
-class JobListView : public QTreeView
+class JobListView
+    : public QTreeView
 {
     Q_OBJECT
 
 public:
-    JobListView(QWidget* parent = nullptr);
+    JobListView(QWidget *parent = nullptr);
 
-    virtual void setModel(QAbstractItemModel* model) override;
+    virtual void setModel(QAbstractItemModel *model) override;
 
     bool isClientColumnVisible() const;
-    void setClientColumnVisible( bool visible );
+    void setClientColumnVisible(bool visible);
 
     bool isServerColumnVisible() const;
-    void setServerColumnVisible( bool visible );
+    void setServerColumnVisible(bool visible);
 
     void clear();
 
 private:
-    JobListModel* jobListModel() const;
+    JobListModel *jobListModel() const;
 };
-
 
 #endif

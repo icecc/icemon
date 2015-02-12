@@ -19,7 +19,7 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #ifndef ICEMON_MAINWINDOW_H
 #define ICEMON_MAINWINDOW_H
@@ -36,12 +36,13 @@ class StatusView;
 class QActionGroup;
 class QLabel;
 
-class MainWindow : public QMainWindow
+class MainWindow
+    : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindow( QWidget *parent = nullptr );
+    MainWindow(QWidget *parent = nullptr);
     virtual ~MainWindow();
 
     void setCurrentNet(const QByteArray &netname);
@@ -61,10 +62,10 @@ private slots:
     void about();
 
     void updateSchedulerState(Monitor::SchedulerState state);
-    void updateJob(const Job&);
+    void updateJob(const Job &);
     void updateJobStats();
 
-    void handleViewModeActionTriggered(QAction* action);
+    void handleViewModeActionTriggered(QAction *action);
 
 private:
     void readSettings();
@@ -77,12 +78,12 @@ private:
 
     HostInfoManager *m_hostInfoManager;
     QPointer<Monitor> m_monitor;
-    StatusView* m_view;
+    StatusView *m_view;
 
     QLabel *m_schedStatusWidget;
     QLabel *m_jobStatsWidget;
 
-    QActionGroup* m_viewMode;
+    QActionGroup *m_viewMode;
     QAction *m_configureViewAction;
     QAction *m_pauseViewAction;
 
