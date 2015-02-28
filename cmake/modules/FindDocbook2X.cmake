@@ -38,8 +38,9 @@ macro(_check_docbook2x_executable)
             OUTPUT_VARIABLE _output
             ERROR_QUIET
         )
-        if("${_output}" MATCHES "docbook2[xX]")
+        if("${_output}" MATCHES "docbook2X ([0-9]+\\.[0-9]+\\.[0-9]+)")
             set(DOCBOOK_TO_MAN_EXECUTABLE ${_docbook_to_man_executable})
+            set(Docbook2X_VERSION ${CMAKE_MATCH_1})
         else()
             unset(DOCBOOK_TO_MAN_EXECUTABLE)
             unset(DOCBOOK_TO_MAN_EXECUTABLE CACHE)
@@ -66,6 +67,7 @@ include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Docbook2X
     FOUND_VAR Docbook2X_FOUND
     REQUIRED_VARS DOCBOOK_TO_MAN_EXECUTABLE
+    VERSION_VAR Docbook2X_VERSION
 )
 
 if (Docbook2X_FOUND)
