@@ -13,11 +13,15 @@
 # Suse
 # * docbook-to-man comes from the package docbook2x
 # * docbook2man comes from the package docbook-utils-minimal
+# ArchLinux
+# * docbook-to-man comes from the package docbook-to-man
+# * docbook2man comes from the package docbook2x
 #
 # We actually want the binary from docbook2x, which supports XML
 
 #=============================================================================
 # Copyright 2013 Kevin Funk <kfunk@kde.org>
+# Copyright 2015 Alex Merry <alexmerry@kde.org>
 #
 # Distributed under the OSI-approved BSD License (the "License");
 # see accompanying file Copyright.txt for details.
@@ -27,29 +31,44 @@
 # See the License for more information.
 #=============================================================================
 
-find_program(_docbook_to_man_executable
-  NAMES docbook2x-man docbook-to-man
-)
-
-# make sure we've found the correct binary which supports XML input
-# e.g. on Ubuntu docbook-to-man just eats SGML
-if (_docbook_to_man_executable)
-    execute_process(
-        COMMAND ${_docbook_to_man_executable} --version
-        OUTPUT_VARIABLE _output
-        ERROR_QUIET
-    )
-    if("${_output}" MATCHES "docbook2x")
-        set(DOCBOOK_TO_MAN_EXECUTABLE ${_docbook_to_man_executable})
-        set(Docbook2X_FOUND TRUE)
-    else()
-        if (NOT Docbook2X_FIND_QUIETLY)
-            message(STATUS "Could not find either docbook2x-man or docbook-to-man binary from docbook2x package")
+macro(_check_docbook2x_executable)
+    if (DOCBOOK_TO_MAN_EXECUTABLE)
+        execute_process(
+            COMMAND ${DOCBOOK_TO_MAN_EXECUTABLE} --version
+            OUTPUT_VARIABLE _output
+            ERROR_QUIET
+        )
+        if("${_output}" MATCHES "docbook2[xX]")
+            set(DOCBOOK_TO_MAN_EXECUTABLE ${_docbook_to_man_executable})
+        else()
+            unset(DOCBOOK_TO_MAN_EXECUTABLE)
+            unset(DOCBOOK_TO_MAN_EXECUTABLE CACHE)
         endif()
     endif()
-endif()
+endmacro()
 
 if (DOCBOOK_TO_MAN_EXECUTABLE)
+    _check_docbook2x_executable()
+else()
+    foreach(test_exec docbook2x-man docbook-to-man docbook2man)
+        find_program(DOCBOOK_TO_MAN_EXECUTABLE
+            NAMES ${test_exec}
+        )
+        _check_docbook2x_executable()
+        if (DOCBOOK_TO_MAN_EXECUTABLE)
+            break()
+        endif()
+    endforeach()
+endif()
+
+include(FindPackageHandleStandardArgs)
+
+find_package_handle_standard_args(Docbook2X
+    FOUND_VAR Docbook2X_FOUND
+    REQUIRED_VARS DOCBOOK_TO_MAN_EXECUTABLE
+)
+
+if (Docbook2X_FOUND)
     macro(install_docbook_man_page name section)
         set(inputfn "man-${name}.${section}.xml")
         set(input "${CMAKE_CURRENT_SOURCE_DIR}/${inputfn}")
