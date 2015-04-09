@@ -65,10 +65,12 @@ endif()
 include(FindPackageHandleStandardArgs)
 
 find_package_handle_standard_args(Docbook2X
-    FOUND_VAR Docbook2X_FOUND
+# TODO: Use FOUND_VAR when requiring CMake 2.8.11
+#    FOUND_VAR Docbook2X_FOUND
     REQUIRED_VARS DOCBOOK_TO_MAN_EXECUTABLE
     VERSION_VAR Docbook2X_VERSION
 )
+set(Docbook2X_FOUND DOCBOOK2X_FOUND)
 
 if (Docbook2X_FOUND)
     macro(install_docbook_man_page name section)
