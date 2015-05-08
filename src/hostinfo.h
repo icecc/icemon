@@ -23,6 +23,7 @@
 #include <QString>
 #include <QColor>
 #include <QMap>
+#include <QObject>
 #include <QtCore/QVector>
 
 class HostInfo
