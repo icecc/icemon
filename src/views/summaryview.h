@@ -43,7 +43,8 @@ private:
     QLabel *addLine(const QString &caption, QWidget *parent, QGridLayout *grid,
                     Qt::Alignment flags = Qt::AlignTop,
                     const QString &status = QString());
-
+    void updateLabel();
+     
     struct JobHandler
     {
         JobHandler()
@@ -60,6 +61,8 @@ private:
     QLabel *m_jobsLabel;
 
     int m_jobCount;
+    double m_totalJobsLength;
+    int m_finishedJobCount;
     SummaryView *m_view;
 
     QVector<JobHandler> m_jobHandlers;

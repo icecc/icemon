@@ -61,6 +61,8 @@ public:
 
 SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryView *view, QGridLayout *layout)
     : m_jobCount(0)
+    , m_totalJobsLength(0.0f)
+    , m_finishedJobCount(0)
     , m_view(view)
 {
     const int row = layout->rowCount();
@@ -94,7 +96,7 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
         m_jobHandlers[i].stateWidget->setLineWidth(2);
         m_jobHandlers[i].stateWidget->setFixedHeight(15);
         QPalette palette = m_jobHandlers[i].stateWidget->palette();
-        palette.setColor(m_jobHandlers[i].stateWidget->backgroundRole(), Qt::black);
+        palette.setColor(m_jobHandlers[i].stateWidget->foregroundRole(), Qt::black);
         m_jobHandlers[i].stateWidget->setPalette(palette);
         m_jobHandlers[i].stateWidget->show();
         labelLayout->addWidget(m_jobHandlers[i].stateWidget);
@@ -133,13 +135,21 @@ SummaryViewItem::~SummaryViewItem()
     m_widgets.clear();
 }
 
+void SummaryViewItem::updateLabel()
+{
+    double avgDuration = 0;
+    if (m_finishedJobCount>0)
+	avgDuration = m_totalJobsLength / m_finishedJobCount;
+    m_jobsLabel->setText(QString::number(m_jobCount) + " Average duration: " + QString::number(avgDuration, 'f', 2));
+}
+
 void SummaryViewItem::update(const Job &job)
 {
     switch (job.state()) {
     case Job::Compiling:
     {
         m_jobCount++;
-        m_jobsLabel->setText(QString::number(m_jobCount));
+        updateLabel();
 
         QVector<JobHandler>::Iterator it = m_jobHandlers.begin();
         while (it != m_jobHandlers.end() && !(*it).currentFile.isNull())
@@ -148,7 +158,7 @@ void SummaryViewItem::update(const Job &job)
         if (it != m_jobHandlers.end()) {
             const QColor nodeColor = m_view->hostInfoManager()->hostColor(job.client());
             QPalette palette = (*it).stateWidget->palette();
-            palette.setColor((*it).stateWidget->backgroundRole(), nodeColor);
+            palette.setColor((*it).stateWidget->foregroundRole(), nodeColor);
             (*it).stateWidget->setPalette(palette);
             const QString fileName = job.fileName().section('/', -1);
             const QString hostName = m_view->nameForHost(job.client());
@@ -167,11 +177,17 @@ void SummaryViewItem::update(const Job &job)
 
         if (it != m_jobHandlers.end()) {
             QPalette palette = (*it).stateWidget->palette();
-            palette.setColor((*it).stateWidget->backgroundRole(), Qt::black);
+            palette.setColor((*it).stateWidget->foregroundRole(), Qt::black);
             (*it).stateWidget->setPalette(palette);
+	    (*it).stateWidget->repaint();
             (*it).sourceLabel->clear();
             (*it).stateLabel->setText(job.stateAsString());
             (*it).currentFile = QString();
+	    if (job.state() == Job::Finished) {
+	      m_totalJobsLength += job.getRealTime();
+	      m_finishedJobCount++;
+	      updateLabel();
+	    }
         }
         break;
     }
