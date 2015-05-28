@@ -101,6 +101,7 @@ void FakeMonitor::update()
     job.in_uncompressed = qrand() % MAX_JOB_SIZE;
     job.in_compressed = qrand() % MAX_JOB_SIZE ;
     job.in_uncompressed = qrand() % MAX_JOB_SIZE * 0.75; // random factor
+    job.real_msec = 200;
     const int serverId = ((JOB_ID + 1) % MAX_HOST_COUNT) + 1;
     job.setServer(serverId);
     emit jobUpdated(job);

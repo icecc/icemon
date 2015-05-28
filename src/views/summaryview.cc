@@ -63,6 +63,8 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
     : m_jobCount(0)
     , m_totalJobsLength(0.0f)
     , m_finishedJobCount(0)
+    , m_totalRequestedJobsLength(0.0f)
+    , m_requestedJobCount(0)
     , m_view(view)
 {
     const int row = layout->rowCount();
@@ -85,6 +87,12 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
     l->setAlignment(Qt::AlignCenter);
     l->show();
     labelLayout->addWidget(l);
+
+    m_speedLabel = new QLabel(labelBox);
+    m_speedLabel->setToolTip(QApplication::tr("Average job time for a file sent by this client / total number of jobs sent."));
+    m_speedLabel->setAlignment(Qt::AlignCenter);
+    m_speedLabel->show();
+    labelLayout->addWidget(m_speedLabel);
 
     const int maxJobs = view->hostInfoManager()->maxJobs(hostid);
 
@@ -113,6 +121,7 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
     grid->setSpacing(5);
 
     m_jobsLabel = addLine(QApplication::tr("Jobs:"), detailsBox, grid, Qt::AlignBottom, QStringLiteral("0"));
+    m_jobsLabel->setToolTip(QApplication::tr("Total number of jobs processed by this server / average duration of each job."));
 
     for (int i = 0; i < maxJobs; i++) {
         if (maxJobs > 1) {
@@ -135,12 +144,32 @@ SummaryViewItem::~SummaryViewItem()
     m_widgets.clear();
 }
 
-void SummaryViewItem::updateLabel()
+void SummaryViewItem::updateStats()
 {
-    double avgDuration = 0;
-    if (m_finishedJobCount>0)
-	avgDuration = m_totalJobsLength / m_finishedJobCount;
-    m_jobsLabel->setText(QString::number(m_jobCount) + " Average duration: " + QString::number(avgDuration, 'f', 2));
+    const double avgDuration = m_finishedJobCount > 0 ? m_totalJobsLength / m_finishedJobCount : 0.0f;
+    m_jobsLabel->setText(QApplication::tr("%1 (Ø duration: %2 ms)").arg(
+        QString::number(m_jobCount),
+        QString::number(avgDuration, 'f', 0)
+    ));
+
+    const double avgTime = m_requestedJobCount > 0 ? m_totalRequestedJobsLength / m_requestedJobCount : 0.0f;
+    if (qIsNull(avgTime)) {
+        m_speedLabel->setText(QString());
+    } else {
+        m_speedLabel->setText(QApplication::tr("Ø job time: %1 ms\nrequested jobs count: %2").arg(
+            QString::number(avgTime, 'f', 0),
+            QString::number(m_requestedJobCount)
+        ));
+    }
+}
+
+void SummaryViewItem::updateClient(const Job &job)
+{
+    if (job.state() == Job::Finished) {
+	m_totalRequestedJobsLength += job.getRealTime();
+	m_requestedJobCount++;
+	updateStats();
+    }
 }
 
 void SummaryViewItem::update(const Job &job)
@@ -149,7 +178,7 @@ void SummaryViewItem::update(const Job &job)
     case Job::Compiling:
     {
         m_jobCount++;
-        updateLabel();
+        updateStats();
 
         QVector<JobHandler>::Iterator it = m_jobHandlers.begin();
         while (it != m_jobHandlers.end() && !(*it).currentFile.isNull())
@@ -186,7 +215,7 @@ void SummaryViewItem::update(const Job &job)
 	    if (job.state() == Job::Finished) {
 	      m_totalJobsLength += job.getRealTime();
 	      m_finishedJobCount++;
-	      updateLabel();
+	      updateStats();
 	    }
         }
         break;
@@ -276,8 +305,14 @@ void SummaryView::update(const Job &job)
     if (!i) {
         i = new SummaryViewItem(job.server(), m_base, this, m_layout);
         m_items.insert(job.server(), i);
+        m_widget->widget()->setMinimumHeight(m_widget->widget()->sizeHint().height());
     }
     i->update(job);
+
+    i = m_items[job.client()];
+    if (i) {
+      i->updateClient(job);
+    }
 }
 
 void SummaryView::checkNode(unsigned int hostid)
@@ -290,5 +325,6 @@ void SummaryView::checkNode(unsigned int hostid)
     } else if (!m_items[hostid]) {
         auto i = new SummaryViewItem(hostid, m_base, this, m_layout);
         m_items.insert(hostid, i);
+	m_widget->widget()->setMinimumHeight(m_widget->widget()->sizeHint().height());
     }
 }
