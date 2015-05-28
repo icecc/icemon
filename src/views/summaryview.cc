@@ -290,5 +290,6 @@ void SummaryView::checkNode(unsigned int hostid)
     } else if (!m_items[hostid]) {
         auto i = new SummaryViewItem(hostid, m_base, this, m_layout);
         m_items.insert(hostid, i);
+	m_widget->widget()->setMinimumHeight(m_widget->widget()->sizeHint().height());
     }
 }
