@@ -38,12 +38,14 @@ public:
     SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryView *view, QGridLayout *layout);
     ~SummaryViewItem();
     void update(const Job &job);
+    void updateClient(const Job &job);
 
 private:
     QLabel *addLine(const QString &caption, QWidget *parent, QGridLayout *grid,
                     Qt::Alignment flags = Qt::AlignTop,
                     const QString &status = QString());
-
+    void updateStats();
+     
     struct JobHandler
     {
         JobHandler()
@@ -57,9 +59,16 @@ private:
         QString currentFile;
     };
 
+    QLabel *m_speedLabel;
     QLabel *m_jobsLabel;
 
     int m_jobCount;
+    double m_totalJobsLength;
+    int m_finishedJobCount;
+    
+    double m_totalRequestedJobsLength;
+    int m_requestedJobCount;
+  
     SummaryView *m_view;
 
     QVector<JobHandler> m_jobHandlers;
@@ -85,7 +94,7 @@ private:
 
     QMap<unsigned int, SummaryViewItem *> m_items;
     QGridLayout *m_layout;
-    QWidget *m_base;
+    QWidget *m_base;  
 };
 
 #endif

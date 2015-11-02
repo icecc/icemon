@@ -48,6 +48,7 @@ public:
     State state() const { return m_state; }
     QString stateAsString() const;
     time_t stime() const { return m_stime; }
+    unsigned int getRealTime() const { return real_msec; }
     bool isDone() const { return m_state == Finished || m_state == Failed; }
     bool isActive() const { return m_state == LocalOnly || m_state == Compiling; }
 

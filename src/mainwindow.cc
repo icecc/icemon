@@ -70,6 +70,8 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowIcon(appIcon);
     setWindowTitle(QApplication::translate("appName", Icemon::Version::appName));
 
+    // Fixes non displayed menubar
+    menuBar()->setNativeMenuBar(false);
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
     QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
     QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
