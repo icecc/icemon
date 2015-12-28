@@ -100,8 +100,7 @@ check_include_file_cxx(icecc/logging.h ICECC_HAVE_LOGGING_H)
 # Work-around for: https://github.com/icecc/icemon/issues/24
 # See: https://gcc.gnu.org/onlinedocs/libstdc++/manual/using_dual_abi.html
 set(USE_OLDCXXABI_DEFINE -D_GLIBCXX_USE_CXX11_ABI=0)
-set(CMAKE_REQUIRED_LIBRARIES ${Icecream_LIBRARIES} ${CMAKE_DL_LIBS})
-set(CMAKE_REQUIRED_INCLUDES ${Icecream_INCLUDE_DIR})
+set(CMAKE_REQUIRED_LIBRARIES Icecream)
 set(CMAKE_REQUIRED_DEFINITIONS ${USE_OLDCXXABI_DEFINE})
 check_cxx_source_compiles("
 #include <icecc/comm.h>

@@ -53,6 +53,7 @@ else ()
   mark_as_advanced(
     Icecream_INCLUDE_DIR Icecream_LIBRARIES
   )
+  set(Icecream_FOUND TRUE)
 endif()
 
 if (Icecream_FOUND)
