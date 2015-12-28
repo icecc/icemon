@@ -111,7 +111,7 @@ void FlowTableView::update(const Job &job)
         jobStateItem->setText(QLatin1String(""));
     } else {
         QString filePath = job.fileName();
-        QString fileName = filePath.mid(filePath.lastIndexOf('/') + 1);
+        QString fileName = filePath.mid(filePath.lastIndexOf(QLatin1Char('/')) + 1);
         fileNameItem->setText(fileName);
         fileNameItem->setToolTip(job.fileName());
         fileNameItem->setFlags(Qt::ItemIsEnabled);

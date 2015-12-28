@@ -196,7 +196,7 @@ QString HostItem::hostName() const
 {
     QString name = mHostInfo->name();
     if (suppressDomain) {
-        return name.section('.', 0, 0);
+        return name.section(QLatin1Char('.'), 0, 0);
     }
     return mHostInfo->name();
 }
@@ -364,7 +364,7 @@ StarView::~StarView()
 void StarView::readSettings()
 {
     QSettings settings;
-    settings.beginGroup("view_" + id());
+    settings.beginGroup(QStringLiteral("view_%1").arg(id()));
     mConfigDialog->setNodesPerRing(settings.value(QStringLiteral("nodesPerRing"), 25).toInt());
     mConfigDialog->setSuppressDomainName(settings.value(QStringLiteral("suppressDomainName"), true).toBool());
     settings.endGroup();
@@ -373,7 +373,7 @@ void StarView::readSettings()
 void StarView::writeSettings()
 {
     QSettings settings;
-    settings.beginGroup("view_" + id());
+    settings.beginGroup(QStringLiteral("view_%1").arg(id()));
     settings.setValue(QStringLiteral("nodesPerRing"), mConfigDialog->nodesPerRing());
     settings.setValue(QStringLiteral("suppressDomainName"), mConfigDialog->suppressDomainName());
     settings.endGroup();

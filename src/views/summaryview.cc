@@ -150,7 +150,7 @@ void SummaryViewItem::update(const Job &job)
             QPalette palette = (*it).stateWidget->palette();
             palette.setColor((*it).stateWidget->backgroundRole(), nodeColor);
             (*it).stateWidget->setPalette(palette);
-            const QString fileName = job.fileName().section('/', -1);
+            const QString fileName = job.fileName().section(QLatin1Char('/'), -1);
             const QString hostName = m_view->nameForHost(job.client());
             (*it).sourceLabel->setText(QStringLiteral("%1 (%2)").arg(fileName).arg(hostName));
             (*it).stateLabel->setText(job.stateAsString());

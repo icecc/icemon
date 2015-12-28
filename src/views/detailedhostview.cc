@@ -38,7 +38,7 @@ static QString myHostName()
 {
     struct utsname uname_buf;
     if (::uname(&uname_buf) == 0) {
-        return uname_buf.nodename;
+        return QLatin1String(uname_buf.nodename);
     } else {
         return QString();
     }

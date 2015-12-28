@@ -88,22 +88,22 @@ MainWindow::MainWindow(QWidget *parent)
     m_viewMode = new QActionGroup(this);
     action = m_viewMode->addAction(tr("&List View"));
     action->setCheckable(true);
-    action->setData("list");
+    action->setData(QStringLiteral("list"));
     action = m_viewMode->addAction(tr("&Star View"));
     action->setCheckable(true);
-    action->setData("star");
+    action->setData(QStringLiteral("star"));
     action = m_viewMode->addAction(tr("&Gantt View"));
     action->setCheckable(true);
-    action->setData("gantt");
+    action->setData(QStringLiteral("gantt"));
     action = m_viewMode->addAction(tr("Summary &View"));
     action->setCheckable(true);
-    action->setData("summary");
+    action->setData(QStringLiteral("summary"));
     action = m_viewMode->addAction(tr("&Flow View"));
     action->setCheckable(true);
-    action->setData("flow");
+    action->setData(QStringLiteral("flow"));
     action = m_viewMode->addAction(tr("&Detailed Host View"));
     action->setCheckable(true);
-    action->setData("detailedhost");
+    action->setData(QStringLiteral("detailedhost"));
     connect(m_viewMode, SIGNAL(triggered(QAction *)), this, SLOT(handleViewModeActionTriggered(QAction *)));
     viewMenu->addActions(m_viewMode->actions());
 
@@ -260,12 +260,13 @@ void MainWindow::about()
                        "Cornelius Schumacher &lt;schumacher@kde.org&gt;<br/><br/>"
                        "Homepage: <a href=\"%4\">%4</a><br/><br/>"
                        "Licensed under the GPLv2.<br/>")
-                    .arg(Icemon::Version::appName)
-                    .arg(Icemon::Version::version)
-                    .arg(Icemon::Version::description)
-                    .arg(Icemon::Version::homePage);
+                    .arg(QLatin1String(Icemon::Version::appName))
+                    .arg(QLatin1String(Icemon::Version::version))
+                    .arg(QLatin1String(Icemon::Version::description))
+                    .arg(QLatin1String(Icemon::Version::homePage));
 
-    QMessageBox::about(this, tr("About %1").arg(Icemon::Version::appShortName), about);
+    QMessageBox::about(this, tr("About %1")
+        .arg(QLatin1String(Icemon::Version::appShortName)), about);
 }
 
 void MainWindow::updateSchedulerState(Monitor::SchedulerState state)
@@ -274,7 +275,7 @@ void MainWindow::updateSchedulerState(Monitor::SchedulerState state)
         QString statusText = m_hostInfoManager->schedulerName();
 
         if (!m_hostInfoManager->networkName().isEmpty()) {
-            statusText.append(" @ ").append(m_hostInfoManager->networkName());
+            statusText.append(QStringLiteral(" @ ")).append(m_hostInfoManager->networkName());
         }
 
         m_schedStatusWidget->setText(statusText.isEmpty() ? tr("Scheduler is online.") : statusText);
@@ -342,7 +343,7 @@ void MainWindow::updateJobStats()
         }
 
         if (!text.isEmpty()) {
-            text.append(" - ");
+            text.append(QStringLiteral(" - "));
         }
 
         text.append(QStringLiteral("<strong>%2/%3</strong> on %1").arg(platform).arg(stat.jobs).arg(stat.maxJobs));

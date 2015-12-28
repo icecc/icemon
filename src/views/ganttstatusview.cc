@@ -199,7 +199,7 @@ void GanttProgress::drawGraph(QPainter &p)
             int width = xWidth - 4;
             QString s = (*it).job.fileName();
             if (!s.isEmpty()) {
-                s = s.mid(s.lastIndexOf('/') + 1, s.length());
+                s = s.mid(s.lastIndexOf(QLatin1Char('/')) + 1, s.length());
 
                 // Optimization - cache the drawn text in a pixmap, and update the cache
                 // only if the pixmap height doesn't match, if the pixmap width is too large,
@@ -222,7 +222,7 @@ void GanttProgress::drawGraph(QPainter &p)
                         }
 
                         (*it).next_text_width = next_width;
-                        s  = s.left(newLength > 2 ? newLength - 2 : 0) + "...";
+                        s  = s.left(newLength > 2 ? newLength - 2 : 0) + QStringLiteral("...");
                     } else {
                         (*it).next_text_width = 1000000; // large number (no next width)
                     }
@@ -433,7 +433,7 @@ GanttProgress *GanttStatusView::registerNode(unsigned int hostid)
         ++lastRow;
 
         nodeLayout = new QVBoxLayout();
-        nodeLayout->setObjectName((QString::number(hostid) + "_layout").toLatin1());
+        nodeLayout->setObjectName(QStringLiteral("%1_layout").arg(hostid));
         m_topLayout->addLayout(nodeLayout, lastRow, 1);
         mNodeLayouts.insert(hostid, nodeLayout);
         mNodeRows.insert(hostid, lastRow);

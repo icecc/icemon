@@ -35,9 +35,14 @@
 
 static QString formatByteSize(unsigned int value)
 {
-    static const char *const units[] = { "B", "KiB", "MiB" };
-    unsigned int unit = 0;
-    while (unit < sizeof(units) / sizeof(units[0]) && value > 1024) {
+    static const QStringList units = {
+        QStringLiteral("B"),
+        QStringLiteral("KiB"),
+        QStringLiteral("MiB")
+    };
+
+    int unit = 0;
+    while (unit < units.size() && value > 1024) {
         ++unit;
         value /= 1024;
     }

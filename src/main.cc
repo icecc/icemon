@@ -32,11 +32,11 @@ int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
     QApplication::setOrganizationDomain(QStringLiteral("kde.org"));
-    QApplication::setApplicationName(Icemon::Version::appShortName);
-    QApplication::setApplicationVersion(Icemon::Version::version);
+    QApplication::setApplicationName(QLatin1String(Icemon::Version::appShortName));
+    QApplication::setApplicationVersion(QLatin1String(Icemon::Version::version));
 
     QCommandLineParser parser;
-    parser.setApplicationDescription(Icemon::Version::description);
+    parser.setApplicationDescription(QLatin1String(Icemon::Version::description));
     parser.addHelpOption();
     parser.addVersionOption();
     QCommandLineOption netnameOption(QStringList() << QStringLiteral("n") << QStringLiteral("netname"),

@@ -113,7 +113,7 @@ void IcecreamMonitor::slotCheckScheduler()
     }
     for (list<string>::const_iterator it = names.begin(); it != names.end();
          ++it) {
-        setCurrentNetname(it->c_str());
+        setCurrentNetname(QByteArray::fromStdString(*it));
         if (!m_discover
             || m_discover->timed_out()) {
             delete m_discover;
@@ -213,9 +213,11 @@ void IcecreamMonitor::handle_getcs(Msg *_m)
         return;
     }
     m_rememberedJobs[m->job_id] = Job(m->job_id, m->clientid,
-                                      m->filename.c_str(),
-                                      m->lang == CompileJob::Lang_C ? "C" :
-                                      "C++");
+                                      QString::fromStdString(m->filename),
+                                      m->lang == CompileJob::Lang_C ?
+                                          QStringLiteral("C") :
+                                          QStringLiteral("C++")
+                                     );
     emit jobUpdated(m_rememberedJobs[m->job_id]);
 }
 
@@ -227,7 +229,7 @@ void IcecreamMonitor::handle_local_begin(Msg *_m)
     }
 
     m_rememberedJobs[m->job_id] = Job(m->job_id, m->hostid,
-                                      m->file.c_str(),
+                                      QString::fromStdString(m->file),
                                       QStringLiteral("C++"));
     m_rememberedJobs[m->job_id].setState(Job::LocalOnly);
     emit jobUpdated(m_rememberedJobs[m->job_id]);
@@ -264,14 +266,14 @@ void IcecreamMonitor::handle_stats(Msg *_m)
         return;
     }
 
-    QStringList statmsg = QString(m->statmsg.c_str()).split('\n');
+    QStringList statmsg = QString::fromStdString(m->statmsg).split(QLatin1Char('\n'));
     HostInfo::StatsMap stats;
     for (QStringList::ConstIterator it = statmsg.constBegin(); it != statmsg.constEnd();
          ++it) {
         QString key = *it;
-        key = key.left(key.indexOf(':'));
+        key = key.left(key.indexOf(QLatin1Char(':')));
         QString value = *it;
-        value = value.mid(value.indexOf(':') + 1);
+        value = value.mid(value.indexOf(QLatin1Char(':')) + 1);
         stats[key] = value;
     }
 
