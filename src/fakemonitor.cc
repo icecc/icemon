@@ -37,15 +37,15 @@ const int MAX_JOB_COUNT = 10;
 const int MAX_HOST_COUNT = 40;
 
 const QStringList JOB_FILENAMES(QStringList()
-    << QLatin1String("/tmp/filename.cc")
-    << QLatin1String("/some/very/long/path/containing/filename.cc")
-    << QLatin1String("/some/very/long/path/containing/averyverylongfilename.cc")
+    << QStringLiteral("/tmp/filename.cc")
+    << QStringLiteral("/some/very/long/path/containing/filename.cc")
+    << QStringLiteral("/some/very/long/path/containing/averyverylongfilename.cc")
     );
 
 const QStringList HOST_NAMES(QStringList()
-    << QLatin1String("Hostname")
-    << QLatin1String("VeryLongHostname")
-    << QLatin1String("VeryLongHostname.localdomain")
+    << QStringLiteral("Hostname")
+    << QStringLiteral("VeryLongHostname")
+    << QStringLiteral("VeryLongHostname.localdomain")
     );
 
 QString randomPlatform()
