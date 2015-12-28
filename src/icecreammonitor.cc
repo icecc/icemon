@@ -117,7 +117,7 @@ void IcecreamMonitor::slotCheckScheduler()
         if (!m_discover
             || m_discover->timed_out()) {
             delete m_discover;
-            m_discover = new DiscoverSched(currentNetname().data());
+            m_discover = new DiscoverSched(currentNetname().toStdString());
         }
 
         m_scheduler = m_discover->try_get_scheduler();
