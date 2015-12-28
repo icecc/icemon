@@ -35,10 +35,11 @@ endif()
 
 set(QT_MIN_VERSION "5.2.0")
 find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED Core Widgets)
-find_package(Icecream REQUIRED)
+find_package(Icecream)
 set_package_properties(Icecream PROPERTIES
   DESCRIPTION "Package providing API for accessing icecc information. Provides 'icecc/comm.h' header"
   URL "http://en.opensuse.org/Icecream"
+  TYPE REQUIRED
 )
 find_package(Docbook2X)
 set_package_properties(Docbook2X PROPERTIES
@@ -94,23 +95,26 @@ include_directories(
 )
 
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-check_include_file_cxx(icecc/logging.h ICECC_HAVE_LOGGING_H)
 
-# Check whether icecc was compiled against old CXXABI
-# Work-around for: https://github.com/icecc/icemon/issues/24
-# See: https://gcc.gnu.org/onlinedocs/libstdc++/manual/using_dual_abi.html
-set(USE_OLDCXXABI_DEFINE -D_GLIBCXX_USE_CXX11_ABI=0)
-set(CMAKE_REQUIRED_LIBRARIES Icecream)
-set(CMAKE_REQUIRED_DEFINITIONS ${USE_OLDCXXABI_DEFINE})
-check_cxx_source_compiles("
-#include <icecc/comm.h>
+if (Icecream_FOUND)
+    check_include_file_cxx(icecc/logging.h ICECC_HAVE_LOGGING_H)
 
-int main() { DiscoverSched sched(\"foo\"); }
-" ICECC_TEST_USE_OLDABI)
+    # Check whether icecc was compiled against old CXXABI
+    # Work-around for: https://github.com/icecc/icemon/issues/24
+    # See: https://gcc.gnu.org/onlinedocs/libstdc++/manual/using_dual_abi.html
+    set(USE_OLDCXXABI_DEFINE -D_GLIBCXX_USE_CXX11_ABI=0)
+    set(CMAKE_REQUIRED_LIBRARIES Icecream)
+    set(CMAKE_REQUIRED_DEFINITIONS ${USE_OLDCXXABI_DEFINE})
+    check_cxx_source_compiles("
+    #include <icecc/comm.h>
 
-if (ICECC_TEST_USE_OLDABI)
-    message(STATUS "Tests indicated icecc was linked against old GCC ABI, adding ${USE_OLDCXXABI_DEFINE} define")
-    add_definitions(${USE_OLDCXXABI_DEFINE})
+    int main() { DiscoverSched sched(\"foo\"); }
+    " ICECC_TEST_USE_OLDABI)
+
+    if (ICECC_TEST_USE_OLDABI)
+        message(STATUS "Tests indicated icecc was linked against old GCC ABI, adding ${USE_OLDCXXABI_DEFINE} define")
+        add_definitions(${USE_OLDCXXABI_DEFINE})
+    endif()
 endif()
 
 set(
