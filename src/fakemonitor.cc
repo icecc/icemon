@@ -50,7 +50,7 @@ const QStringList HOST_NAMES(QStringList()
 
 QString randomPlatform()
 {
-    static const QStringList hostNames = {"Linux 2.6", "Linux 3.2", "Linux 3.6"};
+    static const QStringList hostNames = {QStringLiteral("Linux 2.6"), QStringLiteral("Linux 3.2"), QStringLiteral("Linux 3.6")};
     return hostNames[qrand() % hostNames.size()];
 };
 }
@@ -75,7 +75,7 @@ FakeMonitor::FakeMonitor(HostInfoManager *manager, QObject *parent)
 void FakeMonitor::createHostInfo(HostId id)
 {
     HostInfo info(id);
-    info.setIp(QString("1.0.0.%1").arg(id));
+    info.setIp(QStringLiteral("1.0.0.%1").arg(id));
     info.setMaxJobs(5);
     info.setName(HOST_NAMES[id % HOST_NAMES.length()] + QString::number(id));
     info.setColor(info.createColor(info.name()));

@@ -66,7 +66,7 @@ static QString trimFilePath(const QString &filePath, int numberOfFilePathParts)
     } while (counter-- && index > 0);
 
     if (index > 0) {
-        return QString::fromLatin1("...") + filePath.mid(index);
+        return QLatin1String("...") + filePath.mid(index);
     }
 
     return filePath;

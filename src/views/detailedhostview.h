@@ -44,7 +44,7 @@ public:
 
     QWidget *widget() const override;
 
-    QString id() const override { return "detailedhost"; }
+    QString id() const override { return QStringLiteral("detailedhost"); }
 
     void checkNode(unsigned int hostid) override;
 

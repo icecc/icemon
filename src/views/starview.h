@@ -185,7 +185,7 @@ public:
     void update(const Job &job) override;
     virtual QWidget *widget() const override;
 
-    QString id() const override { return "star"; }
+    QString id() const override { return QStringLiteral("star"); }
 
     QList<HostItem *> hostItems() const;
     HostItem *findHostItem(unsigned int hostid) const;

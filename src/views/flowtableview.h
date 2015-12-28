@@ -66,7 +66,7 @@ public:
     void checkNode(unsigned int hostid) override;
     void removeNode(unsigned int hostid) override;
 
-    QString id() const override { return "flow"; }
+    QString id() const override { return QStringLiteral("flow"); }
 
     void stop() override {}
     void start() override {}

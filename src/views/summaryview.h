@@ -78,7 +78,7 @@ public:
     virtual QWidget *widget() const override;
     virtual void update(const Job &job) override;
     virtual void checkNode(unsigned int hostid) override;
-    virtual QString id() const override { return "summary"; }
+    virtual QString id() const override { return QStringLiteral("summary"); }
 
 private:
     QScopedPointer<SummaryViewScrollArea> m_widget;

@@ -29,29 +29,29 @@ QMap<int, QString> HostInfo::mColorNameMap;
 
 void HostInfo::initColorTable()
 {
-    initColor("#A5080B", QApplication::tr("cherry"));
-    initColor("#76d26f", QApplication::tr("pistachio"));
-    initColor("#664a08", QApplication::tr("chocolate"));
-    initColor("#4c9dff", QApplication::tr("smurf"));
-    initColor("#6c2ca8", QApplication::tr("blueberry"));
-    initColor("#fa8344", QApplication::tr("orange"));
-    initColor("#55CFBD", QApplication::tr("mint"));
-    initColor("#db1230", QApplication::tr("strawberry"));
-    initColor("#a6ea5e", QApplication::tr("apple"));
-    initColor("#D6A3D8", QApplication::tr("bubblegum"));
-    initColor("#f2aa4d", QApplication::tr("peach"));
-    initColor("#aa1387", QApplication::tr("plum"));
-    initColor("#26c3f7", QApplication::tr("polar sea"));
-    initColor("#b8850e", QApplication::tr("nut"));
-    initColor("#6a188d", QApplication::tr("blackberry"));
-    initColor("#24b063", QApplication::tr("woodruff"));
-    initColor("#ffff0f", QApplication::tr("banana"));
-    initColor("#1e1407", QApplication::tr("mocha"));
-    initColor("#29B450", QApplication::tr("kiwi"));
-    initColor("#F8DD31", QApplication::tr("lemon"));
-    initColor("#fa7e91", QApplication::tr("raspberry"));
-    initColor("#c5a243", QApplication::tr("caramel"));
-    initColor("#b8bcff", QApplication::tr("blueberry"));
+    initColor(QStringLiteral("#A5080B"), QApplication::tr("cherry"));
+    initColor(QStringLiteral("#76d26f"), QApplication::tr("pistachio"));
+    initColor(QStringLiteral("#664a08"), QApplication::tr("chocolate"));
+    initColor(QStringLiteral("#4c9dff"), QApplication::tr("smurf"));
+    initColor(QStringLiteral("#6c2ca8"), QApplication::tr("blueberry"));
+    initColor(QStringLiteral("#fa8344"), QApplication::tr("orange"));
+    initColor(QStringLiteral("#55CFBD"), QApplication::tr("mint"));
+    initColor(QStringLiteral("#db1230"), QApplication::tr("strawberry"));
+    initColor(QStringLiteral("#a6ea5e"), QApplication::tr("apple"));
+    initColor(QStringLiteral("#D6A3D8"), QApplication::tr("bubblegum"));
+    initColor(QStringLiteral("#f2aa4d"), QApplication::tr("peach"));
+    initColor(QStringLiteral("#aa1387"), QApplication::tr("plum"));
+    initColor(QStringLiteral("#26c3f7"), QApplication::tr("polar sea"));
+    initColor(QStringLiteral("#b8850e"), QApplication::tr("nut"));
+    initColor(QStringLiteral("#6a188d"), QApplication::tr("blackberry"));
+    initColor(QStringLiteral("#24b063"), QApplication::tr("woodruff"));
+    initColor(QStringLiteral("#ffff0f"), QApplication::tr("banana"));
+    initColor(QStringLiteral("#1e1407"), QApplication::tr("mocha"));
+    initColor(QStringLiteral("#29B450"), QApplication::tr("kiwi"));
+    initColor(QStringLiteral("#F8DD31"), QApplication::tr("lemon"));
+    initColor(QStringLiteral("#fa7e91"), QApplication::tr("raspberry"));
+    initColor(QStringLiteral("#c5a243"), QApplication::tr("caramel"));
+    initColor(QStringLiteral("#b8bcff"), QApplication::tr("blueberry"));
     // try to make the count a prime number (reminder: 19, 23, 29, 31)
     // initColor( "#ffb8c0", QApplication::tr("blackcurrant"));
     // initColor( "#f7d36f", QApplication::tr("passionfruit"));
@@ -101,22 +101,22 @@ QString HostInfo::toolTip() const
 
 void HostInfo::updateFromStatsMap(const StatsMap &stats)
 {
-    QString name = stats["Name"];
+    QString name = stats[QStringLiteral("Name")];
 
     if (name != mName) {
         mName = name;
         mColor = createColor(mName);
-        mIp = stats["IP"];
-        mPlatform = stats["Platform"];
+        mIp = stats[QStringLiteral("IP")];
+        mPlatform = stats[QStringLiteral("Platform")];
     }
 
-    mNoRemote = (stats["NoRemote"].compare("true", Qt::CaseInsensitive) == 0);
-    mMaxJobs = stats["MaxJobs"].toUInt();
-    mOffline = (stats["State"] == "Offline");
+    mNoRemote = (stats[QStringLiteral("NoRemote")].compare(QLatin1String("true"), Qt::CaseInsensitive) == 0);
+    mMaxJobs = stats[QStringLiteral("MaxJobs")].toUInt();
+    mOffline = (stats[QStringLiteral("State")] == QLatin1String("Offline"));
 
-    mServerSpeed = stats["Speed"].toFloat();
+    mServerSpeed = stats[QStringLiteral("Speed")].toFloat();
 
-    mServerLoad = stats["Load"].toUInt();
+    mServerLoad = stats[QStringLiteral("Load")].toUInt();
 }
 
 QColor HostInfo::createColor(const QString &name)

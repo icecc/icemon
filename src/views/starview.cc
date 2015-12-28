@@ -211,11 +211,11 @@ void HostItem::updateName()
         QString text;
 
         if (mHostInfo->noRemote() || mHostInfo->maxJobs() == 0) {
-            text = QString("<i>%1</i>").arg(hostName());
+            text = QStringLiteral("<i>%1</i>").arg(hostName());
             pen.setStyle(Qt::DotLine);
         } else
         {
-            text = QString("%1<br/>[%2/%3]").arg(hostName()).arg(m_jobs.size()).arg(mHostInfo->maxJobs());
+            text = QStringLiteral("%1<br/>[%2/%3]").arg(hostName()).arg(m_jobs.size()).arg(mHostInfo->maxJobs());
             pen.setStyle(Qt::SolidLine);
         }
 
@@ -365,8 +365,8 @@ void StarView::readSettings()
 {
     QSettings settings;
     settings.beginGroup("view_" + id());
-    mConfigDialog->setNodesPerRing(settings.value("nodesPerRing", 25).toInt());
-    mConfigDialog->setSuppressDomainName(settings.value("suppressDomainName", true).toBool());
+    mConfigDialog->setNodesPerRing(settings.value(QStringLiteral("nodesPerRing"), 25).toInt());
+    mConfigDialog->setSuppressDomainName(settings.value(QStringLiteral("suppressDomainName"), true).toBool());
     settings.endGroup();
 }
 
@@ -374,8 +374,8 @@ void StarView::writeSettings()
 {
     QSettings settings;
     settings.beginGroup("view_" + id());
-    settings.setValue("nodesPerRing", mConfigDialog->nodesPerRing());
-    settings.setValue("suppressDomainName", mConfigDialog->suppressDomainName());
+    settings.setValue(QStringLiteral("nodesPerRing"), mConfigDialog->nodesPerRing());
+    settings.setValue(QStringLiteral("suppressDomainName"), mConfigDialog->suppressDomainName());
     settings.endGroup();
     settings.sync();
 }
@@ -601,7 +601,7 @@ void StarViewGraphicsView::arrangeSchedulerItem()
 {
     const Monitor *monitor = m_starView->monitor();
     const bool isOnline = (monitor ? monitor->schedulerState() == Monitor::Online : false);
-    m_schedulerItem->setFixedText(isOnline ? tr("Scheduler") : "<b>No scheduler available</b>");
+    m_schedulerItem->setFixedText(isOnline ? tr("Scheduler") : QStringLiteral("<b>No scheduler available</b>"));
     m_schedulerItem->setCenterPos(width() / 2, height() / 2);
 }
 

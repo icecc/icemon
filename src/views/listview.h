@@ -39,7 +39,7 @@ public:
 
     virtual Options options() const override;
     virtual QWidget *widget() const override;
-    virtual QString id() const override { return "list"; }
+    virtual QString id() const override { return QStringLiteral("list"); }
 
     virtual void setMonitor(Monitor *monitor) override;
 

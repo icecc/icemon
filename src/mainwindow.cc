@@ -62,11 +62,11 @@ MainWindow::MainWindow(QWidget *parent)
     , m_view(nullptr)
 {
     QIcon appIcon = QIcon();
-    appIcon.addFile(":/images/hi128-app-icemon.png", QSize(128, 128));
-    appIcon.addFile(":/images/hi48-app-icemon.png", QSize(48, 48));
-    appIcon.addFile(":/images/hi32-app-icemon.png", QSize(32, 32));
-    appIcon.addFile(":/images/hi22-app-icemon.png", QSize(22, 22));
-    appIcon.addFile(":/images/hi16-app-icemon.png", QSize(16, 16));
+    appIcon.addFile(QStringLiteral(":/images/hi128-app-icemon.png"), QSize(128, 128));
+    appIcon.addFile(QStringLiteral(":/images/hi48-app-icemon.png"), QSize(48, 48));
+    appIcon.addFile(QStringLiteral(":/images/hi32-app-icemon.png"), QSize(32, 32));
+    appIcon.addFile(QStringLiteral(":/images/hi22-app-icemon.png"), QSize(22, 22));
+    appIcon.addFile(QStringLiteral(":/images/hi16-app-icemon.png"), QSize(16, 16));
     setWindowIcon(appIcon);
     setWindowTitle(QApplication::translate("appName", Icemon::Version::appName));
 
@@ -82,7 +82,7 @@ MainWindow::MainWindow(QWidget *parent)
     statusBar()->addPermanentWidget(m_jobStatsWidget);
 
     QAction *action = fileMenu->addAction(tr("&Quit"), this, SLOT(close()), tr("Ctrl+Q"));
-    action->setIcon(QIcon::fromTheme("application-exit"));
+    action->setIcon(QIcon::fromTheme(QStringLiteral("application-exit")));
     action->setMenuRole(QAction::QuitRole);
 
     m_viewMode = new QActionGroup(this);
@@ -110,7 +110,7 @@ MainWindow::MainWindow(QWidget *parent)
     viewMenu->addSeparator();
 
     action = viewMenu->addAction(tr("Pause"));
-    action->setIcon(QIcon::fromTheme("media-playback-pause"));
+    action->setIcon(QIcon::fromTheme(QStringLiteral("media-playback-pause")));
     action->setCheckable(true);
     connect(action, SIGNAL(triggered()), this, SLOT(pauseView()));
     m_pauseViewAction = action;
@@ -118,7 +118,7 @@ MainWindow::MainWindow(QWidget *parent)
     viewMenu->addSeparator();
 
     action = viewMenu->addAction(tr("Configure View..."));
-    action->setIcon(QIcon::fromTheme("configure"));
+    action->setIcon(QIcon::fromTheme(QStringLiteral("configure")));
     connect(action, SIGNAL(triggered()), this, SLOT(configureView()));
     m_configureViewAction = action;
 
@@ -153,9 +153,9 @@ void MainWindow::closeEvent(QCloseEvent *e)
 void MainWindow::readSettings()
 {
     QSettings settings;
-    restoreGeometry(settings.value("geometry").toByteArray());
-    restoreState(settings.value("windowState").toByteArray());
-    QString viewId = settings.value("currentView").toString();
+    restoreGeometry(settings.value(QStringLiteral("geometry")).toByteArray());
+    restoreState(settings.value(QStringLiteral("windowState")).toByteArray());
+    QString viewId = settings.value(QStringLiteral("currentView")).toString();
 
     StatusView *view = s_viewFactory.create(viewId, this);
     setView(view);
@@ -164,9 +164,9 @@ void MainWindow::readSettings()
 void MainWindow::writeSettings()
 {
     QSettings settings;
-    settings.setValue("geometry", saveGeometry());
-    settings.setValue("windowState", saveState());
-    settings.setValue("currentView", (m_view ? m_view->id() : QString()));
+    settings.setValue(QStringLiteral("geometry"), saveGeometry());
+    settings.setValue(QStringLiteral("windowState"), saveState());
+    settings.setValue(QStringLiteral("currentView"), (m_view ? m_view->id() : QString()));
     settings.sync();
 }
 
@@ -345,7 +345,7 @@ void MainWindow::updateJobStats()
             text.append(" - ");
         }
 
-        text.append(QString("<strong>%2/%3</strong> on %1").arg(platform).arg(stat.jobs).arg(stat.maxJobs));
+        text.append(QStringLiteral("<strong>%2/%3</strong> on %1").arg(platform).arg(stat.jobs).arg(stat.maxJobs));
     }
 
     m_jobStatsWidget->setText(tr("| Active jobs: %1").arg(text));

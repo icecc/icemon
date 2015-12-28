@@ -210,7 +210,7 @@ void GanttProgress::drawGraph(QPainter &p)
                     // append "..." at the end.
                     int text_width = p.fontMetrics().width(s);
                     if (text_width > width) {
-                        int threeDotsWidth = p.fontMetrics().width("...");
+                        int threeDotsWidth = p.fontMetrics().width(QStringLiteral("..."));
                         int next_width = 0;
                         int newLength = 0;
                         for (;

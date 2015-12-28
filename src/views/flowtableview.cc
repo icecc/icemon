@@ -107,8 +107,8 @@ void FlowTableView::update(const Job &job)
     QTableWidgetItem *jobStateItem = m_widget->item(serverRow, 3);
 
     if (job.state() == Job::Finished) {
-        fileNameItem->setText("");
-        jobStateItem->setText("");
+        fileNameItem->setText(QLatin1String(""));
+        jobStateItem->setText(QLatin1String(""));
     } else {
         QString filePath = job.fileName();
         QString fileName = filePath.mid(filePath.lastIndexOf('/') + 1);
@@ -162,7 +162,7 @@ void FlowTableView::checkNode(unsigned int hostId)
 
     HostInfo *hostInfo = hostInfoManager()->hostMap().value(hostId);
     QTableWidgetItem *widgetItem = new QTableWidgetItem(hostInfoText(hostInfo));
-    widgetItem->setIcon(QIcon(":/images/icemonnode.png"));
+    widgetItem->setIcon(QIcon(QStringLiteral(":/images/icemonnode.png")));
     widgetItem->setToolTip(hostInfo->toolTip());
     widgetItem->setBackgroundColor(hostInfo->color());
     // usage count

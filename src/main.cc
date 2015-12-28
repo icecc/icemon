@@ -31,7 +31,7 @@
 int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
-    QApplication::setOrganizationDomain("kde.org");
+    QApplication::setOrganizationDomain(QStringLiteral("kde.org"));
     QApplication::setApplicationName(Icemon::Version::appShortName);
     QApplication::setApplicationVersion(Icemon::Version::version);
 
@@ -39,11 +39,11 @@ int main(int argc, char **argv)
     parser.setApplicationDescription(Icemon::Version::description);
     parser.addHelpOption();
     parser.addVersionOption();
-    QCommandLineOption netnameOption(QStringList() << "n" << "netname",
+    QCommandLineOption netnameOption(QStringList() << QStringLiteral("n") << QStringLiteral("netname"),
         QCoreApplication::translate("main", "Icecream network name."),
         QCoreApplication::translate("main", "name", "network name"));
     parser.addOption(netnameOption);
-    QCommandLineOption testmodeOption("testmode",
+    QCommandLineOption testmodeOption(QStringLiteral("testmode"),
         QCoreApplication::translate("main", "Testing mode."));
     parser.addOption(testmodeOption);
 

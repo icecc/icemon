@@ -39,8 +39,8 @@ public:
         : QFrame(parent)
         , m_frameColor(frameColor)
     {
-        setObjectName("nodeInfoFrame");
-        setStyleSheet(QString("QFrame#nodeInfoFrame { border: 2px solid %1 }").arg(frameColor.name()));
+        setObjectName(QStringLiteral("nodeInfoFrame"));
+        setStyleSheet(QStringLiteral("QFrame#nodeInfoFrame { border: 2px solid %1 }").arg(frameColor.name()));
     }
 private:
     QColor m_frameColor;
@@ -110,7 +110,7 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
     grid->setMargin(10);
     grid->setSpacing(5);
 
-    m_jobsLabel = addLine(QApplication::tr("Jobs:"), detailsBox, grid, Qt::AlignBottom, "0");
+    m_jobsLabel = addLine(QApplication::tr("Jobs:"), detailsBox, grid, Qt::AlignBottom, QStringLiteral("0"));
 
     for (int i = 0; i < maxJobs; i++) {
         if (maxJobs > 1) {
@@ -152,7 +152,7 @@ void SummaryViewItem::update(const Job &job)
             (*it).stateWidget->setPalette(palette);
             const QString fileName = job.fileName().section('/', -1);
             const QString hostName = m_view->nameForHost(job.client());
-            (*it).sourceLabel->setText(QString("%1 (%2)").arg(fileName).arg(hostName));
+            (*it).sourceLabel->setText(QStringLiteral("%1 (%2)").arg(fileName).arg(hostName));
             (*it).stateLabel->setText(job.stateAsString());
             (*it).currentFile = job.fileName();
         }
@@ -229,7 +229,7 @@ SummaryView::SummaryView(QObject *parent)
     , m_widget(new SummaryViewScrollArea)
 {
     m_base = new QWidget;
-    m_base->setStyleSheet("QWidget { background-color: 'white'; }");
+    m_base->setStyleSheet(QStringLiteral("QWidget { background-color: 'white'; }"));
     m_widget->setWidget(m_base);
 
     m_layout = new QGridLayout(m_base);

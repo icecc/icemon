@@ -228,7 +228,7 @@ void IcecreamMonitor::handle_local_begin(Msg *_m)
 
     m_rememberedJobs[m->job_id] = Job(m->job_id, m->hostid,
                                       m->file.c_str(),
-                                      "C++");
+                                      QStringLiteral("C++"));
     m_rememberedJobs[m->job_id].setState(Job::LocalOnly);
     emit jobUpdated(m_rememberedJobs[m->job_id]);
 }

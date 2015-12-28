@@ -107,7 +107,7 @@ QVariant HostListModel::data(const QModelIndex &index, int role) const
         case ColumnName:
             return info.name();
         case ColumnNoRemote:
-            return info.noRemote() ? tr("Yes") : "";
+            return info.noRemote() ? tr("Yes") : QLatin1String("");
         case ColumnColor:
             return HostInfo::colorName(info.color());
         case ColumnIP:

@@ -127,7 +127,7 @@ public:
     GanttStatusView(QObject *parent = nullptr);
     virtual ~GanttStatusView() {}
 
-    QString id() const override { return "gantt"; }
+    QString id() const override { return QStringLiteral("gantt"); }
 
     virtual void checkNode(unsigned int hostid) override;
 

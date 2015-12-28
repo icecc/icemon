@@ -33,15 +33,15 @@ StatusViewFactory::StatusViewFactory()
 
 StatusView *StatusViewFactory::create(const QString &id, QObject *parent) const
 {
-    if (id == "list") {
+    if (id == QLatin1String("list")) {
         return new ListStatusView(parent);
-    } else if (id == "gantt") {
+    } else if (id == QLatin1String("gantt")) {
         return new GanttStatusView(parent);
-    } else if (id == "summary") {
+    } else if (id == QLatin1String("summary")) {
         return new SummaryView(parent);
-    } else if (id == "flow") {
+    } else if (id == QLatin1String("flow")) {
         return new FlowTableView(parent);
-    } else if (id == "detailedhost") {
+    } else if (id == QLatin1String("detailedhost")) {
         return new DetailedHostView(parent);
     }
 
