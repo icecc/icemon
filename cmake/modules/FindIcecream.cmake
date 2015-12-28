@@ -58,7 +58,7 @@ endif()
 if (Icecream_FOUND)
   add_library(Icecream UNKNOWN IMPORTED)
   set_target_properties(Icecream PROPERTIES
-      IMPORTED_LOCATION "${Icecream_LIBRARY}"
+      IMPORTED_LOCATION ${Icecream_LIBRARY}
       INTERFACE_INCLUDE_DIRECTORIES ${Icecream_INCLUDE_DIR}
       INTERFACE_LINK_LIBRARIES ${Icecream_LIB_EXTRA} ${CMAKE_DL_LIBS}
   )
