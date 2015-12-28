@@ -7,6 +7,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 include(CheckCXXCompilerFlag)
+include(CheckCXXSourceCompiles)
 include(GNUInstallDirs)
 include(KDE4Macros-Icecream)
 include(CheckIncludeFileCXX)
@@ -86,6 +87,24 @@ include_directories(
 
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 check_include_file_cxx(icecc/logging.h ICECC_HAVE_LOGGING_H)
+
+# Check whether icecc was compiled against old CXXABI
+# Work-around for: https://github.com/icecc/icemon/issues/24
+# See: https://gcc.gnu.org/onlinedocs/libstdc++/manual/using_dual_abi.html
+set(USE_OLDCXXABI_DEFINE -D_GLIBCXX_USE_CXX11_ABI=0)
+set(CMAKE_REQUIRED_LIBRARIES ${Icecream_LIBRARIES} ${CMAKE_DL_LIBS})
+set(CMAKE_REQUIRED_INCLUDES ${Icecream_INCLUDE_DIR})
+set(CMAKE_REQUIRED_DEFINITIONS ${USE_OLDCXXABI_DEFINE})
+check_cxx_source_compiles("
+#include <icecc/comm.h>
+
+int main() { DiscoverSched sched(\"foo\"); }
+" ICECC_TEST_USE_OLDABI)
+
+if (ICECC_TEST_USE_OLDABI)
+    message(STATUS "Tests indicated icecc was linked against old GCC ABI, adding ${USE_OLDCXXABI_DEFINE} define")
+    add_definitions(${USE_OLDCXXABI_DEFINE})
+endif()
 
 set(
   INSTALL_TARGETS_DEFAULT_ARGS
