@@ -1,10 +1,21 @@
-# - Try to find the icecream library
-# Once done this defines
+# Try to find the Icecream library
 #
+# Once done this defines:
 #  Icecream_FOUND - system has libicecream
 #  Icecream_INCLUDE_DIR - the libicecream include directory
 #  Icecream_LIBRARIES - Link these to use libicecream
 #  Icecream_VERSION - the libicecream version, if available
+
+#=============================================================================
+# Copyright 2015 Kevin Funk <kfunk@kde.org>
+#
+# Distributed under the OSI-approved BSD License (the "License");
+# see accompanying file Copyright.txt for details.
+#
+# This software is distributed WITHOUT ANY WARRANTY; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the License for more information.
+#=============================================================================
 
 if (Icecream_INCLUDE_DIR AND Icecream_LIBRARIES)
   # in cache already
