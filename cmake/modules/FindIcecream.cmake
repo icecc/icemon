@@ -17,11 +17,11 @@
 # See the License for more information.
 #=============================================================================
 
-if (Icecream_INCLUDE_DIR AND Icecream_LIBRARIES)
+if (Icecream_INCLUDE_DIR AND Icecream_LIBRARY AND Icecream_LIB_EXTRA)
   # in cache already
   set(Icecream_FOUND TRUE)
 else ()
-  set(Icecream_LIB_EXTRA)
+  set(extraLibs)
 
   if(NOT WIN32)
     # use pkg-config to get the directories and then use these values
@@ -33,11 +33,15 @@ else ()
     # Somewhat hackish, but I can't find a simpler way to do this with CMake.
     foreach(lib ${PC_ICECC_STATIC_LIBRARIES})
       if(NOT ${lib} STREQUAL "icecc")
-        list(APPEND Icecream_LIB_EXTRA "-l${lib}")
+        list(APPEND extraLibs "-l${lib}")
       endif()
     endforeach()
     set(Icecream_VERSION "${PC_ICECC_VERSION}")
   endif()
+
+  list(APPEND extraLibs ${CMAKE_DL_LIBS})
+
+  set(Icecream_LIB_EXTRA ${extraLibs} CACHE INTERNAL "The library dependencies for libicecream")
 
   find_path(Icecream_INCLUDE_DIR icecc/comm.h
     HINTS
@@ -53,25 +57,25 @@ else ()
     /opt/icecream/lib
   )
 
-  set(Icecream_LIBRARIES ${Icecream_LIBRARY} ${Icecream_LIB_EXTRA} CACHE INTERNAL "The libraries for libicecream" )
-
   include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(Icecream
-    REQUIRED_VARS Icecream_LIBRARIES Icecream_INCLUDE_DIR
+    REQUIRED_VARS Icecream_LIBRARY Icecream_INCLUDE_DIR
     VERSION_VAR Icecream_VERSION
   )
 
   mark_as_advanced(
-    Icecream_INCLUDE_DIR Icecream_LIBRARIES
+    Icecream_INCLUDE_DIR Icecream_LIBRARIES Icecream_LIB_EXTRA
   )
   set(Icecream_FOUND TRUE)
 endif()
 
 if (Icecream_FOUND)
+  set(Icecream_LIBRARIES ${Icecream_LIBRARY} ${Icecream_LIB_EXTRA})
+
   add_library(Icecream UNKNOWN IMPORTED)
   set_target_properties(Icecream PROPERTIES
       IMPORTED_LOCATION ${Icecream_LIBRARY}
       INTERFACE_INCLUDE_DIRECTORIES ${Icecream_INCLUDE_DIR}
-      INTERFACE_LINK_LIBRARIES ${Icecream_LIB_EXTRA} ${CMAKE_DL_LIBS}
+      INTERFACE_LINK_LIBRARIES "${Icecream_LIB_EXTRA}"
   )
 endif()
