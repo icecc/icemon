@@ -1,3 +1,6 @@
+sudo: required
+dist: trusty
+
 language: cpp
 
 compiler:
@@ -9,6 +12,9 @@ before_install:
 - sudo apt-get install -qq cmake qtbase5-dev
 
 before_script:
+- cmake --version
+- qtchooser -run-tool=qmake -qt=qt5 --version
+
 - mkdir build
 - cd build
 - cmake ..
