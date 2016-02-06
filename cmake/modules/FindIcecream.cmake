@@ -66,7 +66,7 @@ else ()
   mark_as_advanced(
     Icecream_INCLUDE_DIR Icecream_LIBRARIES Icecream_LIB_EXTRA
   )
-  set(Icecream_FOUND TRUE)
+  set(Icecream_FOUND ${ICECREAM_FOUND}) # CMake bug: Does not set Icecream_FOUND
 endif()
 
 if (Icecream_FOUND)
