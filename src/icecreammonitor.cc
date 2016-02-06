@@ -34,14 +34,24 @@
 #endif
 
 #include <qdebug.h>
-
 #include <qsocketnotifier.h>
 #include <qtimer.h>
 
 #include <list>
 #include <iostream>
+#include <string>
 
 using namespace std;
+
+namespace {
+
+// TODO: Just use QByteArray static methods when depending on Qt 5.4
+inline QByteArray QBA_fromStdString(const std::string& s)
+{ return QByteArray(s.data(), int(s.size())); }
+inline std::string QBA_toStdString(const QByteArray& s)
+{ return std::string(s.constData(), s.length()); }
+
+}
 
 IcecreamMonitor::IcecreamMonitor(HostInfoManager *manager, QObject *parent)
     : Monitor(manager, parent)
@@ -113,11 +123,11 @@ void IcecreamMonitor::slotCheckScheduler()
     }
     for (list<string>::const_iterator it = names.begin(); it != names.end();
          ++it) {
-        setCurrentNetname(QByteArray::fromStdString(*it));
+        setCurrentNetname(QBA_fromStdString(*it));
         if (!m_discover
             || m_discover->timed_out()) {
             delete m_discover;
-            m_discover = new DiscoverSched(currentNetname().toStdString());
+            m_discover = new DiscoverSched(QBA_toStdString(currentNetname()));
         }
 
         m_scheduler = m_discover->try_get_scheduler();
