@@ -17,7 +17,7 @@ To compile icemon, install, the icecc development package, e.g. for Debian/Ubunt
 
 Finally, make sure you have g++, Qt and cmake installed
 
-    $ apt-get install build-essential qt5-default cmake
+    $ apt-get install build-essential qtbase5-dev cmake
 
 Finally, compile and install the application:
 
