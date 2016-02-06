@@ -1,3 +1,17 @@
+## 3.0.1 (2016-02-06)
+
+Bugfixes:
+
+- Added work-around for build for icecc.a using old CXXABI (#24)
+- Fixed build with Qt 5.5
+- Improved how docbook2man is searched for (PR #21)
+
+Internal Changes:
+
+- Added Doxygen support to CMake
+- Modernized CMake code (FindIcecream.cmake, etc.)
+- Modernized source code to use C++11 features (override, nullptr, auto)
+
 ## 3.0.0 (2015-02-08)
 
 Features:
