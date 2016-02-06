@@ -31,8 +31,8 @@ const char appName[] = QT_TRANSLATE_NOOP("appName", "Icecream Monitor");
 const char appShortName[] = "icemon";
 const char version[] = ICEMON_VERSION_STRING;
 const char homePage[] = "http://github.com/icecc/icemon";
-const char description[] = QT_TRANSLATE_NOOP("description", "Icecream monitor for Qt");
-const char copyright[] = QT_TRANSLATE_NOOP("copyright", "(c) 2003, 2004, 2011 The Icecream developers");
+const char description[] = QT_TRANSLATE_NOOP("description", "Icecream Monitor for Qt");
+const char copyright[] = QT_TRANSLATE_NOOP("copyright", "(c) 2003-2016 The Icecream developers");
 } // Version
 } // Icemon
 

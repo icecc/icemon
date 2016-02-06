@@ -248,16 +248,17 @@ void MainWindow::configureView()
 
 void MainWindow::about()
 {
-    QString about = tr("<strong>%1</strong><br/>"
-                       "Version: %2<br/><br/>"
-                       "<strong>%3</strong><br/><br/>"
-                       "Maintainers:<br/>"
-                       "Daniel Molkentin &lt;molkentin@kde.org&gt;<br/>"
-                       "Kevin Funk &lt;kfunk@kde.org&gt;<br/><br/>"
-                       "Based on Icemon for KDE written by:<br/>"
+    QString about = tr("<p><strong>%1</strong><br/>"
+                       "Version: %2</p>"
+                       "<p><strong>%3</strong></p>"
+                       "<p>Maintainer:<br/>"
+                       "Kevin Funk &lt;kfunk@kde.org&gt;</p>"
+                       "<p>Contributors:<br/>"
+                       "Daniel Molkentin &lt;molkentin@kde.org&gt;"
+                       "<p>Based on Icemon for KDE written by:<br/>"
                        "Frerich Raabe &lt;raabe@kde.org&gt;<br/>"
                        "Stephan Kulow &lt;coolo@kde.org&gt;<br/>"
-                       "Cornelius Schumacher &lt;schumacher@kde.org&gt;<br/><br/>"
+                       "Cornelius Schumacher &lt;schumacher@kde.org&gt;</p>"
                        "Homepage: <a href=\"%4\">%4</a><br/><br/>"
                        "Licensed under the GPLv2.<br/>")
                     .arg(QLatin1String(Icemon::Version::appName))
