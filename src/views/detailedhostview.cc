@@ -69,8 +69,8 @@ DetailedHostView::DetailedHostView(QObject *parent)
     mHostListView = new HostListView(hosts);
     mHostListView->setModel(mSortedHostListModel);
     dummy->addWidget(mHostListView);
-    //connect(mHostListView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
-    //        SLOT(slotNodeActivated()));
+    connect(mHostListView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
+            SLOT(slotNodeActivated()));
 
     auto locals = new QWidget(viewSplitter);
     dummy = new QVBoxLayout(locals);
@@ -79,6 +79,7 @@ DetailedHostView::DetailedHostView(QObject *parent)
 
     mLocalJobsModel = new JobListModel(this);
     mLocalJobsModel->setExpireDuration(5);
+    mLocalJobsModel->setJobType(JobListModel::LocalJobs);
     mSortedLocalJobsModel = new JobListSortFilterProxyModel(this);
     mSortedLocalJobsModel->setDynamicSortFilter(true);
     mSortedLocalJobsModel->setSourceModel(mLocalJobsModel);
@@ -96,6 +97,7 @@ DetailedHostView::DetailedHostView(QObject *parent)
 
     mRemoteJobsModel = new JobListModel(this);
     mRemoteJobsModel->setExpireDuration(5);
+    mRemoteJobsModel->setJobType(JobListModel::RemoteJobs);
     mSortedRemoteJobsModel = new JobListSortFilterProxyModel(this);
     mSortedRemoteJobsModel->setDynamicSortFilter(true);
     mSortedRemoteJobsModel->setSourceModel(mRemoteJobsModel);
@@ -144,6 +146,15 @@ void DetailedHostView::createKnownHosts()
     foreach(int hostid, hosts.keys()) {
         checkNode(hostid);
     }
+}
+
+void DetailedHostView::slotNodeActivated()
+{
+    const unsigned int hostid = mHostListView->currentIndex().data(HostListModel::HostIdRole).value<unsigned int>();
+    if (!hostid)
+        return;
+    mLocalJobsModel->setHostId(hostid);
+    mRemoteJobsModel->setHostId(hostid);
 }
 
 QWidget *DetailedHostView::widget() const
