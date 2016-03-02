@@ -260,11 +260,11 @@ void MainWindow::about()
                        "Stephan Kulow &lt;coolo@kde.org&gt;<br/>"
                        "Cornelius Schumacher &lt;schumacher@kde.org&gt;</p>"
                        "Homepage: <a href=\"%4\">%4</a><br/><br/>"
-                       "Licensed under the GPLv2.<br/>")
-                    .arg(QLatin1String(Icemon::Version::appName))
-                    .arg(QLatin1String(Icemon::Version::version))
-                    .arg(QLatin1String(Icemon::Version::description))
-                    .arg(QLatin1String(Icemon::Version::homePage));
+                       "Licensed under the GPLv2.<br/>").arg(
+                            QLatin1String(Icemon::Version::appName),
+                            QLatin1String(Icemon::Version::version),
+                            QLatin1String(Icemon::Version::description),
+                            QLatin1String(Icemon::Version::homePage));
 
     QMessageBox::about(this, tr("About %1")
         .arg(QLatin1String(Icemon::Version::appShortName)), about);
