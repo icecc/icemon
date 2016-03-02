@@ -18,6 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#ifndef ICEMON_STATUSVIEWFACTORY_H
+#define ICEMON_STATUSVIEWFACTORY_H
+
 class StatusView;
 
 class QObject;
@@ -31,3 +34,5 @@ public:
     StatusView *create(const QString &id,
                        QObject *parent = nullptr) const;
 };
+
+#endif
