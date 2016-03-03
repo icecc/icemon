@@ -26,11 +26,11 @@ class StatusView;
 class QObject;
 class QString;
 
-struct StatusViewFactory
+class StatusViewFactory
 {
 public:
-    StatusView *create(const QString &id,
-                       QObject *parent = nullptr) const;
+    static StatusView *create(const QString &id,
+                              QObject *parent = nullptr);
 };
 
 #endif

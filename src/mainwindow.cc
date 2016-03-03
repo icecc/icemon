@@ -44,6 +44,7 @@
 #include <algorithm>
 
 namespace {
+
 struct PlatformStat
 {
     PlatformStat()
@@ -54,7 +55,6 @@ struct PlatformStat
     unsigned int maxJobs;
 };
 
-const StatusViewFactory s_viewFactory;
 }
 
 MainWindow::MainWindow(QWidget *parent)
@@ -157,7 +157,7 @@ void MainWindow::readSettings()
     restoreState(settings.value(QStringLiteral("windowState")).toByteArray());
     QString viewId = settings.value(QStringLiteral("currentView")).toString();
 
-    StatusView *view = s_viewFactory.create(viewId, this);
+    auto view = StatusViewFactory::create(viewId, this);
     setView(view);
 }
 
@@ -363,7 +363,7 @@ void MainWindow::handleViewModeActionTriggered(QAction *action)
 {
     const QString viewId = action->data().toString();
     Q_ASSERT(!viewId.isEmpty());
-    setView(s_viewFactory.create(viewId, this));
+    setView(StatusViewFactory::create(viewId, this));
 }
 
 // It's nasty that we have to hard-code the implementations of Monitor

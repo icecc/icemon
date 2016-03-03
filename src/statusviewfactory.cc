@@ -27,7 +27,7 @@
 #include "views/listview.h"
 #include "views/flowtableview.h"
 
-StatusView *StatusViewFactory::create(const QString &id, QObject *parent) const
+StatusView *StatusViewFactory::create(const QString &id, QObject *parent)
 {
     if (id == QLatin1String("list")) {
         return new ListStatusView(parent);
