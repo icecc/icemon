@@ -52,6 +52,13 @@ public:
         _JobColumnCount
     };
 
+    enum JobType
+    {
+        AllJobs,
+        LocalJobs,
+        RemoteJobs
+    };
+
     explicit JobListModel(QObject *parent = nullptr);
 
     Monitor *monitor() const;
@@ -73,6 +80,11 @@ public:
 
     Job jobForIndex(const QModelIndex &index) const;
     QModelIndex indexForJob(const Job &job, int column);
+
+    void setHostId(unsigned int hostid);
+    unsigned int hostId() const { return m_hostid; }
+    void setJobType(JobType type) { m_jobType = type; }
+    JobType jobType() const { return m_jobType; }
 
 private Q_SLOTS:
     void slotExpireFinishedJobs();
@@ -122,6 +134,8 @@ private:
     FinishedJobs m_finishedJobs;
 
     QTimer *m_expireTimer;
+    JobType m_jobType;
+    unsigned int m_hostid;
 };
 
 class JobListSortFilterProxyModel
@@ -130,6 +144,7 @@ class JobListSortFilterProxyModel
     Q_OBJECT
 public:
     JobListSortFilterProxyModel(QObject *parent = nullptr);
+
 protected:
     virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
 };

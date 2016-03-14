@@ -31,6 +31,7 @@ class JobListView;
 class JobListModel;
 class HostListView;
 class QSortFilterProxyModel;
+class JobListSortFilterProxyModel;
 
 class DetailedHostView
     : public StatusView
@@ -48,6 +49,9 @@ public:
 
     void checkNode(unsigned int hostid) override;
 
+private slots:
+    void slotNodeActivated();
+
 private:
     void createKnownHosts();
 
@@ -59,11 +63,11 @@ private:
 
     JobListModel *mLocalJobsModel;
     JobListView *mLocalJobsView;
-    QSortFilterProxyModel *mSortedLocalJobsModel;
+    JobListSortFilterProxyModel *mSortedLocalJobsModel;
 
     JobListModel *mRemoteJobsModel;
     JobListView *mRemoteJobsView;
-    QSortFilterProxyModel *mSortedRemoteJobsModel;
+    JobListSortFilterProxyModel *mSortedRemoteJobsModel;
 };
 
 #endif
