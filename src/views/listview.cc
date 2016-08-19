@@ -27,7 +27,6 @@
 #include "models/joblistmodel.h"
 
 #include <QBoxLayout>
-#include <QSortFilterProxyModel>
 
 ListStatusView::ListStatusView(QObject *parent)
     : StatusView(parent)
@@ -35,7 +34,7 @@ ListStatusView::ListStatusView(QObject *parent)
     , mJobsListView(new JobListView(m_widget.data()))
 {
     mJobsListModel = new JobListModel(this);
-    mSortedJobsListModel = new QSortFilterProxyModel(this);
+    mSortedJobsListModel = new JobListSortFilterProxyModel(this);
     mSortedJobsListModel->setDynamicSortFilter(true);
     mSortedJobsListModel->setSourceModel(mJobsListModel);
 
