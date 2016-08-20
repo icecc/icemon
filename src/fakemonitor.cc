@@ -35,6 +35,7 @@ int JOB_ID = 0;
 
 const int MAX_JOB_COUNT = 10;
 const int MAX_HOST_COUNT = 40;
+const int MAX_JOB_SIZE = 1024 * 1024 * 24;
 
 const QStringList JOB_FILENAMES(QStringList()
     << QStringLiteral("/tmp/filename.cc")
@@ -96,6 +97,10 @@ void FakeMonitor::update()
     time(&rawtime);
     job.setStartTime(rawtime);
     job.setState(Job::Compiling);
+    job.in_compressed = qrand() % MAX_JOB_SIZE * 0.75; // random factor
+    job.in_uncompressed = qrand() % MAX_JOB_SIZE;
+    job.in_compressed = qrand() % MAX_JOB_SIZE ;
+    job.in_uncompressed = qrand() % MAX_JOB_SIZE * 0.75; // random factor
     const int serverId = ((JOB_ID + 1) % MAX_HOST_COUNT) + 1;
     job.setServer(serverId);
     emit jobUpdated(job);
