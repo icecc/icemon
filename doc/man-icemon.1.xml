@@ -59,6 +59,14 @@ network and monitor its traffic.</para>
 </para></listitem>
 </varlistentry>
 
+
+<varlistentry>
+<term><option>-s</option>, <option>--scheduler</option>
+<parameter>host-name</parameter></term>
+<listitem><para>The hostname of the Icecream scheduler &icemon; should connect to.
+</para></listitem>
+</varlistentry>
+
 </variablelist>
 
 </refsect1>
