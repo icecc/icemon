@@ -39,6 +39,16 @@ void Monitor::setCurrentNetname(const QByteArray &netname)
     m_currentNetname = netname;
 }
 
+QByteArray Monitor::currentSchedname() const
+{
+    return m_currentSchedname;
+}
+
+void Monitor::setCurrentSchedname(const QByteArray &schedname)
+{
+    m_currentSchedname = schedname;
+}
+
 Monitor::SchedulerState Monitor::schedulerState() const
 {
     return m_schedulerState;

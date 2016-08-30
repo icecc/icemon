@@ -51,6 +51,9 @@ public
     QByteArray currentNetname() const;
     void setCurrentNetname(const QByteArray &);
 
+    QByteArray currentSchedname() const;
+    void setCurrentSchedname(const QByteArray &);
+
     SchedulerState schedulerState() const;
 
     virtual QList<Job> jobHistory() const;
@@ -70,6 +73,7 @@ Q_SIGNALS:
 private:
     HostInfoManager *m_hostInfoManager;
     QByteArray m_currentNetname;
+    QByteArray m_currentSchedname;
     SchedulerState m_schedulerState;
 };
 
