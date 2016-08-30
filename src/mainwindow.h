@@ -46,6 +46,7 @@ public:
     virtual ~MainWindow();
 
     void setCurrentNet(const QByteArray &netname);
+    void setCurrentSched(const QByteArray &schedname);
 
     Monitor *monitor() const;
     StatusView *view() const;

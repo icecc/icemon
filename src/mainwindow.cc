@@ -354,9 +354,14 @@ void MainWindow::updateJobStats()
     m_jobStatsWidget->setVisible(true);
 }
 
-void MainWindow::setCurrentNet(const QByteArray &netName)
+void MainWindow::setCurrentNet(const QByteArray &netname)
 {
-    m_monitor->setCurrentNetname(netName);
+    m_monitor->setCurrentNetname(netname);
+}
+
+void MainWindow::setCurrentSched(const QByteArray &schedname)
+{
+    m_monitor->setCurrentSchedname(schedname);
 }
 
 void MainWindow::handleViewModeActionTriggered(QAction *action)
