@@ -43,6 +43,10 @@ int main(int argc, char **argv)
         QCoreApplication::translate("main", "Icecream network name."),
         QCoreApplication::translate("main", "name", "network name"));
     parser.addOption(netnameOption);
+    QCommandLineOption schednameOption(QStringList() << QStringLiteral("s") << QStringLiteral("scheduler"),
+        QCoreApplication::translate("main", "Icecream scheduler hostname"),
+        QCoreApplication::translate("main", "hostname", "scheduler hostname"));
+    parser.addOption(schednameOption);
     QCommandLineOption testmodeOption(QStringLiteral("testmode"),
         QCoreApplication::translate("main", "Testing mode."));
     parser.addOption(testmodeOption);
@@ -50,10 +54,14 @@ int main(int argc, char **argv)
     parser.process(app);
 
     const QByteArray netName = parser.value(netnameOption).toLatin1();
+    const QByteArray schedName = parser.value(schednameOption).toLatin1();
 
     MainWindow mainWindow;
     if (!netName.isEmpty()) {
         mainWindow.setCurrentNet(netName);
+    }
+    if (!schedName.isEmpty()) {
+        mainWindow.setCurrentSched(schedName);
     }
     if (parser.isSet(testmodeOption)) {
         mainWindow.setTestModeEnabled(true);
@@ -62,4 +70,3 @@ int main(int argc, char **argv)
 
     return app.exec();
 }
-
