@@ -128,7 +128,7 @@ private:
         uint time;
         uint jobId;
     };
-    typedef QVector<FinishedJob> FinishedJobs;
+    using FinishedJobs = QVector<JobListModel::FinishedJob>;
 
     /// List with job ids that are expired
     FinishedJobs m_finishedJobs;

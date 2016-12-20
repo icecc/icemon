@@ -161,7 +161,7 @@ private:
 
     GanttTimeScaleWidget *mTimeScale;
 
-    typedef QList<GanttProgress *> SlotList;
+    using SlotList = QList<GanttProgress *>;
     typedef QMap<unsigned int, SlotList> NodeMap;
     NodeMap mNodeMap;
     typedef QMap<unsigned int, int> AgeMap;

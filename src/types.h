@@ -23,6 +23,6 @@
 
 #include <qglobal.h>
 
-typedef unsigned int HostId;
+using HostId = unsigned int;
 
 #endif
