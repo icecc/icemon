@@ -582,14 +582,18 @@ bool StarViewGraphicsView::event(QEvent *e)
         if (hostInfo) {
             QToolTip::showText(gp + QPoint(10, 10), hostInfo->toolTip(), this, itemRect);
         } else {
-            QToolTip::showText(gp + QPoint(10, 10),
-                               "<h3><b>" + tr("Scheduler") + "</b></h3>"
-                               "<table>" +
-                               "<tr><td>" + tr("Host: %1").arg(m_starView->hostInfoManager()->schedulerName()) + "</td></tr>" +
-                               "<tr><td>" + tr("Network name: %1").arg(m_starView->hostInfoManager()->networkName()) + "</td></tr>" +
-                               "</table>"
-                               "<p><img align=\"right\" src=\":/images/icemonnode.png\"/></p>",
-                               this, itemRect);
+            QToolTip::showText(gp + QPoint(10, 10), QStringLiteral(
+                "<h3><b>%1</b></h3>"
+                "<table>"
+                "<tr><td>%2</td></tr>"
+                "<tr><td>%3</td></tr>"
+                "</table>"
+                "<p><img align=\"right\" src=\":/images/icemonnode.png\"/></p>")
+                     .arg(tr("Scheduler"),
+                          tr("Host: %1").arg(m_starView->hostInfoManager()->schedulerName()),
+                          tr("Network name: %1").arg(m_starView->hostInfoManager()->networkName())
+                         ),
+                this, itemRect);
         }
     } else {
         QToolTip::hideText();
