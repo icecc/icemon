@@ -8,6 +8,8 @@ Icemon is an Icecream GUI monitor.
 
 ![Screenshot: Star View](https://github.com/icecc/icemon/wiki/screenshots/icemon-starview.png)
 
+[![Build Status](https://travis-ci.org/icecc/icemon.svg?branch=master)](https://travis-ci.org/icecc/icemon)
+
 Installation
 ------------
 
