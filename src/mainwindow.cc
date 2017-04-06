@@ -292,10 +292,10 @@ void MainWindow::updateSchedulerState(Monitor::SchedulerState state)
 void MainWindow::updateJob(const Job &job)
 {
     if (job.isActive()) {
-        m_activeJobs[job.jobId()] = job;
+        m_activeJobs[job.id] = job;
         updateJobStats();
     } else if (job.isDone()) {
-        m_activeJobs.remove(job.jobId());
+        m_activeJobs.remove(job.id);
         updateJobStats();
     }
 }
@@ -316,7 +316,7 @@ void MainWindow::updateJobStats()
         }
     }
     for (JobList::const_iterator i = m_activeJobs.constBegin(); i != m_activeJobs.constEnd(); ++i) {
-        const HostInfo *server = hostMap[i.value().server() != 0 ? i.value().server() : i.value().client()];
+        const HostInfo *server = hostMap[i.value().server != 0 ? i.value().server : i.value().client];
         if (!server->isOffline() && !server->noRemote()) {
             ++perPlatformStats[server->platform()].jobs;
         }

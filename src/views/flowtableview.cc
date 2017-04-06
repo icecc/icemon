@@ -51,12 +51,12 @@ void ProgressWidget::paintEvent(QPaintEvent *)
         m_isVirgin = false;
     }
 
-    if (m_currentJob.state() == Job::Compiling ||
-        m_currentJob.state() == Job::LocalOnly) {
+    if (m_currentJob.state == Job::Compiling ||
+        m_currentJob.state == Job::LocalOnly) {
         QLinearGradient gradient;
         gradient.setCoordinateMode(QGradient::ObjectBoundingMode);
         gradient.setColorAt(0, palette().base().color());
-        gradient.setColorAt(1, m_statusView->hostColor(m_currentJob.client()));
+        gradient.setColorAt(1, m_statusView->hostColor(m_currentJob.client));
         p.fillRect(width() - 1, 0, 1, height(), gradient);
     } else {
         p.fillRect(width() - 1, 0, 1, height(), palette().base().color());
@@ -92,7 +92,7 @@ FlowTableView::FlowTableView(QObject *parent)
 
 void FlowTableView::update(const Job &job)
 {
-    int serverId = job.server();
+    int serverId = job.server;
     if (serverId == 0) {
         return;
     }
@@ -106,14 +106,14 @@ void FlowTableView::update(const Job &job)
     QTableWidgetItem *fileNameItem = m_widget->item(serverRow, 1);
     QTableWidgetItem *jobStateItem = m_widget->item(serverRow, 3);
 
-    if (job.state() == Job::Finished) {
+    if (job.state == Job::Finished) {
         fileNameItem->setText(QLatin1String(""));
         jobStateItem->setText(QLatin1String(""));
     } else {
-        QString filePath = job.fileName();
+        QString filePath = job.fileName;
         QString fileName = filePath.mid(filePath.lastIndexOf(QLatin1Char('/')) + 1);
         fileNameItem->setText(fileName);
-        fileNameItem->setToolTip(job.fileName());
+        fileNameItem->setToolTip(job.fileName);
         fileNameItem->setFlags(Qt::ItemIsEnabled);
         jobStateItem->setText(job.stateAsString());
         jobStateItem->setToolTip(job.stateAsString());
@@ -127,9 +127,9 @@ void FlowTableView::update(const Job &job)
     // update the host column for the server requesting the job
     QTableWidgetItem *hostNameItem = m_widget->item(serverRow, 0);
     int usageCount = hostNameItem->data(Qt::UserRole).toInt();
-    if (job.state() == Job::LocalOnly || job.state() == Job::Compiling) {
+    if (job.state == Job::LocalOnly || job.state == Job::Compiling) {
         ++usageCount;
-    } else if (job.state() == Job::Finished || job.state() == Job::Failed) {
+    } else if (job.state == Job::Finished || job.state == Job::Failed) {
         --usageCount;
     }
 

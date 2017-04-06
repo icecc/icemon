@@ -124,16 +124,16 @@ void JobListModel::updateJob(const Job &job)
         m_jobs[index] = job;
         emit dataChanged(indexForJob(job, 0), indexForJob(job, _JobColumnCount - 1));
     } else {
-        if (m_hostid && m_jobType == RemoteJobs && job.server() != m_hostid)
+        if (m_hostid && m_jobType == RemoteJobs && job.server != m_hostid)
             return;
-        if (m_hostid && m_jobType == LocalJobs && job.client() != m_hostid)
+        if (m_hostid && m_jobType == LocalJobs && job.client != m_hostid)
             return;
         beginInsertRows(QModelIndex(), m_jobs.size(), m_jobs.size());
         m_jobs << job;
         endInsertRows();
     }
 
-    const bool finished = (job.state() == Job::Finished || job.state() == Job::Failed);
+    const bool finished = (job.state == Job::Finished || job.state == Job::Failed);
     if (finished) {
         expireItem(job);
     }
@@ -206,13 +206,13 @@ QVariant JobListModel::data(const QModelIndex &index, int role) const
     if (role == Qt::DisplayRole) {
         switch (column) {
         case JobColumnID:
-            return job.jobId();
+            return job.id;
         case JobColumnFilename:
-            return trimFilePath(job.fileName(), m_numberOfFilePathParts);
+            return trimFilePath(job.fileName, m_numberOfFilePathParts);
         case JobColumnClient:
-            return manager->nameForHost(job.client());
+            return manager->nameForHost(job.client);
         case JobColumnServer:
-            return manager->nameForHost(job.server());
+            return manager->nameForHost(job.server);
         case JobColumnState:
             return job.stateAsString();
         case JobColumnReal:
@@ -270,7 +270,7 @@ public:
 
     bool operator()(const Job &job) const
     {
-        return job.jobId() == m_jobId;
+        return job.id == m_jobId;
     }
 
 private:
@@ -302,7 +302,7 @@ void JobListModel::slotExpireFinishedJobs()
 
 void JobListModel::removeItem(const Job &job)
 {
-    removeItemById(job.jobId());
+    removeItemById(job.id);
 }
 
 void JobListModel::removeItemById(unsigned int jobId)
@@ -322,7 +322,7 @@ void JobListModel::expireItem(const Job &job)
     }
 
     const uint currentTime = QDateTime::currentDateTime().toTime_t();
-    m_finishedJobs.push_back(FinishedJob(currentTime, job.jobId()));
+    m_finishedJobs.push_back(FinishedJob(currentTime, job.id));
 
     if (!m_expireTimer->isActive()) {
         m_expireTimer->start(1000);

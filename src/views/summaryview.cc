@@ -165,8 +165,8 @@ void SummaryViewItem::updateStats()
 
 void SummaryViewItem::updateClient(const Job &job)
 {
-    if (job.state() == Job::Finished) {
-	m_totalRequestedJobsLength += job.getRealTime();
+    if (job.state == Job::Finished) {
+	m_totalRequestedJobsLength += job.real_msec;
 	m_requestedJobCount++;
 	updateStats();
     }
@@ -174,7 +174,7 @@ void SummaryViewItem::updateClient(const Job &job)
 
 void SummaryViewItem::update(const Job &job)
 {
-    switch (job.state()) {
+    switch (job.state) {
     case Job::Compiling:
     {
         m_jobCount++;
@@ -185,15 +185,15 @@ void SummaryViewItem::update(const Job &job)
             ++it;
 
         if (it != m_jobHandlers.end()) {
-            const QColor nodeColor = m_view->hostInfoManager()->hostColor(job.client());
+            const QColor nodeColor = m_view->hostInfoManager()->hostColor(job.client);
             QPalette palette = (*it).stateWidget->palette();
             palette.setColor((*it).stateWidget->foregroundRole(), nodeColor);
             (*it).stateWidget->setPalette(palette);
-            const QString fileName = job.fileName().section(QLatin1Char('/'), -1);
-            const QString hostName = m_view->nameForHost(job.client());
+            const QString fileName = job.fileName.section(QLatin1Char('/'), -1);
+            const QString hostName = m_view->nameForHost(job.client);
             (*it).sourceLabel->setText(QStringLiteral("%1 (%2)").arg(fileName).arg(hostName));
             (*it).stateLabel->setText(job.stateAsString());
-            (*it).currentFile = job.fileName();
+            (*it).currentFile = job.fileName;
         }
         break;
     }
@@ -201,7 +201,7 @@ void SummaryViewItem::update(const Job &job)
     case Job::Failed:
     {
         QVector<JobHandler>::Iterator it = m_jobHandlers.begin();
-        while (it != m_jobHandlers.end() && (*it).currentFile != job.fileName())
+        while (it != m_jobHandlers.end() && (*it).currentFile != job.fileName)
             ++it;
 
         if (it != m_jobHandlers.end()) {
@@ -212,8 +212,8 @@ void SummaryViewItem::update(const Job &job)
             (*it).sourceLabel->clear();
             (*it).stateLabel->setText(job.stateAsString());
             (*it).currentFile = QString();
-	    if (job.state() == Job::Finished) {
-	      m_totalJobsLength += job.getRealTime();
+	    if (job.state == Job::Finished) {
+	      m_totalJobsLength += job.real_msec;
 	      m_finishedJobCount++;
 	      updateStats();
 	    }
@@ -297,19 +297,19 @@ QWidget *SummaryView::widget() const
 
 void SummaryView::update(const Job &job)
 {
-    if (!job.server()) {
+    if (!job.server) {
         return;
     }
 
-    SummaryViewItem *i = m_items[job.server()];
+    SummaryViewItem *i = m_items[job.server];
     if (!i) {
-        i = new SummaryViewItem(job.server(), m_base, this, m_layout);
-        m_items.insert(job.server(), i);
+        i = new SummaryViewItem(job.server, m_base, this, m_layout);
+        m_items.insert(job.server, i);
         m_widget->widget()->setMinimumHeight(m_widget->widget()->sizeHint().height());
     }
     i->update(job);
 
-    i = m_items[job.client()];
+    i = m_items[job.client];
     if (i) {
       i->updateClient(job);
     }

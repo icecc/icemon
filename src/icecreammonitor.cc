@@ -242,7 +242,7 @@ void IcecreamMonitor::handle_local_begin(Msg *_m)
     m_rememberedJobs[m->job_id] = Job(m->job_id, m->hostid,
                                       QString::fromStdString(m->file),
                                       QStringLiteral("C++"));
-    m_rememberedJobs[m->job_id].setState(Job::LocalOnly);
+    m_rememberedJobs[m->job_id].state = Job::LocalOnly;
     emit jobUpdated(m_rememberedJobs[m->job_id]);
 }
 
@@ -259,7 +259,7 @@ void IcecreamMonitor::handle_local_done(Msg *_m)
         return;
     }
 
-    (*it).setState(Job::Finished);
+    (*it).state = Job::Finished;
     emit jobUpdated(*it);
 
     if (m_rememberedJobs.size() > 3000) {   // now remove 1000
@@ -310,9 +310,9 @@ void IcecreamMonitor::handle_job_begin(Msg *_m)
         return;
     }
 
-    (*it).setServer(m->hostid);
-    (*it).setStartTime(m->stime);
-    (*it).setState(Job::Compiling);
+    (*it).server = m->hostid;
+    (*it).startTime = m->stime;
+    (*it).state = Job::Compiling;
 
     emit jobUpdated(*it);
 }
@@ -332,9 +332,9 @@ void IcecreamMonitor::handle_job_done(Msg *_m)
 
     (*it).exitcode = m->exitcode;
     if (m->exitcode) {
-        (*it).setState(Job::Failed);
+        (*it).state = Job::Failed;
     } else {
-        (*it).setState(Job::Finished);
+        (*it).state = Job::Finished;
         (*it).real_msec = m->real_msec;
         (*it).user_msec = m->user_msec;
         (*it).sys_msec = m->sys_msec;     /* system time used */

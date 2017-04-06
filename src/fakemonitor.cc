@@ -95,15 +95,15 @@ void FakeMonitor::update()
     Job job(JOB_ID++, clientId, fileName);
     time_t rawtime;
     time(&rawtime);
-    job.setStartTime(rawtime);
-    job.setState(Job::Compiling);
+    job.startTime = rawtime;
+    job.state = Job::Compiling;
     job.in_compressed = qrand() % MAX_JOB_SIZE * 0.75; // random factor
     job.in_uncompressed = qrand() % MAX_JOB_SIZE;
     job.in_compressed = qrand() % MAX_JOB_SIZE ;
     job.in_uncompressed = qrand() % MAX_JOB_SIZE * 0.75; // random factor
     job.real_msec = 200;
     const int serverId = ((JOB_ID + 1) % MAX_HOST_COUNT) + 1;
-    job.setServer(serverId);
+    job.server = serverId;
     emit jobUpdated(job);
     m_activeJobs << job;
 
@@ -111,7 +111,7 @@ void FakeMonitor::update()
     if (m_activeJobs.size() > MAX_JOB_COUNT) {
         Job job = m_activeJobs.first();
         m_activeJobs.removeFirst();
-        job.setState(Job::Finished);
+        job.state = Job::Finished;
         emit jobUpdated(job);
     }
 

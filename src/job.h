@@ -37,41 +37,22 @@ public:
                  const QString &filename = QString(),
                  const QString &lang = QString());
 
-    bool operator==(const Job &rhs) const { return m_id == rhs.m_id; }
-    bool operator!=(const Job &rhs) const { return m_id != rhs.m_id; }
-    int operator<(const Job &rhs) const { return m_id < rhs.m_id; }
+    bool operator==(const Job &rhs) const { return id == rhs.id; }
+    bool operator!=(const Job &rhs) const { return id != rhs.id; }
+    int operator<(const Job &rhs) const { return id < rhs.id; }
 
-    unsigned int jobId() const { return m_id; }
-    QString fileName() const { return m_fileName; }
-    unsigned int client() const { return m_client; }
-    unsigned int server() const { return m_server; }
-    State state() const { return m_state; }
     QString stateAsString() const;
-    time_t stime() const { return m_stime; }
-    unsigned int getRealTime() const { return real_msec; }
-    bool isDone() const { return m_state == Finished || m_state == Failed; }
-    bool isActive() const { return m_state == LocalOnly || m_state == Compiling; }
+    bool isDone() const { return state == Finished || state == Failed; }
+    bool isActive() const { return state == LocalOnly || state == Compiling; }
 
-    void setServer(unsigned int hostid) {
-        m_server = hostid;
-    }
-    void setStartTime(time_t t) {
-        m_stime = t;
-    }
-    void setState(State ss) {
-        m_state = ss;
-    }
+    unsigned int id;
+    QString fileName;
+    unsigned int server;
+    unsigned int client;
+    QString lang;
+    State state;
+    time_t startTime;
 
-private:
-    unsigned int m_id;
-    QString m_fileName;
-    unsigned int m_server;
-    unsigned int m_client;
-    QString m_lang;
-    State m_state;
-    time_t m_stime;
-
-public:
     unsigned int real_msec;  /* real time it used */
     unsigned int user_msec;  /* user time used */
     unsigned int sys_msec;   /* system time used */
@@ -92,7 +73,7 @@ class IdleJob
 {
 public:
     IdleJob()
-        : Job() { setState(Job::Idle); }
+        : Job() { state = Job::Idle; }
 };
 
 typedef QMap<unsigned int, Job> JobList;

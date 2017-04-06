@@ -156,14 +156,14 @@ void GanttProgress::adjustGraph()
 void GanttProgress::update(const Job &job)
 {
     if (!m_jobs.isEmpty() && m_jobs.first().job == job) {
-        if (job.state() == Job::Finished || job.state() == Job::Failed) {
+        if (job.state == Job::Finished || job.state == Job::Failed) {
             Job j = IdleJob();
             m_jobs.prepend(JobData(j, mClock));
             mIsFree = true;
         }
     } else {
         m_jobs.prepend(JobData(job, mClock));
-        mIsFree = (job.state() == Job::Idle);
+        mIsFree = (job.state == Job::Idle);
     }
 }
 
@@ -197,7 +197,7 @@ void GanttProgress::drawGraph(QPainter &p)
 
         if (xWidth > 4 && height() > 4) {
             int width = xWidth - 4;
-            QString s = (*it).job.fileName();
+            QString s = (*it).job.fileName;
             if (!s.isEmpty()) {
                 s = s.mid(s.lastIndexOf(QLatin1Char('/')) + 1, s.length());
 
@@ -247,11 +247,11 @@ void GanttProgress::drawGraph(QPainter &p)
 
 QColor GanttProgress::colorForStatus(const Job &job) const
 {
-    if (job.state() == Job::Idle) {
+    if (job.state == Job::Idle) {
         return Qt::gray;
     } else {
-        QColor c = mStatusView->hostColor(job.client());
-        if (job.state() == Job::LocalOnly) {
+        QColor c = mStatusView->hostColor(job.client);
+        if (job.state == Job::LocalOnly) {
             return c.light();
         } else {
             return c;
@@ -319,33 +319,33 @@ void GanttStatusView::update(const Job &job)
         return;
     }
 
-    if (job.state() == Job::WaitingForCS) {
+    if (job.state == Job::WaitingForCS) {
         return;
     }
 
     QMap<unsigned int, GanttProgress *>::Iterator it;
 
-    it = mJobMap.find(job.jobId());
+    it = mJobMap.find(job.id);
 
     if (it != mJobMap.end()) {
         it.value()->update(job);
-        if (job.state() == Job::Finished || job.state() == Job::Failed) {
+        if (job.state == Job::Finished || job.state == Job::Failed) {
             mJobMap.erase(it);
         }
         return;
     }
 
-    if (job.state() == Job::Finished || job.state() == Job::Failed) {
+    if (job.state == Job::Finished || job.state == Job::Failed) {
         return;
     }
 
     GanttProgress *slot = nullptr;
 
     unsigned int processor;
-    if (job.state() == Job::LocalOnly) {
-        processor = job.client();
+    if (job.state == Job::LocalOnly) {
+        processor = job.client;
     } else {
-        processor = job.server();
+        processor = job.server;
     }
 
     if (!processor) {
@@ -371,7 +371,7 @@ void GanttStatusView::update(const Job &job)
     }
 
     Q_ASSERT(slot);
-    mJobMap.insert(job.jobId(), slot);
+    mJobMap.insert(job.id, slot);
     slot->update(job);
     mAgeMap[processor] = 0;
 }

@@ -124,13 +124,13 @@ QColor StatusView::hostColor(HostId id)
 unsigned int StatusView::processor(const Job &job)
 {
     unsigned int ret = 0;
-    if (job.state() == Job::LocalOnly || job.state() == Job::WaitingForCS) {
-        ret = job.client();
+    if (job.state == Job::LocalOnly || job.state == Job::WaitingForCS) {
+        ret = job.client;
     } else {
-        ret = job.server();
+        ret = job.server;
         if (!ret) {
-            //            Q_ASSERT( job.state() == Job::Finished );
-            ret = job.client();
+            //            Q_ASSERT( job.m_state == Job::Finished );
+            ret = job.client;
         }
     }
     Q_ASSERT(ret);

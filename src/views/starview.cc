@@ -265,17 +265,17 @@ void HostItem::setCenterPos(double x, double y)
 
 void HostItem::update(const Job &job)
 {
-    setIsCompiling(job.state() == Job::Compiling);
-    setClient(job.client());
+    setIsCompiling(job.state == Job::Compiling);
+    setClient(job.client);
 
-    if (job.state() == Job::WaitingForCS) {
+    if (job.state == Job::WaitingForCS) {
         return;
     }
 
-    bool finished = job.state() == Job::Finished ||
-                    job.state() == Job::Failed;
+    bool finished = job.state == Job::Finished ||
+                    job.state == Job::Failed;
 
-    JobList::Iterator it = m_jobs.find(job.jobId());
+    JobList::Iterator it = m_jobs.find(job.id);
     bool newJob = (it == m_jobs.end());
 
     if (newJob && finished) {
@@ -286,7 +286,7 @@ void HostItem::update(const Job &job)
     }
 
     if (newJob) {
-        m_jobs.insert(job.jobId(), job);
+        m_jobs.insert(job.id, job);
         createJobHalo(job);
         updateName();
     } else if (finished) {
@@ -335,8 +335,8 @@ void HostItem::updateHalos()
         QGraphicsEllipseItem *halo = it.value();
         halo->setZValue(70 - count);
         halo->setRect(halo->x() - baseXMargin() - count * HaloMargin, halo->y() - baseYMargin() - count * HaloMargin, mBaseWidth + count * HaloMargin * 2, mBaseHeight + count * HaloMargin * 2);
-        halo->setBrush(mHostInfoManager->hostColor(it.key().client()));
-        halo->setPen(mHostInfoManager->hostColor(it.key().client()).darker(PenDarkerFactor));
+        halo->setBrush(mHostInfoManager->hostColor(it.key().client));
+        halo->setPen(mHostInfoManager->hostColor(it.key().client).darker(PenDarkerFactor));
         ++count;
     }
 }
@@ -382,7 +382,7 @@ void StarView::writeSettings()
 
 void StarView::update(const Job &job)
 {
-    if (job.state() == Job::WaitingForCS) {
+    if (job.state == Job::WaitingForCS) {
         m_widget->drawNodeStatus();
         return;
     }
@@ -399,15 +399,15 @@ void StarView::update(const Job &job)
 
     hostItem->update(job);
 
-    bool finished = job.state() == Job::Finished || job.state() == Job::Failed;
+    bool finished = job.state == Job::Finished || job.state == Job::Failed;
 
     QMap<unsigned int, HostItem *>::Iterator it;
-    it = mJobMap.find(job.jobId());
+    it = mJobMap.find(job.id);
     if (it != mJobMap.end()) {
         (*it)->update(job);
         if (finished) {
             mJobMap.erase(it);
-            unsigned int clientid = job.client();
+            unsigned int clientid = job.client;
             HostItem *clientItem = findHostItem(clientid);
             if (clientItem) {
                 clientItem->setIsActiveClient(false);
@@ -418,11 +418,11 @@ void StarView::update(const Job &job)
     }
 
     if (!finished) {
-        mJobMap.insert(job.jobId(), hostItem);
+        mJobMap.insert(job.id, hostItem);
     }
 
-    if (job.state() == Job::Compiling) {
-        unsigned int clientid = job.client();
+    if (job.state == Job::Compiling) {
+        unsigned int clientid = job.client;
         HostItem *clientItem = findHostItem(clientid);
         if (clientItem) {
             clientItem->setClient(clientid);

@@ -26,17 +26,17 @@
 #include <QApplication>
 
 Job::Job(unsigned int id, unsigned int client, const QString &filename, const QString &lang)
-    : m_id(id)
-    , m_fileName(filename)
-    , m_lang(lang)
-    , m_state(WaitingForCS)
-    , m_client(client)
+    : id(id)
+    , fileName(filename)
+    , server(0)
+    , client(client)
+    , lang(lang)
+    , state(WaitingForCS)
     , real_msec(0)
     , user_msec(0)
     , sys_msec(0)
     , pfaults(0)
     , exitcode(0)
-    , m_server(0)
     , in_compressed(0)
     , in_uncompressed(0)
     , out_compressed(0)
@@ -46,7 +46,7 @@ Job::Job(unsigned int id, unsigned int client, const QString &filename, const QS
 
 QString Job::stateAsString() const
 {
-    switch (m_state) {
+    switch (state) {
     case WaitingForCS:
         return QApplication::tr("Waiting");
         break;
@@ -71,10 +71,10 @@ QString Job::stateAsString() const
 
 QDebug operator<<(QDebug dbg, const Job &job)
 {
-    return dbg.nospace() << "Job[id=" << job.jobId()
-           << ", client=" << job.client()
-           << ", server=" << job.server()
-           << ", fileName=" << job.fileName()
+    return dbg.nospace() << "Job[id=" << job.id
+           << ", client=" << job.client
+           << ", server=" << job.server
+           << ", fileName=" << job.fileName
            << ", state=" << job.stateAsString()
            << "]";
 }
