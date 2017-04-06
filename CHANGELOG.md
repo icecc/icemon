@@ -1,3 +1,22 @@
+## 3.1.0 (2017-04-07)
+
+Features:
+
+- Summary view: Multiple improvements (#23)
+    - Displays average time for each submitted jobs
+    - Added display of average build time for finished jobs
+- Added scheduler hostname option (#27)
+
+Bugfixes:
+
+- Fixed summary view stateWidget color not updated correctly (#23)
+- ListView: Sorted file sizes correctly (643abfbbdeed806aa5a08f0c1cfcdaf7ba79d748)
+- Fixed filtering in detailed host view (#26)
+
+Internal Changes:
+
+- Lots of cleanups, more strict compiler flags, etc.
+
 ## 3.0.1 (2016-02-06)
 
 Bugfixes:
