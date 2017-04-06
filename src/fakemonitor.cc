@@ -81,6 +81,7 @@ void FakeMonitor::createHostInfo(HostId id)
     info.setName(HOST_NAMES[id % HOST_NAMES.length()] + QString::number(id));
     info.setColor(info.createColor(info.name()));
     info.setOffline(false);
+    info.setNoRemote(false);
     info.setPlatform(randomPlatform());
     info.setServerLoad(1.0);
     info.setServerSpeed(10);
