@@ -46,7 +46,7 @@ public:
         NoOptions = 0, ///< No option
         RememberJobsOption = 1 ///< Show old jobs in case this view gets reactivated
     };
-    Q_DECLARE_FLAGS(Options, Option);
+    Q_DECLARE_FLAGS(Options, Option)
 
     StatusView(QObject *parent = nullptr);
     virtual ~StatusView();
