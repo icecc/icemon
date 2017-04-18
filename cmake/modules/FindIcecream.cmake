@@ -26,7 +26,7 @@ else ()
   if(NOT WIN32)
     # use pkg-config to get the directories and then use these values
     # in the FIND_PATH() and FIND_LIBRARY() calls
-    find_package(PkgConfig)
+    find_package(PkgConfig REQUIRED)
     pkg_check_modules(PC_ICECC icecc)
     # The icecream lib may optionally need linking to -lcap-ng, so dig it out
     # of pkg-config data.

@@ -51,6 +51,7 @@ public:
     void setOffline(bool offline) { mOffline = offline; }
     bool isOffline() const { return mOffline; }
 
+    void setNoRemote(bool noRemote) { mNoRemote = noRemote; }
     bool noRemote() const { return mNoRemote; }
 
     typedef QMap<QString, QString> StatsMap;
