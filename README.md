@@ -15,7 +15,7 @@ Installation
 
 To compile icemon, install, the icecc development package, e.g. for Debian/Ubuntu:
 
-    $ apt-get install libicecc-dev
+    $ apt-get install pkg-config libicecc-dev
 
 Finally, make sure you have g++, Qt and cmake installed
 
