@@ -53,7 +53,7 @@ QString randomPlatform()
 {
     static const QStringList hostNames = {QStringLiteral("Linux 2.6"), QStringLiteral("Linux 3.2"), QStringLiteral("Linux 3.6")};
     return hostNames[qrand() % hostNames.size()];
-};
+}
 }
 
 FakeMonitor::FakeMonitor(HostInfoManager *manager, QObject *parent)
