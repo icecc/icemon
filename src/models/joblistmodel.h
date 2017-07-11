@@ -81,8 +81,8 @@ public:
     Job jobForIndex(const QModelIndex &index) const;
     QModelIndex indexForJob(const Job &job, int column);
 
-    void setHostId(unsigned int hostid);
-    unsigned int hostId() const { return m_hostid; }
+    void setHostId(unsigned int hostId);
+    unsigned int hostId() const { return m_hostId; }
     void setJobType(JobType type) { m_jobType = type; }
     JobType jobType() const { return m_jobType; }
 
@@ -135,7 +135,7 @@ private:
 
     QTimer *m_expireTimer;
     JobType m_jobType;
-    unsigned int m_hostid;
+    unsigned int m_hostId;
 };
 
 class JobListSortFilterProxyModel
