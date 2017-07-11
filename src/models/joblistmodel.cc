@@ -83,7 +83,7 @@ JobListModel::JobListModel(QObject *parent)
     , m_expireDuration(-1)
     , m_expireTimer(new QTimer(this))
     , m_jobType(AllJobs)
-    , m_hostid(0)
+    , m_hostId(0)
 {
     connect(m_expireTimer, SIGNAL(timeout()),
             this, SLOT(slotExpireFinishedJobs()));
@@ -109,11 +109,13 @@ void JobListModel::setMonitor(Monitor *monitor)
     }
 }
 
-void JobListModel::setHostId(unsigned int hostid)
+void JobListModel::setHostId(unsigned int hostId)
 {
-    if (m_hostid == hostid)
+    if (m_hostId == hostId) {
         return;
-    m_hostid = hostid;
+    }
+
+    m_hostId = hostId;
     clear();
 }
 
@@ -124,9 +126,9 @@ void JobListModel::updateJob(const Job &job)
         m_jobs[index] = job;
         emit dataChanged(indexForJob(job, 0), indexForJob(job, _JobColumnCount - 1));
     } else {
-        if (m_hostid && m_jobType == RemoteJobs && job.server != m_hostid)
+        if (m_hostId && m_jobType == RemoteJobs && job.server != m_hostId)
             return;
-        if (m_hostid && m_jobType == LocalJobs && job.client != m_hostid)
+        if (m_hostId && m_jobType == LocalJobs && job.client != m_hostId)
             return;
         beginInsertRows(QModelIndex(), m_jobs.size(), m_jobs.size());
         m_jobs << job;
