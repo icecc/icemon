@@ -51,7 +51,7 @@ endmacro()
 if (DOCBOOK_TO_MAN_EXECUTABLE)
     _check_docbook2x_executable()
 else()
-    foreach(test_exec docbook2x-man docbook-to-man docbook2man)
+    foreach(test_exec docbook2x-man docbook-to-man db2x_docbook2man docbook2man)
         find_program(DOCBOOK_TO_MAN_EXECUTABLE
             NAMES ${test_exec}
         )
