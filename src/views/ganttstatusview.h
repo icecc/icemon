@@ -40,7 +40,7 @@ class GanttConfigDialog
 {
     Q_OBJECT
 public:
-    GanttConfigDialog(QWidget *parent);
+    explicit GanttConfigDialog(QWidget *parent);
 
     bool isTimeScaleVisible();
 
@@ -56,7 +56,7 @@ class GanttTimeScaleWidget
 {
     Q_OBJECT
 public:
-    GanttTimeScaleWidget(QWidget *parent);
+    explicit GanttTimeScaleWidget(QWidget *parent);
 
     void setPixelsPerSecond(int);
 
@@ -124,7 +124,7 @@ class GanttStatusView
 {
     Q_OBJECT
 public:
-    GanttStatusView(QObject *parent = nullptr);
+    explicit GanttStatusView(QObject *parent = nullptr);
     ~GanttStatusView() override {}
 
     QString id() const override { return QStringLiteral("gantt"); }

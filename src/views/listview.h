@@ -35,7 +35,7 @@ class ListStatusView
 {
     Q_OBJECT
 public:
-    ListStatusView(QObject *parent);
+    explicit ListStatusView(QObject *parent);
 
     Options options() const override;
     QWidget *widget() const override;

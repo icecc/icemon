@@ -267,7 +267,7 @@ struct find_jobid
     : public std::unary_function<Job, bool>
 {
 public:
-    find_jobid(unsigned int jobId)
+    explicit find_jobid(unsigned int jobId)
         : m_jobId(jobId) {}
 
     bool operator()(const Job &job) const

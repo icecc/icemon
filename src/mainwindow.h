@@ -42,7 +42,7 @@ class MainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
 
     void setCurrentNet(const QByteArray &netname);

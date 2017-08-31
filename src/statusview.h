@@ -48,7 +48,7 @@ public:
     };
     Q_DECLARE_FLAGS(Options, Option)
 
-    StatusView(QObject *parent = nullptr);
+    explicit StatusView(QObject *parent = nullptr);
     ~StatusView() override;
 
     virtual Options options() const;

@@ -45,7 +45,7 @@ class StarViewConfigDialog
     Q_OBJECT
 
 public:
-    StarViewConfigDialog(QWidget *parent);
+    explicit StarViewConfigDialog(QWidget *parent);
 
     int nodesPerRing();
     void setNodesPerRing(int nodes);
@@ -80,7 +80,7 @@ public:
 
     enum { RttiHostItem = 1000 };
 
-    HostItem(const QString &text);
+    explicit HostItem(const QString &text);
     HostItem(HostInfo *hostInfo, HostInfoManager *);
     ~HostItem() override;
 
@@ -176,7 +176,7 @@ class StarView
     Q_OBJECT
 
 public:
-    StarView(QObject *parent);
+    explicit StarView(QObject *parent);
     ~StarView() override;
 
     void readSettings();

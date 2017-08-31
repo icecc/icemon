@@ -122,7 +122,7 @@ private:
 
     struct FinishedJob
     {
-        FinishedJob(uint _time = 0, uint _jobId = 0)
+        explicit FinishedJob(uint _time = 0, uint _jobId = 0)
             : time(_time)
             , jobId(_jobId) {}
         uint time;
@@ -143,7 +143,7 @@ class JobListSortFilterProxyModel
 {
     Q_OBJECT
 public:
-    JobListSortFilterProxyModel(QObject *parent = nullptr);
+    explicit JobListSortFilterProxyModel(QObject *parent = nullptr);
 
 protected:
     bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;

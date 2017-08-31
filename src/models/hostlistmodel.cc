@@ -207,7 +207,7 @@ struct find_hostid
     : public std::unary_function<HostInfo, bool>
 {
 public:
-    find_hostid(unsigned int hostId)
+    explicit find_hostid(unsigned int hostId)
         : m_hostId(hostId) {}
 
     bool operator()(const HostInfo &info) const

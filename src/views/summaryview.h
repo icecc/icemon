@@ -81,7 +81,7 @@ class SummaryView
     Q_OBJECT
 
 public:
-    SummaryView(QObject *parent = nullptr);
+    explicit SummaryView(QObject *parent = nullptr);
     ~SummaryView() override;
 
     QWidget *widget() const override;

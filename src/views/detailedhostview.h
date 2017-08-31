@@ -39,7 +39,7 @@ class DetailedHostView
     Q_OBJECT
 
 public:
-    DetailedHostView(QObject *parent);
+    explicit DetailedHostView(QObject *parent);
 
     void setMonitor(Monitor *monitor) override;
 

@@ -32,7 +32,7 @@ class HostListView
     Q_OBJECT
 
 public:
-    HostListView(QWidget *parent);
+    explicit HostListView(QWidget *parent);
 
     void setModel(QAbstractItemModel *model) override;
 };

@@ -37,7 +37,7 @@ class JobListView
     Q_OBJECT
 
 public:
-    JobListView(QWidget *parent = nullptr);
+    explicit JobListView(QWidget *parent = nullptr);
 
     void setModel(QAbstractItemModel *model) override;
 
