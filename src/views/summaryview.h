@@ -82,12 +82,12 @@ class SummaryView
 
 public:
     SummaryView(QObject *parent = nullptr);
-    ~SummaryView();
+    ~SummaryView() override;
 
-    virtual QWidget *widget() const override;
-    virtual void update(const Job &job) override;
-    virtual void checkNode(unsigned int hostid) override;
-    virtual QString id() const override { return QStringLiteral("summary"); }
+    QWidget *widget() const override;
+    void update(const Job &job) override;
+    void checkNode(unsigned int hostid) override;
+    QString id() const override { return QStringLiteral("summary"); }
 
 private:
     QScopedPointer<SummaryViewScrollArea> m_widget;

@@ -60,7 +60,7 @@ class FlowTableView
 public:
     explicit FlowTableView(QObject *parent);
 
-    virtual QWidget *widget() const override;
+    QWidget *widget() const override;
 
     void update(const Job &job) override;
     void checkNode(unsigned int hostid) override;

@@ -41,9 +41,9 @@ class IcecreamMonitor
 
 public:
     IcecreamMonitor(HostInfoManager *, QObject *parent);
-    ~IcecreamMonitor();
+    ~IcecreamMonitor() override;
 
-    virtual QList<Job> jobHistory() const override;
+    QList<Job> jobHistory() const override;
 
 private slots:
     void slotCheckScheduler();

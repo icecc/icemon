@@ -39,7 +39,7 @@ class JobListView
 public:
     JobListView(QWidget *parent = nullptr);
 
-    virtual void setModel(QAbstractItemModel *model) override;
+    void setModel(QAbstractItemModel *model) override;
 
     bool isClientColumnVisible() const;
     void setClientColumnVisible(bool visible);

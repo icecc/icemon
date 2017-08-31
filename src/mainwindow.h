@@ -43,7 +43,7 @@ class MainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
-    virtual ~MainWindow();
+    ~MainWindow() override;
 
     void setCurrentNet(const QByteArray &netname);
     void setCurrentSched(const QByteArray &schedname);

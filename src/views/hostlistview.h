@@ -34,7 +34,7 @@ class HostListView
 public:
     HostListView(QWidget *parent);
 
-    virtual void setModel(QAbstractItemModel *model) override;
+    void setModel(QAbstractItemModel *model) override;
 };
 
 #endif

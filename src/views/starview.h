@@ -82,7 +82,7 @@ public:
 
     HostItem(const QString &text);
     HostItem(HostInfo *hostInfo, HostInfoManager *);
-    ~HostItem();
+    ~HostItem() override;
 
     void init();
 
@@ -158,8 +158,8 @@ public:
     void drawNodeStatus();
 
 protected:
-    virtual void resizeEvent(QResizeEvent *e) override;
-    virtual bool event(QEvent *event) override;
+    void resizeEvent(QResizeEvent *e) override;
+    bool event(QEvent *event) override;
 
 private:
     void arrangeHostItems();
@@ -177,20 +177,20 @@ class StarView
 
 public:
     StarView(QObject *parent);
-    virtual ~StarView();
+    ~StarView() override;
 
     void readSettings();
     void writeSettings();
 
     void update(const Job &job) override;
-    virtual QWidget *widget() const override;
+    QWidget *widget() const override;
 
     QString id() const override { return QStringLiteral("star"); }
 
     QList<HostItem *> hostItems() const;
     HostItem *findHostItem(unsigned int hostid) const;
 
-    virtual void setMonitor(Monitor *monitor) override;
+    void setMonitor(Monitor *monitor) override;
 
     void checkNode(unsigned int hostid) override;
     void removeNode(unsigned int hostid) override;

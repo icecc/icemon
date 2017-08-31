@@ -107,7 +107,7 @@ class HostInfoManager
 
 public:
     HostInfoManager();
-    ~HostInfoManager();
+    ~HostInfoManager() override;
 
     HostInfo *find(unsigned int hostid) const;
 

@@ -41,7 +41,7 @@ class DetailedHostView
 public:
     DetailedHostView(QObject *parent);
 
-    virtual void setMonitor(Monitor *monitor) override;
+    void setMonitor(Monitor *monitor) override;
 
     QWidget *widget() const override;
 

@@ -61,7 +61,7 @@ public:
     void setPixelsPerSecond(int);
 
 protected:
-    virtual void paintEvent(QPaintEvent *e) override;
+    void paintEvent(QPaintEvent *e) override;
 
 private:
     int mPixelsPerSecond;
@@ -83,8 +83,8 @@ public slots:
     void update(const Job &job);
 
 protected:
-    virtual void paintEvent(QPaintEvent *e) override;
-    virtual void resizeEvent(QResizeEvent *e) override;
+    void paintEvent(QPaintEvent *e) override;
+    void resizeEvent(QResizeEvent *e) override;
 
 private:
     void adjustGraph();
@@ -125,11 +125,11 @@ class GanttStatusView
     Q_OBJECT
 public:
     GanttStatusView(QObject *parent = nullptr);
-    virtual ~GanttStatusView() {}
+    ~GanttStatusView() override {}
 
     QString id() const override { return QStringLiteral("gantt"); }
 
-    virtual void checkNode(unsigned int hostid) override;
+    void checkNode(unsigned int hostid) override;
 
     void start() override;
     void stop() override;
@@ -138,10 +138,10 @@ public:
     bool isPausable() override { return true; }
     bool isConfigurable() override { return true; }
 
-    virtual QWidget *widget() const override;
+    QWidget *widget() const override;
 
 public slots:
-    virtual void update(const Job &job) override;
+    void update(const Job &job) override;
 
 private slots:
     void slotConfigChanged();
