@@ -32,6 +32,7 @@ Job::Job(unsigned int id, unsigned int client, const QString &filename, const QS
     , client(client)
     , lang(lang)
     , state(WaitingForCS)
+    , startTime{}
     , real_msec(0)
     , user_msec(0)
     , sys_msec(0)

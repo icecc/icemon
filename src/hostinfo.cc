@@ -122,13 +122,12 @@ void HostInfo::updateFromStatsMap(const StatsMap &stats)
 QColor HostInfo::createColor(const QString &name)
 {
     unsigned long h = 0;
-    unsigned long g;
-    int ch;
 
     for (uint i = 0; i < ( uint )name.length(); ++i) {
-        ch = name[i].unicode();
+        const int ch = name[i].unicode();
         h = (h << 4) + ch;
-        if ((g = (h & 0xf0000000)) != 0) {
+        const unsigned long g = h & 0xf0000000;
+        if (g != 0) {
             h ^= g >> 24;
             h ^= g;
         }

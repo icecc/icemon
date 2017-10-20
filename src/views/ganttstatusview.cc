@@ -422,14 +422,13 @@ GanttProgress *GanttStatusView::registerNode(unsigned int hostid)
 {
 //    qDebug() << "GanttStatusView::registerNode(): " << ip << endl;
 
-    static int lastRow = 0;
-
     QColor color = hostColor(hostid);
 
     QVBoxLayout *nodeLayout;
 
     NodeLayoutMap::ConstIterator it = mNodeLayouts.constFind(hostid);
     if (it == mNodeLayouts.constEnd()) {
+        static int lastRow = 0;
         ++lastRow;
 
         nodeLayout = new QVBoxLayout();

@@ -81,20 +81,20 @@ protected:
     QColor createColor(const QString &name);
 
 private:
-    unsigned int mId;
+    unsigned int mId = 0;
     QString mName;
     QColor mColor;
     QString mPlatform;
 
     QString mIp;
 
-    unsigned int mMaxJobs;
-    bool mOffline;
-    bool mNoRemote;
+    unsigned int mMaxJobs = 0;
+    bool mOffline = false;
+    bool mNoRemote = true;
 
-    float mServerSpeed;
+    float mServerSpeed = 0.0;
 
-    unsigned int mServerLoad;
+    unsigned int mServerLoad = 0;
 
     static QVector<QColor> mColorTable;
     static QMap<int, QString> mColorNameMap;
