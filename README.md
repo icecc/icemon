@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/icecc/icemon.svg?branch=v3.0.1)](https://travis-ci.org/icecc/icemon) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b8bc2d59bad544258a47209cc9bfb8e7)](https://www.codacy.com/app/icecc/icemon?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=icecc/icemon&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.org/icecc/icemon.svg?branch=v3.0.1)](https://travis-ci.org/icecc/icemon)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/b8bc2d59bad544258a47209cc9bfb8e7)](https://www.codacy.com/app/icecc/icemon?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=icecc/icemon&amp;utm_campaign=Badge_Grade)
 
 Icemon
 ======
