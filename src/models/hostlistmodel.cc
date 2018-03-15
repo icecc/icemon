@@ -222,6 +222,9 @@ private:
 void HostListModel::removeNodeById(unsigned int hostId)
 {
     QVector<HostInfo>::iterator it = std::find_if(m_hostInfos.begin(), m_hostInfos.end(), find_hostid(hostId));
+    if (it == m_hostInfos.end()) {
+        return;
+    }
     int index = std::distance(m_hostInfos.begin(), it);
     beginRemoveRows(QModelIndex(), index, index);
     m_hostInfos.erase(it);
