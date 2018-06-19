@@ -274,7 +274,6 @@ SummaryView::SummaryView(QObject *parent)
     , m_widget(new SummaryViewScrollArea)
 {
     m_base = new QWidget;
-    m_base->setStyleSheet(QStringLiteral("QWidget { background-color: 'white'; }"));
     m_widget->setWidget(m_base);
 
     m_layout = new QGridLayout(m_base);
