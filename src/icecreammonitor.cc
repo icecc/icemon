@@ -126,12 +126,10 @@ void IcecreamMonitor::slotCheckScheduler()
          ++it) {
         setCurrentNetname(QBA_fromStdString(*it));
         if (!m_discover
-            || m_discover->timed_out()) {
+            || ((m_scheduler = m_discover->try_get_scheduler()) == NULL && m_discover->timed_out())) {
             delete m_discover;
             m_discover = new DiscoverSched(QBA_toStdString(currentNetname()), 2, hostname);
         }
-
-        m_scheduler = m_discover->try_get_scheduler();
 
         if (m_scheduler) {
             hostInfoManager()->setSchedulerName(QString::fromLatin1(m_discover->schedulerName().data()));
