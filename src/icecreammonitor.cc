@@ -308,6 +308,10 @@ void IcecreamMonitor::handle_job_begin(Msg *_m)
         return;
     }
 
+    HostInfo *hostInfo = hostInfoManager()->find(m->hostid);
+    if (hostInfo)
+        hostInfo->incJobs();
+
     (*it).server = m->hostid;
     (*it).startTime = m->stime;
     (*it).state = Job::Compiling;
@@ -327,6 +331,10 @@ void IcecreamMonitor::handle_job_done(Msg *_m)
         // we started in between
         return;
     }
+
+    HostInfo *hostInfo = hostInfoManager()->find((*it).server);
+    if (hostInfo)
+        hostInfo->decJobs();
 
     (*it).exitcode = m->exitcode;
     if (m->exitcode) {

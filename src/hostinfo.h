@@ -47,6 +47,9 @@ public:
 
     void setMaxJobs(unsigned int jobs) { mMaxJobs = jobs; }
     unsigned int maxJobs() const { return mMaxJobs; }
+    void incJobs() { mNumJobs++; }
+    void decJobs() { if (mNumJobs) mNumJobs--; }
+    unsigned int numJobs() const { return mNumJobs; }
 
     void setOffline(bool offline) { mOffline = offline; }
     bool isOffline() const { return mOffline; }
@@ -89,6 +92,7 @@ private:
     QString mIp;
 
     unsigned int mMaxJobs = 0;
+    unsigned int mNumJobs = 0;
     bool mOffline = false;
     bool mNoRemote = true;
 

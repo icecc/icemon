@@ -78,7 +78,7 @@ public:
 
 private:
     QScopedPointer<QTableWidget> m_widget;
-    QString hostInfoText(HostInfo *hostInfo, int runningProcesses = 0);
+    QString hostInfoText(HostInfo *hostInfo);
     HostIdRowMap m_idToRowMap;
     QTimer *m_updateTimer;
 
