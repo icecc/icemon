@@ -284,6 +284,7 @@ SummaryView::SummaryView(QObject *parent)
 
     m_widget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_widget->setMinimumHeight(150);
+    createKnownHosts();
 }
 
 SummaryView::~SummaryView()
@@ -297,29 +298,47 @@ QWidget *SummaryView::widget() const
 
 void SummaryView::update(const Job &job)
 {
-    if (!job.server) {
+    if (!job.server)
+        return;
+
+    SummaryViewItem *i = m_items[job.server];
+    if (i)
+        i->update(job);
+
+    i= m_items[job.client];
+    if (i)
+	i->updateClient(job);
+}
+
+void SummaryView::createKnownHosts()
+{
+    if (!hostInfoManager()) {
         return;
     }
 
-    SummaryViewItem *i = m_items[job.server];
-    if (!i) {
-        i = new SummaryViewItem(job.server, m_base, this, m_layout);
-        m_items.insert(job.server, i);
-        m_widget->widget()->setMinimumHeight(m_widget->widget()->sizeHint().height());
-    }
-    i->update(job);
+    qDeleteAll(m_items);
+    m_items.clear();
 
-    i = m_items[job.client];
-    if (i) {
-      i->updateClient(job);
+    const HostInfoManager::HostMap hosts(hostInfoManager()->hostMap());
+
+    foreach(int hostid, hosts.keys()) {
+        checkNode(hostid);
     }
+}
+
+void SummaryView::setMonitor(Monitor *monitor)
+{
+    StatusView::setMonitor(monitor);
+
+    if (monitor)
+	    createKnownHosts();
 }
 
 void SummaryView::checkNode(unsigned int hostid)
 {
     HostInfo *hostInfo = hostInfoManager()->find(hostid);
 
-    if (hostInfo && nameForHost(hostid).isNull()) {
+    if (!hostInfo) {
         delete m_items[hostid];
         m_items.remove(hostid);
     } else if (!m_items[hostid]) {
@@ -327,4 +346,9 @@ void SummaryView::checkNode(unsigned int hostid)
         m_items.insert(hostid, i);
 	m_widget->widget()->setMinimumHeight(m_widget->widget()->sizeHint().height());
     }
+}
+void SummaryView::removeNode(unsigned int hostid)
+{
+        delete m_items[hostid];
+        m_items.remove(hostid);
 }

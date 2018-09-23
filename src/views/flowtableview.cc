@@ -88,6 +88,8 @@ FlowTableView::FlowTableView(QObject *parent)
 
     m_updateTimer->setInterval(50);
     m_updateTimer->start();
+
+    createKnownHosts();
 }
 
 void FlowTableView::update(const Job &job)
@@ -154,6 +156,30 @@ QString FlowTableView::hostInfoText(HostInfo *hostInfo, int runningProcesses) {
     }
 }
 
+void FlowTableView::createKnownHosts()
+{
+    if (!hostInfoManager()) {
+        return;
+    }
+
+    m_widget->setRowCount(0);
+    m_idToRowMap.clear();
+
+    const HostInfoManager::HostMap hosts(hostInfoManager()->hostMap());
+
+    foreach(int hostid, hosts.keys()) {
+        checkNode(hostid);
+    }
+}
+
+void FlowTableView::setMonitor(Monitor *monitor)
+{
+    StatusView::setMonitor(monitor);
+
+    if (monitor)
+	    createKnownHosts();
+}
+
 void FlowTableView::checkNode(unsigned int hostId)
 {
     if (m_idToRowMap.contains(hostId)) {
@@ -191,6 +217,7 @@ void FlowTableView::checkNode(unsigned int hostId)
 
 void FlowTableView::removeNode(unsigned int hostId)
 {
-    m_widget->removeRow(m_idToRowMap.value(hostId));
-    m_idToRowMap.remove(hostId);
+    Q_UNUSED(hostId);
+
+    createKnownHosts();
 }

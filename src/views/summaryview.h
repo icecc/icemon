@@ -85,7 +85,10 @@ public:
     ~SummaryView() override;
 
     QWidget *widget() const override;
+
+    void setMonitor(Monitor *monitor) override;
     void update(const Job &job) override;
+    void removeNode(unsigned int hostid) override;
     void checkNode(unsigned int hostid) override;
     QString id() const override { return QStringLiteral("summary"); }
 
@@ -95,6 +98,8 @@ private:
     QMap<unsigned int, SummaryViewItem *> m_items;
     QGridLayout *m_layout;
     QWidget *m_base;
+
+    void createKnownHosts();
 };
 
 #endif

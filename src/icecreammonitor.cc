@@ -288,7 +288,7 @@ void IcecreamMonitor::handle_stats(Msg *_m)
 
     HostInfo *hostInfo = hostInfoManager()->checkNode(m->hostid, stats);
 
-    if (hostInfo->isOffline()) {
+    if (!hostInfo) {
         emit nodeRemoved(m->hostid);
     } else {
         emit nodeUpdated(m->hostid);

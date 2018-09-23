@@ -317,7 +317,7 @@ void MainWindow::updateJobStats()
     }
     for (JobList::const_iterator i = m_activeJobs.constBegin(); i != m_activeJobs.constEnd(); ++i) {
         const HostInfo *server = hostMap[i.value().server != 0 ? i.value().server : i.value().client];
-        if (!server->isOffline() && !server->noRemote()) {
+        if (server && !server->isOffline() && !server->noRemote()) {
             ++perPlatformStats[server->platform()].jobs;
         }
     }

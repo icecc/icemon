@@ -210,9 +210,6 @@ public:
      */
     bool filterArch(HostInfo *);
 
-    void removeItem(HostItem *);
-    void forceRemoveNode(unsigned int hostid);
-
 protected slots:
     void slotConfigChanged();
 

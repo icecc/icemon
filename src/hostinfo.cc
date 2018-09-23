@@ -188,6 +188,12 @@ HostInfo *HostInfoManager::checkNode(unsigned int hostid,
     }
 
     hostInfo->updateFromStatsMap(stats);
+    if (hostInfo->isOffline()) {
+        mHostMap.remove(hostid);
+        delete hostInfo;
+        hostInfo = nullptr;
+    }
+
     emit hostMapChanged();
 
     return hostInfo;
