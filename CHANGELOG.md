@@ -1,3 +1,14 @@
+## 3.2.0 (2018-12-10)
+
+Bugfixes:
+
+- Fix broken scheduler discovery with newer Icecream (#40)
+
+Internal Changes:
+
+- Add some badges to README.md
+- Coding style improvements
+
 ## 3.1.0 (2017-04-07)
 
 Features:
