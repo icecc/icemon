@@ -28,7 +28,7 @@ moc_*.cpp
 ui_*.h
 qrc_*.cpp
 Thumbs.db
-*.pro.user*
+*.user*
 
 # xemacs temporary files
 # ---------------------
