@@ -11,9 +11,9 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 include(CheckCXXCompilerFlag)
 include(CheckCXXSourceCompiles)
 include(GNUInstallDirs)
-include(KDE4Macros-Icecream)
 include(CheckIncludeFileCXX)
 include(FeatureSummary)
+include(ECMInstallIcons)
 
 # version info
 set(ICEMON_VERSION_MAJOR "3")

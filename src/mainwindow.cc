@@ -62,11 +62,11 @@ MainWindow::MainWindow(QWidget *parent)
     , m_view(nullptr)
 {
     QIcon appIcon = QIcon();
-    appIcon.addFile(QStringLiteral(":/images/hi128-app-icemon.png"), QSize(128, 128));
-    appIcon.addFile(QStringLiteral(":/images/hi48-app-icemon.png"), QSize(48, 48));
-    appIcon.addFile(QStringLiteral(":/images/hi32-app-icemon.png"), QSize(32, 32));
-    appIcon.addFile(QStringLiteral(":/images/hi22-app-icemon.png"), QSize(22, 22));
-    appIcon.addFile(QStringLiteral(":/images/hi16-app-icemon.png"), QSize(16, 16));
+    appIcon.addFile(QStringLiteral(":/images/128-apps-icemon.png"), QSize(128, 128));
+    appIcon.addFile(QStringLiteral(":/images/48-apps-icemon.png"), QSize(48, 48));
+    appIcon.addFile(QStringLiteral(":/images/32-apps-icemon.png"), QSize(32, 32));
+    appIcon.addFile(QStringLiteral(":/images/22-apps-icemon.png"), QSize(22, 22));
+    appIcon.addFile(QStringLiteral(":/images/16-apps-icemon.png"), QSize(16, 16));
     setWindowIcon(appIcon);
     setWindowTitle(QApplication::translate("appName", Icemon::Version::appName));
 
