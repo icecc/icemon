@@ -1,10 +1,10 @@
 <RCC>
     <qresource prefix="">
-        <file>images/hi128-app-icemon.png</file>
+        <file>images/128-apps-icemon.png</file>
         <file>images/icemonnode.png</file>
-        <file>images/hi16-app-icemon.png</file>
-        <file>images/hi48-app-icemon.png</file>
-        <file>images/hi22-app-icemon.png</file>
-        <file>images/hi32-app-icemon.png</file>
+        <file>images/16-apps-icemon.png</file>
+        <file>images/48-apps-icemon.png</file>
+        <file>images/22-apps-icemon.png</file>
+        <file>images/32-apps-icemon.png</file>
     </qresource>
 </RCC>
