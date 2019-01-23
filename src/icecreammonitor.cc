@@ -96,6 +96,7 @@ void IcecreamMonitor::checkScheduler(bool deleteit)
 void IcecreamMonitor::registerNotify(int fd, QSocketNotifier::Type type, const char *slot)
 {
     if (m_fd_notify) {
+        m_fd_notify->setEnabled(false);
         m_fd_notify->disconnect(this);
         m_fd_notify->deleteLater();
     }
