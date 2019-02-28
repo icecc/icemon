@@ -43,16 +43,6 @@
 
 using namespace std;
 
-namespace {
-
-// TODO: Just use QByteArray static methods when depending on Qt 5.4
-inline QByteArray QBA_fromStdString(const std::string& s)
-{ return QByteArray(s.data(), int(s.size())); }
-inline std::string QBA_toStdString(const QByteArray& s)
-{ return std::string(s.constData(), s.length()); }
-
-}
-
 IcecreamMonitor::IcecreamMonitor(HostInfoManager *manager, QObject *parent)
     : Monitor(manager, parent)
     , m_scheduler(nullptr)
@@ -122,13 +112,12 @@ void IcecreamMonitor::slotCheckScheduler()
     if (!qgetenv("USE_SCHEDULER").isEmpty()) {
         names.push_front(""); // try $USE_SCHEDULER
     }
-    for (list<string>::const_iterator it = names.begin(); it != names.end();
-         ++it) {
-        setCurrentNetname(QBA_fromStdString(*it));
+    for (auto it = names.begin(); it != names.end(); ++it) {
+        setCurrentNetname(QByteArray::fromStdString(*it));
         if (!m_discover
             || ((m_scheduler = m_discover->try_get_scheduler()) == NULL && m_discover->timed_out())) {
             delete m_discover;
-            m_discover = new DiscoverSched(QBA_toStdString(currentNetname()), 2, hostname);
+            m_discover = new DiscoverSched(currentNetname().toStdString(), 2, hostname);
         }
 
         if (m_scheduler) {

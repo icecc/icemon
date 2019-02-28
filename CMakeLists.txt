@@ -29,7 +29,7 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
   endif()
 endif()
 
-set(QT_MIN_VERSION "5.2.0")
+set(QT_MIN_VERSION "5.4.0") # Because of QByteArray::fromStdString
 find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED Core Widgets)
 find_package(Icecream)
 set_package_properties(Icecream PROPERTIES
