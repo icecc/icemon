@@ -1,6 +1,5 @@
-project(icemon)
-
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.1.0)
+project(icemon VERSION 3.2.0)
 
 find_package(ECM REQUIRED NO_MODULE)
 
@@ -15,12 +14,7 @@ include(CheckIncludeFileCXX)
 include(FeatureSummary)
 include(ECMInstallIcons)
 
-# version info
-set(ICEMON_VERSION_MAJOR "3")
-set(ICEMON_VERSION_MINOR "2")
-set(ICEMON_VERSION_PATCH "0")
-set(ICEMON_VERSION "${ICEMON_VERSION_MAJOR}.${ICEMON_VERSION_MINOR}.${ICEMON_VERSION_PATCH}")
-set(ICEMON_VERSION_STRING "${ICEMON_VERSION}")
+set(ICEMON_VERSION_STRING "${PROJECT_VERSION}")
 
 if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
   find_package(Git)
