@@ -26,6 +26,7 @@ Monitor::Monitor(HostInfoManager *manager, QObject *parent)
     : QObject(parent)
     , m_hostInfoManager(manager)
     , m_schedulerState(Offline)
+    , m_currentSchedport(0)
 {
 }
 
@@ -47,6 +48,15 @@ QByteArray Monitor::currentSchedname() const
 void Monitor::setCurrentSchedname(const QByteArray &schedname)
 {
     m_currentSchedname = schedname;
+}
+
+uint Monitor::currentSchedport() const
+{
+    return m_currentSchedport;
+}
+void Monitor::setCurrentSchedport(uint port)
+{
+    m_currentSchedport = port;
 }
 
 Monitor::SchedulerState Monitor::schedulerState() const

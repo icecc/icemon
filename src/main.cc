@@ -47,6 +47,10 @@ int main(int argc, char **argv)
         QCoreApplication::translate("main", "Icecream scheduler hostname"),
         QCoreApplication::translate("main", "hostname", "scheduler hostname"));
     parser.addOption(schednameOption);
+    QCommandLineOption schedportOption(QStringList() << QStringLiteral("p") << QStringLiteral("port"),
+        QCoreApplication::translate("main", "Icecream scheduler port"),
+        QCoreApplication::translate("main", "port", "scheduler port"));
+    parser.addOption(schedportOption);
     QCommandLineOption testmodeOption(QStringLiteral("testmode"),
         QCoreApplication::translate("main", "Testing mode."));
     parser.addOption(testmodeOption);
@@ -62,6 +66,10 @@ int main(int argc, char **argv)
     }
     if (!schedName.isEmpty()) {
         mainWindow.setCurrentSched(schedName);
+    }
+    if (!parser.value(schedportOption).isEmpty())
+    {
+        mainWindow.setCurrentPort(parser.value(schedportOption).toUInt());
     }
     if (parser.isSet(testmodeOption)) {
         mainWindow.setTestModeEnabled(true);
