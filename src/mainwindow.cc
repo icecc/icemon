@@ -364,6 +364,11 @@ void MainWindow::setCurrentSched(const QByteArray &schedname)
     m_monitor->setCurrentSchedname(schedname);
 }
 
+void MainWindow::setCurrentPort(uint schedport)
+{
+    m_monitor->setCurrentSchedport(schedport);
+}
+
 void MainWindow::handleViewModeActionTriggered(QAction *action)
 {
     const QString viewId = action->data().toString();

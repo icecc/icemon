@@ -47,6 +47,7 @@ public:
 
     void setCurrentNet(const QByteArray &netname);
     void setCurrentSched(const QByteArray &schedname);
+    void setCurrentPort(uint schedport);
 
     Monitor *monitor() const;
     StatusView *view() const;

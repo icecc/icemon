@@ -112,6 +112,7 @@ void IcecreamMonitor::slotCheckScheduler()
 
     const string hostname = currentSchedname().isEmpty() ? "" : currentSchedname().data();
     list<string> names;
+    const uint port = currentSchedport();
 
     if (!currentNetname().isEmpty()) {
         names.push_front(currentNetname().data());
@@ -128,7 +129,7 @@ void IcecreamMonitor::slotCheckScheduler()
         if (!m_discover
             || ((m_scheduler = m_discover->try_get_scheduler()) == NULL && m_discover->timed_out())) {
             delete m_discover;
-            m_discover = new DiscoverSched(QBA_toStdString(currentNetname()), 2, hostname);
+            m_discover = new DiscoverSched(QBA_toStdString(currentNetname()), 2, hostname, port);
         }
 
         if (m_scheduler) {

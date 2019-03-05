@@ -54,6 +54,9 @@ public
     QByteArray currentSchedname() const;
     void setCurrentSchedname(const QByteArray &);
 
+    uint currentSchedport() const;
+    void setCurrentSchedport(uint port);
+
     SchedulerState schedulerState() const;
 
     virtual QList<Job> jobHistory() const;
@@ -74,6 +77,7 @@ private:
     HostInfoManager *m_hostInfoManager;
     QByteArray m_currentNetname;
     QByteArray m_currentSchedname;
+    uint m_currentSchedport;
     SchedulerState m_schedulerState;
 };
 
