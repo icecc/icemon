@@ -40,6 +40,7 @@
 #include <QResizeEvent>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QDialogButtonBox>
 
 #include <math.h>
 
@@ -85,14 +86,14 @@ StarViewConfigDialog::StarViewConfigDialog(QWidget *parent)
     hline->setFrameShape(QFrame::HLine);
     hline->setFrameShadow(QFrame::Sunken);
     topLayout->addWidget(hline);
-    QPushButton *closeButton = new QPushButton(tr("&Close"));
-    closeButton->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
-    topLayout->addWidget(closeButton, 0, Qt::AlignRight);
+
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Close, this);
+    topLayout->addWidget(buttonBox);
 
     connect(mSuppressDomainName, SIGNAL(toggled(bool)),
             SLOT(slotSuppressDomainName(bool)));
 
-    connect(closeButton, SIGNAL(clicked()), SLOT(accept()));
+    connect(buttonBox, SIGNAL(rejected()), SLOT(accept()));
 }
 
 void StarViewConfigDialog::slotNodesPerRingChanged(int nodes)

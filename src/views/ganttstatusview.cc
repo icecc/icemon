@@ -40,6 +40,7 @@
 #include <QResizeEvent>
 #include <QPaintEvent>
 #include <QScrollBar>
+#include <QDialogButtonBox>
 
 GanttConfigDialog::GanttConfigDialog(QWidget *parent)
     : QDialog(parent)
@@ -62,9 +63,9 @@ GanttConfigDialog::GanttConfigDialog(QWidget *parent)
 
     buttonLayout->addStretch(1);
 
-    QPushButton *button = new QPushButton(tr("&Close"), this);
-    buttonLayout->addWidget(button);
-    connect(button, SIGNAL(clicked()), SLOT(hide()));
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Close, this);
+    buttonLayout->addWidget(buttonBox);
+    connect(buttonBox, SIGNAL(rejected()), SLOT(hide()));
 
     setWindowTitle(tr("Configure Gantt View"));
     // apply some minimum size
