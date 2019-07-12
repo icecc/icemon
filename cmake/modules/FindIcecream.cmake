@@ -27,7 +27,7 @@ else ()
     # use pkg-config to get the directories and then use these values
     # in the FIND_PATH() and FIND_LIBRARY() calls
     find_package(PkgConfig REQUIRED)
-    pkg_check_modules(PC_ICECC icecc)
+    pkg_check_modules(PC_ICECC icecc REQUIRED)
     # The icecream lib may optionally need linking to -lcap-ng, so dig it out
     # of pkg-config data.
     # Somewhat hackish, but I can't find a simpler way to do this with CMake.
