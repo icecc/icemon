@@ -86,11 +86,18 @@ void IcecreamMonitor::checkScheduler(bool deleteit)
 void IcecreamMonitor::registerNotify(int fd, QSocketNotifier::Type type, const char *slot)
 {
     if (m_fd_notify) {
+        if(m_fd_notify->socket() != fd || m_fd_notify->type() != type) {
+            m_fd_notify->disconnect(this);
+            m_fd_notify->deleteLater();
+            m_fd_notify = nullptr;
+        }
+        // Reuse, but the slot will change.
         m_fd_notify->disconnect(this);
-        m_fd_notify->deleteLater();
     }
-    m_fd_notify = new QSocketNotifier(fd, type, this);
-    m_fd_type = type;
+    if (!m_fd_notify) {
+        m_fd_notify = new QSocketNotifier(fd, type, this);
+        m_fd_type = type;
+    }
     QObject::connect(m_fd_notify, SIGNAL(activated(int)), slot);
 }
 
