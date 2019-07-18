@@ -62,6 +62,8 @@ public:
 
     QWidget *widget() const override;
 
+    void setMonitor(Monitor *monitor) override;
+
     void update(const Job &job) override;
     void checkNode(unsigned int hostid) override;
     void removeNode(unsigned int hostid) override;
@@ -76,9 +78,11 @@ public:
 
 private:
     QScopedPointer<QTableWidget> m_widget;
-    QString hostInfoText(HostInfo *hostInfo, int runningProcesses = 0);
+    QString hostInfoText(HostInfo *hostInfo);
     HostIdRowMap m_idToRowMap;
     QTimer *m_updateTimer;
+
+    void createKnownHosts();
 };
 
 #endif // FLOWTABLEVIEW_H

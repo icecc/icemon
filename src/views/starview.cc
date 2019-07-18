@@ -479,23 +479,10 @@ void StarView::removeNode(unsigned int hostid)
 
     HostItem *hostItem = findHostItem(hostid);
 
-    if (hostItem && hostItem->hostInfo()->isOffline()) {
-        removeItem(hostItem);
-    }
-}
+    if (!hostItem)
+	    return;
 
-void StarView::forceRemoveNode(unsigned int hostid)
-{
-    HostItem *hostItem = findHostItem(hostid);
-
-    if (hostItem) {
-        removeItem(hostItem);
-    }
-}
-
-void StarView::removeItem(HostItem *hostItem)
-{
-    m_hostItems.remove(hostItem->hostInfo()->id());
+    m_hostItems.remove(hostid);
 
     QList<unsigned int> obsoleteJobs;
 
@@ -622,7 +609,7 @@ void StarView::slotConfigChanged()
         if (filterArch(*it)) {
             checkNode(it.key());
         } else {
-            forceRemoveNode(it.key());
+            removeNode(it.key());
         }
     }
 

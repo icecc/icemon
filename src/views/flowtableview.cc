@@ -88,6 +88,8 @@ FlowTableView::FlowTableView(QObject *parent)
 
     m_updateTimer->setInterval(50);
     m_updateTimer->start();
+
+    createKnownHosts();
 }
 
 void FlowTableView::update(const Job &job)
@@ -126,19 +128,12 @@ void FlowTableView::update(const Job &job)
 
     // update the host column for the server requesting the job
     QTableWidgetItem *hostNameItem = m_widget->item(serverRow, 0);
-    int usageCount = hostNameItem->data(Qt::UserRole).toInt();
-    if (job.state == Job::LocalOnly || job.state == Job::Compiling) {
-        ++usageCount;
-    } else if (job.state == Job::Finished || job.state == Job::Failed) {
-        --usageCount;
-    }
-
-    hostNameItem->setData(Qt::UserRole, usageCount);
+    HostInfo *hostInfo = hostInfoManager()->find(serverId);
 
     QFont f = m_widget->font();
-    f.setBold(usageCount > 0);
+    f.setBold(hostInfo->numJobs() > 0);
     hostNameItem->setFont(f);
-    hostNameItem->setText(hostInfoText(hostInfoManager()->find(serverId), usageCount));
+    hostNameItem->setText(hostInfoText(hostInfo));
 }
 
 QWidget *FlowTableView::widget() const
@@ -146,12 +141,36 @@ QWidget *FlowTableView::widget() const
     return m_widget.data();
 }
 
-QString FlowTableView::hostInfoText(HostInfo *hostInfo, int runningProcesses) {
-    if (hostInfo->serverSpeed() == 0) { // host disabled
+QString FlowTableView::hostInfoText(HostInfo *hostInfo) {
+    if ((hostInfo->serverSpeed() == 0) && (hostInfo->numJobs() == 0)) { // host disabled
         return tr("%1 (Disabled)").arg(hostInfo->name());
     } else {
-        return tr("%1 (%2/%3)").arg(hostInfo->name()).arg(runningProcesses).arg(hostInfo->maxJobs());
+        return tr("%1 (%2/%3)").arg(hostInfo->name()).arg(hostInfo->numJobs()).arg(hostInfo->maxJobs());
     }
+}
+
+void FlowTableView::createKnownHosts()
+{
+    if (!hostInfoManager()) {
+        return;
+    }
+
+    m_widget->setRowCount(0);
+    m_idToRowMap.clear();
+
+    const HostInfoManager::HostMap hosts(hostInfoManager()->hostMap());
+
+    foreach(int hostid, hosts.keys()) {
+        checkNode(hostid);
+    }
+}
+
+void FlowTableView::setMonitor(Monitor *monitor)
+{
+    StatusView::setMonitor(monitor);
+
+    if (monitor)
+	    createKnownHosts();
 }
 
 void FlowTableView::checkNode(unsigned int hostId)
@@ -165,8 +184,6 @@ void FlowTableView::checkNode(unsigned int hostId)
     widgetItem->setIcon(QIcon(QStringLiteral(":/images/icemonnode.png")));
     widgetItem->setToolTip(hostInfo->toolTip());
     widgetItem->setBackgroundColor(hostInfo->color());
-    // usage count
-    widgetItem->setData(Qt::UserRole, 0);
     widgetItem->setFlags(Qt::ItemIsEnabled);
     int insertRow = m_widget->rowCount();
     m_widget->setRowCount(insertRow + 1);
@@ -191,6 +208,7 @@ void FlowTableView::checkNode(unsigned int hostId)
 
 void FlowTableView::removeNode(unsigned int hostId)
 {
-    m_widget->removeRow(m_idToRowMap.value(hostId));
-    m_idToRowMap.remove(hostId);
+    Q_UNUSED(hostId);
+
+    createKnownHosts();
 }

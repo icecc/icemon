@@ -129,6 +129,7 @@ public:
 
     QString id() const override { return QStringLiteral("gantt"); }
 
+    void removeNode(unsigned int hostid) override;
     void checkNode(unsigned int hostid) override;
 
     void start() override;

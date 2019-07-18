@@ -382,6 +382,11 @@ QWidget *GanttStatusView::widget() const
     return m_widget.data();
 }
 
+void GanttStatusView::removeNode(unsigned int hostid)
+{
+	unregisterNode(hostid);
+}
+
 void GanttStatusView::checkNode(unsigned int hostid)
 {
     if (!mRunning) {

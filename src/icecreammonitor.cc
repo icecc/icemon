@@ -277,7 +277,7 @@ void IcecreamMonitor::handle_stats(Msg *_m)
 
     HostInfo *hostInfo = hostInfoManager()->checkNode(m->hostid, stats);
 
-    if (hostInfo->isOffline()) {
+    if (!hostInfo) {
         emit nodeRemoved(m->hostid);
     } else {
         emit nodeUpdated(m->hostid);
@@ -296,6 +296,10 @@ void IcecreamMonitor::handle_job_begin(Msg *_m)
         // we started in between
         return;
     }
+
+    HostInfo *hostInfo = hostInfoManager()->find(m->hostid);
+    if (hostInfo)
+        hostInfo->incJobs();
 
     (*it).server = m->hostid;
     (*it).startTime = m->stime;
@@ -316,6 +320,10 @@ void IcecreamMonitor::handle_job_done(Msg *_m)
         // we started in between
         return;
     }
+
+    HostInfo *hostInfo = hostInfoManager()->find((*it).server);
+    if (hostInfo)
+        hostInfo->decJobs();
 
     (*it).exitcode = m->exitcode;
     if (m->exitcode) {
