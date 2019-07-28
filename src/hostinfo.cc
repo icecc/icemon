@@ -39,6 +39,7 @@ void HostInfo::initColorTable()
     initColor(QStringLiteral("#db1230"), QApplication::tr("strawberry"));
     initColor(QStringLiteral("#a6ea5e"), QApplication::tr("apple"));
     initColor(QStringLiteral("#D6A3D8"), QApplication::tr("bubblegum"));
+
     initColor(QStringLiteral("#f2aa4d"), QApplication::tr("peach"));
     initColor(QStringLiteral("#aa1387"), QApplication::tr("plum"));
     initColor(QStringLiteral("#26c3f7"), QApplication::tr("polar sea"));
@@ -49,14 +50,17 @@ void HostInfo::initColorTable()
     initColor(QStringLiteral("#1e1407"), QApplication::tr("mocha"));
     initColor(QStringLiteral("#29B450"), QApplication::tr("kiwi"));
     initColor(QStringLiteral("#F8DD31"), QApplication::tr("lemon"));
+
     initColor(QStringLiteral("#fa7e91"), QApplication::tr("raspberry"));
     initColor(QStringLiteral("#c5a243"), QApplication::tr("caramel"));
     initColor(QStringLiteral("#b8bcff"), QApplication::tr("blueberry"));
+    initColor(QStringLiteral("#af3765"), QApplication::tr("blackcurrant"));
+    initColor(QStringLiteral("#f7d36f"), QApplication::tr("passionfruit"));
+    initColor(QStringLiteral("#d51013"), QApplication::tr("pomegranate"));
+    initColor(QStringLiteral("#C2C032"), QApplication::tr("pumpkin"));
+    initColor(QStringLiteral("#f0e8e3"), QApplication::tr("vanilla"));
+    initColor(QStringLiteral("#d8e0e3"), QApplication::tr("stracciatella"));
     // try to make the count a prime number (reminder: 19, 23, 29, 31)
-    // initColor( "#ffb8c0", QApplication::tr("blackcurrant"));
-    // initColor( "#f7d36f", QApplication::tr("passionfruit"));
-    // initColor( "#d51013", QApplication::tr("pomegranate"));
-    // initColor( "#C2C032", QApplication::tr("pumpkin" ) );
 }
 
 void HostInfo::initColor(const QString &value, const QString &name)
