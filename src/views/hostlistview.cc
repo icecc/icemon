@@ -23,6 +23,8 @@
 
 #include "models/hostlistmodel.h"
 
+#include <QHeaderView>
+
 HostListView::HostListView(QWidget *parent)
     : QTreeView(parent)
 {
@@ -34,9 +36,13 @@ HostListView::HostListView(QWidget *parent)
 
 void HostListView::setModel(QAbstractItemModel *model)
 {
+    QTreeView::setModel(model);
     if (model) {
         sortByColumn(HostListModel::ColumnID);
+        header()->setStretchLastSection(false);
+        header()->setSectionResizeMode(HostListModel::ColumnName, QHeaderView::Stretch);
+        header()->setSectionResizeMode(HostListModel::ColumnColor, QHeaderView::ResizeToContents);
+        header()->setSectionResizeMode(HostListModel::ColumnIP, QHeaderView::ResizeToContents);
+        header()->setSectionResizeMode(HostListModel::ColumnPlatform, QHeaderView::ResizeToContents);
     }
-
-    QTreeView::setModel(model);
 }

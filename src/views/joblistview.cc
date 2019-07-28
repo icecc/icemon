@@ -44,11 +44,14 @@ JobListModel *JobListView::jobListModel() const
 
 void JobListView::setModel(QAbstractItemModel *model)
 {
+    QTreeView::setModel(model);
     if (model) {
         sortByColumn(JobListModel::JobColumnID);
+        header()->setStretchLastSection(false);
+        header()->setSectionResizeMode(JobListModel::JobColumnFilename, QHeaderView::Stretch);
+        header()->setSectionResizeMode(JobListModel::JobColumnClient, QHeaderView::ResizeToContents);
+        header()->setSectionResizeMode(JobListModel::JobColumnServer, QHeaderView::ResizeToContents);
     }
-
-    QTreeView::setModel(model);
 }
 
 bool JobListView::isClientColumnVisible() const
