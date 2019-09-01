@@ -69,6 +69,12 @@ public:
     void setServerLoad(unsigned int load) { mServerLoad = load; }
     unsigned int serverLoad() const { return mServerLoad; }
 
+    void setProtocol(unsigned int protocol) { mProtocol = protocol; }
+    int protocol() const { return mProtocol; }
+
+    void setFeatures(const QString& features) { mFeatures = features; }
+    QString features() const { return mFeatures; }
+
     QString toolTip() const;
 
     bool operator==(const HostInfo &rhs) const { return mId == rhs.mId; }
@@ -95,9 +101,10 @@ private:
     unsigned int mNumJobs = 0;
     bool mOffline = false;
     bool mNoRemote = true;
+    int mProtocol = 0;
+    QString mFeatures;
 
     float mServerSpeed = 0.0;
-
     unsigned int mServerLoad = 0;
 
     static QVector<QColor> mColorTable;

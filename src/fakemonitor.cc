@@ -29,6 +29,8 @@
 #include <QTime>
 #include <QTimer>
 
+#include <icecc/comm.h>
+
 namespace {
 // counter variable
 int JOB_ID = 0;
@@ -83,6 +85,8 @@ void FakeMonitor::createHostInfo(HostId id)
     info.setOffline(false);
     info.setNoRemote(false);
     info.setPlatform(randomPlatform());
+    info.setProtocol(PROTOCOL_VERSION);
+    info.setFeatures(id % 2 == 0 ? QStringLiteral("env_xz") : QStringLiteral("env_zstd"));
     info.setServerLoad(1.0);
     info.setServerSpeed(10);
     hostInfoManager()->checkNode(info);

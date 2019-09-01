@@ -112,6 +112,8 @@ void HostInfo::updateFromStatsMap(const StatsMap &stats)
         mColor = createColor(mName);
         mIp = stats[QStringLiteral("IP")];
         mPlatform = stats[QStringLiteral("Platform")];
+        mProtocol = stats[QStringLiteral("Version")].toInt();
+        mFeatures = stats[QStringLiteral("Features")];
     }
 
     mNoRemote = (stats[QStringLiteral("NoRemote")].compare(QLatin1String("true"), Qt::CaseInsensitive) == 0);
