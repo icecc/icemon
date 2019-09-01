@@ -134,3 +134,9 @@ add_subdirectory(src)
 add_subdirectory(doc)
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
+
+set(ARCHIVE_NAME ${CMAKE_PROJECT_NAME}-${PROJECT_VERSION})
+add_custom_target(dist
+    COMMAND git archive --prefix=${ARCHIVE_NAME}/ HEAD
+        | xz -T0 > ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar.xz
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
