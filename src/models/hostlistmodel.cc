@@ -76,6 +76,10 @@ QVariant HostListModel::headerData(int section, Qt::Orientation orientation, int
             return tr("IP");
         case ColumnPlatform:
             return tr("Platform");
+        case ColumnProtocol:
+            return tr("Protocol");
+        case ColumnFeatures:
+            return tr("Features");
         case ColumnMaxJobs:
             return tr("Max Jobs");
         case ColumnSpeed:
@@ -114,6 +118,10 @@ QVariant HostListModel::data(const QModelIndex &index, int role) const
             return info.ip();
         case ColumnPlatform:
             return info.platform();
+        case ColumnProtocol:
+            return info.protocol() > 0 ? QString::number(info.protocol()) : QStringLiteral("?");
+        case ColumnFeatures:
+            return info.features().isEmpty() ? QStringLiteral( " - " ) : info.features();
         case ColumnMaxJobs:
             return info.maxJobs();
         case ColumnSpeed:
@@ -129,6 +137,8 @@ QVariant HostListModel::data(const QModelIndex &index, int role) const
             return Qt::AlignRight;
         case ColumnNoRemote:
             return Qt::AlignCenter;
+        case ColumnProtocol:
+            return Qt::AlignRight;
         case ColumnMaxJobs:
             return Qt::AlignRight;
         case ColumnSpeed:

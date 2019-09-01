@@ -43,6 +43,8 @@ public:
         ColumnColor,
         ColumnIP,
         ColumnPlatform,
+        ColumnProtocol,
+        ColumnFeatures,
         ColumnMaxJobs,
         ColumnSpeed,
         ColumnLoad,
