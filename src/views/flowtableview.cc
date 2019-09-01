@@ -75,8 +75,8 @@ void ProgressWidget::resizeEvent(QResizeEvent *) {
 
 FlowTableView::FlowTableView(QObject *parent)
     : StatusView(parent)
-    , m_updateTimer(new QTimer)
     , m_widget(new QTableWidget)
+    , m_updateTimer(new QTimer)
 {
     m_widget->setColumnCount(4);
     QStringList labels;
