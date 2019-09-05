@@ -1,3 +1,20 @@
+## 3.3.0 (?)
+
+Features:
+- Display node protocol version and features in detailed host view
+- Several more icecream flavors added
+- Add --port option to specify the scheduler port
+
+Bugfixes:
+- Remote hardcoded background color (#39)
+- Fix data loss when switching views
+- Avoid a possible QSocketNotifier crash (#47)
+- Improve column widths in views
+
+Internal Changes:
+- Require extra-cmake-modules for building
+- Fix finding icecc pkgconfig file
+
 ## 3.2.0 (2018-12-10)
 
 Bugfixes:
