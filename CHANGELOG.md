@@ -1,4 +1,4 @@
-## 3.3.0 (?)
+## 3.3.0 (2019-09-11)
 
 Features:
 - Display node protocol version and features in detailed host view
