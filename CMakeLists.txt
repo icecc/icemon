@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1.0)
-project(icemon VERSION 3.2.90)
+project(icemon VERSION 3.3)
 
 find_package(ECM REQUIRED NO_MODULE)
 
