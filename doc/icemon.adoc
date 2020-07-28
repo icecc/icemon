@@ -1,0 +1,54 @@
+ICEMON(1)
+=========
+:doctype: manpage
+:man source: icemon
+:man version: {revnumber}
+:man manual: Icemon User's Manual
+
+
+Name
+----
+icemon - Icecream network monitor
+
+
+Synopsis
+--------
+*icemon* _OPTION_
+
+
+Description
+-----------
+Icemon is a graphical application to view an Icecream compile network and monitor its traffic.
+
+
+
+Options
+-------
+
+*-h, --help*::
+    Print help message and exit.
+
+*-n, --netname* _net-name_::
+    The name of the Icecream network `icemon` should connect to.
+
+*-s, --scheduler* _host-name_::
+    The hostname of the Icecream scheduler `icemon` should connect to.
+
+
+
+See Also
+--------
+ifdef::env-github[]
+link:https://github.com/icecc/icecream/tree/master/doc/icecream.adoc[icecream(7)]
+link:https://github.com/icecc/icecream/tree/master/doc/icecc-scheduler.adoc[icecc-scheduler(1)]
+link:https://github.com/icecc/icecream/tree/master/doc/iceccd.adoc[iceccd(1)]
+endif::[]
+
+ifndef::env-github[]
+icecream(7), icecc-scheduler(1), iceccd(1)
+endif::[]
+
+
+Website
+-------
+Project home: https://github.com/icecc/icemon
