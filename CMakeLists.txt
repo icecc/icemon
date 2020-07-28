@@ -37,28 +37,6 @@ set_package_properties(Icecream PROPERTIES
   URL "http://en.opensuse.org/Icecream"
   TYPE REQUIRED
 )
-find_package(Docbook2X)
-set_package_properties(Docbook2X PROPERTIES
-  DESCRIPTION "docbook2X converts DocBook documents into the traditional Unix man page format"
-  PURPOSE "Required for man-page generation"
-  URL "http://docbook2x.sourceforge.net/"
-)
-
-# add a target to generate API documentation with Doxygen
-find_package(Doxygen)
-set_package_properties(Doxygen PROPERTIES
-  TYPE OPTIONAL
-  DESCRIPTION "Doxygen documentation generator"
-  PURPOSE "Needed for generating API documentation (make doc)"
-)
-if(DOXYGEN_FOUND)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
-  add_custom_target(doc
-    ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    COMMENT "Generating API documentation with Doxygen" VERBATIM
-  )
-endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
