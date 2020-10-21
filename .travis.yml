@@ -7,6 +7,10 @@ compiler:
 - gcc
 - clang
 
+arch:
+  - amd64
+  - ppc64le
+
 before_script:
 - |
     git clone --depth=50 --branch=master https://github.com/icecc/icecream.git icecream
