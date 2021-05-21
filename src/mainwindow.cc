@@ -32,6 +32,7 @@
 
 #include "utils.h"
 
+#include <QCloseEvent>
 #include <QDebug>
 #include <QLabel>
 #include <QMenuBar>
@@ -60,6 +61,7 @@ struct PlatformStat
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_view(nullptr)
+    , m_systemTrayIcon(nullptr)
 {
     QIcon appIcon = QIcon();
     appIcon.addFile(QStringLiteral(":/images/128-apps-icemon.png"), QSize(128, 128));
@@ -81,7 +83,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_jobStatsWidget->setVisible(false);
     statusBar()->addPermanentWidget(m_jobStatsWidget);
 
-    QAction *action = fileMenu->addAction(tr("&Quit"), this, SLOT(close()), tr("Ctrl+Q"));
+    QAction *action = fileMenu->addAction(tr("&Quit"), this, SLOT(quit()), tr("Ctrl+Q"));
     action->setIcon(QIcon::fromTheme(QStringLiteral("application-exit")));
     action->setMenuRole(QAction::QuitRole);
 
@@ -122,6 +124,26 @@ MainWindow::MainWindow(QWidget *parent)
     connect(action, SIGNAL(triggered()), this, SLOT(configureView()));
     m_configureViewAction = action;
 
+    if (QSystemTrayIcon::isSystemTrayAvailable())
+    {
+        action = viewMenu->addAction(tr("Show in System Tray"));
+        action->setIcon(QIcon::fromTheme(QStringLiteral("systemtray")));
+        action->setCheckable(true);
+        connect(action, SIGNAL(triggered()), this, SLOT(updateSystemTrayVisible()));
+        m_showInSystemTrayAction = action;
+
+        QMenu *systrayMenu = new QMenu(this);
+        QAction *quitAction = systrayMenu->addAction(tr("&Quit"), this, SLOT(quit()), tr("Ctrl+Q"));
+        quitAction->setIcon(QIcon::fromTheme(QStringLiteral("application-exit")));
+        quitAction->setMenuRole(QAction::QuitRole);
+
+        m_systemTrayIcon = new QSystemTrayIcon(this);
+        m_systemTrayIcon->setIcon(appIcon);
+        m_systemTrayIcon->setToolTip(windowTitle());
+        m_systemTrayIcon->setContextMenu(systrayMenu);
+        connect(m_systemTrayIcon, &QSystemTrayIcon::activated, this, &MainWindow::systemTrayIconActivated);
+    }
+
     action = helpMenu->addAction(tr("About Qt..."));
     connect(action, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
     action->setMenuRole(QAction::AboutQtRole);
@@ -145,6 +167,18 @@ MainWindow::~MainWindow()
 
 void MainWindow::closeEvent(QCloseEvent *e)
 {
+    if (m_systemTrayIcon->isVisible())
+    {
+        QMessageBox::information(this, tr("Systray"),
+                                 tr("The program will keep running in the "
+                                    "system tray. To terminate the program, "
+                                    "choose <b>Quit</b> in the context menu "
+                                    "of the system tray entry."));
+        hide();
+        e->ignore();
+        return;
+    }
+
     writeSettings();
 
     QMainWindow::closeEvent(e);
@@ -155,10 +189,14 @@ void MainWindow::readSettings()
     QSettings settings;
     restoreGeometry(settings.value(QStringLiteral("geometry")).toByteArray());
     restoreState(settings.value(QStringLiteral("windowState")).toByteArray());
+    bool showSystemTray = settings.value(QStringLiteral("showSystemTray")).toBool();
     QString viewId = settings.value(QStringLiteral("currentView")).toString();
 
     auto view = StatusViewFactory::create(viewId, this);
     setView(view);
+
+    m_showInSystemTrayAction->setChecked(showSystemTray);
+    updateSystemTrayVisible();
 }
 
 void MainWindow::writeSettings()
@@ -166,6 +204,7 @@ void MainWindow::writeSettings()
     QSettings settings;
     settings.setValue(QStringLiteral("geometry"), saveGeometry());
     settings.setValue(QStringLiteral("windowState"), saveState());
+    settings.setValue(QStringLiteral("showSystemTray"), m_systemTrayIcon->isVisible());
     settings.setValue(QStringLiteral("currentView"), (m_view ? m_view->id() : QString()));
     settings.sync();
 }
@@ -246,6 +285,39 @@ void MainWindow::configureView()
     m_view->configureView();
 }
 
+void MainWindow::updateSystemTrayVisible()
+{
+    if (m_showInSystemTrayAction->isChecked()) {
+        m_systemTrayIcon->show();
+    } else {
+        m_systemTrayIcon->hide();
+    }
+}
+
+void MainWindow::quit()
+{
+    writeSettings();
+    qApp->quit();
+}
+
+void MainWindow::systemTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+    switch (reason) {
+    case QSystemTrayIcon::Trigger:
+        if (isVisible())
+            hide();
+        else
+            show();
+        break;
+
+    case QSystemTrayIcon::DoubleClick:
+    case QSystemTrayIcon::MiddleClick:
+    case QSystemTrayIcon::Unknown:
+    default:
+        ;
+    }
+}
+
 void MainWindow::about()
 {
     QString about = tr("<p><strong>%1</strong><br/>"
@@ -305,6 +377,7 @@ void MainWindow::updateJobStats()
     if (!m_monitor->schedulerState()) {
         m_jobStatsWidget->clear();
         m_jobStatsWidget->setVisible(false);
+        m_systemTrayIcon->setToolTip(tr("Scheduler is offline."));
         return;
     }
 
@@ -336,6 +409,7 @@ void MainWindow::updateJobStats()
 
     // Compose the text
     QString text;
+    QString textNoHTML;
     foreach (auto pair, statistics) {
         const QString& platform = pair.first;
         const PlatformStat& stat = pair.second;
@@ -345,13 +419,16 @@ void MainWindow::updateJobStats()
 
         if (!text.isEmpty()) {
             text.append(QStringLiteral(" - "));
+            textNoHTML.append(QStringLiteral(" - "));
         }
 
         text.append(QStringLiteral("<strong>%2/%3</strong> on %1").arg(platform).arg(stat.jobs).arg(stat.maxJobs));
+        textNoHTML.append(QStringLiteral("%2/%3 on %1").arg(platform).arg(stat.jobs).arg(stat.maxJobs));
     }
 
     m_jobStatsWidget->setText(tr("| Active jobs: %1").arg(text));
     m_jobStatsWidget->setVisible(true);
+    m_systemTrayIcon->setToolTip(tr("Active jobs: %1").arg(textNoHTML));
 }
 
 void MainWindow::setCurrentNet(const QByteArray &netname)
