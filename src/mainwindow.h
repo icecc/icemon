@@ -26,6 +26,7 @@
 
 #include <QMainWindow>
 #include <QPointer>
+#include <QSystemTrayIcon>
 
 #include "monitor.h"
 #include "job.h"
@@ -60,6 +61,9 @@ protected:
 private slots:
     void pauseView();
     void configureView();
+    void updateSystemTrayVisible();
+    void systemTrayIconActivated(QSystemTrayIcon::ActivationReason reason);
+    void quit();
 
     void about();
 
@@ -81,6 +85,7 @@ private:
     HostInfoManager *m_hostInfoManager;
     QPointer<Monitor> m_monitor;
     StatusView *m_view;
+    QSystemTrayIcon* m_systemTrayIcon;
 
     QLabel *m_schedStatusWidget;
     QLabel *m_jobStatsWidget;
@@ -88,6 +93,7 @@ private:
     QActionGroup *m_viewMode;
     QAction *m_configureViewAction;
     QAction *m_pauseViewAction;
+    QAction *m_showInSystemTrayAction;
 
     JobList m_activeJobs;
 };
