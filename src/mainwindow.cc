@@ -83,7 +83,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_jobStatsWidget = new QLabel;
     m_jobStatsWidget->setVisible(false);
     statusBar()->addPermanentWidget(m_jobStatsWidget);
-    
+
     QAction *action = nullptr;
 
     if (QSystemTrayIcon::isSystemTrayAvailable())
@@ -108,7 +108,7 @@ MainWindow::MainWindow(QWidget *parent)
         fileMenu->addSeparator();
     }
 
-    action = fileMenu->addAction(tr("&Quit"), this, SLOT(quit()), tr("Ctrl+Q"));
+    action = fileMenu->addAction(tr("&Quit"), this, &QWidget::close, tr("Ctrl+Q"));
     action->setIcon(QIcon::fromTheme(QStringLiteral("application-exit")));
     action->setMenuRole(QAction::QuitRole);
 
@@ -131,7 +131,7 @@ MainWindow::MainWindow(QWidget *parent)
     action = m_viewMode->addAction(tr("&Detailed Host View"));
     action->setCheckable(true);
     action->setData(QStringLiteral("detailedhost"));
-    connect(m_viewMode, SIGNAL(triggered(QAction *)), this, SLOT(handleViewModeActionTriggered(QAction *)));
+    connect(m_viewMode, &QActionGroup::triggered, this, &MainWindow::handleViewModeActionTriggered);
     viewMenu->addActions(m_viewMode->actions());
 
     viewMenu->addSeparator();
@@ -139,14 +139,14 @@ MainWindow::MainWindow(QWidget *parent)
     action = viewMenu->addAction(tr("Pause"));
     action->setIcon(QIcon::fromTheme(QStringLiteral("media-playback-pause")));
     action->setCheckable(true);
-    connect(action, SIGNAL(triggered()), this, SLOT(pauseView()));
+    connect(action, &QAction::triggered, this, &MainWindow::pauseView);
     m_pauseViewAction = action;
 
     viewMenu->addSeparator();
 
     action = viewMenu->addAction(tr("Configure View..."));
     action->setIcon(QIcon::fromTheme(QStringLiteral("configure")));
-    connect(action, SIGNAL(triggered()), this, SLOT(configureView()));
+    connect(action, &QAction::triggered, this, &MainWindow::configureView);
     m_configureViewAction = action;
 
     action = helpMenu->addAction(tr("About Qt..."));
@@ -155,7 +155,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     action = helpMenu->addAction(tr("About..."));
     action->setIcon(appIcon);
-    connect(action, SIGNAL(triggered()), this, SLOT(about()));
+    connect(action, &QAction::triggered, this, &MainWindow::about);
     action->setMenuRole(QAction::AboutRole);
 
     m_hostInfoManager = new HostInfoManager;
@@ -233,19 +233,19 @@ void MainWindow::setMonitor(Monitor *monitor)
     }
 
     if (m_monitor) {
-        disconnect(m_monitor, SIGNAL(schedulerStateChanged(Monitor::SchedulerState)),
-                   this, SLOT(updateSchedulerState(Monitor::SchedulerState)));
-        disconnect(m_monitor, SIGNAL(jobUpdated(const Job &)), this, SLOT(updateJob(Job)));
-        disconnect(m_monitor->hostInfoManager(), SIGNAL(hostMapChanged()), this, SLOT(updateJobStats()));
+        disconnect(m_monitor.data(), &Monitor::schedulerStateChanged,
+                   this, &MainWindow::updateSchedulerState);
+        disconnect(m_monitor.data(), &Monitor::jobUpdated, this, &MainWindow::updateJob);
+        disconnect(m_monitor->hostInfoManager(), &HostInfoManager::hostMapChanged, this, &MainWindow::updateJobStats);
     }
 
     m_monitor = monitor;
 
     if (m_monitor) {
-        connect(m_monitor, SIGNAL(schedulerStateChanged(Monitor::SchedulerState)),
-                this, SLOT(updateSchedulerState(Monitor::SchedulerState)));
-        connect(m_monitor, SIGNAL(jobUpdated(const Job &)), this, SLOT(updateJob(Job)));
-        connect(m_monitor->hostInfoManager(), SIGNAL(hostMapChanged()), this, SLOT(updateJobStats()));
+        connect(m_monitor.data(), &Monitor::schedulerStateChanged,
+                this, &MainWindow::updateSchedulerState);
+        connect(m_monitor.data(), &Monitor::jobUpdated, this, &MainWindow::updateJob);
+        connect(m_monitor->hostInfoManager(), &HostInfoManager::hostMapChanged, this, &MainWindow::updateJobStats);
     }
 
     if (m_view) {

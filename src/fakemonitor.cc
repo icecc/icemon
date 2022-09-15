@@ -65,7 +65,7 @@ FakeMonitor::FakeMonitor(HostInfoManager *manager, QObject *parent)
 {
     m_updateTimer->setInterval(200);
     m_updateTimer->start();
-    connect(m_updateTimer, SIGNAL(timeout()), SLOT(update()));
+    connect(m_updateTimer, &QTimer::timeout, this, &FakeMonitor::update);
 
     setSchedulerState(Online);
 
