@@ -57,21 +57,21 @@ void StatusView::setMonitor(Monitor *monitor)
     }
 
     if (m_monitor) {
-        disconnect(m_monitor.data(), SIGNAL(jobUpdated(Job)), this, SLOT(update(Job)));
-        disconnect(m_monitor.data(), SIGNAL(nodeRemoved(HostId)), this, SLOT(removeNode(HostId)));
-        disconnect(m_monitor.data(), SIGNAL(nodeUpdated(HostId)), this, SLOT(checkNode(HostId)));
-        disconnect(m_monitor.data(), SIGNAL(schedulerStateChanged(Monitor::SchedulerState)),
-                   this, SLOT(updateSchedulerState(Monitor::SchedulerState)));
+        disconnect(m_monitor.data(), &Monitor::jobUpdated, this, &StatusView::update);
+        disconnect(m_monitor.data(), &Monitor::nodeRemoved, this, &StatusView::removeNode);
+        disconnect(m_monitor.data(), &Monitor::nodeUpdated, this, &StatusView::checkNode);
+        disconnect(m_monitor.data(), &Monitor::schedulerStateChanged,
+                   this, &StatusView::updateSchedulerState);
     }
 
     m_monitor = monitor;
 
     if (m_monitor) {
-        connect(m_monitor.data(), SIGNAL(jobUpdated(Job)), this, SLOT(update(Job)));
-        connect(m_monitor.data(), SIGNAL(nodeRemoved(HostId)), this, SLOT(removeNode(HostId)));
-        connect(m_monitor.data(), SIGNAL(nodeUpdated(HostId)), this, SLOT(checkNode(HostId)));
-        connect(m_monitor.data(), SIGNAL(schedulerStateChanged(Monitor::SchedulerState)),
-                this, SLOT(updateSchedulerState(Monitor::SchedulerState)));
+        connect(m_monitor.data(), &Monitor::jobUpdated, this, &StatusView::update);
+        connect(m_monitor.data(), &Monitor::nodeRemoved, this, &StatusView::removeNode);
+        connect(m_monitor.data(), &Monitor::nodeUpdated, this, &StatusView::checkNode);
+        connect(m_monitor.data(), &Monitor::schedulerStateChanged,
+                this, &StatusView::updateSchedulerState);
 
         if (options().testFlag(RememberJobsOption)) {
             foreach(const Job &job, m_monitor->jobHistory()) {
