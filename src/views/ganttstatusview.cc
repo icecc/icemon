@@ -46,7 +46,7 @@ GanttConfigDialog::GanttConfigDialog(QWidget *parent)
     : QDialog(parent)
 {
     QBoxLayout *topLayout = new QVBoxLayout(this);
-    topLayout->setMargin(10);
+    topLayout->setContentsMargins({10, 10, 10, 10});
     topLayout->setSpacing(10);
 
     mTimeScaleVisibleCheck = new QCheckBox(tr("Show time scale"), this);
@@ -103,7 +103,7 @@ void GanttTimeScaleWidget::paintEvent(QPaintEvent *pe)
     if (r.x() % 100 != 0) {
         const int lastNumberXPos = r.x() - (r.x() % 100);
         QString lastNumber = QString::number(lastNumberXPos / 100 * 5);
-        if (r.x() % 100 < p.fontMetrics().width(lastNumber)) {
+        if (r.x() % 100 < p.fontMetrics().horizontalAdvance(lastNumber)) {
             p.drawText(lastNumberXPos - r.x() + 2, fm.ascent(), lastNumber);
         }
     }
@@ -193,7 +193,7 @@ void GanttProgress::drawGraph(QPainter &p)
         // Draw the rectangle for the current job
         QColor color = colorForStatus((*it).job);
         p.fillRect(xStart, 0, xWidth, height(), color);
-        p.setPen(color.dark());
+        p.setPen(color.darker());
         p.drawRect(xStart, 0, xWidth, height());
 
         if (xWidth > 4 && height() > 4) {
@@ -209,16 +209,16 @@ void GanttProgress::drawGraph(QPainter &p)
                     || height() - 4 != (*it).text_cache.height()) {
                     // If we print the filename, check whether we need to truncate it and
                     // append "..." at the end.
-                    int text_width = p.fontMetrics().width(s);
+                    int text_width = p.fontMetrics().horizontalAdvance(s);
                     if (text_width > width) {
-                        int threeDotsWidth = p.fontMetrics().width(QStringLiteral("..."));
+                        int threeDotsWidth = p.fontMetrics().horizontalAdvance(QStringLiteral("..."));
                         int next_width = 0;
                         int newLength = 0;
                         for (;
                              next_width <= width;
                              ++newLength) {
                             text_width = next_width;
-                            next_width = p.fontMetrics().width(s.left(newLength)) +
+                            next_width = p.fontMetrics().horizontalAdvance(s.left(newLength)) +
                                          threeDotsWidth;
                         }
 
@@ -253,7 +253,7 @@ QColor GanttProgress::colorForStatus(const Job &job) const
     } else {
         QColor c = mStatusView->hostColor(job.client);
         if (job.state == Job::LocalOnly) {
-            return c.light();
+            return c.lighter();
         } else {
             return c;
         }
@@ -264,7 +264,7 @@ void GanttProgress::paintEvent(QPaintEvent *)
 {
     QPainter p(this);
     p.setBackgroundMode(Qt::OpaqueMode);
-    p.setBackground(palette().background());
+    p.setBackground(palette().window());
     drawGraph(p);
 }
 
@@ -292,7 +292,7 @@ GanttStatusView::GanttStatusView(QObject *parent)
 
     m_topLayout = new QGridLayout(mTopWidget);
     m_topLayout->setSpacing(5);
-    m_topLayout->setMargin(4);
+    m_topLayout->setContentsMargins({4, 4, 4, 4});
     m_topLayout->setColumnStretch(1, 10);
 
     mTimeScale = new GanttTimeScaleWidget(mTopWidget);

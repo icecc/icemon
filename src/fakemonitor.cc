@@ -28,6 +28,7 @@
 #include <QStringList>
 #include <QTime>
 #include <QTimer>
+#include <QRandomGenerator>
 
 #include <icecc/comm.h>
 
@@ -54,7 +55,7 @@ const QStringList HOST_NAMES(QStringList()
 QString randomPlatform()
 {
     static const QStringList hostNames = {QStringLiteral("Linux 2.6"), QStringLiteral("Linux 3.2"), QStringLiteral("Linux 3.6")};
-    return hostNames[qrand() % hostNames.size()];
+    return hostNames[QRandomGenerator::global()->generate() % hostNames.size()];
 }
 }
 
@@ -71,8 +72,6 @@ FakeMonitor::FakeMonitor(HostInfoManager *manager, QObject *parent)
     for (HostId i = 0; i < MAX_HOST_COUNT; ++i) {
         createHostInfo(i + 1);
     }
-
-    qsrand(QTime::currentTime().msec());
 }
 
 void FakeMonitor::createHostInfo(HostId id)
@@ -102,10 +101,10 @@ void FakeMonitor::update()
     time(&rawtime);
     job.startTime = rawtime;
     job.state = Job::Compiling;
-    job.in_compressed = qrand() % MAX_JOB_SIZE * 0.75; // random factor
-    job.in_uncompressed = qrand() % MAX_JOB_SIZE;
-    job.in_compressed = qrand() % MAX_JOB_SIZE ;
-    job.in_uncompressed = qrand() % MAX_JOB_SIZE * 0.75; // random factor
+    job.in_compressed = QRandomGenerator::global()->generate() % MAX_JOB_SIZE * 0.75; // random factor
+    job.in_uncompressed = QRandomGenerator::global()->generate() % MAX_JOB_SIZE;
+    job.in_compressed = QRandomGenerator::global()->generate() % MAX_JOB_SIZE ;
+    job.in_uncompressed = QRandomGenerator::global()->generate() % MAX_JOB_SIZE * 0.75; // random factor
     job.real_msec = 200;
     const int serverId = ((JOB_ID + 1) % MAX_HOST_COUNT) + 1;
     job.server = serverId;

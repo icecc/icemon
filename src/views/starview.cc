@@ -33,7 +33,6 @@
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
-#include <qregexp.h>
 #include <qcheckbox.h>
 #include <qdir.h>
 #include <QSettings>
@@ -41,6 +40,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QDialogButtonBox>
+#include <QRegularExpression>
 
 #include <math.h>
 
@@ -753,9 +753,9 @@ bool StarView::filterArch(HostInfo *i)
         return true;
     }
 
-    QRegExp regExp(mConfigDialog->archFilter());
+    static QRegularExpression regExp(mConfigDialog->archFilter());
 
-    if (regExp.indexIn(i->platform()) >= 0) {
+    if (regExp.match(i->platform()).hasMatch()) {
         return true;
     }
 

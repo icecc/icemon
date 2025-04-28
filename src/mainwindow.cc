@@ -40,6 +40,7 @@
 #include <QApplication>
 #include <QSettings>
 #include <QMenu>
+#include <QActionGroup>
 
 #include <algorithm>
 

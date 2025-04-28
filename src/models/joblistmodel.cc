@@ -281,7 +281,7 @@ private:
 
 void JobListModel::slotExpireFinishedJobs()
 {
-    const uint currentTime = QDateTime::currentDateTime().toTime_t();
+    const uint currentTime = QDateTime::currentDateTime().toSecsSinceEpoch();
 
     // this list is sorted by the age of the finished jobs, the oldest is the first
     // so we've to find the first job which isn't old enough to expire
@@ -323,7 +323,7 @@ void JobListModel::expireItem(const Job &job)
         return;
     }
 
-    const uint currentTime = QDateTime::currentDateTime().toTime_t();
+    const uint currentTime = QDateTime::currentDateTime().toSecsSinceEpoch();
     m_finishedJobs.push_back(FinishedJob(currentTime, job.id));
 
     if (!m_expireTimer->isActive()) {

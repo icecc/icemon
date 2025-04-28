@@ -49,7 +49,7 @@ DetailedHostView::DetailedHostView(QObject *parent)
     , m_widget(new QWidget)
 {
     QBoxLayout *topLayout = new QVBoxLayout(m_widget.data());
-    topLayout->setMargin(10);
+    topLayout->setContentsMargins({10, 10, 10, 10});
 
     auto viewSplitter = new QSplitter(Qt::Vertical);
     topLayout->addWidget(viewSplitter);
@@ -57,7 +57,7 @@ DetailedHostView::DetailedHostView(QObject *parent)
     auto hosts = new QWidget(viewSplitter);
     auto dummy = new QVBoxLayout(hosts);
     dummy->setSpacing(10);
-    dummy->setMargin(0);
+    dummy->setContentsMargins({});
 
     mHostListModel = new HostListModel(this);
 
@@ -75,7 +75,7 @@ DetailedHostView::DetailedHostView(QObject *parent)
     auto locals = new QWidget(viewSplitter);
     dummy = new QVBoxLayout(locals);
     dummy->setSpacing(10);
-    dummy->setMargin(0);
+    dummy->setContentsMargins({});
 
     mLocalJobsModel = new JobListModel(this);
     mLocalJobsModel->setExpireDuration(5);
@@ -93,7 +93,7 @@ DetailedHostView::DetailedHostView(QObject *parent)
     auto remotes = new QWidget(viewSplitter);
     dummy = new QVBoxLayout(remotes);
     dummy->setSpacing(10);
-    dummy->setMargin(0);
+    dummy->setContentsMargins({});
 
     mRemoteJobsModel = new JobListModel(this);
     mRemoteJobsModel->setExpireDuration(5);

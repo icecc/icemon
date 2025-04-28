@@ -25,11 +25,11 @@ set(icemon_SRCS
   views/summaryview.cc
 )
 
-qt5_add_resources(resources_SRCS icemon.qrc)
+qt_add_resources(resources_SRCS icemon.qrc)
 add_executable(icemon ${icemon_SRCS} ${resources_SRCS})
 target_link_libraries(icemon
     Icecream
-    Qt5::Widgets
+    Qt6::Widgets
 )
 
 install(TARGETS icemon ${INSTALL_TARGETS_DEFAULT_ARGS})
