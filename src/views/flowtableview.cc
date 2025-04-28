@@ -184,14 +184,14 @@ void FlowTableView::checkNode(unsigned int hostId)
     QTableWidgetItem *widgetItem = new QTableWidgetItem(hostInfoText(hostInfo));
     widgetItem->setIcon(QIcon(QStringLiteral(":/images/icemonnode.png")));
     widgetItem->setToolTip(hostInfo->toolTip());
-    widgetItem->setBackgroundColor(hostInfo->color());
+    widgetItem->setBackground(hostInfo->color());
     widgetItem->setFlags(Qt::ItemIsEnabled);
     int insertRow = m_widget->rowCount();
     m_widget->setRowCount(insertRow + 1);
     m_idToRowMap.insert(hostId, insertRow);
     m_widget->setItem(insertRow, 0, widgetItem);
     // adjust column width
-    int width = QFontMetrics(widgetItem->font()).width(widgetItem->text()) + 32;
+    int width = QFontMetrics(widgetItem->font()).horizontalAdvance(widgetItem->text()) + 32;
     m_widget->horizontalHeader()->resizeSection(0, qMax(m_widget->horizontalHeader()->sectionSize(0), width));
 
     widgetItem = new QTableWidgetItem;

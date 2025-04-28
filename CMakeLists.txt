@@ -29,8 +29,8 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
   endif()
 endif()
 
-set(QT_MIN_VERSION "5.4.0") # Because of QByteArray::fromStdString
-find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED Core Widgets)
+set(QT_MIN_VERSION "6.2.0")
+find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED Core Widgets)
 find_package(Icecream)
 set_package_properties(Icecream PROPERTIES
   DESCRIPTION "Package providing API for accessing icecc information. Provides 'icecc/comm.h' header"
@@ -38,9 +38,8 @@ set_package_properties(Icecream PROPERTIES
   TYPE REQUIRED
 )
 
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-endif()
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
   check_cxx_compiler_flag(-Wunused-but-set-variable HAVE_GCC_UNUSED_BUT_SET)

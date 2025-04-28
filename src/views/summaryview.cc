@@ -71,14 +71,14 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
     const QColor nodeColor = view->hostInfoManager()->hostColor(hostid);
 
     auto labelBox = new NodeInfoFrame(parent, nodeColor);
-    layout->setMargin(5);
+    layout->setContentsMargins({5, 5, 5, 5});
     layout->addWidget(labelBox, row, 0);
     labelBox->show();
     labelBox->setMinimumWidth(75);
     m_widgets.append(labelBox);
 
     auto labelLayout = new QVBoxLayout(labelBox);
-    labelLayout->setMargin(10);
+    labelLayout->setContentsMargins({10, 10, 10, 10});
     labelLayout->setSpacing(5);
 
     QLabel *l;
@@ -111,13 +111,13 @@ SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryVi
     }
 
     auto detailsBox = new NodeInfoFrame(parent, nodeColor);
-    layout->setMargin(5);
+    layout->setContentsMargins({5, 5, 5, 5});
     layout->addWidget(detailsBox, row, 1);
     detailsBox->show();
     m_widgets.append(detailsBox);
 
     auto grid = new QGridLayout(detailsBox);
-    grid->setMargin(10);
+    grid->setContentsMargins({10, 10, 10, 10});
     grid->setSpacing(5);
 
     m_jobsLabel = addLine(QApplication::tr("Jobs:"), detailsBox, grid, Qt::AlignBottom, QStringLiteral("0"));
@@ -279,7 +279,7 @@ SummaryView::SummaryView(QObject *parent)
     m_layout = new QGridLayout(m_base);
     m_layout->setColumnStretch(1, 1);
     m_layout->setSpacing(5);
-    m_layout->setMargin(5);
+    m_layout->setContentsMargins({5, 5, 5, 5});
 
     m_widget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_widget->setMinimumHeight(150);

@@ -38,7 +38,7 @@ void HostListView::setModel(QAbstractItemModel *model)
 {
     QTreeView::setModel(model);
     if (model) {
-        sortByColumn(HostListModel::ColumnID);
+        sortByColumn(HostListModel::ColumnID, Qt::AscendingOrder);
         header()->setStretchLastSection(false);
         header()->setSectionResizeMode(HostListModel::ColumnName, QHeaderView::Stretch);
         header()->setSectionResizeMode(HostListModel::ColumnColor, QHeaderView::ResizeToContents);

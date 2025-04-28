@@ -46,7 +46,7 @@ void JobListView::setModel(QAbstractItemModel *model)
 {
     QTreeView::setModel(model);
     if (model) {
-        sortByColumn(JobListModel::JobColumnID);
+        sortByColumn(JobListModel::JobColumnID, Qt::AscendingOrder);
         header()->setStretchLastSection(false);
         header()->setSectionResizeMode(JobListModel::JobColumnFilename, QHeaderView::Stretch);
         header()->setSectionResizeMode(JobListModel::JobColumnClient, QHeaderView::ResizeToContents);

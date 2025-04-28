@@ -36,6 +36,7 @@
 #include <qdebug.h>
 #include <qsocketnotifier.h>
 #include <qtimer.h>
+#include <QRandomGenerator>
 
 #include <list>
 #include <iostream>
@@ -80,7 +81,7 @@ void IcecreamMonitor::checkScheduler(bool deleteit)
     } else if (m_scheduler) {
         return;
     }
-    QTimer::singleShot(1000 + (qrand() & 1023), this, SLOT(slotCheckScheduler())); // TODO: check if correct
+    QTimer::singleShot(1000 + (QRandomGenerator::global()->generate() & 1023), this, SLOT(slotCheckScheduler())); // TODO: check if correct
 }
 
 void IcecreamMonitor::registerNotify(int fd, QSocketNotifier::Type type, const char *slot)
@@ -157,7 +158,7 @@ void IcecreamMonitor::slotCheckScheduler()
                            QSocketNotifier::Read, SLOT(slotCheckScheduler()));
         }
         if (m_fd_type == QSocketNotifier::Read) {
-            QTimer::singleShot(1000 + (qrand() & 1023), this, SLOT(slotCheckScheduler()));
+            QTimer::singleShot(1000 + (QRandomGenerator::global()->generate() & 1023), this, SLOT(slotCheckScheduler()));
         }
     }
 
