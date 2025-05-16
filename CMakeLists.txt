@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10.0)
+cmake_minimum_required(VERSION 3.12)
 project(icemon VERSION 3.3)
 
 find_package(ECM REQUIRED NO_MODULE)
@@ -72,18 +72,25 @@ include_directories(
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 if (Icecream_FOUND)
+    set(CMAKE_REQUIRED_LIBRARIES Icecream)
+
     check_include_file_cxx(icecc/logging.h ICECC_HAVE_LOGGING_H)
+
+    check_cxx_source_compiles("
+      #include <icecc/comm.h>
+
+      int main() { Msg msg(M_MON_GET_CS); (void)msg.type; }
+    " ICECC_TEST_USE_OLD_MSG_API)
 
     # Check whether icecc was compiled against old CXXABI
     # Work-around for: https://github.com/icecc/icemon/issues/24
     # See: https://gcc.gnu.org/onlinedocs/libstdc++/manual/using_dual_abi.html
     set(USE_OLDCXXABI_DEFINE -D_GLIBCXX_USE_CXX11_ABI=0)
-    set(CMAKE_REQUIRED_LIBRARIES Icecream)
     set(CMAKE_REQUIRED_DEFINITIONS ${USE_OLDCXXABI_DEFINE})
     check_cxx_source_compiles("
-    #include <icecc/comm.h>
+      #include <icecc/comm.h>
 
-    int main() { DiscoverSched sched(\"foo\"); }
+      int main() { DiscoverSched sched(\"foo\"); }
     " ICECC_TEST_USE_OLDABI)
 
     if (ICECC_TEST_USE_OLDABI)
