@@ -29,7 +29,7 @@
 #include <config-icemon.h>
 
 #include <icecc/comm.h>
-#ifdef ICECC_HAVE_LOGGING_H
+#if ICECC_HAVE_LOGGING_H
 #include <icecc/logging.h>
 #endif
 
@@ -38,9 +38,16 @@
 #include <qtimer.h>
 #include <QRandomGenerator>
 
+#include <memory>
 #include <list>
 #include <iostream>
 #include <string>
+
+#if ICECC_TEST_USE_OLD_MSG_API
+#define ICECC_MSG_API_COMPAT(old, new) old
+#else
+#define ICECC_MSG_API_COMPAT(old, new) new
+#endif
 
 using namespace std;
 
@@ -175,41 +182,40 @@ void IcecreamMonitor::msgReceived()
 
 bool IcecreamMonitor::handle_activity()
 {
-    Msg *m = m_scheduler->get_msg();
+    std::unique_ptr<Msg> m(m_scheduler->get_msg());
     if (!m) {
         checkScheduler(true);
         setSchedulerState(Offline);
         return false;
     }
 
-    switch (m->type) {
-    case M_MON_GET_CS:
-        handle_getcs(m);
+    switch (ICECC_MSG_API_COMPAT(m->type, *m)) {
+    case ICECC_MSG_API_COMPAT(M_MON_GET_CS, Msg::GET_CS):
+        handle_getcs(m.get());
         break;
-    case M_MON_JOB_BEGIN:
-        handle_job_begin(m);
+    case ICECC_MSG_API_COMPAT(M_MON_JOB_BEGIN, Msg::JOB_BEGIN):
+        handle_job_begin(m.get());
         break;
-    case M_MON_JOB_DONE:
-        handle_job_done(m);
+    case ICECC_MSG_API_COMPAT(M_MON_JOB_DONE, Msg::JOB_DONE):
+        handle_job_done(m.get());
         break;
-    case M_END:
+    case ICECC_MSG_API_COMPAT(M_END, Msg::END):
         std::cout << "END" << endl;
         checkScheduler(true);
         break;
-    case M_MON_STATS:
-        handle_stats(m);
+    case ICECC_MSG_API_COMPAT(M_MON_STATS, Msg::STATS):
+        handle_stats(m.get());
         break;
-    case M_MON_LOCAL_JOB_BEGIN:
-        handle_local_begin(m);
+    case ICECC_MSG_API_COMPAT(M_MON_LOCAL_JOB_BEGIN, Msg::JOB_LOCAL_BEGIN):
+        handle_local_begin(m.get());
         break;
-    case M_JOB_LOCAL_DONE:
-        handle_local_done(m);
+    case ICECC_MSG_API_COMPAT(M_JOB_LOCAL_DONE, Msg::JOB_LOCAL_DONE):
+        handle_local_done(m.get());
         break;
     default:
         cout << "UNKNOWN" << endl;
         break;
     }
-    delete m;
     return true;
 }
 
@@ -355,7 +361,7 @@ void IcecreamMonitor::handle_job_done(Msg *_m)
 
 void IcecreamMonitor::setupDebug()
 {
-#ifdef ICECC_HAVE_LOGGING_H
+#if ICECC_HAVE_LOGGING_H
     char *env = getenv("ICECC_DEBUG");
     int debug_level = Error;
 
