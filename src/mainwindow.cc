@@ -172,7 +172,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::closeEvent(QCloseEvent *e)
 {
-    if (m_systemTrayIcon->isVisible())
+    if (m_systemTrayIcon && m_systemTrayIcon->isVisible())
     {
         QSettings settings;
         const bool shownBefore = settings.value(QStringLiteral("programWillKeepRunningWarningShown")).toBool();
@@ -216,7 +216,10 @@ void MainWindow::writeSettings()
     QSettings settings;
     settings.setValue(QStringLiteral("geometry"), saveGeometry());
     settings.setValue(QStringLiteral("windowState"), saveState());
-    settings.setValue(QStringLiteral("showSystemTray"), m_systemTrayIcon->isVisible());
+    if (m_systemTrayIcon)
+    {
+        settings.setValue(QStringLiteral("showSystemTray"), m_systemTrayIcon->isVisible());
+    }
     settings.setValue(QStringLiteral("currentView"), (m_view ? m_view->id() : QString()));
     settings.sync();
 }
@@ -299,6 +302,10 @@ void MainWindow::configureView()
 
 void MainWindow::updateSystemTrayVisible()
 {
+    if (!m_systemTrayIcon)
+    {
+        return;
+    }
     if (m_showInSystemTrayAction->isChecked()) {
         m_systemTrayIcon->show();
     } else {
@@ -394,7 +401,10 @@ void MainWindow::updateJobStats()
     if (!m_monitor->schedulerState()) {
         m_jobStatsWidget->clear();
         m_jobStatsWidget->setVisible(false);
-        m_systemTrayIcon->setToolTip(tr("Scheduler is offline."));
+        if (m_systemTrayIcon)
+        {
+            m_systemTrayIcon->setToolTip(tr("Scheduler is offline."));
+        }
         return;
     }
 
@@ -445,7 +455,10 @@ void MainWindow::updateJobStats()
 
     m_jobStatsWidget->setText(tr("| Active jobs: %1").arg(text));
     m_jobStatsWidget->setVisible(true);
-    m_systemTrayIcon->setToolTip(tr("Active jobs: %1").arg(textNoHTML));
+    if (m_systemTrayIcon)
+    {
+        m_systemTrayIcon->setToolTip(tr("Active jobs: %1").arg(textNoHTML));
+    }
 }
 
 void MainWindow::setCurrentNet(const QByteArray &netname)
