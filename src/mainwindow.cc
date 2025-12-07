@@ -207,8 +207,11 @@ void MainWindow::readSettings()
     auto view = StatusViewFactory::create(viewId, this);
     setView(view);
 
-    m_showInSystemTrayAction->setChecked(showSystemTray);
-    updateSystemTrayVisible();
+    if (m_systemTrayIcon)
+    {
+        m_showInSystemTrayAction->setChecked(showSystemTray);
+        updateSystemTrayVisible();
+    }
 }
 
 void MainWindow::writeSettings()
