@@ -222,9 +222,11 @@ bool IcecreamMonitor::handle_activity()
 void IcecreamMonitor::handle_getcs(Msg *_m)
 {
     MonGetCSMsg *m = dynamic_cast<MonGetCSMsg *>(_m);
+    assert(m);
     if (!m) {
         return;
     }
+
     m_rememberedJobs[m->job_id] = Job(m->job_id, m->clientid,
                                       QString::fromStdString(m->filename),
                                       m->lang == CompileJob::Lang_C ?
@@ -237,6 +239,7 @@ void IcecreamMonitor::handle_getcs(Msg *_m)
 void IcecreamMonitor::handle_local_begin(Msg *_m)
 {
     MonLocalJobBeginMsg *m = dynamic_cast<MonLocalJobBeginMsg *>(_m);
+    assert(m);
     if (!m) {
         return;
     }
@@ -251,6 +254,7 @@ void IcecreamMonitor::handle_local_begin(Msg *_m)
 void IcecreamMonitor::handle_local_done(Msg *_m)
 {
     JobLocalDoneMsg *m = dynamic_cast<JobLocalDoneMsg *>(_m);
+    assert(m);
     if (!m) {
         return;
     }
@@ -275,6 +279,7 @@ void IcecreamMonitor::handle_local_done(Msg *_m)
 void IcecreamMonitor::handle_stats(Msg *_m)
 {
     MonStatsMsg *m = dynamic_cast<MonStatsMsg *>(_m);
+    assert(m);
     if (!m) {
         return;
     }
@@ -302,6 +307,7 @@ void IcecreamMonitor::handle_stats(Msg *_m)
 void IcecreamMonitor::handle_job_begin(Msg *_m)
 {
     MonJobBeginMsg *m = dynamic_cast<MonJobBeginMsg *>(_m);
+    assert(m);
     if (!m) {
         return;
     }
@@ -313,6 +319,7 @@ void IcecreamMonitor::handle_job_begin(Msg *_m)
     }
 
     HostInfo *hostInfo = hostInfoManager()->find(m->hostid);
+    assert(hostInfo);
     if (hostInfo)
         hostInfo->incJobs();
 
@@ -326,6 +333,7 @@ void IcecreamMonitor::handle_job_begin(Msg *_m)
 void IcecreamMonitor::handle_job_done(Msg *_m)
 {
     MonJobDoneMsg *m = dynamic_cast<MonJobDoneMsg *>(_m);
+    assert(m);
     if (!m) {
         return;
     }
