@@ -263,22 +263,6 @@ int JobListModel::rowCount(const QModelIndex &parent) const
     return m_jobs.size();
 }
 
-struct find_jobid
-    : public std::unary_function<Job, bool>
-{
-public:
-    explicit find_jobid(unsigned int jobId)
-        : m_jobId(jobId) {}
-
-    bool operator()(const Job &job) const
-    {
-        return job.id == m_jobId;
-    }
-
-private:
-    unsigned int m_jobId;
-};
-
 void JobListModel::slotExpireFinishedJobs()
 {
     const uint currentTime = QDateTime::currentDateTime().toSecsSinceEpoch();
@@ -309,7 +293,10 @@ void JobListModel::removeItem(const Job &job)
 
 void JobListModel::removeItemById(unsigned int jobId)
 {
-    QVector<Job>::iterator it = std::find_if(m_jobs.begin(), m_jobs.end(), find_jobid(jobId));
+    QVector<Job>::iterator it = std::find_if(m_jobs.begin(), m_jobs.end(),
+        [jobId](const Job &job) {
+            return job.id == jobId;
+        });
     int index = std::distance(m_jobs.begin(), it);
     beginRemoveRows(QModelIndex(), index, index);
     m_jobs.erase(it);
