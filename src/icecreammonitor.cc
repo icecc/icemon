@@ -190,30 +190,30 @@ bool IcecreamMonitor::handle_activity()
     }
 
     switch (ICECC_MSG_API_COMPAT(m->type, *m)) {
-    case ICECC_MSG_API_COMPAT(M_MON_GET_CS, Msg::GET_CS):
+    case ICECC_MSG_API_COMPAT(M_MON_GET_CS, Msg::MON_GET_CS):
         handle_getcs(m.get());
         break;
-    case ICECC_MSG_API_COMPAT(M_MON_JOB_BEGIN, Msg::JOB_BEGIN):
+    case ICECC_MSG_API_COMPAT(M_MON_JOB_BEGIN, Msg::MON_JOB_BEGIN):
         handle_job_begin(m.get());
         break;
-    case ICECC_MSG_API_COMPAT(M_MON_JOB_DONE, Msg::JOB_DONE):
+    case ICECC_MSG_API_COMPAT(M_MON_JOB_DONE, Msg::MON_JOB_DONE):
         handle_job_done(m.get());
         break;
     case ICECC_MSG_API_COMPAT(M_END, Msg::END):
         std::cout << "END" << endl;
         checkScheduler(true);
         break;
-    case ICECC_MSG_API_COMPAT(M_MON_STATS, Msg::STATS):
+    case ICECC_MSG_API_COMPAT(M_MON_STATS, Msg::MON_STATS):
         handle_stats(m.get());
         break;
-    case ICECC_MSG_API_COMPAT(M_MON_LOCAL_JOB_BEGIN, Msg::JOB_LOCAL_BEGIN):
+    case ICECC_MSG_API_COMPAT(M_MON_LOCAL_JOB_BEGIN, Msg::MON_LOCAL_JOB_BEGIN):
         handle_local_begin(m.get());
         break;
     case ICECC_MSG_API_COMPAT(M_JOB_LOCAL_DONE, Msg::JOB_LOCAL_DONE):
         handle_local_done(m.get());
         break;
     default:
-        cout << "UNKNOWN" << endl;
+        cout << "UNKNOWN message type " << ICECC_MSG_API_COMPAT(m->type, m->to_string()) << endl;
         break;
     }
     return true;
