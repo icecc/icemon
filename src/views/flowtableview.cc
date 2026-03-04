@@ -132,7 +132,6 @@ void FlowTableView::update(const Job &job)
     HostInfo *hostInfo = hostInfoManager()->find(serverId);
 
     QFont f = m_widget->font();
-    f.setBold(hostInfo->numJobs() > 0);
     hostNameItem->setFont(f);
     hostNameItem->setText(hostInfoText(hostInfo));
 }
