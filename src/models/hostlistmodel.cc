@@ -213,25 +213,12 @@ void HostListModel::checkNode(unsigned int hostid)
     }
 }
 
-struct find_hostid
-    : public std::unary_function<HostInfo, bool>
-{
-public:
-    explicit find_hostid(unsigned int hostId)
-        : m_hostId(hostId) {}
-
-    bool operator()(const HostInfo &info) const
-    {
-        return info.id() == m_hostId;
-    }
-
-private:
-    unsigned int m_hostId;
-};
-
 void HostListModel::removeNodeById(unsigned int hostId)
 {
-    QVector<HostInfo>::iterator it = std::find_if(m_hostInfos.begin(), m_hostInfos.end(), find_hostid(hostId));
+    auto it = std::find_if(m_hostInfos.begin(), m_hostInfos.end(),
+        [hostId](const HostInfo &info) {
+            return info.id() == hostId;
+        });
     if (it == m_hostInfos.end()) {
         return;
     }
