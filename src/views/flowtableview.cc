@@ -143,7 +143,7 @@ QWidget *FlowTableView::widget() const
 
 QString FlowTableView::hostInfoText(HostInfo *hostInfo) {
     if ((hostInfo->serverSpeed() == 0) && (hostInfo->numJobs() == 0)) { // host disabled
-        return tr("%1 (Disabled)").arg(hostInfo->name());
+        return tr("%1 (not accepting jobs)").arg(hostInfo->name());
     } else {
         return tr("%1 (%2/%3)").arg(hostInfo->name()).arg(hostInfo->numJobs()).arg(hostInfo->maxJobs());
     }
