@@ -47,23 +47,23 @@ public:
 
     unsigned int id;
     QString fileName;
-    unsigned int server;
+    unsigned int server{0};
     unsigned int client;
     QString lang;
-    State state;
-    time_t startTime;
+    State state{WaitingForCS};
+    time_t startTime{};
 
-    unsigned int real_msec;  /* real time it used */
-    unsigned int user_msec;  /* user time used */
-    unsigned int sys_msec;   /* system time used */
-    unsigned int pfaults;    /* page faults */
+    unsigned int real_msec{0};  /* real time it used */
+    unsigned int user_msec{0};  /* user time used */
+    unsigned int sys_msec{0};   /* system time used */
+    unsigned int pfaults{0};    /* page faults */
 
-    int exitcode;            /* exit code */
+    int exitcode{0};            /* exit code */
 
-    unsigned int in_compressed;
-    unsigned int in_uncompressed;
-    unsigned int out_compressed;
-    unsigned int out_uncompressed;
+    unsigned int in_compressed{0};
+    unsigned int in_uncompressed{0};
+    unsigned int out_compressed{0};
+    unsigned int out_uncompressed{0};
 };
 
 QDebug operator<<(QDebug dbg, const Job &job);

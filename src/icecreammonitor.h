@@ -63,11 +63,11 @@ private:
     void handle_local_done(Msg *m);
 
     JobList m_rememberedJobs;
-    MsgChannel *m_scheduler;
+    MsgChannel *m_scheduler{nullptr};
 
-    DiscoverSched *m_discover;
-    QSocketNotifier *m_fd_notify;
-    QSocketNotifier::Type m_fd_type;
+    DiscoverSched *m_discover{nullptr};
+    QSocketNotifier *m_fd_notify{nullptr};
+    QSocketNotifier::Type m_fd_type{QSocketNotifier::Exception};
 };
 
 #endif // ICEMON_ICECREAMMONITOR_H

@@ -25,8 +25,6 @@
 Monitor::Monitor(HostInfoManager *manager, QObject *parent)
     : QObject(parent)
     , m_hostInfoManager(manager)
-    , m_currentSchedport(0)
-    , m_schedulerState(Offline)
 {
 }
 

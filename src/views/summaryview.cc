@@ -60,12 +60,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 
 SummaryViewItem::SummaryViewItem(unsigned int hostid, QWidget *parent, SummaryView *view, QGridLayout *layout)
-    : m_jobCount(0)
-    , m_totalJobsLength(0.0f)
-    , m_finishedJobCount(0)
-    , m_totalRequestedJobsLength(0.0f)
-    , m_requestedJobCount(0)
-    , m_view(view)
+    : m_view(view)
 {
     const int row = layout->rowCount();
     const QColor nodeColor = view->hostInfoManager()->hostColor(hostid);

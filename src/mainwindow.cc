@@ -49,20 +49,14 @@ namespace {
 
 struct PlatformStat
 {
-    PlatformStat()
-        : jobs(0)
-        , maxJobs(0) {}
-
-    unsigned int jobs;
-    unsigned int maxJobs;
+    unsigned int jobs{0};
+    unsigned int maxJobs{0};
 };
 
 }
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , m_view(nullptr)
-    , m_systemTrayIcon(nullptr)
 {
     QIcon appIcon = QIcon();
     appIcon.addFile(QStringLiteral(":/images/128-apps-icemon.png"), QSize(128, 128));

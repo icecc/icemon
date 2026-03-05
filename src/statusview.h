@@ -86,7 +86,7 @@ protected Q_SLOTS:
 
 private:
     QPointer<Monitor> m_monitor;
-    bool m_paused;
+    bool m_paused{false};
 };
 
 #endif
