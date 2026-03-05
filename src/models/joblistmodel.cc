@@ -31,7 +31,6 @@
 #include <QCoreApplication>
 
 #include <algorithm>
-#include <functional>
 
 static QString formatByteSize(unsigned int value)
 {

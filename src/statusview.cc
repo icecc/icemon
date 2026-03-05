@@ -25,7 +25,6 @@
 
 #include "hostinfo.h"
 #include "job.h"
-#include "utils.h"
 
 #include <QDebug>
 #include <QTime>

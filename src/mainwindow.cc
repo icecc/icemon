@@ -30,8 +30,6 @@
 #include "statusview.h"
 #include "statusviewfactory.h"
 
-#include "utils.h"
-
 #include <QCloseEvent>
 #include <QDebug>
 #include <QLabel>
