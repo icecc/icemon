@@ -57,7 +57,7 @@ public:
     void setNoRemote(bool noRemote) { mNoRemote = noRemote; }
     bool noRemote() const { return mNoRemote; }
 
-    typedef QMap<QString, QString> StatsMap;
+    using StatsMap = QMap<QString, QString>;
     void updateFromStatsMap(const StatsMap &stats);
 
     static void initColorTable();
@@ -122,7 +122,7 @@ public:
 
     HostInfo *find(unsigned int hostid) const;
 
-    typedef QMap<unsigned int, HostInfo *> HostMap;
+    using HostMap = QMap<unsigned int, HostInfo *>;
 
     HostMap hostMap() const;
 

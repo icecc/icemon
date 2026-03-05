@@ -31,7 +31,7 @@
 
 class Job;
 
-typedef QHash<int, int> HostIdRowMap;
+using HostIdRowMap = QHash<int, int>;
 
 class ProgressWidget
     : public QWidget
