@@ -123,7 +123,7 @@ void FlowTableView::update(const Job &job)
         jobStateItem->setFlags(Qt::ItemIsEnabled);
     }
 
-    if (ProgressWidget * progressWidget = static_cast<ProgressWidget *>(m_widget->cellWidget(serverRow, 2))) {
+    if (auto * progressWidget = static_cast<ProgressWidget *>(m_widget->cellWidget(serverRow, 2))) {
         progressWidget->setCurrentJob(job);
     }
 
@@ -180,7 +180,7 @@ void FlowTableView::checkNode(unsigned int hostId)
     }
 
     HostInfo *hostInfo = hostInfoManager()->hostMap().value(hostId);
-    QTableWidgetItem *widgetItem = new QTableWidgetItem(hostInfoText(hostInfo));
+    auto *widgetItem = new QTableWidgetItem(hostInfoText(hostInfo));
     widgetItem->setIcon(QIcon(QStringLiteral(":/images/icemonnode.png")));
     widgetItem->setToolTip(hostInfo->toolTip());
     widgetItem->setBackground(hostInfo->color());

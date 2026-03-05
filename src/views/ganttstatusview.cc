@@ -63,7 +63,7 @@ GanttConfigDialog::GanttConfigDialog(QWidget *parent)
 
     buttonLayout->addStretch(1);
 
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Close, this);
+    auto *buttonBox = new QDialogButtonBox(QDialogButtonBox::Close, this);
     buttonLayout->addWidget(buttonBox);
     connect(buttonBox, SIGNAL(rejected()), SLOT(hide()));
 

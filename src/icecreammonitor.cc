@@ -221,7 +221,7 @@ bool IcecreamMonitor::handle_activity()
 
 void IcecreamMonitor::handle_getcs(Msg *_m)
 {
-    MonGetCSMsg *m = dynamic_cast<MonGetCSMsg *>(_m);
+    auto *m = dynamic_cast<MonGetCSMsg *>(_m);
     assert(m);
     if (!m) {
         return;
@@ -238,7 +238,7 @@ void IcecreamMonitor::handle_getcs(Msg *_m)
 
 void IcecreamMonitor::handle_local_begin(Msg *_m)
 {
-    MonLocalJobBeginMsg *m = dynamic_cast<MonLocalJobBeginMsg *>(_m);
+    auto *m = dynamic_cast<MonLocalJobBeginMsg *>(_m);
     assert(m);
     if (!m) {
         return;
@@ -253,7 +253,7 @@ void IcecreamMonitor::handle_local_begin(Msg *_m)
 
 void IcecreamMonitor::handle_local_done(Msg *_m)
 {
-    JobLocalDoneMsg *m = dynamic_cast<JobLocalDoneMsg *>(_m);
+    auto *m = dynamic_cast<JobLocalDoneMsg *>(_m);
     assert(m);
     if (!m) {
         return;
@@ -278,7 +278,7 @@ void IcecreamMonitor::handle_local_done(Msg *_m)
 
 void IcecreamMonitor::handle_stats(Msg *_m)
 {
-    MonStatsMsg *m = dynamic_cast<MonStatsMsg *>(_m);
+    auto *m = dynamic_cast<MonStatsMsg *>(_m);
     assert(m);
     if (!m) {
         return;
@@ -306,7 +306,7 @@ void IcecreamMonitor::handle_stats(Msg *_m)
 
 void IcecreamMonitor::handle_job_begin(Msg *_m)
 {
-    MonJobBeginMsg *m = dynamic_cast<MonJobBeginMsg *>(_m);
+    auto *m = dynamic_cast<MonJobBeginMsg *>(_m);
     assert(m);
     if (!m) {
         return;
@@ -332,7 +332,7 @@ void IcecreamMonitor::handle_job_begin(Msg *_m)
 
 void IcecreamMonitor::handle_job_done(Msg *_m)
 {
-    MonJobDoneMsg *m = dynamic_cast<MonJobDoneMsg *>(_m);
+    auto *m = dynamic_cast<MonJobDoneMsg *>(_m);
     assert(m);
     if (!m) {
         return;
