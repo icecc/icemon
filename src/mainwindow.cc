@@ -94,7 +94,7 @@ MainWindow::MainWindow(QWidget *parent)
         connect(action, &QAction::triggered, this, &MainWindow::updateSystemTrayVisible);
         m_showInSystemTrayAction = action;
 
-        QMenu *systrayMenu = new QMenu(this);
+        auto *systrayMenu = new QMenu(this);
         QAction *quitAction = systrayMenu->addAction(tr("&Quit"), this, SLOT(quit()), tr("Ctrl+Q"));
         quitAction->setIcon(QIcon::fromTheme(QStringLiteral("application-exit")));
         quitAction->setMenuRole(QAction::QuitRole);

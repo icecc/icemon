@@ -150,7 +150,7 @@ void DetailedHostView::createKnownHosts()
 
 void DetailedHostView::slotNodeActivated()
 {
-    const unsigned int hostid = mHostListView->currentIndex().data(HostListModel::HostIdRole).value<unsigned int>();
+    const auto hostid = mHostListView->currentIndex().data(HostListModel::HostIdRole).value<unsigned int>();
     if (!hostid)
         return;
     mLocalJobsModel->setHostId(hostid);

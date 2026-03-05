@@ -54,7 +54,7 @@ StarViewConfigDialog::StarViewConfigDialog(QWidget *parent)
 
     QBoxLayout *topLayout = new QVBoxLayout(this);
 
-    QLabel *label = new QLabel(tr("Number of nodes per ring:"));
+    auto *label = new QLabel(tr("Number of nodes per ring:"));
     topLayout->addWidget(label);
 
     QBoxLayout *nodesLayout = new QHBoxLayout();
@@ -87,7 +87,7 @@ StarViewConfigDialog::StarViewConfigDialog(QWidget *parent)
     hline->setFrameShadow(QFrame::Sunken);
     topLayout->addWidget(hline);
 
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Close, this);
+    auto *buttonBox = new QDialogButtonBox(QDialogButtonBox::Close, this);
     topLayout->addWidget(buttonBox);
 
     connect(mSuppressDomainName, SIGNAL(toggled(bool)),
