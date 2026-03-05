@@ -109,7 +109,7 @@ private:
      *    the complete file path is displayed else .../partN/.../part1/fileName.
      * Default is 2.
      */
-    int m_numberOfFilePathParts;
+    int m_numberOfFilePathParts{2};
 
     /**
      * The number of seconds after which finished jobs should be expired.
@@ -118,7 +118,7 @@ private:
      * -  > 0 after some seconds.
      * Default is -1.
      */
-    int m_expireDuration;
+    int m_expireDuration{-1};
 
     struct FinishedJob
     {
@@ -134,8 +134,8 @@ private:
     FinishedJobs m_finishedJobs;
 
     QTimer *m_expireTimer;
-    JobType m_jobType;
-    unsigned int m_hostId;
+    JobType m_jobType{AllJobs};
+    unsigned int m_hostId{0};
 };
 
 class JobListSortFilterProxyModel

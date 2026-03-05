@@ -53,10 +53,6 @@ using namespace std;
 
 IcecreamMonitor::IcecreamMonitor(HostInfoManager *manager, QObject *parent)
     : Monitor(manager, parent)
-    , m_scheduler(nullptr)
-    , m_discover(nullptr)
-    , m_fd_notify(nullptr)
-    , m_fd_type(QSocketNotifier::Exception)
 {
     setupDebug();
     checkScheduler();

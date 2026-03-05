@@ -32,7 +32,6 @@
 
 StatusView::StatusView(QObject *parent)
     : QObject(parent)
-    , m_paused(false)
 {
 }
 

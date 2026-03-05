@@ -84,8 +84,8 @@ private:
 
     HostInfoManager *m_hostInfoManager;
     QPointer<Monitor> m_monitor;
-    StatusView *m_view;
-    QSystemTrayIcon* m_systemTrayIcon;
+    StatusView *m_view{nullptr};
+    QSystemTrayIcon* m_systemTrayIcon{nullptr};
 
     QLabel *m_schedStatusWidget;
     QLabel *m_jobStatsWidget;

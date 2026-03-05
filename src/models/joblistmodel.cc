@@ -79,11 +79,7 @@ static QString trimFilePath(const QString &filePath, int numberOfFilePathParts)
 
 JobListModel::JobListModel(QObject *parent)
     : QAbstractListModel(parent)
-    , m_numberOfFilePathParts(2)
-    , m_expireDuration(-1)
     , m_expireTimer(new QTimer(this))
-    , m_jobType(AllJobs)
-    , m_hostId(0)
 {
     connect(m_expireTimer, SIGNAL(timeout()),
             this, SLOT(slotExpireFinishedJobs()));

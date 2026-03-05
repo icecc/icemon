@@ -28,20 +28,8 @@
 Job::Job(unsigned int id, unsigned int client, const QString &filename, const QString &lang)
     : id(id)
     , fileName(filename)
-    , server(0)
     , client(client)
     , lang(lang)
-    , state(WaitingForCS)
-    , startTime{}
-    , real_msec(0)
-    , user_msec(0)
-    , sys_msec(0)
-    , pfaults(0)
-    , exitcode(0)
-    , in_compressed(0)
-    , in_uncompressed(0)
-    , out_compressed(0)
-    , out_uncompressed(0)
 {
 }
 

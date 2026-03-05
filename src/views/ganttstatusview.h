@@ -64,7 +64,7 @@ protected:
     void paintEvent(QPaintEvent *e) override;
 
 private:
-    int mPixelsPerSecond;
+    int mPixelsPerSecond{40};
 };
 
 class GanttProgress
@@ -114,9 +114,9 @@ private:
 
     QList<JobData> m_jobs;
 
-    int mClock;
+    int mClock{0};
 
-    bool mIsFree;
+    bool mIsFree{true};
 };
 
 class GanttStatusView

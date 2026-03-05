@@ -50,7 +50,7 @@ private:
     StatusView *m_statusView;
     Job m_currentJob;
     QImage m_backingStore;
-    bool m_isVirgin;
+    bool m_isVirgin{true};
 };
 
 class FlowTableView

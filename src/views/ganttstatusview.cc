@@ -79,7 +79,6 @@ bool GanttConfigDialog::isTimeScaleVisible()
 
 GanttTimeScaleWidget::GanttTimeScaleWidget(QWidget *parent)
     : QWidget(parent)
-    , mPixelsPerSecond(40)
 {
     QPalette pal = palette();
     pal.setColor(backgroundRole(), Qt::white);
@@ -130,8 +129,6 @@ void GanttTimeScaleWidget::paintEvent(QPaintEvent *pe)
 GanttProgress::GanttProgress(StatusView *statusView, QWidget *parent)
     : QWidget(parent)
     , mStatusView(statusView)
-    , mClock(0)
-    , mIsFree(true)
 {
     QPalette pal = palette();
     pal.setColor(backgroundRole(), Qt::white);

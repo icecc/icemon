@@ -77,8 +77,8 @@ private:
     HostInfoManager *m_hostInfoManager;
     QByteArray m_currentNetname;
     QByteArray m_currentSchedname;
-    uint m_currentSchedport;
-    SchedulerState m_schedulerState;
+    uint m_currentSchedport{0};
+    SchedulerState m_schedulerState{Offline};
 };
 
 #endif // ICEMON_MONITOR_H

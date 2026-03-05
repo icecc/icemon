@@ -30,7 +30,6 @@ ProgressWidget::ProgressWidget(HostInfo *info, StatusView *statusView, QWidget *
     : QWidget(parent)
     , m_hostInfo(info)
     , m_statusView(statusView)
-    , m_isVirgin(true)
 {
     setAutoFillBackground(false);
     setAttribute(Qt::WA_OpaquePaintEvent);

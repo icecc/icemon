@@ -48,26 +48,21 @@ private:
      
     struct JobHandler
     {
-        JobHandler()
-            : stateWidget(nullptr)
-            , sourceLabel(nullptr)
-            , stateLabel(nullptr) {}
-
-        QFrame *stateWidget;
-        QLabel *sourceLabel;
-        QLabel *stateLabel;
+        QFrame *stateWidget{nullptr};
+        QLabel *sourceLabel{nullptr};
+        QLabel *stateLabel{nullptr};
         QString currentFile;
     };
 
     QLabel *m_speedLabel;
     QLabel *m_jobsLabel;
 
-    int m_jobCount;
-    double m_totalJobsLength;
-    int m_finishedJobCount;
+    int m_jobCount{0};
+    double m_totalJobsLength{0.0f};
+    int m_finishedJobCount{0};
 
-    double m_totalRequestedJobsLength;
-    int m_requestedJobCount;
+    double m_totalRequestedJobsLength{0.0f};
+    int m_requestedJobCount{0};
 
     SummaryView *m_view;
 
