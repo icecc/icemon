@@ -76,7 +76,7 @@ public:
         : Job() { state = Job::Idle; }
 };
 
-typedef QMap<unsigned int, Job> JobList;
+using JobList = QMap<unsigned int, Job>;
 
 #endif
 // vim:ts=4:sw=4:noet

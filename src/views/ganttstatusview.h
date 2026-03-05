@@ -163,17 +163,17 @@ private:
     GanttTimeScaleWidget *mTimeScale;
 
     using SlotList = QList<GanttProgress *>;
-    typedef QMap<unsigned int, SlotList> NodeMap;
+    using NodeMap = QMap<unsigned int, SlotList>;
     NodeMap mNodeMap;
-    typedef QMap<unsigned int, int> AgeMap;
+    using AgeMap = QMap<unsigned int, int>;
     AgeMap mAgeMap;
-    typedef QMap<unsigned int, GanttProgress *> JobMap;
+    using JobMap = QMap<unsigned int, GanttProgress *>;
     JobMap mJobMap;
-    typedef QMap<unsigned int, QVBoxLayout *> NodeLayoutMap;
+    using NodeLayoutMap = QMap<unsigned int, QVBoxLayout *>;
     NodeLayoutMap mNodeLayouts;
-    typedef QMap<unsigned int, int> NodeRowMap;
+    using NodeRowMap = QMap<unsigned int, int>;
     NodeRowMap mNodeRows;
-    typedef QMap<unsigned int, QWidget *> NodeLabelMap;
+    using NodeLabelMap = QMap<unsigned int, QWidget *>;
     NodeLabelMap mNodeLabels;
     QTimer *m_progressTimer;
     QTimer *m_ageTimer;
