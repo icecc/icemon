@@ -85,3 +85,9 @@ icemon
 *.BASE.*
 *.LOCAL.*
 *.REMOTE.*
+
+# Others
+# ------
+.clangd
+.vscode
+build*/*
