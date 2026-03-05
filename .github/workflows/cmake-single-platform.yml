@@ -23,7 +23,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
     - name: Install dependencies (linux)
-      run: sudo apt install ninja-build extra-cmake-modules libicecc-dev
+      run: sudo apt install ninja-build extra-cmake-modules libicecc-dev pandoc
     - uses: actions/checkout@v4
 
     - name: Configure CMake
@@ -32,5 +32,7 @@ jobs:
       run: cmake -B ${{github.workspace}}/build -G Ninja -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build
-      # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    - name: Docs
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target manpage
