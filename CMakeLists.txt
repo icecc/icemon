@@ -11,6 +11,7 @@ include(CheckCXXCompilerFlag)
 include(CheckCXXSourceCompiles)
 include(GNUInstallDirs)
 include(CheckIncludeFileCXX)
+include(FindPackageHandleStandardArgs)
 include(FeatureSummary)
 include(ECMInstallIcons)
 
