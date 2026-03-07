@@ -66,7 +66,7 @@ private slots:
 
     void about();
 
-    void updateSchedulerState(Monitor::SchedulerState state);
+    void updateSchedulerState();
     void updateJob(const Job &);
     void updateJobStats();
 

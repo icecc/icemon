@@ -151,7 +151,7 @@ MainWindow::MainWindow(QWidget *parent)
     resize(600, 400);
     readSettings();
 
-    updateSchedulerState(Monitor::Offline);
+    updateSchedulerState();
 }
 
 MainWindow::~MainWindow()
@@ -245,7 +245,7 @@ void MainWindow::setMonitor(Monitor *monitor)
     if (m_view) {
         m_view->setMonitor(m_monitor);
     }
-    updateSchedulerState(m_monitor ? m_monitor->schedulerState() : Monitor::Offline);
+    updateSchedulerState();
 }
 
 StatusView *MainWindow::view() const
@@ -357,9 +357,9 @@ void MainWindow::about()
         .arg(QLatin1String(Icemon::Version::appShortName)), about);
 }
 
-void MainWindow::updateSchedulerState(Monitor::SchedulerState state)
+void MainWindow::updateSchedulerState()
 {
-    if (state == Monitor::Online) {
+    if (m_monitor && m_monitor->schedulerState() == Monitor::SchedulerState::Online) {
         QString statusText = m_monitor->currentSchedname();
 
         if (!m_monitor->currentNetname().isEmpty()) {
@@ -389,7 +389,7 @@ void MainWindow::updateJob(const Job &job)
 
 void MainWindow::updateJobStats()
 {
-    if (!m_monitor || !m_monitor->schedulerState()) {
+    if (!m_monitor || m_monitor->schedulerState() == Monitor::SchedulerState::Offline) {
         m_jobStatsWidget->clear();
         m_jobStatsWidget->setVisible(false);
         if (m_systemTrayIcon)

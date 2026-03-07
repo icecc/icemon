@@ -499,7 +499,7 @@ void StarView::removeNode(unsigned int hostid)
 
 void StarView::updateSchedulerState(Monitor::SchedulerState state)
 {
-    if (state == Monitor::Offline) {
+    if (state == Monitor::SchedulerState::Offline) {
         for (auto it = m_hostItems.constBegin(); it != m_hostItems.constEnd(); ++it) {
             delete *it;
         }
@@ -584,7 +584,7 @@ bool StarViewGraphicsView::event(QEvent *e)
 void StarViewGraphicsView::arrangeSchedulerItem()
 {
     const Monitor *monitor = m_starView->monitor();
-    const bool isOnline = (monitor ? monitor->schedulerState() == Monitor::Online : false);
+    const bool isOnline = monitor && monitor->schedulerState() == Monitor::SchedulerState::Online;
     m_schedulerItem->setFixedText(isOnline ? tr("Scheduler") : QStringLiteral("<b>No scheduler available</b>"));
     m_schedulerItem->setCenterPos(width() / 2, height() / 2);
 }

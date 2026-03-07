@@ -41,7 +41,7 @@ class Monitor
     Q_ENUMS(SchedulerState)
 
 public:
-    enum SchedulerState {
+    enum class SchedulerState {
         Offline,
         Online,
     };
@@ -78,7 +78,7 @@ private:
     QString m_currentNetname;
     QString m_currentSchedname;
     uint m_currentSchedport{0};
-    SchedulerState m_schedulerState{Offline};
+    SchedulerState m_schedulerState{SchedulerState::Offline};
 };
 
 #endif // ICEMON_MONITOR_H

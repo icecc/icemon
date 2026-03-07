@@ -80,7 +80,7 @@ void IcecreamMonitor::checkScheduler(bool deleteit)
         m_fd_type = QSocketNotifier::Exception;
         delete m_discover;
         m_discover = nullptr;
-        setSchedulerState(Offline);
+        setSchedulerState(SchedulerState::Offline);
     } else if (m_scheduler) {
         return;
     }
@@ -143,7 +143,7 @@ void IcecreamMonitor::slotCheckScheduler()
                 checkScheduler(true);
                 QTimer::singleShot(0, this, &IcecreamMonitor::slotCheckScheduler);
             } else {
-                setSchedulerState(Online);
+                setSchedulerState(SchedulerState::Online);
             }
             return;
         }
@@ -163,7 +163,7 @@ void IcecreamMonitor::slotCheckScheduler()
         }
     }
 
-    setSchedulerState(Offline);
+    setSchedulerState(SchedulerState::Offline);
 }
 
 void IcecreamMonitor::msgReceived()
@@ -179,7 +179,7 @@ bool IcecreamMonitor::handle_activity()
     std::unique_ptr<Msg> m(m_scheduler->get_msg());
     if (!m) {
         checkScheduler(true);
-        setSchedulerState(Offline);
+        setSchedulerState(SchedulerState::Offline);
         return false;
     }
 
