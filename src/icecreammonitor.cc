@@ -111,12 +111,12 @@ void IcecreamMonitor::slotCheckScheduler()
         return;
     }
 
-    const string hostname = currentSchedname().isEmpty() ? "" : currentSchedname().data();
+    const string hostname = currentSchedname().toStdString();
     list<string> names;
     const uint port = currentSchedport();
 
     if (!currentNetname().isEmpty()) {
-        names.push_front(currentNetname().data());
+        names.push_front(currentNetname().toStdString());
     } else {
         names.push_front("ICECREAM");
     }
@@ -125,7 +125,7 @@ void IcecreamMonitor::slotCheckScheduler()
         names.push_front(""); // try $USE_SCHEDULER
     }
     for (auto it = names.begin(); it != names.end(); ++it) {
-        setCurrentNetname(QByteArray::fromStdString(*it));
+        setCurrentNetname(QString::fromStdString(*it));
         if (!m_discover
             || ((m_scheduler = m_discover->try_get_scheduler()) == NULL && m_discover->timed_out())) {
             delete m_discover;
@@ -133,8 +133,6 @@ void IcecreamMonitor::slotCheckScheduler()
         }
 
         if (m_scheduler) {
-            hostInfoManager()->setSchedulerName(QString::fromLatin1(m_discover->schedulerName().data()));
-            hostInfoManager()->setNetworkName(QString::fromLatin1(m_discover->networkName().data()));
             m_scheduler->setBulkTransfer();
             delete m_discover;
             m_discover = nullptr;

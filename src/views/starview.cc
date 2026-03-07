@@ -561,7 +561,7 @@ bool StarViewGraphicsView::event(QEvent *e)
         const QRect itemRect = mapFromScene(graphicsItem->sceneBoundingRect()).boundingRect();
         if (hostInfo) {
             QToolTip::showText(gp + QPoint(10, 10), hostInfo->toolTip(), this, itemRect);
-        } else {
+        } else if (const auto monitor = m_starView->monitor()) {
             QToolTip::showText(gp + QPoint(10, 10), QStringLiteral(
                 "<h3><b>%1</b></h3>"
                 "<table>"
@@ -570,8 +570,8 @@ bool StarViewGraphicsView::event(QEvent *e)
                 "</table>"
                 "<p><img align=\"right\" src=\":/images/icemonnode.png\"/></p>")
                      .arg(tr("Scheduler"),
-                          tr("Host: %1").arg(m_starView->hostInfoManager()->schedulerName()),
-                          tr("Network name: %1").arg(m_starView->hostInfoManager()->networkName())
+                          tr("Host: %1").arg(monitor->currentSchedname()),
+                          tr("Network name: %1").arg(monitor->currentNetname())
                          ),
                 this, itemRect);
         }

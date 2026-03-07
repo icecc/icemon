@@ -25,7 +25,10 @@
 #include <QApplication>
 #include <QCommandLineParser>
 
+#include "hostinfo.h"
 #include "mainwindow.h"
+#include "fakemonitor.h"
+#include "icecreammonitor.h"
 #include "version.h"
 
 int main(int argc, char **argv)
@@ -57,23 +60,29 @@ int main(int argc, char **argv)
 
     parser.process(app);
 
-    const QByteArray netName = parser.value(netnameOption).toLatin1();
-    const QByteArray schedName = parser.value(schednameOption).toLatin1();
+    const QString netName = parser.value(netnameOption);
+    const QString schedName = parser.value(schednameOption);
 
-    MainWindow mainWindow;
+    HostInfoManager hostInfoManager;
+
+    QScopedPointer<Monitor> monitor;
+    if (parser.isSet(testmodeOption)) {
+        monitor.reset(new FakeMonitor(&hostInfoManager));
+    } else {
+        monitor.reset(new IcecreamMonitor(&hostInfoManager));
+    }
     if (!netName.isEmpty()) {
-        mainWindow.setCurrentNet(netName);
+        monitor->setCurrentNetname(netName);
     }
     if (!schedName.isEmpty()) {
-        mainWindow.setCurrentSched(schedName);
+        monitor->setCurrentSchedname(schedName);
     }
-    if (!parser.value(schedportOption).isEmpty())
-    {
-        mainWindow.setCurrentPort(parser.value(schedportOption).toUInt());
+    if (!parser.value(schedportOption).isEmpty()) {
+        monitor->setCurrentSchedport(parser.value(schedportOption).toUInt());
     }
-    if (parser.isSet(testmodeOption)) {
-        mainWindow.setTestModeEnabled(true);
-    }
+
+    MainWindow mainWindow;
+    mainWindow.setMonitor(monitor.get());
     mainWindow.show();
 
     return app.exec();

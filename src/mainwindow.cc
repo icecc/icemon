@@ -25,8 +25,6 @@
 
 #include "hostinfo.h"
 #include "version.h"
-#include "fakemonitor.h"
-#include "icecreammonitor.h"
 #include "statusview.h"
 #include "statusviewfactory.h"
 
@@ -150,16 +148,14 @@ MainWindow::MainWindow(QWidget *parent)
     connect(action, &QAction::triggered, this, &MainWindow::about);
     action->setMenuRole(QAction::AboutRole);
 
-    m_hostInfoManager = new HostInfoManager;
-    setMonitor(new IcecreamMonitor(m_hostInfoManager, this));
-
     resize(600, 400);
     readSettings();
+
+    updateSchedulerState(Monitor::Offline);
 }
 
 MainWindow::~MainWindow()
 {
-    delete m_hostInfoManager;
 }
 
 void MainWindow::closeEvent(QCloseEvent *e)
@@ -364,10 +360,10 @@ void MainWindow::about()
 void MainWindow::updateSchedulerState(Monitor::SchedulerState state)
 {
     if (state == Monitor::Online) {
-        QString statusText = m_hostInfoManager->schedulerName();
+        QString statusText = m_monitor->currentSchedname();
 
-        if (!m_hostInfoManager->networkName().isEmpty()) {
-            statusText.append(QStringLiteral(" @ ")).append(m_hostInfoManager->networkName());
+        if (!m_monitor->currentNetname().isEmpty()) {
+            statusText.append(QStringLiteral(" @ ")).append(m_monitor->currentNetname());
         }
 
         m_schedStatusWidget->setText(statusText.isEmpty() ? tr("Scheduler is online.") : statusText);
@@ -393,7 +389,7 @@ void MainWindow::updateJob(const Job &job)
 
 void MainWindow::updateJobStats()
 {
-    if (!m_monitor->schedulerState()) {
+    if (!m_monitor || !m_monitor->schedulerState()) {
         m_jobStatsWidget->clear();
         m_jobStatsWidget->setVisible(false);
         if (m_systemTrayIcon)
@@ -456,35 +452,9 @@ void MainWindow::updateJobStats()
     }
 }
 
-void MainWindow::setCurrentNet(const QByteArray &netname)
-{
-    m_monitor->setCurrentNetname(netname);
-}
-
-void MainWindow::setCurrentSched(const QByteArray &schedname)
-{
-    m_monitor->setCurrentSchedname(schedname);
-}
-
-void MainWindow::setCurrentPort(uint schedport)
-{
-    m_monitor->setCurrentSchedport(schedport);
-}
-
 void MainWindow::handleViewModeActionTriggered(QAction *action)
 {
     const QString viewId = action->data().toString();
     Q_ASSERT(!viewId.isEmpty());
     setView(StatusViewFactory::create(viewId, this));
-}
-
-// It's nasty that we have to hard-code the implementations of Monitor
-// But we can't just add a setMonitor() method because we require the host info manager
-void MainWindow::setTestModeEnabled(bool testMode)
-{
-    if (testMode) {
-        setMonitor(new FakeMonitor(m_hostInfoManager, this));
-    } else {
-        setMonitor(new IcecreamMonitor(m_hostInfoManager, this));
-    }
 }
