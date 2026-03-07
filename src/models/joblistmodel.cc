@@ -264,8 +264,8 @@ void JobListModel::slotExpireFinishedJobs()
 
     // this list is sorted by the age of the finished jobs, the oldest is the first
     // so we've to find the first job which isn't old enough to expire
-    FinishedJobs::iterator it = m_finishedJobs.begin();
-    for (const FinishedJobs::iterator itEnd = m_finishedJobs.end(); it != itEnd; ++it) {
+    auto it = m_finishedJobs.begin();
+    for (const auto itEnd = m_finishedJobs.end(); it != itEnd; ++it) {
         if (currentTime - (*it).time < ( uint )m_expireDuration) {
             break;
         }
@@ -288,7 +288,7 @@ void JobListModel::removeItem(const Job &job)
 
 void JobListModel::removeItemById(unsigned int jobId)
 {
-    QVector<Job>::iterator it = std::find_if(m_jobs.begin(), m_jobs.end(),
+    auto it = std::find_if(m_jobs.begin(), m_jobs.end(),
         [jobId](const Job &job) {
             return job.id == jobId;
         });

@@ -175,7 +175,7 @@ void SummaryViewItem::update(const Job &job)
         m_jobCount++;
         updateStats();
 
-        QVector<JobHandler>::Iterator it = m_jobHandlers.begin();
+        auto it = m_jobHandlers.begin();
         while (it != m_jobHandlers.end() && !(*it).currentFile.isNull())
             ++it;
 
@@ -195,7 +195,7 @@ void SummaryViewItem::update(const Job &job)
     case Job::Finished:
     case Job::Failed:
     {
-        QVector<JobHandler>::Iterator it = m_jobHandlers.begin();
+        auto it = m_jobHandlers.begin();
         while (it != m_jobHandlers.end() && (*it).currentFile != job.fileName)
             ++it;
 

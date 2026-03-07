@@ -255,7 +255,7 @@ void IcecreamMonitor::handle_local_done(Msg *_m)
         return;
     }
 
-    JobList::iterator it = m_rememberedJobs.find(m->job_id);
+    auto it = m_rememberedJobs.find(m->job_id);
     if (it == m_rememberedJobs.end()) {
         // we started in between
         return;
@@ -308,7 +308,7 @@ void IcecreamMonitor::handle_job_begin(Msg *_m)
         return;
     }
 
-    JobList::iterator it = m_rememberedJobs.find(m->job_id);
+    auto it = m_rememberedJobs.find(m->job_id);
     if (it == m_rememberedJobs.end()) {
         // we started in between
         return;
@@ -334,7 +334,7 @@ void IcecreamMonitor::handle_job_done(Msg *_m)
         return;
     }
 
-    JobList::iterator it = m_rememberedJobs.find(m->job_id);
+    auto it = m_rememberedJobs.find(m->job_id);
     if (it == m_rememberedJobs.end()) {
         // we started in between
         return;

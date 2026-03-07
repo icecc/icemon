@@ -273,12 +273,11 @@ void HostItem::update(const Job &job)
         return;
     }
 
-    bool finished = job.state == Job::Finished ||
-                    job.state == Job::Failed;
+    const bool finished = job.state == Job::Finished ||
+                          job.state == Job::Failed;
 
-    JobList::Iterator it = m_jobs.find(job.id);
-    bool newJob = (it == m_jobs.end());
-
+    auto it = m_jobs.find(job.id);
+    const bool newJob = (it == m_jobs.end());
     if (newJob && finished) {
         return;
     }
@@ -313,7 +312,7 @@ void HostItem::createJobHalo(const Job &job)
 
 void HostItem::deleteJobHalo(const Job &job)
 {
-    QMap<Job, QGraphicsEllipseItem *>::Iterator it = m_jobHalos.find(job);
+    auto it = m_jobHalos.find(job);
     if (it == m_jobHalos.end()) {
         return;
     }
@@ -331,8 +330,7 @@ void HostItem::updateHalos()
 
     int count = 1;
 
-    QMap<Job, QGraphicsEllipseItem *>::Iterator it;
-    for (it = m_jobHalos.begin(); it != m_jobHalos.end(); ++it) {
+    for (auto it = m_jobHalos.begin(); it != m_jobHalos.end(); ++it) {
         QGraphicsEllipseItem *halo = it.value();
         halo->setZValue(70 - count);
         halo->setRect(halo->x() - baseXMargin() - count * HaloMargin, halo->y() - baseYMargin() - count * HaloMargin, mBaseWidth + count * HaloMargin * 2, mBaseHeight + count * HaloMargin * 2);
@@ -402,8 +400,7 @@ void StarView::update(const Job &job)
 
     bool finished = job.state == Job::Finished || job.state == Job::Failed;
 
-    QMap<unsigned int, HostItem *>::Iterator it;
-    it = mJobMap.find(job.id);
+    auto it = mJobMap.find(job.id);
     if (it != mJobMap.end()) {
         (*it)->update(job);
         if (finished) {
@@ -478,23 +475,19 @@ void StarView::removeNode(unsigned int hostid)
 //  qDebug() << "StarView::removeNode() " << hostid << endl;
 
     HostItem *hostItem = findHostItem(hostid);
-
     if (!hostItem)
 	    return;
 
     m_hostItems.remove(hostid);
 
     QList<unsigned int> obsoleteJobs;
-
-    QMap<unsigned int, HostItem *>::Iterator it;
-    for (it = mJobMap.begin(); it != mJobMap.end(); ++it) {
+    for (auto it = mJobMap.begin(); it != mJobMap.end(); ++it) {
         if (it.value() == hostItem) {
             obsoleteJobs.append(it.key());
         }
     }
 
-    QList<unsigned int>::ConstIterator it2;
-    for (it2 = obsoleteJobs.constBegin(); it2 != obsoleteJobs.constEnd(); ++it2) {
+    for (auto it2 = obsoleteJobs.constBegin(); it2 != obsoleteJobs.constEnd(); ++it2) {
         mJobMap.remove(*it2);
     }
 
@@ -507,8 +500,7 @@ void StarView::removeNode(unsigned int hostid)
 void StarView::updateSchedulerState(Monitor::SchedulerState state)
 {
     if (state == Monitor::Offline) {
-        QMap<unsigned int, HostItem *>::ConstIterator it;
-        for (it = m_hostItems.constBegin(); it != m_hostItems.constEnd(); ++it) {
+        for (auto it = m_hostItems.constBegin(); it != m_hostItems.constEnd(); ++it) {
             delete *it;
         }
 
@@ -604,8 +596,7 @@ void StarView::slotConfigChanged()
     }
 
     HostInfoManager::HostMap hostMap = hostInfoManager()->hostMap();
-    HostInfoManager::HostMap::ConstIterator it;
-    for (it = hostMap.constBegin(); it != hostMap.constEnd(); ++it) {
+    for (auto it = hostMap.constBegin(); it != hostMap.constEnd(); ++it) {
         if (filterArch(*it)) {
             checkNode(it.key());
         } else {
@@ -720,10 +711,8 @@ void StarViewGraphicsView::drawState(HostItem *node)
 
 void StarView::createKnownHosts()
 {
-    HostInfoManager::HostMap hosts = hostInfoManager()->hostMap();
-
-    HostInfoManager::HostMap::ConstIterator it;
-    for (it = hosts.constBegin(); it != hosts.constEnd(); ++it) {
+    const HostInfoManager::HostMap hosts = hostInfoManager()->hostMap();
+    for (auto it = hosts.constBegin(); it != hosts.constEnd(); ++it) {
         unsigned int id = (*it)->id();
         if (!findHostItem(id)) {
             createHostItem(id);
