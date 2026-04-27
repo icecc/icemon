@@ -110,6 +110,8 @@ set(
 set(XDG_APPS_INSTALL_DIR ${CMAKE_INSTALL_DATADIR}/applications)
 set(ICON_INSTALL_DIR ${CMAKE_INSTALL_DATADIR}/icons)
 
+option(ICEMON_DEVELOPER_BUILD "Enable Icemon developer mode" OFF)
+
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/config-icemon.h.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/config-icemon.h

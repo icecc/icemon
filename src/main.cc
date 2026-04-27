@@ -31,6 +31,8 @@
 #include "icecreammonitor.h"
 #include "version.h"
 
+#include "config-icemon.h"
+
 int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
@@ -54,9 +56,12 @@ int main(int argc, char **argv)
         QCoreApplication::translate("main", "Icecream scheduler port"),
         QCoreApplication::translate("main", "port", "scheduler port"));
     parser.addOption(schedportOption);
+
+#if ICEMON_DEVELOPER_BUILD
     QCommandLineOption testmodeOption(QStringLiteral("testmode"),
         QCoreApplication::translate("main", "Testing mode."));
     parser.addOption(testmodeOption);
+#endif
 
     parser.process(app);
 
@@ -66,11 +71,16 @@ int main(int argc, char **argv)
     HostInfoManager hostInfoManager;
 
     QScopedPointer<Monitor> monitor;
+#if ICEMON_DEVELOPER_BUILD
     if (parser.isSet(testmodeOption)) {
         monitor.reset(new FakeMonitor(&hostInfoManager));
     } else {
         monitor.reset(new IcecreamMonitor(&hostInfoManager));
     }
+#else
+    monitor.reset(new IcecreamMonitor(&hostInfoManager));
+#endif
+
     if (!netName.isEmpty()) {
         monitor->setCurrentNetname(netName);
     }
