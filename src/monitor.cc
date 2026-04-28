@@ -28,22 +28,22 @@ Monitor::Monitor(HostInfoManager *manager, QObject *parent)
 {
 }
 
-QByteArray Monitor::currentNetname() const
+QString Monitor::currentNetname() const
 {
     return m_currentNetname;
 }
 
-void Monitor::setCurrentNetname(const QByteArray &netname)
+void Monitor::setCurrentNetname(const QString &netname)
 {
     m_currentNetname = netname;
 }
 
-QByteArray Monitor::currentSchedname() const
+QString Monitor::currentSchedname() const
 {
     return m_currentSchedname;
 }
 
-void Monitor::setCurrentSchedname(const QByteArray &schedname)
+void Monitor::setCurrentSchedname(const QString &schedname)
 {
     m_currentSchedname = schedname;
 }

@@ -80,7 +80,7 @@ void IcecreamMonitor::checkScheduler(bool deleteit)
         m_fd_type = QSocketNotifier::Exception;
         delete m_discover;
         m_discover = nullptr;
-        setSchedulerState(Offline);
+        setSchedulerState(SchedulerState::Offline);
     } else if (m_scheduler) {
         return;
     }
@@ -90,13 +90,13 @@ void IcecreamMonitor::checkScheduler(bool deleteit)
 void IcecreamMonitor::registerNotify(int fd, QSocketNotifier::Type type, const char *slot)
 {
     if (m_fd_notify) {
+        // Reuse, but the slot will change.
+        m_fd_notify->disconnect(this);
+
         if(m_fd_notify->socket() != fd || m_fd_notify->type() != type) {
-            m_fd_notify->disconnect(this);
             m_fd_notify->deleteLater();
             m_fd_notify = nullptr;
         }
-        // Reuse, but the slot will change.
-        m_fd_notify->disconnect(this);
     }
     if (!m_fd_notify) {
         m_fd_notify = new QSocketNotifier(fd, type, this);
@@ -111,12 +111,12 @@ void IcecreamMonitor::slotCheckScheduler()
         return;
     }
 
-    const string hostname = currentSchedname().isEmpty() ? "" : currentSchedname().data();
+    const string hostname = currentSchedname().toStdString();
     list<string> names;
     const uint port = currentSchedport();
 
     if (!currentNetname().isEmpty()) {
-        names.push_front(currentNetname().data());
+        names.push_front(currentNetname().toStdString());
     } else {
         names.push_front("ICECREAM");
     }
@@ -125,7 +125,7 @@ void IcecreamMonitor::slotCheckScheduler()
         names.push_front(""); // try $USE_SCHEDULER
     }
     for (auto it = names.begin(); it != names.end(); ++it) {
-        setCurrentNetname(QByteArray::fromStdString(*it));
+        setCurrentNetname(QString::fromStdString(*it));
         if (!m_discover
             || ((m_scheduler = m_discover->try_get_scheduler()) == NULL && m_discover->timed_out())) {
             delete m_discover;
@@ -133,8 +133,6 @@ void IcecreamMonitor::slotCheckScheduler()
         }
 
         if (m_scheduler) {
-            hostInfoManager()->setSchedulerName(QString::fromLatin1(m_discover->schedulerName().data()));
-            hostInfoManager()->setNetworkName(QString::fromLatin1(m_discover->networkName().data()));
             m_scheduler->setBulkTransfer();
             delete m_discover;
             m_discover = nullptr;
@@ -145,7 +143,7 @@ void IcecreamMonitor::slotCheckScheduler()
                 checkScheduler(true);
                 QTimer::singleShot(0, this, &IcecreamMonitor::slotCheckScheduler);
             } else {
-                setSchedulerState(Online);
+                setSchedulerState(SchedulerState::Online);
             }
             return;
         }
@@ -165,7 +163,7 @@ void IcecreamMonitor::slotCheckScheduler()
         }
     }
 
-    setSchedulerState(Offline);
+    setSchedulerState(SchedulerState::Offline);
 }
 
 void IcecreamMonitor::msgReceived()
@@ -181,7 +179,7 @@ bool IcecreamMonitor::handle_activity()
     std::unique_ptr<Msg> m(m_scheduler->get_msg());
     if (!m) {
         checkScheduler(true);
-        setSchedulerState(Offline);
+        setSchedulerState(SchedulerState::Offline);
         return false;
     }
 
@@ -255,7 +253,7 @@ void IcecreamMonitor::handle_local_done(Msg *_m)
         return;
     }
 
-    JobList::iterator it = m_rememberedJobs.find(m->job_id);
+    auto it = m_rememberedJobs.find(m->job_id);
     if (it == m_rememberedJobs.end()) {
         // we started in between
         return;
@@ -308,7 +306,7 @@ void IcecreamMonitor::handle_job_begin(Msg *_m)
         return;
     }
 
-    JobList::iterator it = m_rememberedJobs.find(m->job_id);
+    auto it = m_rememberedJobs.find(m->job_id);
     if (it == m_rememberedJobs.end()) {
         // we started in between
         return;
@@ -334,7 +332,7 @@ void IcecreamMonitor::handle_job_done(Msg *_m)
         return;
     }
 
-    JobList::iterator it = m_rememberedJobs.find(m->job_id);
+    auto it = m_rememberedJobs.find(m->job_id);
     if (it == m_rememberedJobs.end()) {
         // we started in between
         return;

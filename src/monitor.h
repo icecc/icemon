@@ -40,19 +40,19 @@ class Monitor
     Q_PROPERTY(SchedulerState schedulerState READ schedulerState WRITE setSchedulerState NOTIFY schedulerStateChanged)
     Q_ENUMS(SchedulerState)
 
-public
-        : enum SchedulerState {
+public:
+    enum class SchedulerState {
         Offline,
         Online,
     };
 
     explicit Monitor(HostInfoManager *manager, QObject *parent = nullptr);
 
-    QByteArray currentNetname() const;
-    void setCurrentNetname(const QByteArray &);
+    QString currentNetname() const;
+    void setCurrentNetname(const QString &);
 
-    QByteArray currentSchedname() const;
-    void setCurrentSchedname(const QByteArray &);
+    QString currentSchedname() const;
+    void setCurrentSchedname(const QString &);
 
     uint currentSchedport() const;
     void setCurrentSchedport(uint port);
@@ -75,10 +75,10 @@ Q_SIGNALS:
 
 private:
     HostInfoManager *m_hostInfoManager;
-    QByteArray m_currentNetname;
-    QByteArray m_currentSchedname;
+    QString m_currentNetname;
+    QString m_currentSchedname;
     uint m_currentSchedport{0};
-    SchedulerState m_schedulerState{Offline};
+    SchedulerState m_schedulerState{SchedulerState::Offline};
 };
 
 #endif // ICEMON_MONITOR_H

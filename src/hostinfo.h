@@ -134,18 +134,11 @@ public:
     QColor hostColor(unsigned int id) const;
     unsigned int maxJobs(unsigned int id) const;
 
-    QString schedulerName() const { return mSchedulerName; }
-    void setSchedulerName(const QString &schedulerName);
-    QString networkName() const { return mNetworkName; }
-    void setNetworkName(const QString &networkName);
-
 signals:
     void hostMapChanged();
 
 private:
     HostMap mHostMap;
-    QString mSchedulerName;
-    QString mNetworkName;
 };
 
 #endif

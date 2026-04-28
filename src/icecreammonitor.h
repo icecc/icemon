@@ -40,7 +40,7 @@ class IcecreamMonitor
     Q_OBJECT
 
 public:
-    IcecreamMonitor(HostInfoManager *, QObject *parent);
+    IcecreamMonitor(HostInfoManager *, QObject *parent = nullptr);
     ~IcecreamMonitor() override;
 
     QList<Job> jobHistory() const override;

@@ -321,10 +321,7 @@ void GanttStatusView::update(const Job &job)
         return;
     }
 
-    QMap<unsigned int, GanttProgress *>::Iterator it;
-
-    it = mJobMap.find(job.id);
-
+    auto it = mJobMap.find(job.id);
     if (it != mJobMap.end()) {
         it.value()->update(job);
         if (job.state == Job::Finished || job.state == Job::Failed) {
@@ -489,11 +486,9 @@ void GanttStatusView::removeSlot(unsigned int hostid, GanttProgress *slot)
 
     mNodeMap[hostid].removeAll(slot);
     JobMap newJobMap;
-    for (QMap<unsigned int, GanttProgress *>::Iterator it = mJobMap.begin();
-         it != mJobMap.end();  // QMap::remove doesn't return an iterator like
-         ++it) {               // e.g. in QValueList, and I'm not sure if 'it'
-        if ((*it) != slot) {   // or '++it' would be still valid, so let's copy
-            newJobMap[it.key()] = *it;   // still valid items to a new map
+    for (auto it = mJobMap.begin(); it != mJobMap.end(); ++it) {
+        if ((*it) != slot) {
+            newJobMap[it.key()] = *it; // still valid items to a new map
         }
     }
 
@@ -547,7 +542,7 @@ void GanttStatusView::start()
 void GanttStatusView::checkAge()
 {
     QList<unsigned int> to_unregister;
-    for (AgeMap::Iterator it = mAgeMap.begin();
+    for (auto it = mAgeMap.begin();
          it != mAgeMap.end();
          ++it) {
         if (*it > 1) {
@@ -559,7 +554,7 @@ void GanttStatusView::checkAge()
         }
     }
 
-    for (QList<unsigned int>::ConstIterator it = to_unregister.constBegin();
+    for (auto it = to_unregister.constBegin();
          it != to_unregister.constEnd();
          ++it) {
         unregisterNode(*it);

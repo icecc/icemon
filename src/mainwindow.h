@@ -46,11 +46,10 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
 
-    void setCurrentNet(const QByteArray &netname);
-    void setCurrentSched(const QByteArray &schedname);
-    void setCurrentPort(uint schedport);
-
     Monitor *monitor() const;
+    /// Does *not* take ownership over @p monitor
+    void setMonitor(Monitor *monitor);
+
     StatusView *view() const;
 
     void setTestModeEnabled(bool testMode);
@@ -67,7 +66,7 @@ private slots:
 
     void about();
 
-    void updateSchedulerState(Monitor::SchedulerState state);
+    void updateSchedulerState();
     void updateJob(const Job &);
     void updateJobStats();
 
@@ -77,12 +76,9 @@ private:
     void readSettings();
     void writeSettings();
 
-    /// Does *not* take ownership over @p monitor
-    void setMonitor(Monitor *monitor);
     /// Takes ownership over @p view
     void setView(StatusView *view);
 
-    HostInfoManager *m_hostInfoManager;
     QPointer<Monitor> m_monitor;
     StatusView *m_view{nullptr};
     QSystemTrayIcon* m_systemTrayIcon{nullptr};

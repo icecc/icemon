@@ -30,14 +30,13 @@
 #include <QTimer>
 #include <QRandomGenerator>
 
-#include <icecc/comm.h>
-
 namespace {
 // counter variable
 int JOB_ID = 0;
 
-const int MAX_JOB_COUNT = 10;
-const int MAX_HOST_COUNT = 40;
+const int MAX_HOST_COUNT = 20;
+const int MAX_JOB_COUNT = 32;
+const int MAX_TOTAL_JOB_COUNT = MAX_HOST_COUNT * MAX_JOB_COUNT / 2;
 const int MAX_JOB_SIZE = 1024 * 1024 * 24;
 
 const QStringList JOB_FILENAMES(QStringList()
@@ -54,7 +53,7 @@ const QStringList HOST_NAMES(QStringList()
 
 QString randomPlatform()
 {
-    static const QStringList hostNames = {QStringLiteral("Linux 2.6"), QStringLiteral("Linux 3.2"), QStringLiteral("Linux 3.6")};
+    static const QStringList hostNames = {QStringLiteral("x86_64"), QStringLiteral("arm64")};
     return hostNames[QRandomGenerator::global()->generate() % hostNames.size()];
 }
 }
@@ -63,11 +62,11 @@ FakeMonitor::FakeMonitor(HostInfoManager *manager, QObject *parent)
     : Monitor(manager, parent)
     , m_updateTimer(new QTimer(this))
 {
-    m_updateTimer->setInterval(200);
+    m_updateTimer->setInterval(500);
     m_updateTimer->start();
     connect(m_updateTimer, &QTimer::timeout, this, &FakeMonitor::update);
 
-    setSchedulerState(Online);
+    setSchedulerState(SchedulerState::Online);
 
     for (HostId i = 0; i < MAX_HOST_COUNT; ++i) {
         createHostInfo(i + 1);
@@ -76,43 +75,56 @@ FakeMonitor::FakeMonitor(HostInfoManager *manager, QObject *parent)
 
 void FakeMonitor::createHostInfo(HostId id)
 {
+    // Set some servers as not accepting remote jobs
+    const float speed = (QRandomGenerator::global()->generate() % 5) * 100.0;
+
     HostInfo info(id);
     info.setIp(QStringLiteral("1.0.0.%1").arg(id));
-    info.setMaxJobs(5);
+    info.setMaxJobs(MAX_JOB_COUNT);
     info.setName(HOST_NAMES[id % HOST_NAMES.length()] + QString::number(id));
     info.setColor(info.createColor(info.name()));
     info.setOffline(false);
-    info.setNoRemote(false);
+    info.setNoRemote(qFuzzyIsNull(speed));
     info.setPlatform(randomPlatform());
-    info.setProtocol(PROTOCOL_VERSION);
+    info.setProtocol(0);
     info.setFeatures(id % 2 == 0 ? QStringLiteral("env_xz") : QStringLiteral("env_zstd"));
     info.setServerLoad(1.0);
-    info.setServerSpeed(10);
+    info.setServerSpeed(speed);
     hostInfoManager()->checkNode(info);
 }
 
 void FakeMonitor::update()
 {
-    // create job
-    const int clientId = (JOB_ID % MAX_HOST_COUNT) + 1;
-    const QString fileName = JOB_FILENAMES[JOB_ID % JOB_FILENAMES.length()];
-    Job job(JOB_ID++, clientId, fileName);
-    time_t rawtime;
-    time(&rawtime);
-    job.startTime = rawtime;
-    job.state = Job::Compiling;
-    job.in_compressed = QRandomGenerator::global()->generate() % MAX_JOB_SIZE * 0.75; // random factor
-    job.in_uncompressed = QRandomGenerator::global()->generate() % MAX_JOB_SIZE;
-    job.in_compressed = QRandomGenerator::global()->generate() % MAX_JOB_SIZE ;
-    job.in_uncompressed = QRandomGenerator::global()->generate() % MAX_JOB_SIZE * 0.75; // random factor
-    job.real_msec = 200;
-    const int serverId = ((JOB_ID + 1) % MAX_HOST_COUNT) + 1;
-    job.server = serverId;
-    emit jobUpdated(job);
-    m_activeJobs << job;
+    // create jobs
+    for (int i = 0; i < 10; ++i) {
+        const int jobId = JOB_ID++;
+
+        const int clientId = (jobId % MAX_HOST_COUNT) + 1;
+        const QString fileName = JOB_FILENAMES[jobId % JOB_FILENAMES.length()];
+        const auto hostInfo = hostInfoManager()->find(clientId);
+        assert(hostInfo);
+        if (qFuzzyIsNull(hostInfo->serverSpeed())) {
+            continue;
+        }
+
+        Job job(jobId, clientId, fileName);
+        time_t rawtime;
+        time(&rawtime);
+        job.startTime = rawtime;
+        job.state = Job::Compiling;
+        job.in_compressed = QRandomGenerator::global()->generate() % MAX_JOB_SIZE * 0.75; // random factor
+        job.in_uncompressed = QRandomGenerator::global()->generate() % MAX_JOB_SIZE;
+        job.in_compressed = QRandomGenerator::global()->generate() % MAX_JOB_SIZE ;
+        job.in_uncompressed = QRandomGenerator::global()->generate() % MAX_JOB_SIZE * 0.75; // random factor
+        job.real_msec = 200;
+        const int serverId = ((jobId + 1) % MAX_HOST_COUNT) + 1;
+        job.server = serverId;
+        emit jobUpdated(job);
+        m_activeJobs << job;
+    }
 
     // clean up old jobs
-    if (m_activeJobs.size() > MAX_JOB_COUNT) {
+    if (m_activeJobs.size() > MAX_TOTAL_JOB_COUNT) {
         Job job = m_activeJobs.first();
         m_activeJobs.removeFirst();
         job.state = Job::Finished;
