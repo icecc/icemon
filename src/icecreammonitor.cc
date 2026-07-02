@@ -264,11 +264,20 @@ void IcecreamMonitor::handle_local_done(Msg *_m)
     (*it).state = Job::Finished;
     emit jobUpdated(*it);
 
-    if (m_rememberedJobs.size() > 3000) {   // now remove 1000
+    if (m_rememberedJobs.size() > 3000) {   // now remove 1000 completed jobs
         uint count = 1000;
-
-        while (--count)
-            m_rememberedJobs.erase(m_rememberedJobs.begin());
+        JobList::iterator it = m_rememberedJobs.begin();
+        while (count > 0 && it != m_rememberedJobs.end()) {
+            if (it.value().isDone()) {
+                JobList::iterator next = it;
+                ++next;
+                m_rememberedJobs.erase(it);
+                it = next;
+                --count;
+            } else {
+                ++it;
+            }
+        }
     }
 }
 
