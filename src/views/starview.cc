@@ -389,37 +389,46 @@ void StarView::update(const Job &job)
     }
 
     unsigned int hostid = processor(job);
-    if (!hostid) {
-        return;
-    }
-
-    HostItem *hostItem = findHostItem(hostid);
-    if (!hostItem) {
-        return;
-    }
-
-    hostItem->update(job);
+    HostItem *hostItem = hostid ? findHostItem(hostid) : nullptr;
 
     bool finished = job.state == Job::Finished || job.state == Job::Failed;
 
-    QMap<unsigned int, HostItem *>::Iterator it;
-    it = mJobMap.find(job.id);
+    QMap<unsigned int, HostItem *>::Iterator it = mJobMap.find(job.id);
     if (it != mJobMap.end()) {
-        (*it)->update(job);
-        if (finished) {
-            mJobMap.erase(it);
-            unsigned int clientid = job.client;
-            HostItem *clientItem = findHostItem(clientid);
-            if (clientItem) {
-                clientItem->setIsActiveClient(false);
+        HostItem *oldHostItem = *it;
+
+        if (oldHostItem != hostItem) {
+            Job finishedJob = job;
+            finishedJob.state = Job::Finished;
+            oldHostItem->update(finishedJob);
+
+            if (hostItem && !finished) {
+                hostItem->update(job);
+                *it = hostItem;
+            } else {
+                mJobMap.erase(it);
+                unsigned int clientid = job.client;
+                HostItem *clientItem = findHostItem(clientid);
+                if (clientItem) {
+                    clientItem->setIsActiveClient(false);
+                }
+            }
+        } else {
+            hostItem->update(job);
+            if (finished) {
+                mJobMap.erase(it);
+                unsigned int clientid = job.client;
+                HostItem *clientItem = findHostItem(clientid);
+                if (clientItem) {
+                    clientItem->setIsActiveClient(false);
+                }
             }
         }
-        m_widget->drawNodeStatus();
-        return;
-    }
-
-    if (!finished) {
-        mJobMap.insert(job.id, hostItem);
+    } else {
+        if (hostItem && !finished) {
+            hostItem->update(job);
+            mJobMap.insert(job.id, hostItem);
+        }
     }
 
     if (job.state == Job::Compiling) {
