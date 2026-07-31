@@ -14,13 +14,12 @@ set_package_properties(pandoc PROPERTIES
 )
 
 if (pandoc_FOUND)
-    add_custom_target(manpage)
+    add_custom_target(manpage ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/icemon.1)
     add_custom_command(
-        TARGET manpage
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/icemon.1
         COMMAND ${pandoc_EXECUTABLE} -s -t man ${CMAKE_CURRENT_SOURCE_DIR}/icemon.md
             -o ${CMAKE_CURRENT_BINARY_DIR}/icemon.1
-        MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/icemon.md
-        BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/icemon.1)
+        MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/icemon.md)
     install(
         FILES ${CMAKE_CURRENT_BINARY_DIR}/icemon.1
         DESTINATION ${CMAKE_INSTALL_MANDIR}/man1)
