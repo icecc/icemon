@@ -94,9 +94,10 @@ void IcecreamMonitor::registerNotify(int fd, QSocketNotifier::Type type, const c
             m_fd_notify->disconnect(this);
             m_fd_notify->deleteLater();
             m_fd_notify = nullptr;
+        } else {
+            // Reuse, but the slot will change.
+            m_fd_notify->disconnect(this);
         }
-        // Reuse, but the slot will change.
-        m_fd_notify->disconnect(this);
     }
     if (!m_fd_notify) {
         m_fd_notify = new QSocketNotifier(fd, type, this);
