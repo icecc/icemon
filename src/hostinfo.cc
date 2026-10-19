@@ -244,6 +244,18 @@ unsigned int HostInfoManager::maxJobs(unsigned int id) const
     return 0;
 }
 
+void HostInfoManager::clear()
+{
+    if (mHostMap.isEmpty()) {
+        return;
+    }
+
+    qDeleteAll(mHostMap);
+    mHostMap.clear();
+
+    emit hostMapChanged();
+}
+
 HostInfoManager::HostMap HostInfoManager::hostMap() const
 {
     return mHostMap;

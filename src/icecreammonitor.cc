@@ -80,6 +80,11 @@ void IcecreamMonitor::checkScheduler(bool deleteit)
         m_fd_type = QSocketNotifier::Exception;
         delete m_discover;
         m_discover = nullptr;
+        const HostInfoManager::HostMap hostMap = hostInfoManager()->hostMap();
+        for (auto it = hostMap.constBegin(); it != hostMap.constEnd(); ++it) {
+            emit nodeRemoved(it.key());
+        }
+        hostInfoManager()->clear();
         setSchedulerState(Offline);
     } else if (m_scheduler) {
         return;

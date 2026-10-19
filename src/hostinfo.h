@@ -134,6 +134,8 @@ public:
     QColor hostColor(unsigned int id) const;
     unsigned int maxJobs(unsigned int id) const;
 
+    void clear();
+
     QString schedulerName() const { return mSchedulerName; }
     void setSchedulerName(const QString &schedulerName);
     QString networkName() const { return mNetworkName; }
