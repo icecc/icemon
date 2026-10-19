@@ -150,6 +150,16 @@ void IcecreamMonitor::slotCheckScheduler()
             return;
         }
 
+        if (m_fd_type == QSocketNotifier::Write) {
+            // The connection attempt failed, retry later instead of busy looping.
+            m_fd_notify->disconnect(this);
+            m_fd_notify->deleteLater();
+            m_fd_notify = nullptr;
+            m_fd_type = QSocketNotifier::Exception;
+            QTimer::singleShot(1000 + (QRandomGenerator::global()->generate() & 1023), this, &IcecreamMonitor::slotCheckScheduler);
+            break;
+        }
+
         if (m_fd_type != QSocketNotifier::Write
             && m_discover->connect_fd() >= 0) {
             registerNotify(m_discover->connect_fd(),
