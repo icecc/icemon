@@ -198,7 +198,7 @@ bool IcecreamMonitor::handle_activity()
     case ICECC_MSG_API_COMPAT(M_END, Msg::END):
         std::cout << "END" << endl;
         checkScheduler(true);
-        break;
+        return false;
     case ICECC_MSG_API_COMPAT(M_MON_STATS, Msg::MON_STATS):
         handle_stats(m.get());
         break;
