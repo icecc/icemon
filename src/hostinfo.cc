@@ -226,10 +226,7 @@ QColor HostInfoManager::hostColor(unsigned int id) const
         }
     }
 
-    //qDebug() << "id " << id << " got no color\n";
-    Q_ASSERT(false);
-
-    return QColor(0, 0, 0);
+    return QColor(Qt::gray);
 }
 
 unsigned int HostInfoManager::maxJobs(unsigned int id) const
